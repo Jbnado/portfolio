@@ -1,0 +1,46 @@
+header {
+  display: flex;
+}
+
+header .logo a {
+  display: inline-block;
+  padding: 10px 10px 6px 20px;
+  font-size: 2rem;
+  text-decoration: none;
+}
+
+header nav {
+  margin: 0;
+  flex: 1;
+}
+
+header ul {
+  padding: 3px 10px 0 0;
+  list-style: none;
+  text-align: right;
+}
+
+header li {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+header li a {
+  display: inline-block;
+  padding: 8px 10px;
+  text-decoration: none;
+}
+
+header li a:hover {
+  text-decoration: underline;
+}
+
+a,
+a:visited {
+  color: var(--dark-pink);
+}
+
+a:hover {
+  text-decoration: none;
+}
