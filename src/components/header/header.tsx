@@ -12,7 +12,9 @@ export default component$(() => {
       <nav>
         <ul>
           <li>
-            <a href="#">Contact me</a>
+            <a href="mailto:me@jbnado.dev?subject=Regarding%20your%20portfolio">
+              Contact me
+            </a>
           </li>
         </ul>
       </nav>

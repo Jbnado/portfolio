@@ -13,8 +13,9 @@ export default component$(() => {
             See all my experience as a developer
           </h1>
           <p className="lg:w-2/3 mx-auto leading-relaxed text-base">
-            Here you can check out the companies I joined. Is here where I
-            learned a lot and built great apps!
+            I've had the privilege of working with some great companies in the
+            past, where I learned valuable software development skills and built
+            successful applications.
           </p>
         </div>
         <div className="flex flex-wrap -m-4">

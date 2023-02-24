@@ -11,13 +11,17 @@ export default component$(() => {
             apps.
           </h1>
           <p className="mb-8 leading-relaxed">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Qui
-            laborum quasi, incidunt dolore iste nostrum cupiditate voluptas?
-            Laborum, voluptas natus?
+            I'm constantly seeking to improve my skills and knowledge in
+            different programming languages and frameworks such as JavaScript,
+            Node, React, and Python and enjoy taking on challenging projects
+            that require creative problem-solving. I value teamwork, attention
+            to detail, and producing high-quality work that adheres to industry
+            standards. I look forward to contributing my skills and expertise to
+            innovative software development projects in the future
           </p>
           <div className="flex justify-center">
             <a
-              href="#contact"
+              href="mailto:me@jbnado.dev?subject=Regarding%20your%20portfolio"
               className="inline-flex text-white bg-[#ea4ca4] border-0 py-2 px-6 focus:outline-none hover:bg-[#de057f] rounded text-lg"
             >
               Contact Me
