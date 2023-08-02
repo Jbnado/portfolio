@@ -8,6 +8,13 @@ interface IExperience {
 
 export const experiences: Array<IExperience> = [
   {
+    title: "Take & Go",
+    role: "FrontEnd Developer",
+    description: "",
+    image: "take-and-go.png",
+    link: "https://takeandgoapp.com/",
+  },
+  {
     title: "Authorify",
     role: "FullStack Developer",
     description: "",
