@@ -1,0 +1,43 @@
+[
+  {
+    "company": "Take",
+    "role": "Full Stack Developer",
+    "period": "Mai 2023 - Presente",
+    "logo": "take-and-go.png",
+    "highlights": [
+      "Liderança no desenvolvimento de novas funcionalidades e implementação de tecnologias front-end",
+      "Desenvolvimento full-stack com React (front-end) e Java (back-end)",
+      "Integração com AWS, RabbitMQ e arquitetura de micro-serviços",
+      "Manutenção e correção de sistema legado em Angular",
+      "Criação de documentação técnica com Wiki.js e Storybook",
+      "Implementação de testes automatizados com Cypress",
+      "Gestão de conflitos e capacitação de novos desenvolvedores"
+    ]
+  },
+  {
+    "company": "Authorify",
+    "role": "Full Stack Developer",
+    "period": "Abr 2022 - Fev 2023",
+    "logo": "authorify.png",
+    "highlights": [
+      "Desenvolvimento e manutenção de serviços com Node.js, TypeScript, Nest.js e React",
+      "Refatoração de código React legado para melhor desempenho",
+      "Otimização de consultas e modelagem de dados no MongoDB",
+      "Implementação de testes com Jest e Cypress"
+    ]
+  },
+  {
+    "company": "Target Sistemas",
+    "role": "Full Stack Developer Trainee",
+    "period": "Fev 2021 - Abr 2022",
+    "logo": "target-sistemas.svg",
+    "highlights": [
+      "Refatoração de código front-end utilizando Sass",
+      "Criação de plugin para Adobe XD para integração com designers",
+      "Desenvolvimento de aplicações CRUD com Express e TypeScript",
+      "Implementação de interfaces com Angular",
+      "Desenvolvimento de aplicativo móvel com Flutter",
+      "Contribuição em sistema de grande escala com funcionalidades complexas"
+    ]
+  }
+]
