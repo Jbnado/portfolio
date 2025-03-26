@@ -8,13 +8,15 @@ import ClientMarkdownRenderer from "@/components/ClientMarkdownRenderer";
 import { MdArrowBack } from "react-icons/md";
 
 interface BlogParams {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: BlogParams): Promise<Metadata> {
-  const post = await getPost(params.slug);
+  const { slug } = await params;
+
+  const post = await getPost(slug);
 
   if (!post) {
     return {
@@ -40,7 +42,8 @@ export async function generateStaticParams() {
 }
 
 export default async function BlogPost({ params }: BlogParams) {
-  const post = await getPost(params.slug);
+  const { slug } = await params;
+  const post = await getPost(slug);
 
   if (!post) {
     return (
