@@ -1,3 +1,5 @@
+"use client";
+
 import skills from "@/app/skills.json";
 import {
   FaReact,
@@ -24,6 +26,7 @@ import {
 } from "react-icons/si";
 import { CgFileDocument } from "react-icons/cg";
 import React from "react";
+import { motion } from "framer-motion";
 
 // Função para mapear o nome do ícone para o componente
 const getIconComponent = (iconName: string) => {
@@ -55,47 +58,118 @@ const getIconComponent = (iconName: string) => {
   return iconMap[iconName] || <CgFileDocument className="w-full h-full" />;
 };
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+    },
+  },
+};
+
 export default function Skills() {
   return (
     <section className="py-12 px-4 bg-gray-50 dark:bg-gray-900">
-      <h2 className="text-3xl font-bold text-center mb-8">Habilidades</h2>
+      <motion.h2
+        className="text-3xl font-bold text-center mb-8"
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        Habilidades
+      </motion.h2>
 
-      <p className="text-center text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto">
+      <motion.p
+        className="text-center text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         Nenhuma habilidade está em 100% pois acredito que estamos sempre
         aprendendo e evoluindo constantemente.
-      </p>
+      </motion.p>
 
       <div className="max-w-4xl mx-auto">
-        {skills.map((category) => (
-          <div key={category.category} className="mb-10">
-            <h3 className="text-xl font-semibold mb-4 text-cyan-700 dark:text-cyan-400">
+        {skills.map((category, index) => (
+          <motion.div
+            key={category.category}
+            className="mb-10"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: index * 0.2 }}
+          >
+            <motion.h3
+              className="text-xl font-semibold mb-4 text-cyan-700 dark:text-cyan-400"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               {category.category}
-            </h3>
+            </motion.h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              variants={container}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+            >
               {category.skills.map((skill) => (
-                <div
+                <motion.div
                   key={skill.name}
                   className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                  variants={item}
+                  whileHover={{
+                    y: -5,
+                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+                  }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 relative flex-shrink-0">
+                    <motion.div
+                      className="w-8 h-8 relative flex-shrink-0"
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.6 }}
+                    >
                       {getIconComponent(skill.icon)}
-                    </div>
+                    </motion.div>
                     <div className="flex-grow">
                       <p className="font-medium">{skill.name}</p>
                       <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full mt-1">
-                        <div
+                        <motion.div
                           className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
-                          style={{ width: `${skill.level}%` }}
+                          style={{ width: "0%" }}
+                          animate={{ width: `${skill.level}%` }}
+                          transition={{
+                            duration: 1,
+                            delay: 0.2,
+                            ease: "easeOut",
+                          }}
                         />
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         ))}
       </div>
     </section>
