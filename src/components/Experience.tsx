@@ -50,7 +50,7 @@ export default function Experience() {
         {experiences.map((exp, index) => (
           <motion.div
             key={exp.company}
-            className="group p-6 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-cyan-500 transition-all"
+            className="bg-gray-900 group p-6 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-cyan-500 transition-all"
             variants={item}
             whileHover={{
               y: -5,

@@ -58,6 +58,53 @@ const getIconComponent = (iconName: string) => {
   return iconMap[iconName] || <CgFileDocument className="w-full h-full" />;
 };
 
+// Função para obter o efeito de hover baseado no tipo de habilidade
+const getHoverEffect = (iconName: string) => {
+  const effectMap: Record<
+    string,
+    {
+      rotate?: number;
+      scale?: number;
+      y?: number;
+      x?: number;
+      skewX?: number;
+      skewY?: number;
+    }
+  > = {
+    // Efeito 1: Rotação completa
+    react: { rotate: 360, scale: 1.1 },
+    angular: { rotate: -360, scale: 1.1 },
+    "spring-boot": { rotate: 360, scale: 1.1 },
+    docker: { rotate: 360, scale: 1.1 },
+
+    // Efeito 2: Movimento para cima
+    typescript: { y: -8, scale: 1.1 },
+    nodejs: { y: -8, scale: 1.1 },
+    express: { y: -8, scale: 1.1 },
+    git: { y: -8, scale: 1.1 },
+
+    // Efeito 3: Movimento para os lados
+    nextjs: { x: 5, scale: 1.2 },
+    mongodb: { x: -5, scale: 1.2 },
+    aws: { x: 5, scale: 1.1 },
+    cypress: { x: -5, scale: 1.2 },
+
+    // Efeito 4: Rotação parcial + escala
+    tailwind: { rotate: 15, scale: 1.2 },
+    storybook: { rotate: -15, scale: 1.2 },
+    nestjs: { rotate: -15, scale: 1.1 },
+    jest: { rotate: 15, scale: 1.1 },
+
+    // Efeito 5: Inclinação (skew)
+    java: { skewX: 10, scale: 1.2 },
+    rabbitmq: { skewY: 10, scale: 1.1 },
+    cicd: { skewX: -10, scale: 1.2 },
+    sass: { skewY: -10, scale: 1.1 },
+  };
+
+  return effectMap[iconName] || { scale: 1.1, y: -3 };
+};
+
 const container = {
   hidden: { opacity: 0 },
   show: {
@@ -95,28 +142,27 @@ export default function Skills() {
       </motion.h2>
 
       <motion.p
-        className="text-center text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto"
+        className="text-center text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        Nenhuma habilidade está em 100% pois acredito que estamos sempre
-        aprendendo e evoluindo constantemente.
+        Tecnologias e ferramentas que utilizo no meu dia a dia
       </motion.p>
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {skills.map((category, index) => (
           <motion.div
             key={category.category}
-            className="mb-10"
+            className="mb-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: index * 0.2 }}
           >
             <motion.h3
-              className="text-xl font-semibold mb-4 text-cyan-700 dark:text-cyan-400"
+              className="text-xl font-semibold mb-6 text-cyan-700 dark:text-cyan-400"
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -126,7 +172,7 @@ export default function Skills() {
             </motion.h3>
 
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
               variants={container}
               initial="hidden"
               whileInView="show"
@@ -135,37 +181,29 @@ export default function Skills() {
               {category.skills.map((skill) => (
                 <motion.div
                   key={skill.name}
-                  className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                  className="flex flex-col items-center justify-center p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all"
                   variants={item}
                   whileHover={{
                     y: -5,
                     boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
                   }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <div className="flex items-center gap-3">
-                    <motion.div
-                      className="w-8 h-8 relative flex-shrink-0"
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      {getIconComponent(skill.icon)}
-                    </motion.div>
-                    <div className="flex-grow">
-                      <p className="font-medium">{skill.name}</p>
-                      <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full mt-1">
-                        <motion.div
-                          className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
-                          style={{ width: "0%" }}
-                          animate={{ width: `${skill.level}%` }}
-                          transition={{
-                            duration: 1,
-                            delay: 0.2,
-                            ease: "easeOut",
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <motion.div
+                    className="w-12 h-12 mb-2 relative flex-shrink-0"
+                    whileHover={getHoverEffect(skill.icon)}
+                    transition={{
+                      duration: 0.5,
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 10,
+                    }}
+                  >
+                    {getIconComponent(skill.icon)}
+                  </motion.div>
+                  <p className="font-medium text-sm text-center">
+                    {skill.name}
+                  </p>
                 </motion.div>
               ))}
             </motion.div>

@@ -5,7 +5,6 @@ import { motion, useScroll, useSpring } from "framer-motion";
 export default function ScrollProgressBar() {
   const { scrollYProgress } = useScroll();
 
-  // Adiciona um efeito de spring para tornar a animação mais suave
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
