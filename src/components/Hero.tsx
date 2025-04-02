@@ -5,10 +5,12 @@ import { FaLinkedin, FaGithub } from "react-icons/fa";
 import { motion } from "framer-motion";
 import React from "react";
 import SocialIcon from "./SocialIcon";
+import ParticlesBackground from "./ParticlesBackground";
 
 export default function Hero() {
   return (
-    <section className="min-h-screen flex flex-col md:flex-row items-center justify-center gap-8 p-6">
+    <section className="min-h-screen flex flex-col md:flex-row items-center justify-center gap-8 p-6 relative">
+      <ParticlesBackground />
       <motion.div
         className="relative w-64 h-64 rounded-full overflow-hidden border-4 border-cyan-500 hover:scale-105 transition-transform"
         initial={{ opacity: 0, scale: 0.8 }}
