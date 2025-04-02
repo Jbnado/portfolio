@@ -40,11 +40,11 @@ export default function ParticlesBackground() {
             color: "#00FFFF",
             distance: 100,
             enable: true,
-            opacity: 0.3,
+            opacity: 0.1,
             width: 1,
             triangles: {
               enable: true,
-              opacity: 0.2,
+              opacity: 0.1,
             },
           },
           move: {
@@ -64,7 +64,7 @@ export default function ParticlesBackground() {
             },
           },
           opacity: {
-            value: 0.3,
+            value: 0.1,
             animation: {
               enable: true,
               speed: 1,
@@ -102,7 +102,7 @@ export default function ParticlesBackground() {
             grab: {
               distance: 150,
               links: {
-                opacity: 0.3,
+                opacity: 0.1,
               },
             },
             push: {
