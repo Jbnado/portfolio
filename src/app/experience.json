@@ -1,8 +1,18 @@
 [
   {
+    "company": "Verzel",
+    "role": "Full Stack Developer",
+    "period": "Abr 2025 - Presente",
+    "logo": "verzel.png",
+    "highlights": [
+      "Desenvolvimento de novas funcionalidades e implementação de tecnologias front-end com React, Next.js, Tailwind CSS e Shadcn/UI",
+      "Desenvolvimento back-end com Java, Spring Boot e Nest.js, com integração com banco de dados PostgreSQL e Oracle"
+    ]
+  },
+  {
     "company": "Take",
     "role": "Full Stack Developer",
-    "period": "Mai 2023 - Presente",
+    "period": "Mai 2023 - Abr 2025",
     "logo": "take-and-go.png",
     "highlights": [
       "Liderança no desenvolvimento de novas funcionalidades e implementação de tecnologias front-end",

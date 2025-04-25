@@ -26,25 +26,25 @@ export default {
             },
             h1: {
               fontWeight: '700',
-              color: 'var(--tw-prose-headings)',
+              color: '#ffffff',
             },
             h2: {
               fontWeight: '700',
-              color: 'var(--tw-prose-headings)',
+              color: '#ffffff',
             },
             h3: {
               fontWeight: '600',
-              color: 'var(--tw-prose-headings)',
+              color: '#ffffff',
             },
             pre: {
-              backgroundColor: 'var(--tw-prose-pre-bg)',
+              backgroundColor: '#1e1e1e',
               borderRadius: '0.5rem',
               padding: '1rem',
               overflowX: 'auto',
             },
             code: {
-              backgroundColor: 'var(--tw-prose-pre-code-bg)',
-              color: 'var(--tw-prose-pre-code)',
+              backgroundColor: '#2d2d2d',
+              color: '#ffffff',
               fontWeight: '400',
               fontSize: '0.875em',
               borderRadius: '0.25rem',
