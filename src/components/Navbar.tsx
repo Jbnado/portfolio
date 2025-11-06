@@ -32,8 +32,11 @@ export default function Navbar() {
           </div>
 
           <button
-            className="md:hidden text-gray-700 dark:text-gray-300"
+            type="button"
+            className="md:hidden text-gray-700 dark:text-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-md p-1"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
+            aria-controls="mobile-menu"
           >
             {isMenuOpen ? (
               <MdClose className="w-6 h-6" />
@@ -46,7 +49,12 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-16 inset-x-0 bg-white dark:bg-gray-900 shadow-lg">
+        <div
+          id="mobile-menu"
+          className="md:hidden absolute top-16 inset-x-0 bg-white dark:bg-gray-900 shadow-lg"
+          role="dialog"
+          aria-label="Menu de navegação"
+        >
           <div className="px-2 pt-2 pb-3 space-y-1">
             <MobileNavLink
               href="/#sobre"
@@ -63,18 +71,18 @@ export default function Navbar() {
               Experiência
             </MobileNavLink>
             <MobileNavLink
-              href="/#habilidades"
-              onClick={() => setIsMenuOpen(false)}
-              icon={<MdCode className="w-5 h-5" />}
-            >
-              Habilidades
-            </MobileNavLink>
-            <MobileNavLink
               href="/#projetos"
               onClick={() => setIsMenuOpen(false)}
               icon={<MdOutlineWeb className="w-5 h-5" />}
             >
               Projetos
+            </MobileNavLink>
+            <MobileNavLink
+              href="/#habilidades"
+              onClick={() => setIsMenuOpen(false)}
+              icon={<MdCode className="w-5 h-5" />}
+            >
+              Habilidades
             </MobileNavLink>
             <MobileNavLink
               href="/blog"

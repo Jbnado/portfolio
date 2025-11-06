@@ -3,24 +3,20 @@
 import skills from "@/app/skills.json";
 import {
   FaReact,
-  FaAngular,
   FaNodeJs,
   FaJava,
   FaAws,
   FaGit,
   FaDocker,
-  FaSass,
 } from "react-icons/fa";
 import {
   SiTypescript,
   SiNextdotjs,
   SiTailwindcss,
-  SiStorybook,
   SiNestjs,
   SiSpringboot,
   SiExpress,
   SiMongodb,
-  SiRabbitmq,
   SiCypress,
   SiJest,
 } from "react-icons/si";
@@ -32,18 +28,15 @@ import { motion } from "framer-motion";
 const getIconComponent = (iconName: string) => {
   const iconMap: Record<string, React.ReactNode> = {
     react: <FaReact className="w-full h-full text-blue-500" />,
-    angular: <FaAngular className="w-full h-full text-red-600" />,
     typescript: <SiTypescript className="w-full h-full text-blue-600" />,
     nextjs: <SiNextdotjs className="w-full h-full" />,
     tailwind: <SiTailwindcss className="w-full h-full text-cyan-500" />,
-    storybook: <SiStorybook className="w-full h-full text-pink-500" />,
     nodejs: <FaNodeJs className="w-full h-full text-green-600" />,
     nestjs: <SiNestjs className="w-full h-full text-red-600" />,
     java: <FaJava className="w-full h-full text-orange-600" />,
     "spring-boot": <SiSpringboot className="w-full h-full text-green-600" />,
     express: <SiExpress className="w-full h-full" />,
     mongodb: <SiMongodb className="w-full h-full text-green-500" />,
-    rabbitmq: <SiRabbitmq className="w-full h-full text-orange-500" />,
     aws: <FaAws className="w-full h-full text-orange-400" />,
     cypress: (
       <SiCypress className="w-full h-full text-gray-700 dark:text-gray-300" />
@@ -52,7 +45,6 @@ const getIconComponent = (iconName: string) => {
     git: <FaGit className="w-full h-full text-orange-600" />,
     docker: <FaDocker className="w-full h-full text-blue-500" />,
     cicd: <CgFileDocument className="w-full h-full text-purple-500" />,
-    sass: <FaSass className="w-full h-full text-pink-500" />,
   };
 
   return iconMap[iconName] || <CgFileDocument className="w-full h-full" />;
@@ -73,7 +65,6 @@ const getHoverEffect = (iconName: string) => {
   > = {
     // Efeito 1: Rotação completa
     react: { rotate: 360, scale: 1.1 },
-    angular: { rotate: -360, scale: 1.1 },
     "spring-boot": { rotate: 360, scale: 1.1 },
     docker: { rotate: 360, scale: 1.1 },
 
@@ -91,15 +82,12 @@ const getHoverEffect = (iconName: string) => {
 
     // Efeito 4: Rotação parcial + escala
     tailwind: { rotate: 15, scale: 1.2 },
-    storybook: { rotate: -15, scale: 1.2 },
     nestjs: { rotate: -15, scale: 1.1 },
     jest: { rotate: 15, scale: 1.1 },
 
     // Efeito 5: Inclinação (skew)
     java: { skewX: 10, scale: 1.2 },
-    rabbitmq: { skewY: 10, scale: 1.1 },
     cicd: { skewX: -10, scale: 1.2 },
-    sass: { skewY: -10, scale: 1.1 },
   };
 
   return effectMap[iconName] || { scale: 1.1, y: -3 };

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ribeirao-noir",
+    "title": "Ribeirão Noir — O Roubo da Estátua de São Sebastião",
+    "shortTitle": "Ribeirão Noir",
+    "subtitle": "Godot 4 • GDScript • Arquitetura SOLID • Design Patterns",
+    "description": "Jogo investigativo educacional unindo desenvolvimento de games e impacto social. Produzido integralmente como projeto solo com narrativa ramificada, sistema probabilístico de rolagem de dados e engenharia de software orientada a objetos.",
+    "image": "ribeirao-noir.png",
+    "highlights": [
+      "Desenvolvimento completo com Godot 4.x e GDScript, mecânicas de RPG e narrativa não linear",
+      "Arquitetura SOLID, padrões Singleton/Observer e composição para escalabilidade",
+      "Sistema robusto de save/load com serialização JSON e progresso granular do jogador",
+      "Impacto: lançado na 24ª Feira Internacional do Livro de Ribeirão Preto (ago/2025)"
+    ],
+    "links": {
+      "website": "https://palimpsestoproducoes.com.br/ribeiraonoir/"
+    },
+    "featured": true
+  }
+]

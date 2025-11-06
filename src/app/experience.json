@@ -5,8 +5,10 @@
     "period": "Abr 2025 - Presente",
     "logo": "verzel.png",
     "highlights": [
-      "Desenvolvimento de novas funcionalidades e implementação de tecnologias front-end com React, Next.js, Tailwind CSS e Shadcn/UI",
-      "Desenvolvimento back-end com Java, Spring Boot e Nest.js, com integração com banco de dados PostgreSQL e Oracle"
+      "Criação de APIs resilientes para pagamentos, suporte e CRM (Java, Spring Boot, NestJS) integrando PostgreSQL, Oracle e MSSQL",
+      "Automação RPA com Python + Playwright reduzindo tarefas manuais repetitivas em processos internos",
+      "Interfaces acessíveis e responsivas com React, Next.js, Tailwind CSS e shadcn/ui focadas em performance",
+      "Aprimoramento de logs estruturados e observabilidade para reduzir tempo de diagnóstico de incidentes"
     ]
   },
   {
@@ -15,13 +17,12 @@
     "period": "Mai 2023 - Abr 2025",
     "logo": "take-and-go.png",
     "highlights": [
-      "Liderança no desenvolvimento de novas funcionalidades e implementação de tecnologias front-end",
-      "Desenvolvimento full-stack com React (front-end) e Java (back-end)",
-      "Integração com AWS, RabbitMQ e arquitetura de micro-serviços",
-      "Manutenção e correção de sistema legado em Angular",
-      "Criação de documentação técnica com Wiki.js e Storybook",
-      "Implementação de testes automatizados com Cypress",
-      "Gestão de conflitos e capacitação de novos desenvolvedores"
+      "Arquitetura e manutenção de microserviços B2B (React, Spring Boot, AWS, RabbitMQ) garantindo 99.8% de uptime",
+      "Otimização de consultas críticas e índices de banco elevando performance de checkout em ~60%",
+      "Migração e manutenção de módulos legados Angular para stack moderna sem downtime",
+      "Documentação estruturada (Wiki.js, Storybook) acelerando onboarding de devs",
+      "Estratégia de testes com Cypress (E2E) e Jest elevando cobertura a 80%",
+      "Mentoria de 2 desenvolvedores juniores com foco em arquitetura e revisão de código"
     ]
   },
   {
@@ -30,10 +31,10 @@
     "period": "Abr 2022 - Fev 2023",
     "logo": "authorify.png",
     "highlights": [
-      "Desenvolvimento e manutenção de serviços com Node.js, TypeScript, Nest.js e React",
-      "Refatoração de código React legado para melhor desempenho",
-      "Otimização de consultas e modelagem de dados no MongoDB",
-      "Implementação de testes com Jest e Cypress"
+      "Desenvolvimento e manutenção de serviços escaláveis (Node.js, TypeScript, NestJS, React)",
+      "Refatoração de módulos React legados reduzindo tempo de carregamento e re-renderizações desnecessárias",
+      "Modelagem de dados e otimização de consultas MongoDB para menor latência",
+      "Implementação de testes unitários (Jest) e integração (Cypress) para qualidade contínua"
     ]
   },
   {
@@ -42,12 +43,12 @@
     "period": "Fev 2021 - Abr 2022",
     "logo": "target-sistemas.svg",
     "highlights": [
-      "Refatoração de código front-end utilizando Sass",
-      "Criação de plugin para Adobe XD para integração com designers",
-      "Desenvolvimento de aplicações CRUD com Express e TypeScript",
-      "Implementação de interfaces com Angular",
-      "Desenvolvimento de aplicativo móvel com Flutter",
-      "Contribuição em sistema de grande escala com funcionalidades complexas"
+      "Refatoração de front-end com Sass e melhoria de consistência visual",
+      "Plugin personalizado para Adobe XD acelerando handoff de design",
+      "CRUDs e módulos backend com Express + TypeScript",
+      "Interfaces modulares em Angular e protótipos rápidos",
+      "Aplicativo mobile com Flutter conectando-se a APIs REST",
+      "Exposição inicial a sistemas de grande escala e padrões de arquitetura"
     ]
   }
 ]
