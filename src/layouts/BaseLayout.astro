@@ -32,7 +32,7 @@ const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
 
     <!-- Theme flicker prevention — MUST be before stylesheets -->
     <script is:inline>
-      const t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.classList.add(t);
+      const t=localStorage.getItem('theme')||'light';document.documentElement.classList.add(t);
     </script>
 
     <!-- Font preload — critical for LCP -->
@@ -51,7 +51,7 @@ const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
     <script is:inline>
       if(document.documentElement.classList.contains('dark')){document.querySelector('meta[name="theme-color"]').setAttribute('content','#0c0a09');}
     </script>
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="generator" content={Astro.generator} />
     {noindex && <meta name="robots" content="noindex" />}
