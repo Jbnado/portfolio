@@ -4,7 +4,7 @@
     "projects": "Projetos",
     "certifications": "Certificações",
     "contact": "Contacto",
-    "downloadCv": "Descarregar CV em PDF",
+    "downloadCv": "Baixar CV em PDF",
     "skipToContent": "Saltar para o conteúdo principal",
     "mainNav": "Navegação principal",
     "openMenu": "Abrir menu",
@@ -54,8 +54,8 @@
     "linkedinLabel": "Abrir perfil do LinkedIn (nova janela)",
     "github": "GitHub",
     "githubLabel": "Abrir perfil do GitHub (nova janela)",
-    "downloadCv": "Descarregar CV",
-    "downloadCvLabel": "Descarregar CV em PDF"
+    "downloadCv": "Baixar CV",
+    "downloadCvLabel": "Baixar CV em PDF"
   },
   "footer": {
     "builtWith": "Construído com",

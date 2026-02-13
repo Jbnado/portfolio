@@ -26,7 +26,16 @@ const displayNumber = String(number).padStart(2, '0');
 const year = startDate.slice(0, 4);
 ---
 
-<article class="project-card">
+<article class="project-card" style="position:relative">
+  <!-- MSN chrome — authentic Windows XP title bar -->
+  <div class="punk-msn-chrome" style="grid-column:1/-1" aria-hidden="true">
+    <span>📁 {title}.exe</span>
+    <span class="punk-msn-buttons">
+      <span class="punk-msn-btn punk-msn-btn--min">_</span>
+      <span class="punk-msn-btn punk-msn-btn--max">□</span>
+      <span class="punk-msn-btn punk-msn-btn--close">×</span>
+    </span>
+  </div>
   <span class="project-number" aria-hidden="true">{displayNumber}</span>
   <div class="project-content">
     <div class="project-header">
@@ -78,4 +87,201 @@ const year = startDate.slice(0, 4);
       </div>
     </details>
   </div>
+  <!-- MSN status bar -->
+  <div class="punk-msn-status" style="grid-column:1/-1" aria-hidden="true">
+    Status: Compiling... | {year} | 🖥️ Ready
+  </div>
+  <!-- Menacing decoration -->
+  <span class="punk-menacing" style="bottom:-0.75rem;right:1rem;font-size:0.75rem;color:rgba(162,119,255,0.15);--punk-rotate:5deg" aria-hidden="true">gogo</span>
 </article>
+
+<style is:global>
+  /* Project Card */
+  .project-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--color-border);
+    transition: border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .project-card:first-child {
+    padding-top: 0;
+  }
+
+  .project-card:last-child {
+    border-bottom: none;
+  }
+
+  .project-card:hover {
+    border-bottom-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+
+  .project-card:hover .project-number {
+    color: var(--color-accent);
+  }
+
+  .project-card:hover .project-content {
+    transform: translateX(4px);
+  }
+
+  /* Number */
+  .project-number {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    line-height: 1;
+    padding-top: 0.25rem;
+    transition: color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  @media (min-width: 768px) {
+    .project-number {
+      font-size: 2.5rem;
+    }
+  }
+
+  /* Content */
+  .project-content {
+    min-width: 0;
+    transition: transform 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .project-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    letter-spacing: var(--font-heading-tracking);
+  }
+
+  @media (min-width: 768px) {
+    .project-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* Links */
+  .project-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .project-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .project-link:hover {
+    color: var(--color-accent);
+  }
+
+  /* Meta */
+  .project-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .project-year {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-accent-secondary);
+  }
+
+  .project-meta-sep {
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+  }
+
+  .project-meta .tech-badge {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.5rem;
+  }
+
+  /* Description */
+  .project-description {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+
+  @media (min-width: 768px) {
+    .project-description {
+      font-size: 1rem;
+    }
+  }
+
+  /* Mobile: stack number above content */
+  @media (max-width: 767px) {
+    .project-card {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+  }
+
+  /* Dark mode — punk chaos */
+  .dark .project-card {
+    border-bottom-color: rgba(162, 119, 255, 0.15);
+    position: relative;
+  }
+
+  .dark .project-card:hover {
+    animation: shake-msn 300ms ease-in-out;
+    border-bottom-color: rgba(162, 119, 255, 0.4);
+  }
+
+  /* JoJo ゴゴゴ menacing hover */
+  .dark .project-card::after {
+    content: "";
+    position: absolute;
+    right: -0.5rem;
+    top: -0.5rem;
+    font-size: 1.25rem;
+    color: transparent;
+    font-weight: 900;
+    writing-mode: vertical-rl;
+    letter-spacing: -0.15em;
+    pointer-events: none;
+    z-index: 20;
+  }
+
+  .dark .project-card:hover::after {
+    content: "ゴゴゴ";
+    color: rgba(162, 119, 255, 0.6);
+    text-shadow: 0 0 15px rgba(162, 119, 255, 0.4);
+    animation: menacing-float 2s ease-in-out infinite;
+  }
+
+  .dark .project-number {
+    color: rgba(162, 119, 255, 0.3);
+    font-family: var(--font-punk);
+  }
+
+  .dark .project-card:hover .project-number {
+    color: #61ffca;
+    text-shadow:
+      0 0 20px rgba(97, 255, 202, 0.5),
+      0 0 40px rgba(97, 255, 202, 0.2);
+  }
+
+  .dark .project-title {
+    font-family: var(--font-punk);
+  }
+</style>

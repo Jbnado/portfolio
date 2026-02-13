@@ -1,6 +1,9 @@
 ---
+import { Image } from 'astro:assets';
 import SectionTitle from './SectionTitle.astro';
 import { t } from '../i18n/utils';
+import killuaImg from '../assets/imgs/Killua_full_body.webp';
+import esqueletoImg from '../assets/imgs/esqueleto-de-surf-tropical.webp';
 
 interface Props {
   locale?: string;
@@ -9,7 +12,21 @@ interface Props {
 const { locale = 'pt-br' } = Astro.props;
 ---
 
-<section id="sobre" class="about-section">
+<section id="sobre" class="about-section" style="position:relative;overflow:hidden">
+  <!-- PUNK: Killua — big, right side -->
+  <Image src={killuaImg} alt="" width={440} format="webp" quality={80}
+    class="punk-sticker" style="width:220px;top:0%;right:1%;--punk-rotate:5deg;animation-delay:0.5s;opacity:0.85" />
+
+  <!-- PUNK: Esqueleto surf — bottom left -->
+  <Image src={esqueletoImg} alt="" width={280} format="webp" quality={75}
+    class="punk-sticker punk-zine-filter" style="width:140px;bottom:5%;left:1%;--punk-rotate:-10deg;animation-delay:1.8s;opacity:0.7" />
+
+  <!-- PUNK: Stars and decorations -->
+  <span class="punk-ono" style="top:8%;right:22%;font-size:1.75rem;color:#82e2ff;transform:rotate(15deg);text-shadow:0 0 12px rgba(130,226,255,0.4)" aria-hidden="true">&#9733;</span>
+  <span class="punk-ono" style="bottom:15%;left:8%;font-size:1.25rem;color:#f694ff;transform:rotate(-20deg);text-shadow:0 0 10px rgba(246,148,255,0.4)" aria-hidden="true">&#10038;</span>
+  <span class="punk-menacing" style="top:15%;left:0%;font-size:1.25rem;color:rgba(97,255,202,0.12);--punk-rotate:6deg;animation-delay:1s" aria-hidden="true">gogo</span>
+  <span class="punk-ono" style="bottom:5%;right:20%;font-size:1rem;color:#61ffca;transform:rotate(8deg);text-shadow:0 0 8px rgba(97,255,202,0.4)" aria-hidden="true">&#9733;</span>
+
   <div class="about-container">
     <SectionTitle title={t('about.title', locale)} />
     <div class="about-content">
@@ -21,3 +38,111 @@ const { locale = 'pt-br' } = Astro.props;
     </div>
   </div>
 </section>
+
+<style is:global>
+  .about-section {
+    padding: 6rem 0;
+  }
+
+  .about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .about-container {
+      padding: 0 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .about-container {
+      padding: 0 4rem;
+    }
+  }
+
+  .about-content {
+    max-width: 700px;
+  }
+
+  .about-description {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .about-description:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 768px) {
+    .about-description {
+      font-size: 1.125rem;
+    }
+  }
+
+  .about-pullquote {
+    margin: 2rem 0;
+    padding-left: 1.25rem;
+    border-left: 3px solid var(--color-accent);
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    font-style: italic;
+  }
+
+  @media (min-width: 768px) {
+    .about-pullquote {
+      font-size: 1.25rem;
+      padding-left: 1.5rem;
+    }
+  }
+
+  /* Dark mode — punk pullquote */
+  .dark .about-pullquote {
+    border-left: 4px dashed #f694ff;
+    padding: 1.25rem 1.5rem;
+    background: rgba(162, 119, 255, 0.04);
+    border-radius: 0 4px 4px 0;
+    position: relative;
+  }
+
+  .dark .about-pullquote::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: 20px;
+    width: 60px;
+    height: 18px;
+    background: rgba(246, 148, 255, 0.15);
+    border: 1px solid rgba(246, 148, 255, 0.25);
+    transform: rotate(-2deg);
+    border-radius: 2px;
+  }
+
+  /* Mobile: sticker repositioning */
+  @media (max-width: 767px) {
+    .dark .about-section .punk-sticker:first-of-type {
+      width: 120px !important;
+      top: -2% !important;
+      right: -2% !important;
+    }
+    .dark .about-section .punk-sticker:nth-of-type(2) {
+      width: 70px !important;
+      bottom: 2% !important;
+      left: -1% !important;
+    }
+  }
+
+  /* Extra small screens (≤480px) */
+  @media (max-width: 480px) {
+    .dark .about-section .punk-sticker:first-of-type {
+      width: 80px !important;
+    }
+    .dark .about-section .punk-sticker:nth-of-type(2) {
+      display: none !important;
+    }
+  }
+</style>

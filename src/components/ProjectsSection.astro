@@ -41,3 +41,32 @@ const localeKey = locale as 'pt-br' | 'en' | 'es';
     </div>
   </div>
 </section>
+
+<style is:global>
+  .projects-section {
+    padding: 4rem 0;
+  }
+
+  .projects-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .projects-container {
+      padding: 0 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .projects-container {
+      padding: 0 4rem;
+    }
+  }
+
+  .projects-list {
+    display: flex;
+    flex-direction: column;
+  }
+</style>

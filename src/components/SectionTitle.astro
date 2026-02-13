@@ -9,7 +9,68 @@ const { title, subtitle, id } = Astro.props;
 ---
 
 <div class="section-title" id={id}>
-  <h2 class="section-title-text">{title}</h2>
+  <h2 class="section-title-text punk-glitch">{title}</h2>
   <span class="section-title-line" aria-hidden="true"></span>
 </div>
 {subtitle && <p class="section-title-subtitle">{subtitle}</p>}
+
+<style is:global>
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 3rem;
+  }
+
+  .section-title-text {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 768px) {
+    .section-title-text {
+      font-size: 2.25rem;
+    }
+  }
+
+  .section-title-line {
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+  }
+
+  .section-title-subtitle {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    margin-top: -2rem;
+    margin-bottom: 3rem;
+  }
+
+  /* Dark mode */
+  .dark .section-title-text {
+    font-family: var(--font-punk);
+    transform: rotate(-2.5deg);
+    text-shadow:
+      0 0 20px rgba(162, 119, 255, 0.4),
+      0 0 50px rgba(162, 119, 255, 0.15);
+    position: relative;
+  }
+
+  .dark .section-title-line {
+    background: linear-gradient(to right, #a277ff, #61ffca, #f694ff, #82e2ff);
+    height: 3px;
+    box-shadow: 0 0 12px rgba(162, 119, 255, 0.4);
+  }
+
+  /* Mobile: less rotation */
+  @media (max-width: 767px) {
+    .dark .section-title-text {
+      transform: rotate(-1deg);
+    }
+  }
+</style>

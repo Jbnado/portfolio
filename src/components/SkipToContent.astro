@@ -10,3 +10,24 @@ const { href = '#main', label = 'Saltar para o conteúdo' } = Astro.props;
 <a href={href} class="skip-to-content">
   {label}
 </a>
+
+<style is:global>
+  .skip-to-content {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    z-index: 10001;
+    background: var(--color-accent);
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 0 0 6px 0;
+  }
+
+  .skip-to-content:focus-visible {
+    top: 0;
+    left: 0;
+    outline: none;
+  }
+</style>

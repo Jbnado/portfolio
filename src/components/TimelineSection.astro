@@ -1,8 +1,11 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import SectionTitle from './SectionTitle.astro';
 import TimelineEntry from './TimelineEntry.astro';
 import { t } from '../i18n/utils';
+import thorfinnImg from '../assets/imgs/Thorfinn-full-body.webp';
+import killuaBloodImg from '../assets/imgs/killua-covered-blood.png';
 
 interface Props {
   locale?: string;
@@ -17,7 +20,23 @@ const items = (timelineEntries[0]?.data?.items ?? [])
 const localeKey = locale as 'pt-br' | 'en' | 'es';
 ---
 
-<section id="timeline" class="timeline-section">
+<section id="timeline" class="timeline-section" style="position:relative;overflow:hidden">
+  <!-- PUNK: Thorfinn — big, right side -->
+  <Image src={thorfinnImg} alt="" width={400} format="webp" quality={80}
+    class="punk-sticker" style="width:200px;bottom:5%;right:1%;--punk-rotate:-6deg;animation-delay:0.8s;opacity:0.8" />
+
+  <!-- PUNK: Killua blood — mid-left -->
+  <Image src={killuaBloodImg} alt="" width={320} format="webp" quality={75}
+    class="punk-sticker" style="width:160px;top:15%;left:1%;--punk-rotate:8deg;animation-delay:2s;opacity:0.65" />
+
+  <!-- PUNK: Decorations scattered throughout -->
+  <span class="punk-menacing" style="top:3%;right:10%;font-size:1.75rem;color:rgba(162,119,255,0.18);--punk-rotate:-12deg" aria-hidden="true">gogo</span>
+  <span class="punk-menacing" style="bottom:20%;left:5%;font-size:1rem;color:rgba(246,148,255,0.12);--punk-rotate:15deg;animation-delay:2.5s" aria-hidden="true">gogo</span>
+  <span class="punk-ono" style="top:8%;right:25%;font-size:2rem;color:#f694ff;transform:rotate(10deg);text-shadow:0 0 18px rgba(246,148,255,0.5)" aria-hidden="true">BOOM!</span>
+  <span class="punk-ono" style="bottom:30%;right:5%;font-size:1.5rem;color:#61ffca;text-shadow:0 0 12px rgba(97,255,202,0.5)" aria-hidden="true">&#9733;</span>
+  <span class="punk-ono" style="top:45%;left:0%;font-size:1.25rem;color:#82e2ff;transform:rotate(-15deg);text-shadow:0 0 10px rgba(130,226,255,0.4)" aria-hidden="true">&#9733;</span>
+  <span class="punk-ono" style="bottom:10%;left:15%;font-size:0.875rem;color:#a277ff;transform:rotate(20deg);text-shadow:0 0 8px rgba(162,119,255,0.4)" aria-hidden="true">ZAP!</span>
+
   <div class="timeline-container">
     <SectionTitle title={t('sections.timeline', locale)} />
     <ol class="timeline-list">
@@ -34,3 +53,51 @@ const localeKey = locale as 'pt-br' | 'en' | 'es';
     </ol>
   </div>
 </section>
+
+<style is:global>
+  .timeline-section {
+    padding: 4rem 0;
+  }
+
+  .timeline-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .timeline-container {
+      padding: 0 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .timeline-container {
+      padding: 0 4rem;
+    }
+  }
+
+  /* Mobile: sticker repositioning */
+  @media (max-width: 767px) {
+    .dark .timeline-section .punk-sticker:first-of-type {
+      width: 110px !important;
+      bottom: 2% !important;
+      right: -2% !important;
+    }
+    .dark .timeline-section .punk-sticker:nth-of-type(2) {
+      width: 80px !important;
+      top: 5% !important;
+      left: -2% !important;
+    }
+  }
+
+  /* Extra small screens (≤480px) */
+  @media (max-width: 480px) {
+    .dark .timeline-section .punk-sticker:first-of-type {
+      width: 80px !important;
+    }
+    .dark .timeline-section .punk-sticker:nth-of-type(2) {
+      display: none !important;
+    }
+  }
+</style>

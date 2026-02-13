@@ -7,6 +7,7 @@ interface NavLink {
 
 interface Props {
   links?: NavLink[];
+  cvHref?: string;
 }
 
 const defaultLinks: NavLink[] = [
@@ -15,7 +16,7 @@ const defaultLinks: NavLink[] = [
   { href: '#contacto', label: 'Contacto' },
 ];
 
-export default function MobileNav({ links = defaultLinks }: Props) {
+export default function MobileNav({ links = defaultLinks, cvHref = '/Bernardo-CV.pdf' }: Props) {
   const [open, setOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -117,7 +118,7 @@ export default function MobileNav({ links = defaultLinks }: Props) {
                 </a>
               ))}
               <a
-                href="/Bernardo-CV.pdf"
+                href={cvHref}
                 download
                 class="mobile-nav-cv"
                 onClick={close}

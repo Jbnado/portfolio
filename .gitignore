@@ -42,3 +42,5 @@ _bmad-output/
 # Windows artifacts
 nul
 src/nul
+
+.vercel

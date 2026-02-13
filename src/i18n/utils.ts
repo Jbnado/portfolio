@@ -4,6 +4,16 @@ import ptBr from './pt-br.json';
 import en from './en.json';
 import es from './es.json';
 
+const CV_PATHS: Record<string, string> = {
+  'pt-br': '/Bernardo-CV.pdf',
+  en: '/Bernardo-CV-en.pdf',
+  es: '/Bernardo-CV-es.pdf',
+};
+
+export function getCvPath(locale: string = DEFAULT_LOCALE): string {
+  return CV_PATHS[locale] ?? CV_PATHS[DEFAULT_LOCALE];
+}
+
 const translations: Record<string, Record<string, unknown>> = {
   'pt-br': ptBr,
   en,
