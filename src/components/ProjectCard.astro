@@ -1,0 +1,81 @@
+---
+import TechBadge from './TechBadge.astro';
+import CaseStudyContent from './CaseStudyContent.astro';
+
+interface Props {
+  number: number;
+  title: string;
+  description: string;
+  techStack: string[];
+  startDate: string;
+  locale?: string;
+  links: {
+    github?: string;
+    demo?: string;
+  };
+  caseStudy: {
+    problem: string;
+    decision: string;
+    result: string;
+  };
+}
+
+const { number, title, description, techStack, startDate, locale = 'pt-br', links, caseStudy } = Astro.props;
+
+const displayNumber = String(number).padStart(2, '0');
+const year = startDate.slice(0, 4);
+---
+
+<article class="project-card">
+  <span class="project-number" aria-hidden="true">{displayNumber}</span>
+  <div class="project-content">
+    <div class="project-header">
+      <h3 class="project-title">{title}</h3>
+      <div class="project-links">
+        {links.github && (
+        <a
+          href={links.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-link"
+          aria-label={`GitHub: ${title}`}
+        >
+          GitHub <span aria-hidden="true">↗</span>
+        </a>
+        )}
+        {links.demo && (
+          <a
+            href={links.demo}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="project-link"
+            aria-label={`Demo: ${title}`}
+          >
+            Demo <span aria-hidden="true">↗</span>
+          </a>
+        )}
+      </div>
+    </div>
+    <div class="project-meta">
+      <span class="project-year">{year}</span>
+      <span class="project-meta-sep" aria-hidden="true">·</span>
+      {techStack.map((tech) => <TechBadge name={tech} />)}
+    </div>
+    <p class="project-description">{description}</p>
+
+    <details class="case-study-details">
+      <summary class="case-study-trigger">
+        <span>Case Study</span>
+        <span class="case-study-chevron" aria-hidden="true">›</span>
+      </summary>
+      <div class="case-study-body">
+        <CaseStudyContent
+          problem={caseStudy.problem}
+          decision={caseStudy.decision}
+          result={caseStudy.result}
+          locale={locale}
+        />
+      </div>
+    </details>
+  </div>
+</article>

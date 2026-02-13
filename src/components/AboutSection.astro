@@ -1,0 +1,23 @@
+---
+import SectionTitle from './SectionTitle.astro';
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'pt-br' } = Astro.props;
+---
+
+<section id="sobre" class="about-section">
+  <div class="about-container">
+    <SectionTitle title={t('about.title', locale)} />
+    <div class="about-content">
+      <p class="about-description">{t('about.intro', locale)}</p>
+      <blockquote class="about-pullquote">
+        {t('about.philosophy', locale)}
+      </blockquote>
+      <p class="about-description">{t('about.approach', locale)}</p>
+    </div>
+  </div>
+</section>

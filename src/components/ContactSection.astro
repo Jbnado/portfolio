@@ -1,0 +1,67 @@
+---
+import SectionTitle from './SectionTitle.astro';
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'pt-br' } = Astro.props;
+---
+
+<section id="contacto" class="contact-section">
+  <div class="contact-gradient-border" aria-hidden="true"></div>
+  <div class="contact-container">
+    <p class="contact-cta">{t('contact.cta', locale)}</p>
+    <p class="contact-subtitle">{t('contact.subtitle', locale)}</p>
+
+    <div class="contact-links">
+      <a
+        id="email-link"
+        href="#"
+        class="contact-link"
+        aria-label={t('contact.emailLabel', locale)}
+      >
+        <span>{t('contact.email', locale)}</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      <a
+        href="https://linkedin.com/in/jbnado"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="contact-link"
+        aria-label={t('contact.linkedinLabel', locale)}
+      >
+        <span>{t('contact.linkedin', locale)}</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      <a
+        href="https://github.com/Jbnado"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="contact-link"
+        aria-label={t('contact.githubLabel', locale)}
+      >
+        <span>{t('contact.github', locale)}</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      <a
+        href="/Bernardo-CV.pdf"
+        download
+        class="contact-link contact-link--cv"
+        aria-label={t('contact.downloadCvLabel', locale)}
+      >
+        <span>{t('contact.downloadCv', locale)}</span>
+        <span aria-hidden="true">↓</span>
+      </a>
+    </div>
+  </div>
+
+  <script is:inline>
+    (function(){
+      var u='bernardojoao9';var d='gmail.com';
+      var l=document.getElementById('email-link');
+      if(l){l.href='mailto:'+u+'@'+d;}
+    })();
+  </script>
+</section>

@@ -1,0 +1,63 @@
+---
+import '../styles/global.css';
+import SkipToContent from '../components/SkipToContent.astro';
+import SEOHead from '../components/SEOHead.astro';
+import NavBar from '../components/NavBar.astro';
+import ScrollSpy from '../islands/ScrollSpy.tsx';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  locale?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  locale = 'pt-br',
+  noindex = false,
+} = Astro.props;
+
+const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
+---
+
+<!doctype html>
+<html lang={htmlLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Theme flicker prevention — MUST be before stylesheets -->
+    <script is:inline>
+      const t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.classList.add(t);
+    </script>
+
+    <!-- Font preload — critical for LCP -->
+    <link rel="preload" as="font" href="/fonts/inter-variable.woff2" type="font/woff2" crossorigin />
+
+    <!-- SEO Head (meta tags, OG, Twitter Card, JSON-LD, hreflang, canonical) -->
+    <SEOHead locale={locale} title={title} description={description} />
+
+    <!-- PWA & Icons -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#C2703E" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="generator" content={Astro.generator} />
+    {noindex && <meta name="robots" content="noindex" />}
+  </head>
+  <body class="bg-bg-primary text-text-primary font-sans">
+    <SkipToContent />
+    <NavBar locale={locale} />
+    <ScrollSpy client:idle />
+    <main id="main" class="pt-16">
+      <slot />
+    </main>
+    <Footer locale={locale} />
+  </body>
+</html>

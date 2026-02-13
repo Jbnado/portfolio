@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t } from '../i18n/utils';
+
+const locale = 'pt-br';
+---
+
+<BaseLayout locale={locale} title={t('notFound.title', locale)} noindex>
+  <section class="not-found">
+    <div class="not-found-logo" aria-hidden="true">
+      jb<span class="not-found-dot">.</span>
+    </div>
+    <h1 class="not-found-heading">{t('notFound.heading', locale)}</h1>
+    <p class="not-found-message">{t('notFound.message', locale)}</p>
+    <a href="/" class="not-found-link">{t('notFound.back', locale)}</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .not-found-logo {
+    font-family: var(--font-heading);
+    font-size: clamp(4rem, 10vw, 8rem);
+    font-weight: 800;
+    color: var(--color-text-primary);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .not-found-dot {
+    color: var(--color-accent);
+  }
+
+  .not-found-heading {
+    font-family: var(--font-mono);
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .not-found-message {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 2rem;
+    max-width: 28rem;
+  }
+
+  .not-found-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-accent);
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 200ms var(--ease-out);
+  }
+
+  .not-found-link:hover {
+    background: var(--color-accent-hover);
+  }
+
+  .not-found-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+</style>

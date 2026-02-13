@@ -1,0 +1,27 @@
+---
+import { t } from '../i18n/utils';
+
+interface Props {
+  problem: string;
+  decision: string;
+  result: string;
+  locale?: string;
+}
+
+const { problem, decision, result, locale = 'pt-br' } = Astro.props;
+---
+
+<div class="case-study-content">
+  <div class="case-study-section">
+    <h4 class="case-study-label" aria-label={t('caseStudy.problem', locale)}>{t('caseStudy.problem', locale)}</h4>
+    <p class="case-study-text">{problem}</p>
+  </div>
+  <div class="case-study-section">
+    <h4 class="case-study-label" aria-label={t('caseStudy.decision', locale)}>{t('caseStudy.decision', locale)}</h4>
+    <p class="case-study-text">{decision}</p>
+  </div>
+  <div class="case-study-section">
+    <h4 class="case-study-label" aria-label={t('caseStudy.result', locale)}>{t('caseStudy.result', locale)}</h4>
+    <p class="case-study-text">{result}</p>
+  </div>
+</div>

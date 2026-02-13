@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import StatCard from './StatCard.astro';
+import StatsCounter from '../islands/StatsCounter.tsx';
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'pt-br' } = Astro.props;
+
+const statsEntries = await getCollection('stats');
+const statsData = statsEntries[0]?.data?.items ?? [];
+
+const techStack = ['React', 'Node.js', 'TypeScript', 'Java', 'Python', 'AWS'];
+const techString = techStack.join(' · ');
+---
+
+<section id="hero" class="hero-section">
+  <div class="hero-container">
+    <div class="hero-grid">
+      <!-- Left: Text content -->
+      <div class="hero-content">
+        <span class="hero-role hero-stagger" style="--stagger: 1">{t('hero.role', locale)}</span>
+        <h1 class="hero-title hero-stagger" style="--stagger: 2">João<br />Bernardo</h1>
+        <p class="hero-description hero-stagger" style="--stagger: 3">
+          {t('hero.description', locale)}
+        </p>
+        <p class="hero-tech hero-stagger" style="--stagger: 4">{techString}</p>
+      </div>
+
+      <!-- Right: Stats -->
+      <div class="hero-stats hero-stagger" style="--stagger: 5">
+        {statsData.map((stat) => (
+          <StatCard value={stat.value} suffix={stat.suffix} label={stat.label}>
+            <StatsCounter client:visible value={stat.value} suffix={stat.suffix} />
+          </StatCard>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

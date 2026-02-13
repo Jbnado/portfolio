@@ -1,0 +1,16 @@
+---
+interface Props {
+  value: number;
+  suffix?: string;
+  label: string;
+}
+
+const { value, suffix = '', label } = Astro.props;
+---
+
+<div class="stat-card" aria-label={`${value}${suffix} ${label}`}>
+  <div class="stat-card-value">
+    <slot>{value}{suffix}</slot>
+  </div>
+  <div class="stat-card-label">{label}</div>
+</div>

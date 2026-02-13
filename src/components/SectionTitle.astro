@@ -1,0 +1,15 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  id?: string;
+}
+
+const { title, subtitle, id } = Astro.props;
+---
+
+<div class="section-title" id={id}>
+  <h2 class="section-title-text">{title}</h2>
+  <span class="section-title-line" aria-hidden="true"></span>
+</div>
+{subtitle && <p class="section-title-subtitle">{subtitle}</p>}

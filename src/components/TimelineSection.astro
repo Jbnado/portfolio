@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import SectionTitle from './SectionTitle.astro';
+import TimelineEntry from './TimelineEntry.astro';
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'pt-br' } = Astro.props;
+
+const timelineEntries = await getCollection('timeline');
+const items = (timelineEntries[0]?.data?.items ?? [])
+  .sort((a, b) => b.date.localeCompare(a.date));
+
+const localeKey = locale as 'pt-br' | 'en' | 'es';
+---
+
+<section id="timeline" class="timeline-section">
+  <div class="timeline-container">
+    <SectionTitle title={t('sections.timeline', locale)} />
+    <ol class="timeline-list">
+      {items.map((item) => (
+        <TimelineEntry
+          date={item.date}
+          title={item.title[localeKey] ?? item.title['pt-br']}
+          description={item.description[localeKey] ?? item.description['pt-br']}
+          type={item.type}
+          tech={item.tech}
+          href={item.href}
+        />
+      ))}
+    </ol>
+  </div>
+</section>

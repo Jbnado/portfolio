@@ -1,0 +1,7 @@
+{
+  "items": [
+    { "value": 4, "suffix": "+", "label": "Anos de experiência" },
+    { "value": 4, "suffix": "", "label": "Empresas" },
+    { "value": 42, "suffix": "", "label": "Repos no GitHub" }
+  ]
+}

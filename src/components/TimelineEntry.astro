@@ -1,0 +1,36 @@
+---
+import TechBadge from './TechBadge.astro';
+
+interface Props {
+  date: string;
+  title: string;
+  description: string;
+  type: 'career' | 'project';
+  tech?: string[];
+  href?: string;
+}
+
+const { date, title, description, type, tech = [], href } = Astro.props;
+---
+
+<li class={`timeline-entry timeline-entry--${type}`}>
+  <div class="timeline-marker">
+    <span class={`timeline-dot timeline-dot--${type}`}></span>
+  </div>
+  <div class="timeline-content">
+    <span class="timeline-date">{date}</span>
+    {href ? (
+      <h3 class="timeline-title">
+        <a href={href} class="timeline-title-link">{title}</a>
+      </h3>
+    ) : (
+      <h3 class="timeline-title">{title}</h3>
+    )}
+    <p class="timeline-description">{description}</p>
+    {tech.length > 0 && (
+      <div class="timeline-badges">
+        {tech.map((name) => <TechBadge name={name} />)}
+      </div>
+    )}
+  </div>
+</li>

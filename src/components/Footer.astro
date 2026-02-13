@@ -1,0 +1,20 @@
+---
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'pt-br' } = Astro.props;
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <span class="footer-logo" aria-hidden="true">jb<span class="footer-logo-dot">.</span></span>
+    <p class="footer-text">
+      © {year} João Bernardo · {t('footer.builtWith', locale)} <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="footer-link">Astro</a> · <a href="https://github.com/Jbnado/portfolio-jb" target="_blank" rel="noopener noreferrer" class="footer-link" aria-label={t('footer.repoLabel', locale)}>{t('footer.openSource', locale)}</a>
+    </p>
+  </div>
+</footer>

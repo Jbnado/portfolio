@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "about": "Sobre",
+    "projects": "Projetos",
+    "certifications": "Certificações",
+    "contact": "Contacto",
+    "downloadCv": "Descarregar CV em PDF",
+    "skipToContent": "Saltar para o conteúdo principal",
+    "mainNav": "Navegação principal",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu",
+    "goHome": "Ir para o início"
+  },
+  "hero": {
+    "role": "Fullstack Developer",
+    "name": "João Bernardo",
+    "description": "Fullstack developer em Ribeirão Preto. Construo APIs, interfaces e às vezes jogos."
+  },
+  "about": {
+    "title": "Sobre Mim",
+    "intro": "Sou um developer fullstack com 4 anos de experiência construindo aplicações web que fazem a diferença. Já passei por empresas de marketing (Authorify, EUA), e-commerce B2B (Take) e fintech (Verzel). O meu percurso começou pela curiosidade — desmontar coisas para perceber como funcionam — e evoluiu para uma paixão por criar soluções completas, do backend ao pixel final.",
+    "philosophy": "Acredito que bom software é invisível: carrega rápido, é intuitivo e acessível a todos. Cada linha de código que escrevo tem um propósito — resolver um problema real, não impressionar com complexidade desnecessária.",
+    "approach": "A minha abordagem combina visão fullstack com atenção ao detalhe. Trabalho com React no frontend e Java/Python/NestJS no backend, deploy em cloud com AWS e Docker. Fora do código, co-fundei a RP.js — comunidade JavaScript de Ribeirão Preto — e desenvolvi o Ribeirão Noir, um jogo investigativo lançado na Feira do Livro e validado por 3 doutores."
+  },
+  "sections": {
+    "about": "Sobre Mim",
+    "projects": "Projetos",
+    "certifications": "Certificações",
+    "contact": "Contacto",
+    "timeline": "Percurso"
+  },
+  "theme": {
+    "toggleLight": "Mudar para modo claro",
+    "toggleDark": "Mudar para modo escuro"
+  },
+  "caseStudy": {
+    "expand": "Case Study",
+    "problem": "Problema",
+    "decision": "Decisão Técnica",
+    "result": "Resultado"
+  },
+  "projects": {
+    "github": "GitHub",
+    "demo": "Demo",
+    "githubLabel": "GitHub: {title} (nova janela)",
+    "demoLabel": "Demo: {title} (nova janela)"
+  },
+  "contact": {
+    "cta": "Fala comigo.",
+    "subtitle": "Aberto a conversas, oportunidades e ideias.",
+    "email": "Email",
+    "emailLabel": "Enviar email para Bernardo",
+    "linkedin": "LinkedIn",
+    "linkedinLabel": "Abrir perfil do LinkedIn (nova janela)",
+    "github": "GitHub",
+    "githubLabel": "Abrir perfil do GitHub (nova janela)",
+    "downloadCv": "Descarregar CV",
+    "downloadCvLabel": "Descarregar CV em PDF"
+  },
+  "footer": {
+    "builtWith": "Construído com",
+    "openSource": "Código aberto",
+    "repoLabel": "Ver repositório no GitHub (nova janela)"
+  },
+  "language": {
+    "switch": "Mudar idioma",
+    "current": "Idioma atual",
+    "ptBr": "Português (Brasil)",
+    "en": "English",
+    "es": "Español"
+  },
+  "seo": {
+    "title": "João Bernardo — Fullstack Developer",
+    "description": "Portfolio de João Bernardo — Fullstack Developer especializado em React, Node.js e cloud. Projetos, certificações e experiência."
+  },
+  "notFound": {
+    "title": "Página não encontrada",
+    "heading": "404",
+    "message": "Parece que esta página decidiu tirar férias.",
+    "back": "Voltar ao início"
+  },
+  "a11y": {
+    "externalLink": "Abre em nova janela",
+    "mobileNav": "Menu de navegação"
+  }
+}

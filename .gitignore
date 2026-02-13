@@ -22,3 +22,23 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Vercel build output
+.vercel/
+
+# Claude Code config
+.claude/
+
+# BMAD agent framework
+_bmad/
+_bmad-output/
+
+# Playwright MCP
+.playwright-mcp/
+
+# BMAD agents in GitHub
+.github/agents/
+
+# Windows artifacts
+nul
+src/nul

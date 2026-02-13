@@ -1,0 +1,63 @@
+---
+import ThemeToggle from '../islands/ThemeToggle.tsx';
+import MobileNav from '../islands/MobileNav.tsx';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'pt-br' } = Astro.props;
+
+const localePrefix = locale === 'pt-br' ? '' : `/${locale}`;
+
+const navLinks = [
+  { href: '#sobre', label: t('nav.about', locale) },
+  { href: '#projetos', label: t('nav.projects', locale) },
+  { href: '#contacto', label: t('nav.contact', locale) },
+];
+---
+
+<nav class="navbar" aria-label={t('nav.mainNav', locale)}>
+  <div class="navbar-container">
+    <!-- Logo -->
+    <a href={localePrefix || '/'} class="navbar-logo" aria-label={t('nav.goHome', locale)}>
+      jb<span class="navbar-logo-dot">.</span>
+    </a>
+
+    <!-- Desktop links -->
+    <div class="navbar-links">
+      {navLinks.map(({ href, label }) => (
+        <a href={href} class="navbar-link">{label}</a>
+      ))}
+    </div>
+
+    <!-- Actions -->
+    <div class="navbar-actions">
+      <a
+        href="/Bernardo-CV.pdf"
+        download
+        class="navbar-cv"
+        aria-label={t('nav.downloadCv', locale)}
+      >
+        CV ↓
+      </a>
+      <LanguageSwitcher locale={locale} />
+      <ThemeToggle client:load />
+      <MobileNav client:load links={navLinks} />
+    </div>
+  </div>
+</nav>
+
+<script>
+  const nav = document.querySelector('.navbar');
+  if (nav) {
+    const onScroll = () => {
+      const scrolled = window.scrollY > 100;
+      nav.classList.toggle('scrolled', scrolled);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); // check initial state
+  }
+</script>

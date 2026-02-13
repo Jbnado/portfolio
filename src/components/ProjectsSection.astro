@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import SectionTitle from './SectionTitle.astro';
+import ProjectCard from './ProjectCard.astro';
+import CaseStudyExpander from '../islands/CaseStudyExpander.tsx';
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'pt-br' } = Astro.props;
+
+const projectEntries = await getCollection('projects');
+const items = projectEntries[0]?.data?.items ?? [];
+
+const localeKey = locale as 'pt-br' | 'en' | 'es';
+---
+
+<CaseStudyExpander client:visible />
+<section id="projetos" class="projects-section">
+  <div class="projects-container">
+    <SectionTitle title={t('sections.projects', locale)} />
+    <div class="projects-list">
+      {items.map((item, index) => (
+        <ProjectCard
+          number={index + 1}
+          title={item.title[localeKey] ?? item.title['pt-br']}
+          description={item.description[localeKey] ?? item.description['pt-br']}
+          techStack={item.techStack}
+          startDate={item.startDate}
+          locale={locale}
+          links={item.links}
+          caseStudy={{
+            problem: item.caseStudy.problem[localeKey] ?? item.caseStudy.problem['pt-br'],
+            decision: item.caseStudy.decision[localeKey] ?? item.caseStudy.decision['pt-br'],
+            result: item.caseStudy.result[localeKey] ?? item.caseStudy.result['pt-br'],
+          }}
+        />
+      ))}
+    </div>
+  </div>
+</section>

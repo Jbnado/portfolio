@@ -1,0 +1,95 @@
+{
+  "items": [
+    {
+      "type": "career",
+      "date": "2025",
+      "title": {
+        "pt-br": "Full Stack Developer @ Verzel",
+        "en": "Full Stack Developer @ Verzel",
+        "es": "Full Stack Developer @ Verzel"
+      },
+      "description": {
+        "pt-br": "APIs RESTful em Python, Java (Spring Boot) e NestJS para sistemas de cartões, SAC e CRM. Automação RPA com Playwright. Interfaces React com Vite.",
+        "en": "RESTful APIs in Python, Java (Spring Boot), and NestJS for card, helpdesk, and CRM systems. RPA automation with Playwright. React interfaces with Vite.",
+        "es": "APIs RESTful en Python, Java (Spring Boot) y NestJS para sistemas de tarjetas, SAC y CRM. Automatización RPA con Playwright. Interfaces React con Vite."
+      },
+      "tech": ["Python", "Java", "NestJS", "React", "Oracle"]
+    },
+    {
+      "type": "project",
+      "date": "2025",
+      "title": {
+        "pt-br": "Ribeirão Noir — Jogo Educativo",
+        "en": "Ribeirão Noir — Educational Game",
+        "es": "Ribeirão Noir — Juego Educativo"
+      },
+      "description": {
+        "pt-br": "Jogo investigativo desenvolvido solo com Godot Engine. Lançado na 24ª Feira Internacional do Livro, disponível no Google Play e itch.io. Usado como case no TCC da FATEC.",
+        "en": "Investigative game developed solo with Godot Engine. Launched at the 24th International Book Fair, available on Google Play and itch.io. Used as case study for FATEC thesis.",
+        "es": "Juego investigativo desarrollado solo con Godot Engine. Lanzado en la 24ª Feria Internacional del Libro, disponible en Google Play e itch.io. Usado como case en el TCC de FATEC."
+      },
+      "tech": ["Godot 4", "GDScript"],
+      "href": "#projetos"
+    },
+    {
+      "type": "career",
+      "date": "2023",
+      "title": {
+        "pt-br": "Full Stack Developer @ Take",
+        "en": "Full Stack Developer @ Take",
+        "es": "Full Stack Developer @ Take"
+      },
+      "description": {
+        "pt-br": "Microsserviços para e-commerce B2B com React, Spring Boot e AWS. Otimização de queries com melhoria de 60% em performance. Mentoria de devs júnior e code reviews.",
+        "en": "Microservices for B2B e-commerce with React, Spring Boot, and AWS. Query optimization with 60% performance improvement. Junior dev mentoring and code reviews.",
+        "es": "Microservicios para e-commerce B2B con React, Spring Boot y AWS. Optimización de queries con mejora del 60% en rendimiento. Mentoría de devs junior y code reviews."
+      },
+      "tech": ["React", "Java", "AWS", "RabbitMQ", "Cypress"]
+    },
+    {
+      "type": "career",
+      "date": "2022",
+      "title": {
+        "pt-br": "Full Stack Developer @ Authorify",
+        "en": "Full Stack Developer @ Authorify",
+        "es": "Full Stack Developer @ Authorify"
+      },
+      "description": {
+        "pt-br": "Serviços escaláveis com NestJS, React e MongoDB para marketing imobiliário (EUA). Refatoração de código legado React (+30% performance). Cobertura de testes >85%.",
+        "en": "Scalable services with NestJS, React, and MongoDB for real estate marketing (US). Legacy React code refactoring (+30% performance). Test coverage >85%.",
+        "es": "Servicios escalables con NestJS, React y MongoDB para marketing inmobiliario (EE.UU.). Refactorización de código legacy React (+30% rendimiento). Cobertura de tests >85%."
+      },
+      "tech": ["NestJS", "React", "MongoDB", "Jest", "Cypress"]
+    },
+    {
+      "type": "career",
+      "date": "2021",
+      "title": {
+        "pt-br": "Full Stack Developer Trainee @ Target Sistemas",
+        "en": "Full Stack Developer Trainee @ Target Sistemas",
+        "es": "Full Stack Developer Trainee @ Target Sistemas"
+      },
+      "description": {
+        "pt-br": "Sistema empresarial com Kanban, rastreamento de rotas (Google Maps API) e relatórios automáticos PDF/Excel. Interfaces Angular com RxJS. Plugin Adobe XD. App mobile Flutter.",
+        "en": "Enterprise system with Kanban, route tracking (Google Maps API), and automated PDF/Excel reports. Angular interfaces with RxJS. Adobe XD plugin. Flutter mobile app.",
+        "es": "Sistema empresarial con Kanban, rastreo de rutas (Google Maps API) e informes automáticos PDF/Excel. Interfaces Angular con RxJS. Plugin Adobe XD. App móvil Flutter."
+      },
+      "tech": ["Angular", "TypeScript", "Flutter", "Express"]
+    },
+    {
+      "type": "project",
+      "date": "2024",
+      "title": {
+        "pt-br": "Co-fundador RP.js",
+        "en": "Co-founder RP.js",
+        "es": "Co-fundador RP.js"
+      },
+      "description": {
+        "pt-br": "Comunidade JavaScript de Ribeirão Preto. Organização de meetups, workshops e eventos para conectar desenvolvedores da região.",
+        "en": "JavaScript community of Ribeirão Preto. Organizing meetups, workshops, and events to connect developers in the region.",
+        "es": "Comunidad JavaScript de Ribeirão Preto. Organización de meetups, workshops y eventos para conectar desarrolladores de la región."
+      },
+      "tech": ["JavaScript", "Community"]
+    }
+  ]
+}

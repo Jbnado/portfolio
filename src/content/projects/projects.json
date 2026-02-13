@@ -1,0 +1,113 @@
+{
+  "items": [
+    {
+      "id": "ribeirao-noir",
+      "title": {
+        "pt-br": "Ribeirão Noir",
+        "en": "Ribeirão Noir",
+        "es": "Ribeirão Noir"
+      },
+      "description": {
+        "pt-br": "Jogo investigativo noir ambientado nos anos 1950 de Ribeirão Preto. Protagonizado por Dandara, investigadora negra que enfrenta machismo e racismo. Desenvolvimento solo em 6 meses com Godot 4, arquitetura SOLID e testes automatizados. Lançado na 24ª Feira do Livro e validado por 3 doutores.",
+        "en": "Noir investigative game set in 1950s Ribeirão Preto, Brazil. Starring Dandara, a Black investigator facing sexism and racism. Solo development in 6 months with Godot 4, SOLID architecture and automated tests. Launched at the 24th Book Fair and validated by 3 PhD academics.",
+        "es": "Juego investigativo noir ambientado en los años 1950 de Ribeirão Preto. Protagonizado por Dandara, investigadora negra que enfrenta machismo y racismo. Desarrollo solo en 6 meses con Godot 4, arquitectura SOLID y tests automatizados. Lanzado en la 24ª Feria del Libro y validado por 3 doctores."
+      },
+      "techStack": ["Godot 4", "GDScript", "SOLID", "Design Patterns"],
+      "startDate": "2025-01-01",
+      "isFeatured": true,
+      "links": {
+        "demo": "https://palimpsestoproducoes.itch.io/ribeiraonoir"
+      },
+      "caseStudy": {
+        "problem": {
+          "pt-br": "O jogo de mesa original (Curupira Educação) sobre história e patrimônio de Ribeirão Preto precisava de uma adaptação digital gratuita e acessível. Financiado pela Lei Paulo Gustavo, o desafio era entregar um RPG narrativo completo como desenvolvedor solo em 6 meses.",
+          "en": "The original tabletop game (Curupira Education) about the history and heritage of Ribeirão Preto needed a free, accessible digital adaptation. Funded by the Paulo Gustavo Law, the challenge was delivering a complete narrative RPG as a solo developer in 6 months.",
+          "es": "El juego de mesa original (Curupira Educación) sobre la historia y patrimonio de Ribeirão Preto necesitaba una adaptación digital gratuita y accesible. Financiado por la Ley Paulo Gustavo, el desafío era entregar un RPG narrativo completo como desarrollador solo en 6 meses."
+        },
+        "decision": {
+          "pt-br": "Godot 4.4 com GDScript, princípios SOLID e padrões Singleton/Observer/Composition. Narrativa ramificada com 3 profissões, 4 posturas e 11 marcos históricos reais. Sistema de dados probabilístico com HP. Testes automatizados com framework do Godot. Multiplataforma: web e Android. Desenvolvimento solo em 6 meses.",
+          "en": "Godot 4.4 with GDScript, SOLID principles and Singleton/Observer/Composition patterns. Branching narrative with 3 professions, 4 stances, and 11 real historical landmarks. Probabilistic dice system with HP. Automated testing with Godot's framework. Cross-platform: web and Android. Solo development in 6 months.",
+          "es": "Godot 4.4 con GDScript, principios SOLID y patrones Singleton/Observer/Composition. Narrativa ramificada con 3 profesiones, 4 posturas y 11 marcos históricos reales. Sistema de dados probabilístico con HP. Tests automatizados con framework de Godot. Multiplataforma: web y Android. Desarrollo solo en 6 meses."
+        },
+        "result": {
+          "pt-br": "Lançamento na 24ª Feira Internacional do Livro. Validado por 3 doutores (USP, UFTM, Metodista). Cobertura de imprensa (Portal Zumm, Revide). Material pedagógico publicado em domínio público. Disponível gratuitamente no Google Play e itch.io. Usado como case no TCC da FATEC.",
+          "en": "Launched at the 24th International Book Fair. Validated by 3 PhD academics (USP, UFTM, Metodista). Press coverage (Portal Zumm, Revide). Pedagogical material published in public domain. Available for free on Google Play and itch.io. Used as case study for FATEC thesis.",
+          "es": "Lanzamiento en la 24ª Feria Internacional del Libro. Validado por 3 doctores (USP, UFTM, Metodista). Cobertura de prensa (Portal Zumm, Revide). Material pedagógico publicado en dominio público. Disponible gratuitamente en Google Play e itch.io. Usado como case en el TCC de FATEC."
+        }
+      }
+    },
+    {
+      "id": "rpjs-community",
+      "title": {
+        "pt-br": "RP.js — Comunidade JavaScript",
+        "en": "RP.js — JavaScript Community",
+        "es": "RP.js — Comunidad JavaScript"
+      },
+      "description": {
+        "pt-br": "Comunidade JavaScript de Ribeirão Preto, co-fundada por mim. Organização de meetups, workshops e eventos para conectar desenvolvedores da região. Site construído com Astro.",
+        "en": "JavaScript community of Ribeirão Preto, co-founded by me. Organizing meetups, workshops, and events to connect developers in the region. Website built with Astro.",
+        "es": "Comunidad JavaScript de Ribeirão Preto, co-fundada por mí. Organización de meetups, workshops y eventos para conectar desarrolladores de la región. Sitio construido con Astro."
+      },
+      "techStack": ["Astro", "JavaScript"],
+      "startDate": "2024-01-01",
+      "isFeatured": true,
+      "links": {
+        "github": "https://github.com/Jbnado/rpjs"
+      },
+      "caseStudy": {
+        "problem": {
+          "pt-br": "Ribeirão Preto não tinha uma comunidade organizada de JavaScript. Desenvolvedores da região estavam isolados, sem espaço para networking e troca de conhecimento.",
+          "en": "Ribeirão Preto lacked an organized JavaScript community. Regional developers were isolated, without a space for networking and knowledge sharing.",
+          "es": "Ribeirão Preto no tenía una comunidad organizada de JavaScript. Desarrolladores de la región estaban aislados, sin espacio para networking e intercambio de conocimiento."
+        },
+        "decision": {
+          "pt-br": "Co-fundar a RP.js com meetups regulares e workshops. Site construído com Astro — leve e rápido. Foco em criar um espaço inclusivo e acessível para todos os níveis.",
+          "en": "Co-found RP.js with regular meetups and workshops. Website built with Astro — lightweight and fast. Focus on creating an inclusive, accessible space for all skill levels.",
+          "es": "Co-fundar RP.js con meetups regulares y workshops. Sitio construido con Astro — ligero y rápido. Foco en crear un espacio inclusivo y accesible para todos los niveles."
+        },
+        "result": {
+          "pt-br": "Comunidade ativa com meetups regulares. Networking entre desenvolvedores de Ribeirão Preto. Workshops sobre React, Node.js e ferramentas modernas.",
+          "en": "Active community with regular meetups. Networking among Ribeirão Preto developers. Workshops on React, Node.js, and modern tools.",
+          "es": "Comunidad activa con meetups regulares. Networking entre desarrolladores de Ribeirão Preto. Workshops sobre React, Node.js y herramientas modernas."
+        }
+      }
+    },
+    {
+      "id": "portfolio-jb",
+      "title": {
+        "pt-br": "Portfolio Pessoal",
+        "en": "Personal Portfolio",
+        "es": "Portfolio Personal"
+      },
+      "description": {
+        "pt-br": "Este portfolio — construído com Astro, Preact e Tailwind CSS 4. Zero JS by default com Preact islands. Dark/light mode como duas personalidades visuais.",
+        "en": "This portfolio — built with Astro, Preact, and Tailwind CSS 4. Zero JS by default with Preact islands. Dark/light mode as two visual personalities.",
+        "es": "Este portfolio — construido con Astro, Preact y Tailwind CSS 4. Zero JS por defecto con Preact islands. Dark/light mode como dos personalidades visuales."
+      },
+      "techStack": ["Astro", "Preact", "TypeScript", "Tailwind CSS"],
+      "startDate": "2025-01-01",
+      "isFeatured": false,
+      "links": {
+        "github": "https://github.com/Jbnado/portfolio-jb",
+        "demo": "https://jbnado.dev"
+      },
+      "caseStudy": {
+        "problem": {
+          "pt-br": "Precisava de um portfolio que mostrasse quem sou sem parecer genérico. Frameworks SPA são overkill para conteúdo essencialmente estático.",
+          "en": "Needed a portfolio that shows who I am without looking generic. SPA frameworks are overkill for essentially static content.",
+          "es": "Necesitaba un portfolio que mostrara quién soy sin parecer genérico. Frameworks SPA son overkill para contenido esencialmente estático."
+        },
+        "decision": {
+          "pt-br": "Astro para zero JS by default + Preact islands apenas onde necessário. Tailwind CSS 4 com design tokens. Content Collections para dados. Temas dark/light com transição suave.",
+          "en": "Astro for zero JS by default + Preact islands only where needed. Tailwind CSS 4 with design tokens. Content Collections for data. Smooth dark/light theme transitions.",
+          "es": "Astro para zero JS por defecto + Preact islands solo donde necesario. Tailwind CSS 4 con design tokens. Content Collections para datos. Transición suave entre temas dark/light."
+        },
+        "result": {
+          "pt-br": "Bundle JS mínimo. Lighthouse 100 em todas as métricas. Build em <4s. Dark/light mode sem flicker. Acessibilidade WCAG AA.",
+          "en": "Minimal JS bundle. Lighthouse 100 across all metrics. Build under 4s. Dark/light mode with zero flicker. WCAG AA accessibility.",
+          "es": "Bundle JS mínimo. Lighthouse 100 en todas las métricas. Build en <4s. Dark/light mode sin flicker. Accesibilidad WCAG AA."
+        }
+      }
+    }
+  ]
+}
