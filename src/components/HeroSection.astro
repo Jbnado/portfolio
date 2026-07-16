@@ -21,7 +21,7 @@ const techStack = ['React', 'Node.js', 'TypeScript', 'Java', 'Python', 'AWS'];
 const techString = techStack.join(' · ');
 ---
 
-<section id="hero" class="hero-section">
+<section id="hero" class="hero-section blueprint-wrap">
   <!-- PUNK: Gon — huge, top-right corner -->
   <Image src={gonImg} alt="" width={400} format="webp" quality={80}
     class="punk-sticker" style="width:260px;top:-2%;right:1%;--punk-rotate:-8deg;animation-delay:0s;opacity:0.9" />
@@ -35,20 +35,25 @@ const techString = techStack.join(' · ');
     class="punk-sticker" style="width:90px;bottom:15%;left:3%;--punk-rotate:-15deg;animation-delay:2.2s" />
 
   <!-- PUNK: Menacing gogo — fewer, spread out -->
-  <span class="punk-menacing" style="top:6%;left:18%;font-size:1.5rem;color:rgba(162,119,255,0.2);--punk-rotate:-18deg" aria-hidden="true">gogo</span>
+  <span class="punk-menacing" style="top:6%;left:18%;font-size:1.5rem;color:rgba(97,255,202,0.2);--punk-rotate:-18deg" aria-hidden="true">gogo</span>
   <span class="punk-menacing" style="top:40%;right:28%;font-size:2rem;color:rgba(97,255,202,0.1);--punk-rotate:-5deg;animation-delay:3s" aria-hidden="true">gogo</span>
 
-  <!-- PUNK: BOOM + stars — spread out, not competing -->
-  <span class="punk-ono" style="top:8%;right:24%;font-size:2.5rem;color:#f694ff;transform:rotate(12deg);text-shadow:0 0 20px rgba(246,148,255,0.5)" aria-hidden="true">BOOM!</span>
-  <span class="punk-ono" style="bottom:12%;right:5%;font-size:2rem;color:#61ffca;text-shadow:0 0 15px rgba(97,255,202,0.5)" aria-hidden="true">&#9733;</span>
-  <span class="punk-ono" style="top:55%;left:1%;font-size:1.5rem;color:#82e2ff;transform:rotate(-12deg);text-shadow:0 0 15px rgba(130,226,255,0.4)" aria-hidden="true">&#9733;</span>
-  <span class="punk-ono" style="bottom:6%;left:32%;font-size:1.25rem;color:#a277ff;transform:rotate(-8deg);text-shadow:0 0 10px rgba(162,119,255,0.5)" aria-hidden="true">POW!</span>
+  <!-- PUNK: BOOM + star — reduced to two -->
+  <span class="punk-ono" style="top:8%;right:10%;font-size:2rem;color:#61ffca;text-shadow:0 0 15px rgba(97,255,202,0.5)" aria-hidden="true">&#9733;</span>
+  <span class="punk-ono" style="bottom:10%;right:6%;font-size:1.5rem;color:#ff3e3e;text-shadow:0 0 12px rgba(255,62,62,0.5)" aria-hidden="true">BOOM!</span>
 
   <div class="hero-container">
     <div class="hero-grid">
       <!-- Left: Text content -->
       <div class="hero-content">
-        <span class="hero-role hero-stagger" style="--stagger: 1">{t('hero.role', locale)}</span>
+        <div class="hero-syshead">
+          <div class="hero-holes" aria-hidden="true">
+            {[...Array(6)].map(() => <span class="punch-hole"></span>)}
+          </div>
+          <span class="ink-stamp hero-stamp crt-glow">{t('hero.status', locale)}</span>
+        </div>
+        <p class="hero-boot crt-glow" aria-hidden="true">{t('hero.boot', locale)}</p>
+        <span class="hero-role hero-stagger terminal-cursor" style="--stagger: 1">{t('hero.role', locale)}</span>
         <h1 class="hero-title hero-stagger punk-glitch" style="--stagger: 2">João<br />Bernardo</h1>
         <p class="hero-description hero-stagger" style="--stagger: 3">
           {t('hero.description', locale)}
@@ -137,6 +142,25 @@ const techString = techStack.join(' · ');
     letter-spacing: 0.06em;
     margin-bottom: 1rem;
   }
+
+  .hero-syshead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .hero-holes { display: flex; gap: 0.4rem; }
+  .hero-holes .punch-hole { width: 0.5rem; height: 0.5rem; }
+  .hero-stamp { font-size: 0.625rem; }
+  .hero-boot {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+  }
+  /* Cursor de terminal só no escuro */
+  .light .terminal-cursor::after { content: none; }
 
   .hero-title {
     font-family: var(--font-display);
