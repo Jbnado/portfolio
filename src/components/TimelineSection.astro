@@ -20,7 +20,7 @@ const items = (timelineEntries[0]?.data?.items ?? [])
 const localeKey = locale as 'pt-br' | 'en' | 'es';
 ---
 
-<section id="timeline" class="timeline-section" style="position:relative;overflow:hidden">
+<section id="timeline" class="timeline-section blueprint-wrap" style="position:relative;overflow:hidden">
   <!-- PUNK: Thorfinn — big, right side -->
   <Image src={thorfinnImg} alt="" width={400} format="webp" quality={80}
     class="punk-sticker" style="width:200px;bottom:5%;right:1%;--punk-rotate:-6deg;animation-delay:0.8s;opacity:0.8" />
@@ -39,6 +39,7 @@ const localeKey = locale as 'pt-br' | 'en' | 'es';
 
   <div class="timeline-container">
     <SectionTitle title={t('sections.timeline', locale)} />
+    <span class="ink-stamp" style="font-size:0.625rem">LOG</span>
     <ol class="timeline-list">
       {items.map((item) => (
         <TimelineEntry

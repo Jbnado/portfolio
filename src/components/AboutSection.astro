@@ -12,7 +12,7 @@ interface Props {
 const { locale = 'pt-br' } = Astro.props;
 ---
 
-<section id="sobre" class="about-section" style="position:relative;overflow:hidden">
+<section id="sobre" class="about-section blueprint-wrap" style="position:relative;overflow:hidden">
   <!-- PUNK: Killua — big, right side -->
   <Image src={killuaImg} alt="" width={440} format="webp" quality={80}
     class="punk-sticker" style="width:220px;top:0%;right:1%;--punk-rotate:5deg;animation-delay:0.5s;opacity:0.85" />
@@ -29,6 +29,7 @@ const { locale = 'pt-br' } = Astro.props;
 
   <div class="about-container">
     <SectionTitle title={t('about.title', locale)} />
+    <span class="ink-stamp" style="font-size:0.625rem">DOSSIÊ</span>
     <div class="about-content">
       <p class="about-description">{t('about.intro', locale)}</p>
       <blockquote class="about-pullquote">
