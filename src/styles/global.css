@@ -72,19 +72,21 @@
    ============================================ */
 
 .dark {
-  --color-bg-primary: #0c0a09;
-  --color-bg-secondary: #1c1917;
-  --color-text-primary: #f5f5f4;
-  --color-text-secondary: #a8a29e;
-  --color-accent: #a277ff;
-  --color-accent-hover: #b794ff;
-  --color-accent-muted: rgba(162, 119, 255, 0.25);
-  --color-accent-secondary: #61ffca;
-  --color-accent-tertiary: #f694ff;
-  --color-accent-quaternary: #82e2ff;
+  --color-bg-primary: #0a0f0c;      /* Preto-esverdeado CRT */
+  --color-bg-secondary: #0f1512;
+  --color-text-primary: #7cf5ad;    /* Verde fósforo */
+  --color-text-secondary: #4fbf85;
+  --color-accent: #42f59b;          /* Verde ácido primário */
+  --color-accent-hover: #7dffb0;
+  --color-accent-muted: rgba(97, 255, 202, 0.18);
+  --color-accent-secondary: #61ffca; /* Fósforo brilhante */
+  --color-accent-tertiary: #ff3e3e;  /* Revolta */
+  --color-accent-quaternary: #61ffca;
   --color-accent-quinary: #54c59f;
-  --color-border: #292524;
-  --color-border-accent: rgba(162, 119, 255, 0.25);
+  --color-border: #1f5a3d;          /* Verde escuro */
+  --color-border-accent: rgba(97, 255, 202, 0.25);
+  --color-revolt: #ff3e3e;          /* Vermelho revolta — CTAs */
+  --color-ink-blue: #54c59f;        /* No CRT dobra em verde apagado */
   --font-heading-tracking: -0.01em;
   --shadow-sm: none;
   --shadow-md: none;
@@ -162,16 +164,17 @@
 
 @media (prefers-contrast: high) {
   .dark {
-    --color-accent: #c4a0ff;
-    --color-accent-secondary: #7fffdb;
-    --color-accent-tertiary: #ffb0ff;
-    --color-accent-quaternary: #a0edff;
-    --color-text-secondary: #f5f5f4;
+    --color-accent: #6affb3;
+    --color-accent-secondary: #8affd4;
+    --color-accent-tertiary: #ff6a6a;
+    --color-accent-quaternary: #8affd4;
+    --color-text-primary: #b6ffd6;
+    --color-text-secondary: #d6ffe8;
     --color-border: currentColor;
   }
   .light {
-    --color-accent: #7a4728;
-    --color-text-secondary: #1c1917;
+    --color-accent: #742019;
+    --color-text-secondary: #22242b;
     --color-border: currentColor;
   }
 }
