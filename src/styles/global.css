@@ -91,22 +91,24 @@
 }
 
 .light {
-  --color-bg-primary: #faf9f6;
-  --color-bg-secondary: #ffffff;
-  --color-text-primary: #1c1917;
-  --color-text-secondary: #78716c;
-  --color-accent: #9a5b32;
-  --color-accent-hover: #7a4728;
-  --color-accent-muted: #fef7ed;
-  --color-accent-secondary: #6b7f63;
-  --color-accent-tertiary: #9a5b32;
-  --color-accent-quaternary: #9a5b32;
-  --color-accent-quinary: #6b7f63;
-  --color-border: #e7e5e4;
-  --color-border-accent: rgba(154, 91, 50, 0.25);
+  --color-bg-primary: #f2efe4;      /* Papel manila / creme frio */
+  --color-bg-secondary: #f8f6ef;    /* Papel de card */
+  --color-text-primary: #22242b;    /* Tinta quase-preta azulada */
+  --color-text-secondary: #5f636e;  /* Cinza-tinta */
+  --color-accent: #8f2d24;          /* Oxblood — carimbo */
+  --color-accent-hover: #742019;
+  --color-accent-muted: #f3e6e2;
+  --color-accent-secondary: #2f5aa8; /* Azul-blueprint */
+  --color-accent-tertiary: #8f2d24;
+  --color-accent-quaternary: #2f5aa8;
+  --color-accent-quinary: #5f636e;
+  --color-border: #cbc7ba;          /* Borda de papel */
+  --color-border-accent: rgba(143, 45, 36, 0.25);
+  --color-revolt: #8f2d24;          /* Oxblood também no claro */
+  --color-ink-blue: #2f5aa8;        /* Blueprint */
   --font-heading-tracking: -0.02em;
-  --shadow-sm: 0 1px 3px rgba(28, 25, 23, 0.06);
-  --shadow-md: 0 4px 12px rgba(28, 25, 23, 0.08);
+  --shadow-sm: 0 1px 3px rgba(34, 36, 43, 0.08);
+  --shadow-md: 0 4px 12px rgba(34, 36, 43, 0.10);
 }
 
 /* ============================================
