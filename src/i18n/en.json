@@ -39,7 +39,12 @@
     "expand": "Case Study",
     "problem": "Problem",
     "decision": "Technical Decision",
-    "result": "Result"
+    "result": "Result",
+    "back": "BACK",
+    "readMore": "Read case study",
+    "eyebrow": "> CASE_STUDY",
+    "code": "CODE",
+    "liveDemo": "LIVE DEMO"
   },
   "projects": {
     "github": "GitHub",
