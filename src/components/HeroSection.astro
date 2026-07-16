@@ -6,7 +6,6 @@ import StatsCounter from '../islands/StatsCounter.tsx';
 import { t } from '../i18n/utils';
 import gonImg from '../assets/imgs/Gon-full-body-hi.webp';
 import skullRockImg from '../assets/imgs/skull-rockandroll.webp';
-import flamingSkullImg from '../assets/imgs/flaming-skull.webp';
 
 interface Props {
   locale?: string;
@@ -29,10 +28,6 @@ const techString = techStack.join(' · ');
   <!-- PUNK: Skull Rock&Roll — mid-left -->
   <Image src={skullRockImg} alt="" width={240} format="webp" quality={75}
     class="punk-sticker" style="width:120px;top:5%;left:2%;--punk-rotate:12deg;animation-delay:1.5s" />
-
-  <!-- PUNK: Flaming skull — bottom-left -->
-  <Image src={flamingSkullImg} alt="" width={180} format="webp" quality={75}
-    class="punk-sticker" style="width:90px;bottom:15%;left:3%;--punk-rotate:-15deg;animation-delay:2.2s" />
 
   <!-- PUNK: Menacing gogo — fewer, spread out -->
   <span class="punk-menacing" style="top:6%;left:18%;font-size:1.5rem;color:rgba(97,255,202,0.2);--punk-rotate:-18deg" aria-hidden="true">gogo</span>
@@ -92,7 +87,7 @@ const techString = techStack.join(' · ');
   .dark .hero-section {
     background: radial-gradient(
       ellipse at 70% 20%,
-      rgba(162, 119, 255, 0.08) 0%,
+      rgba(97, 255, 202, 0.07) 0%,
       transparent 60%
     );
   }
@@ -236,8 +231,8 @@ const techString = techStack.join(' · ');
   .dark .hero-title {
     font-family: var(--font-punk);
     text-shadow:
-      0 0 30px rgba(162, 119, 255, 0.5),
-      0 0 80px rgba(162, 119, 255, 0.2);
+      0 0 30px rgba(97, 255, 202, 0.5),
+      0 0 80px rgba(97, 255, 202, 0.2);
     transform: rotate(-1.5deg);
   }
 
