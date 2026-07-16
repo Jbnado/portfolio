@@ -584,6 +584,50 @@ button,
 /* Fita de papel decorativa */
 .paper-tape { position: relative; }
 
+/* ===== Case study page ===== */
+.case-page { min-height: 100vh; position: relative; }
+.case-container { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 4rem; position: relative; z-index: 1; }
+.case-back {
+  display: inline-block; font-family: var(--font-mono); font-size: 0.75rem;
+  letter-spacing: 0.1em; color: var(--color-text-secondary); text-decoration: none; margin-bottom: 1.5rem;
+}
+.case-back:hover { color: var(--color-accent); }
+.case-head { border: 2px solid var(--color-border); padding: 1.5rem; margin-bottom: 2rem; position: relative; }
+.case-head-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.case-holes { display: flex; gap: 0.4rem; }
+.case-holes .punch-hole { width: 0.5rem; height: 0.5rem; }
+.case-num { font-family: var(--font-mono); font-size: 0.75rem; background: color-mix(in srgb, var(--color-accent) 18%, transparent); color: var(--color-accent); padding: 0.1rem 0.5rem; border-radius: 2px; }
+.case-eyebrow { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-accent); margin-bottom: 0.75rem; }
+.case-titlerow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.case-title { font-size: clamp(1.75rem, 5vw, 2.75rem); font-weight: 700; color: var(--color-text-primary); letter-spacing: var(--font-heading-tracking); }
+.dark .case-title { font-family: var(--font-punk); }
+.case-summary { color: var(--color-text-secondary); line-height: 1.6; max-width: 60ch; margin-bottom: 1.25rem; }
+.case-stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+.case-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.case-btn { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; border: 2px solid var(--color-border); padding: 0.5rem 1rem; color: var(--color-text-primary); text-decoration: none; transition: all 150ms; }
+.case-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.case-meta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 2rem; font-family: var(--font-mono); }
+@media (min-width: 640px) { .case-meta { grid-template-columns: repeat(4, 1fr); } }
+.case-meta-cell { border: 2px solid var(--color-border); padding: 0.75rem; }
+.case-meta-label { font-size: 0.625rem; color: var(--color-text-secondary); letter-spacing: 0.08em; margin-bottom: 0.25rem; }
+.case-meta-value { font-size: 0.875rem; font-weight: 700; }
+.case-body { line-height: 1.7; color: var(--color-text-primary); }
+.case-body h2 { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 0.75rem; color: var(--color-text-primary); font-family: var(--font-mono); }
+.dark .case-body h2 { color: var(--color-accent-secondary); text-shadow: 0 0 6px rgba(97,255,202,0.3); }
+.case-body h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+.case-body p { margin-bottom: 1rem; color: var(--color-text-secondary); }
+.case-body ul, .case-body ol { margin: 0 0 1rem 1.25rem; color: var(--color-text-secondary); }
+.case-body li { margin-bottom: 0.4rem; }
+.case-body a { color: var(--color-accent); text-decoration: underline; }
+.case-body code { font-family: var(--font-mono); font-size: 0.85em; background: color-mix(in srgb, var(--color-accent) 12%, transparent); padding: 0.1rem 0.3rem; border-radius: 2px; }
+.case-body pre { background: var(--color-bg-secondary); border: 1px solid var(--color-border); padding: 1rem; overflow-x: auto; margin-bottom: 1rem; }
+.case-body pre code { background: none; padding: 0; }
+.case-highlights { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 2rem; }
+@media (min-width: 640px) { .case-highlights { grid-template-columns: repeat(3, 1fr); } }
+.case-highlight { border: 2px solid var(--color-border); padding: 1.25rem; text-align: center; }
+.case-highlight-value { font-size: 1.75rem; font-weight: 700; color: var(--color-text-primary); }
+.case-highlight-label { font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-text-secondary); letter-spacing: 0.08em; margin-top: 0.25rem; }
+
 /* ============================================
    PUNK DARK MODE — Shared element styles
    ============================================ */

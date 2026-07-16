@@ -1,0 +1,77 @@
+---
+import { t } from '../i18n/utils';
+import { caseStudyUrl } from '../utils/constants';
+import TechBadge from './TechBadge.astro';
+
+interface Props {
+  project: any;        // item do projects.json
+  number: number;
+  locale: string;
+  entry: any;          // entrada de caseStudies
+  typeLabel: string;
+}
+const { project, number, locale, entry, typeLabel } = Astro.props;
+const { Content } = await entry.render();
+const data = entry.data;
+const displayNumber = String(number).padStart(2, '0');
+const year = project.startDate.slice(0, 4);
+const homeHref = locale === 'pt-br' ? '/#projetos' : `/${locale}/#projetos`;
+---
+
+<div class="case-page blueprint-wrap">
+  <div class="case-container">
+    <a href={homeHref} class="case-back">← {t('caseStudy.back', locale)}_AO_DECK</a>
+
+    <header class="case-head card-edge-holes vintage-card">
+      <div class="case-head-top">
+        <div class="case-holes" aria-hidden="true">
+          {[...Array(6)].map(() => <span class="punch-hole"></span>)}
+        </div>
+        <span class="case-num">#{displayNumber}</span>
+      </div>
+      <p class="case-eyebrow crt-glow">{t('caseStudy.eyebrow', locale)}</p>
+      <div class="case-titlerow">
+        <h1 class="case-title crt-glow">{data.title}</h1>
+        <span class={`project-type-stamp project-type-stamp--${project.type}`}>{typeLabel}</span>
+      </div>
+      <p class="case-summary">{data.summary}</p>
+      <div class="case-stack">
+        {project.techStack.map((tech: string) => <TechBadge name={tech} />)}
+      </div>
+      <div class="case-actions">
+        {project.links.github && (
+          <a href={project.links.github} target="_blank" rel="noopener noreferrer" class="case-btn">{t('caseStudy.code', locale)} ↗</a>
+        )}
+        {project.links.demo && (
+          <a href={project.links.demo} target="_blank" rel="noopener noreferrer" class="case-btn">{t('caseStudy.liveDemo', locale)} ↗</a>
+        )}
+      </div>
+    </header>
+
+    {data.meta && data.meta.length > 0 && (
+      <div class="case-meta">
+        {data.meta.map((m: any) => (
+          <div class="case-meta-cell">
+            <div class="case-meta-label">{m.label}</div>
+            <div class="case-meta-value crt-glow">{m.value}</div>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <article class="case-body">
+      <Content />
+    </article>
+
+    {data.highlights && data.highlights.length > 0 && (
+      <div class="case-highlights">
+        {data.highlights.map((h: any) => (
+          <div class="case-highlight vintage-card">
+            <div class="case-highlight-value crt-glow">{h.value}</div>
+            <div class="case-highlight-label">{h.label}</div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</div>
