@@ -1,6 +1,7 @@
 ---
 import TechBadge from './TechBadge.astro';
 import CaseStudyContent from './CaseStudyContent.astro';
+import { t } from '../i18n/utils';
 
 interface Props {
   number: number;
@@ -15,6 +16,7 @@ interface Props {
     github?: string;
     demo?: string;
   };
+  caseUrl?: string;
   caseStudy: {
     problem: string;
     decision: string;
@@ -22,7 +24,7 @@ interface Props {
   };
 }
 
-const { number, title, description, techStack, startDate, locale = 'pt-br', type = 'project', typeLabel, links, caseStudy } = Astro.props;
+const { number, title, description, techStack, startDate, locale = 'pt-br', type = 'project', typeLabel, links, caseUrl, caseStudy } = Astro.props;
 
 const displayNumber = String(number).padStart(2, '0');
 const year = startDate.slice(0, 4);
@@ -88,6 +90,9 @@ const year = startDate.slice(0, 4);
         />
       </div>
     </details>
+    {caseUrl && (
+      <a href={caseUrl} class="project-readmore">{t('caseStudy.readMore', locale)} →</a>
+    )}
   </div>
   <!-- Punch-card footer -->
   <div class="pc-foot" style="grid-column:1/-1" aria-hidden="true">
@@ -242,6 +247,18 @@ const year = startDate.slice(0, 4);
     font-size: 0.625rem;
     padding: 0.125rem 0.5rem;
   }
+
+  .project-readmore {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+  .project-readmore:hover { text-decoration: underline; }
 
   /* Description */
   .project-description {
