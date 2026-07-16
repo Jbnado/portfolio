@@ -12,6 +12,11 @@ interface Props {
   description?: string;
   locale?: string;
   noindex?: boolean;
+  canonical?: string;
+  alternates?: Record<string, string>;
+  ogType?: string;
+  jsonLd?: unknown;
+  showScrollSpy?: boolean;
 }
 
 const {
@@ -19,6 +24,11 @@ const {
   description,
   locale = 'pt-br',
   noindex = false,
+  canonical,
+  alternates,
+  ogType,
+  jsonLd,
+  showScrollSpy = true,
 } = Astro.props;
 
 const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
@@ -40,7 +50,15 @@ const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
     <link rel="preload" as="font" href="/fonts/permanent-marker.woff2" type="font/woff2" crossorigin />
 
     <!-- SEO Head (meta tags, OG, Twitter Card, JSON-LD, hreflang, canonical) -->
-    <SEOHead locale={locale} title={title} description={description} />
+    <SEOHead
+      locale={locale}
+      title={title}
+      description={description}
+      canonical={canonical}
+      alternates={alternates}
+      ogType={ogType}
+      jsonLd={jsonLd}
+    />
 
     <!-- PWA & Icons -->
     <link rel="manifest" href="/manifest.json" />
@@ -74,7 +92,7 @@ const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
     </svg>
     <SkipToContent />
     <NavBar locale={locale} />
-    <ScrollSpy client:idle />
+    {showScrollSpy && <ScrollSpy client:idle />}
     <main id="main" class="pt-16">
       <slot />
     </main>
