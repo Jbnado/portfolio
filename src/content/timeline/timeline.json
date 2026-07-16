@@ -1,6 +1,22 @@
 {
   "items": [
     {
+      "type": "project",
+      "date": "2026",
+      "title": {
+        "pt-br": "Instanta + Contribuições Open Source",
+        "en": "Instanta + Open Source Contributions",
+        "es": "Instanta + Contribuciones Open Source"
+      },
+      "description": {
+        "pt-br": "Instanta, feed de fotos edge-native em Cloudflare Workers. Contribuições no ADG (infra self-hosted com Docker Swarm + observabilidade) e no Alethe (workspace desktop em Tauri/Rust).",
+        "en": "Instanta, an edge-native photo feed on Cloudflare Workers. Contributions to ADG (self-hosted infra with Docker Swarm + observability) and Alethe (desktop workspace in Tauri/Rust).",
+        "es": "Instanta, un feed de fotos edge-native en Cloudflare Workers. Contribuciones a ADG (infra self-hosted con Docker Swarm + observabilidad) y a Alethe (workspace de escritorio en Tauri/Rust)."
+      },
+      "tech": ["Cloudflare Workers", "Tauri", "Rust", "Docker Swarm"],
+      "href": "#projetos"
+    },
+    {
       "type": "career",
       "date": "2025",
       "title": {
