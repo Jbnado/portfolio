@@ -658,78 +658,6 @@ button,
   animation: neon-pulse 3s ease-in-out infinite;
 }
 
-/* MSN window chrome — authentic XP style */
-.punk-msn-chrome {
-  display: none;
-  background: linear-gradient(180deg, #0a246a 0%, #3a6ea5 3%, #0a246a 97%, #0a246a 100%);
-  color: #fff;
-  font-family: "Tahoma", "Segoe UI", sans-serif;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  padding: 3px 4px 3px 6px;
-  border-radius: 6px 6px 0 0;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  border: 1px solid #0a246a;
-  border-bottom: none;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
-}
-
-.dark .punk-msn-chrome {
-  display: flex;
-}
-
-.punk-msn-buttons {
-  display: flex;
-  gap: 1px;
-}
-
-.punk-msn-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 21px;
-  height: 21px;
-  border-radius: 3px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  line-height: 1;
-  color: #fff;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
-}
-
-.punk-msn-btn--min {
-  background: linear-gradient(180deg, #3c8eef 0%, #2663c1 50%, #1a4fa0 100%);
-  border: 1px solid #1a3f7a;
-}
-
-.punk-msn-btn--max {
-  background: linear-gradient(180deg, #3c8eef 0%, #2663c1 50%, #1a4fa0 100%);
-  border: 1px solid #1a3f7a;
-}
-
-.punk-msn-btn--close {
-  background: linear-gradient(180deg, #c75050 0%, #b33030 50%, #8c1a1a 100%);
-  border: 1px solid #6b1010;
-}
-
-.punk-msn-status {
-  display: none;
-  background: linear-gradient(180deg, #ece9d8 0%, #d6d2c2 100%);
-  color: #444;
-  font-family: "Tahoma", "Segoe UI", sans-serif;
-  font-size: 0.625rem;
-  padding: 3px 8px;
-  border-radius: 0 0 4px 4px;
-  border: 1px solid #aca899;
-  border-top: 1px solid #fff;
-}
-
-.dark .punk-msn-status {
-  display: block;
-}
-
 /* Glitch RGB */
 .dark .punk-glitch {
   animation: glitch-rgb 5s ease-in-out infinite;
@@ -802,19 +730,6 @@ button,
     opacity: 0.4 !important;
   }
 
-  /* MSN chrome: smaller text */
-  .punk-msn-chrome {
-    font-size: 0.5625rem !important;
-  }
-  .punk-msn-btn {
-    width: 16px !important;
-    height: 16px !important;
-    font-size: 0.5rem !important;
-  }
-  .punk-msn-status {
-    font-size: 0.5rem !important;
-  }
-
   /* Collage strip: smaller icons */
   .punk-collage-strip svg {
     width: 28px !important;
@@ -878,8 +793,6 @@ button,
   .punk-sticker,
   .punk-menacing,
   .punk-ono,
-  .punk-msn-chrome,
-  .punk-msn-status,
   .punk-collage-strip {
     display: none !important;
   }

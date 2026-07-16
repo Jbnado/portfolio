@@ -211,27 +211,27 @@ const year = startDate.slice(0, 4);
     color: var(--color-accent-secondary);
   }
 
-  /* Type stamp: PROJETO vs CONTRIB */
+  /* Type stamp: PROJETO vs CONTRIB — ink-stamp look */
   .project-type-stamp {
     font-family: var(--font-mono);
-    font-size: 0.625rem;
+    font-size: 0.5625rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    padding: 0.1rem 0.4rem;
-    border: 1px solid currentColor;
+    padding: 0.1rem 0.45rem;
+    border: 2px solid currentColor;
     border-radius: 2px;
     line-height: 1.4;
+    transform: rotate(-4deg);
   }
-  .project-type-stamp--project {
-    color: var(--color-text-secondary);
+  .project-type-stamp--project { color: var(--color-text-secondary); }
+  .project-type-stamp--contribution { color: var(--color-accent); }
+  .dark .project-type-stamp {
+    transform: none;
+    text-shadow: 0 0 6px rgba(97, 255, 202, 0.4);
   }
-  .project-type-stamp--contribution {
-    color: var(--color-accent);
-  }
-  .dark .project-type-stamp--contribution {
-    color: var(--color-accent-tertiary);
-  }
+  .dark .project-type-stamp--project { color: var(--color-accent-secondary); }
+  .dark .project-type-stamp--contribution { color: var(--color-revolt); }
 
   .project-meta-sep {
     color: var(--color-text-secondary);
@@ -266,13 +266,13 @@ const year = startDate.slice(0, 4);
 
   /* Dark mode — punk chaos */
   .dark .project-card {
-    border-bottom-color: rgba(162, 119, 255, 0.15);
+    border-bottom-color: rgba(97, 255, 202, 0.15);
     position: relative;
   }
 
   .dark .project-card:hover {
     animation: shake-msn 300ms ease-in-out;
-    border-bottom-color: rgba(162, 119, 255, 0.4);
+    border-bottom-color: rgba(97, 255, 202, 0.4);
   }
 
   /* JoJo ゴゴゴ menacing hover */
@@ -292,13 +292,13 @@ const year = startDate.slice(0, 4);
 
   .dark .project-card:hover::after {
     content: "ゴゴゴ";
-    color: rgba(162, 119, 255, 0.6);
-    text-shadow: 0 0 15px rgba(162, 119, 255, 0.4);
+    color: rgba(97, 255, 202, 0.6);
+    text-shadow: 0 0 15px rgba(97, 255, 202, 0.4);
     animation: menacing-float 2s ease-in-out infinite;
   }
 
   .dark .project-number {
-    color: rgba(162, 119, 255, 0.3);
+    color: rgba(97, 255, 202, 0.3);
     font-family: var(--font-punk);
   }
 
@@ -311,5 +311,35 @@ const year = startDate.slice(0, 4);
 
   .dark .project-title {
     font-family: var(--font-punk);
+  }
+
+  /* Punch-card header/footer */
+  .pc-head, .pc-foot {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.4rem 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    background: color-mix(in srgb, var(--color-bg-secondary) 70%, transparent);
+  }
+  .pc-head { border-bottom: none; }
+  .pc-foot { border-top: none; justify-content: space-between; }
+  .pc-sprockets { display: flex; gap: 0.35rem; }
+  .pc-sprockets .punch-hole { width: 0.375rem; height: 0.375rem; }
+  .pc-title { flex: 1; font-weight: 700; text-transform: uppercase; }
+  .pc-num {
+    background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+    color: var(--color-accent);
+    padding: 0.05rem 0.4rem;
+    border-radius: 2px;
+  }
+  .dark .pc-head, .dark .pc-foot {
+    border-color: var(--color-border);
+    color: var(--color-accent-secondary);
+    text-shadow: 0 0 6px rgba(97, 255, 202, 0.3);
   }
 </style>
