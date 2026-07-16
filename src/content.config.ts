@@ -57,7 +57,14 @@ const projects = defineCollection({
 });
 
 const caseStudies = defineCollection({
-  loader: glob({ pattern: '*.md', base: './src/content/caseStudies' }),
+  loader: glob({
+    pattern: '*.md',
+    base: './src/content/caseStudies',
+    // Default id generation uses frontmatter `slug` as-is, which collides
+    // across locales (each project has one .md per locale, same `slug`).
+    // Combine slug + locale so all 18 entries load as distinct entries.
+    generateId: ({ data }) => `${data.slug}.${data.locale}`,
+  }),
   schema: z.object({
     slug: z.string(),
     locale: z.enum(['pt-br', 'en', 'es']),
