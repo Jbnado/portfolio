@@ -12,7 +12,7 @@ interface Props {
 const { locale = 'pt-br' } = Astro.props;
 ---
 
-<section id="sobre" class="about-section" style="position:relative;overflow:hidden">
+<section id="sobre" class="about-section blueprint-wrap" style="position:relative;overflow:hidden">
   <!-- PUNK: Killua — big, right side -->
   <Image src={killuaImg} alt="" width={440} format="webp" quality={80}
     class="punk-sticker" style="width:220px;top:0%;right:1%;--punk-rotate:5deg;animation-delay:0.5s;opacity:0.85" />
@@ -22,13 +22,14 @@ const { locale = 'pt-br' } = Astro.props;
     class="punk-sticker punk-zine-filter" style="width:140px;bottom:5%;left:1%;--punk-rotate:-10deg;animation-delay:1.8s;opacity:0.7" />
 
   <!-- PUNK: Stars and decorations -->
-  <span class="punk-ono" style="top:8%;right:22%;font-size:1.75rem;color:#82e2ff;transform:rotate(15deg);text-shadow:0 0 12px rgba(130,226,255,0.4)" aria-hidden="true">&#9733;</span>
-  <span class="punk-ono" style="bottom:15%;left:8%;font-size:1.25rem;color:#f694ff;transform:rotate(-20deg);text-shadow:0 0 10px rgba(246,148,255,0.4)" aria-hidden="true">&#10038;</span>
+  <span class="punk-ono" style="top:8%;right:22%;font-size:1.75rem;color:#61ffca;transform:rotate(15deg);text-shadow:0 0 12px rgba(97,255,202,0.4)" aria-hidden="true">&#9733;</span>
+  <span class="punk-ono" style="bottom:15%;left:8%;font-size:1.25rem;color:#ff3e3e;transform:rotate(-20deg);text-shadow:0 0 10px rgba(255,62,62,0.4)" aria-hidden="true">&#10038;</span>
   <span class="punk-menacing" style="top:15%;left:0%;font-size:1.25rem;color:rgba(97,255,202,0.12);--punk-rotate:6deg;animation-delay:1s" aria-hidden="true">gogo</span>
   <span class="punk-ono" style="bottom:5%;right:20%;font-size:1rem;color:#61ffca;transform:rotate(8deg);text-shadow:0 0 8px rgba(97,255,202,0.4)" aria-hidden="true">&#9733;</span>
 
   <div class="about-container">
     <SectionTitle title={t('about.title', locale)} />
+    <span class="ink-stamp" style="font-size:0.625rem">DOSSIÊ</span>
     <div class="about-content">
       <p class="about-description">{t('about.intro', locale)}</p>
       <blockquote class="about-pullquote">
@@ -102,9 +103,9 @@ const { locale = 'pt-br' } = Astro.props;
 
   /* Dark mode — punk pullquote */
   .dark .about-pullquote {
-    border-left: 4px dashed #f694ff;
+    border-left: 4px dashed #ff3e3e;
     padding: 1.25rem 1.5rem;
-    background: rgba(162, 119, 255, 0.04);
+    background: rgba(97, 255, 202, 0.04);
     border-radius: 0 4px 4px 0;
     position: relative;
   }
@@ -116,8 +117,8 @@ const { locale = 'pt-br' } = Astro.props;
     left: 20px;
     width: 60px;
     height: 18px;
-    background: rgba(246, 148, 255, 0.15);
-    border: 1px solid rgba(246, 148, 255, 0.25);
+    background: rgba(255, 62, 62, 0.15);
+    border: 1px solid rgba(255, 62, 62, 0.25);
     transform: rotate(-2deg);
     border-radius: 2px;
   }

@@ -7,6 +7,10 @@ interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
+  canonical?: string;
+  alternates?: Record<string, string>;
+  ogType?: string;
+  jsonLd?: unknown;
 }
 
 const {
@@ -14,6 +18,10 @@ const {
   title = t('seo.title', locale),
   description = t('seo.description', locale),
   ogImage = '/og-image.png',
+  canonical,
+  alternates,
+  ogType = 'website',
+  jsonLd,
 } = Astro.props;
 
 const ogLocaleMap: Record<string, string> = {
@@ -28,12 +36,14 @@ const hreflangMap: Record<string, string> = {
   es: `${SITE_URL}/es/`,
 };
 
-const canonicalUrl = hreflangMap[locale] ?? `${SITE_URL}/`;
+const canonicalUrl = canonical ?? (hreflangMap[locale] ?? `${SITE_URL}/`);
 const ogImageUrl = `${SITE_URL}${ogImage}`;
 const ogLocale = ogLocaleMap[locale] ?? 'pt_BR';
 const ogLocaleAlternates = Object.values(ogLocaleMap).filter((l) => l !== ogLocale);
 
-const jsonLd = {
+const alternateLinks = alternates ?? hreflangMap;
+
+const defaultPersonJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'João Bernardo',
@@ -52,7 +62,7 @@ const jsonLd = {
 <link rel="canonical" href={canonicalUrl} />
 
 <!-- SEO: Open Graph -->
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={ogImageUrl} />
@@ -70,10 +80,10 @@ const jsonLd = {
 <meta name="twitter:image" content={ogImageUrl} />
 
 <!-- SEO: hreflang -->
-<link rel="alternate" hreflang="pt-BR" href={hreflangMap['pt-br']} />
-<link rel="alternate" hreflang="en" href={hreflangMap['en']} />
-<link rel="alternate" hreflang="es" href={hreflangMap['es']} />
-<link rel="alternate" hreflang="x-default" href={hreflangMap['pt-br']} />
+<link rel="alternate" hreflang="pt-BR" href={alternateLinks['pt-br']} />
+<link rel="alternate" hreflang="en" href={alternateLinks['en']} />
+<link rel="alternate" hreflang="es" href={alternateLinks['es']} />
+<link rel="alternate" hreflang="x-default" href={alternateLinks['pt-br']} />
 
 <!-- SEO: JSON-LD Structured Data -->
-<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd ?? defaultPersonJsonLd)} />

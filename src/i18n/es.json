@@ -14,7 +14,9 @@
   "hero": {
     "role": "Fullstack Developer",
     "name": "João Bernardo",
-    "description": "Fullstack developer en Ribeirão Preto, Brasil. Construyo APIs, interfaces y a veces juegos."
+    "description": "Fullstack developer en Ribeirão Preto, Brasil. Construyo APIs, interfaces y a veces juegos.",
+    "boot": "> SISTEMA_ONLINE — READY",
+    "status": "DISPONIBLE P/ PROYECTOS"
   },
   "about": {
     "title": "Sobre Mí",
@@ -37,7 +39,12 @@
     "expand": "Case Study",
     "problem": "Problema",
     "decision": "Decisión Técnica",
-    "result": "Resultado"
+    "result": "Resultado",
+    "back": "VOLVER",
+    "readMore": "Leer case study",
+    "eyebrow": "> CASE_STUDY",
+    "code": "CÓDIGO",
+    "liveDemo": "DEMO"
   },
   "projects": {
     "github": "GitHub",
@@ -57,7 +64,8 @@
     "github": "GitHub",
     "githubLabel": "Abrir perfil de GitHub (nueva ventana)",
     "downloadCv": "Descargar CV",
-    "downloadCvLabel": "Descargar CV en PDF"
+    "downloadCvLabel": "Descargar CV en PDF",
+    "stamp": "SIN JEFE"
   },
   "footer": {
     "builtWith": "Construido con",

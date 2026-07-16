@@ -72,41 +72,45 @@
    ============================================ */
 
 .dark {
-  --color-bg-primary: #0c0a09;
-  --color-bg-secondary: #1c1917;
-  --color-text-primary: #f5f5f4;
-  --color-text-secondary: #a8a29e;
-  --color-accent: #a277ff;
-  --color-accent-hover: #b794ff;
-  --color-accent-muted: rgba(162, 119, 255, 0.25);
-  --color-accent-secondary: #61ffca;
-  --color-accent-tertiary: #f694ff;
-  --color-accent-quaternary: #82e2ff;
+  --color-bg-primary: #0a0f0c;      /* Preto-esverdeado CRT */
+  --color-bg-secondary: #0f1512;
+  --color-text-primary: #7cf5ad;    /* Verde fósforo */
+  --color-text-secondary: #4fbf85;
+  --color-accent: #42f59b;          /* Verde ácido primário */
+  --color-accent-hover: #7dffb0;
+  --color-accent-muted: rgba(97, 255, 202, 0.18);
+  --color-accent-secondary: #61ffca; /* Fósforo brilhante */
+  --color-accent-tertiary: #ff3e3e;  /* Revolta */
+  --color-accent-quaternary: #61ffca;
   --color-accent-quinary: #54c59f;
-  --color-border: #292524;
-  --color-border-accent: rgba(162, 119, 255, 0.25);
+  --color-border: #1f5a3d;          /* Verde escuro */
+  --color-border-accent: rgba(97, 255, 202, 0.25);
+  --color-revolt: #ff3e3e;          /* Vermelho revolta — CTAs */
+  --color-ink-blue: #54c59f;        /* No CRT dobra em verde apagado */
   --font-heading-tracking: -0.01em;
   --shadow-sm: none;
   --shadow-md: none;
 }
 
 .light {
-  --color-bg-primary: #faf9f6;
-  --color-bg-secondary: #ffffff;
-  --color-text-primary: #1c1917;
-  --color-text-secondary: #78716c;
-  --color-accent: #9a5b32;
-  --color-accent-hover: #7a4728;
-  --color-accent-muted: #fef7ed;
-  --color-accent-secondary: #6b7f63;
-  --color-accent-tertiary: #9a5b32;
-  --color-accent-quaternary: #9a5b32;
-  --color-accent-quinary: #6b7f63;
-  --color-border: #e7e5e4;
-  --color-border-accent: rgba(154, 91, 50, 0.25);
+  --color-bg-primary: #f2efe4;      /* Papel manila / creme frio */
+  --color-bg-secondary: #f8f6ef;    /* Papel de card */
+  --color-text-primary: #22242b;    /* Tinta quase-preta azulada */
+  --color-text-secondary: #5f636e;  /* Cinza-tinta */
+  --color-accent: #8f2d24;          /* Oxblood — carimbo */
+  --color-accent-hover: #742019;
+  --color-accent-muted: #f3e6e2;
+  --color-accent-secondary: #2f5aa8; /* Azul-blueprint */
+  --color-accent-tertiary: #8f2d24;
+  --color-accent-quaternary: #2f5aa8;
+  --color-accent-quinary: #5f636e;
+  --color-border: #cbc7ba;          /* Borda de papel */
+  --color-border-accent: rgba(143, 45, 36, 0.25);
+  --color-revolt: #8f2d24;          /* Oxblood também no claro */
+  --color-ink-blue: #2f5aa8;        /* Blueprint */
   --font-heading-tracking: -0.02em;
-  --shadow-sm: 0 1px 3px rgba(28, 25, 23, 0.06);
-  --shadow-md: 0 4px 12px rgba(28, 25, 23, 0.08);
+  --shadow-sm: 0 1px 3px rgba(34, 36, 43, 0.08);
+  --shadow-md: 0 4px 12px rgba(34, 36, 43, 0.10);
 }
 
 /* ============================================
@@ -127,6 +131,8 @@
   --color-accent-quinary: var(--color-accent-quinary);
   --color-border: var(--color-border);
   --color-border-accent: var(--color-border-accent);
+  --color-revolt: var(--color-revolt);
+  --color-ink-blue: var(--color-ink-blue);
 
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-display: "Sora", "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -135,6 +141,17 @@
 
   --shadow-sm: var(--shadow-sm);
   --shadow-md: var(--shadow-md);
+}
+
+/* ============================================
+   BASE STYLES — Layout & Typography
+   ============================================ */
+
+@layer base {
+  /* Terminal: corpo monoespaçado só no escuro */
+  .dark body {
+    font-family: var(--font-mono);
+  }
 }
 
 /* ============================================
@@ -160,16 +177,17 @@
 
 @media (prefers-contrast: high) {
   .dark {
-    --color-accent: #c4a0ff;
-    --color-accent-secondary: #7fffdb;
-    --color-accent-tertiary: #ffb0ff;
-    --color-accent-quaternary: #a0edff;
-    --color-text-secondary: #f5f5f4;
+    --color-accent: #6affb3;
+    --color-accent-secondary: #8affd4;
+    --color-accent-tertiary: #ff6a6a;
+    --color-accent-quaternary: #8affd4;
+    --color-text-primary: #b6ffd6;
+    --color-text-secondary: #d6ffe8;
     --color-border: currentColor;
   }
   .light {
-    --color-accent: #7a4728;
-    --color-text-secondary: #1c1917;
+    --color-accent: #742019;
+    --color-text-secondary: #22242b;
     --color-border: currentColor;
   }
 }
@@ -180,12 +198,12 @@
 
 /* Selection */
 ::selection {
-  background: rgba(194, 112, 62, 0.2);
+  background: rgba(143, 45, 36, 0.2);
   color: inherit;
 }
 
 .dark ::selection {
-  background: rgba(162, 119, 255, 0.3);
+  background: rgba(97, 255, 202, 0.25);
   color: inherit;
 }
 
@@ -222,8 +240,8 @@ html {
   background-image:
     repeating-linear-gradient(
       0deg,
-      rgba(162, 119, 255, 0.03) 0px,
-      rgba(162, 119, 255, 0.03) 1px,
+      rgba(97, 255, 202, 0.04) 0px,
+      rgba(97, 255, 202, 0.04) 1px,
       transparent 1px,
       transparent 3px
     ),
@@ -289,14 +307,14 @@ button,
 
 .dark .tech-badge {
   border-color: rgba(97, 255, 202, 0.3);
-  color: #82e2ff;
-  text-shadow: 0 0 6px rgba(130, 226, 255, 0.3);
-  box-shadow: inset 0 0 6px rgba(162, 119, 255, 0.08);
+  color: #61ffca;
+  text-shadow: 0 0 6px rgba(97, 255, 202, 0.3);
+  box-shadow: inset 0 0 6px rgba(97, 255, 202, 0.08);
 }
 
 /* Dark mode scrollbar — neon */
 .dark::-webkit-scrollbar-thumb {
-  background: rgba(162, 119, 255, 0.4);
+  background: rgba(97, 255, 202, 0.4);
 }
 
 /* ============================================
@@ -345,37 +363,37 @@ button,
 @keyframes glitch-rgb {
   0%, 82%, 97%, 100% {
     text-shadow:
-      0 0 20px rgba(162, 119, 255, 0.4),
-      0 0 60px rgba(162, 119, 255, 0.15);
+      0 0 20px rgba(97, 255, 202, 0.4),
+      0 0 60px rgba(97, 255, 202, 0.15);
   }
   83% {
     text-shadow:
-      -3px 0 #ff0040,
-      3px 0 #0ff,
-      0 0 20px rgba(162, 119, 255, 0.4);
+      -3px 0 #ff3e3e,
+      3px 0 #61ffca,
+      0 0 20px rgba(97, 255, 202, 0.4);
   }
   86% {
     text-shadow:
-      4px 0 #ff0040,
-      -4px 0 #0ff,
-      0 0 30px rgba(246, 148, 255, 0.5);
+      4px 0 #ff3e3e,
+      -4px 0 #61ffca,
+      0 0 30px rgba(255, 62, 62, 0.5);
   }
   89% {
     text-shadow:
-      -2px 2px #ff0040,
-      2px -2px #0ff,
+      -2px 2px #ff3e3e,
+      2px -2px #61ffca,
       0 0 20px rgba(97, 255, 202, 0.4);
   }
   92% {
     text-shadow:
-      3px -1px #ff0040,
-      -3px 1px #0ff,
-      0 0 40px rgba(162, 119, 255, 0.5);
+      3px -1px #ff3e3e,
+      -3px 1px #61ffca,
+      0 0 40px rgba(97, 255, 202, 0.5);
   }
   95% {
     text-shadow:
-      0 0 20px rgba(162, 119, 255, 0.4),
-      0 0 60px rgba(162, 119, 255, 0.15);
+      0 0 20px rgba(97, 255, 202, 0.4),
+      0 0 60px rgba(97, 255, 202, 0.15);
   }
 }
 
@@ -407,14 +425,14 @@ button,
 @keyframes curtain-to-dark {
   0% { opacity: 1; background: #000; }
   40% { opacity: 1; background: #000; }
-  60% { opacity: 1; background: #1a0a2e; }
-  80% { opacity: 1; background: rgba(162, 119, 255, 0.15); }
+  60% { opacity: 1; background: #06120c; }
+  80% { opacity: 1; background: rgba(97, 255, 202, 0.15); }
   100% { opacity: 0; background: transparent; }
 }
 
 @keyframes curtain-to-light {
-  0% { opacity: 1; background: rgba(162, 119, 255, 0.15); }
-  30% { opacity: 1; background: #1a0a2e; }
+  0% { opacity: 1; background: rgba(97, 255, 202, 0.15); }
+  30% { opacity: 1; background: #06120c; }
   60% { opacity: 1; background: #000; }
   100% { opacity: 0; background: transparent; }
 }
@@ -435,7 +453,180 @@ button,
   .dark .project-card:hover {
     animation: none !important;
   }
+  .terminal-cursor::after {
+    animation: none !important;
+  }
 }
+
+/* ============================================
+   ENGENHARIA / TERMINAL — utilitários portados
+   ============================================ */
+
+/* Furos de punch card */
+.punch-hole {
+  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  border-radius: 2px;
+}
+.dark .punch-hole {
+  background: color-mix(in srgb, var(--color-accent-secondary) 50%, transparent);
+  box-shadow: 0 0 4px rgba(97, 255, 202, 0.6);
+}
+
+/* Borda perfurada nos cantos de um card */
+.card-edge-holes {
+  background:
+    linear-gradient(90deg,
+      transparent 0%, transparent 2%,
+      color-mix(in srgb, var(--color-border) 60%, transparent) 2%,
+      color-mix(in srgb, var(--color-border) 60%, transparent) 4%,
+      transparent 4%, transparent 96%,
+      color-mix(in srgb, var(--color-border) 60%, transparent) 96%,
+      color-mix(in srgb, var(--color-border) 60%, transparent) 98%,
+      transparent 98%);
+}
+
+/* Papel vintage gasto (claro) / painel fósforo (escuro) */
+.vintage-card {
+  position: relative;
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--color-bg-secondary) 92%, #d8d2bf) 0%,
+      var(--color-bg-secondary) 50%,
+      color-mix(in srgb, var(--color-bg-secondary) 95%, #d8d2bf) 100%);
+}
+.vintage-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.015) 2px, rgba(0,0,0,0.015) 3px),
+    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.01) 2px, rgba(0,0,0,0.01) 3px);
+}
+.dark .vintage-card {
+  background: linear-gradient(135deg, #101613 0%, #0d1310 50%, #111713 100%);
+}
+.dark .vintage-card::before { opacity: 0; }
+
+/* Carimbo de tinta rotacionado (claro) / brilho fósforo (escuro) */
+.ink-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+  padding: 0.2rem 0.6rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transform: rotate(-6deg);
+  opacity: 0.9;
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+.dark .ink-stamp {
+  border-color: var(--color-accent-secondary);
+  color: var(--color-accent-secondary);
+  transform: none;
+  box-shadow: none;
+  opacity: 1;
+  text-shadow: 0 0 6px rgba(97, 255, 202, 0.5);
+}
+
+/* Grid milimetrado sutil (claro) / grid fósforo (escuro) */
+.blueprint-wrap { position: relative; }
+.blueprint-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 23px, var(--color-ink-blue) 23px, var(--color-ink-blue) 24px),
+    repeating-linear-gradient(90deg, transparent, transparent 23px, var(--color-ink-blue) 23px, var(--color-ink-blue) 24px);
+}
+.dark .blueprint-wrap::before {
+  opacity: 0.05;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 23px, rgba(97,255,202,1) 23px, rgba(97,255,202,1) 24px),
+    repeating-linear-gradient(90deg, transparent, transparent 23px, rgba(97,255,202,1) 23px, rgba(97,255,202,1) 24px);
+}
+
+/* Brilho fósforo em texto (escuro) */
+.dark .crt-glow {
+  text-shadow: 0 0 2px rgba(97,255,202,0.7), 0 0 8px rgba(97,255,202,0.35);
+}
+
+/* Cursor de terminal piscando */
+.terminal-cursor::after {
+  content: '\2588';
+  margin-left: 2px;
+  animation: cursor-blink 1.1s step-end infinite;
+}
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+/* Barra censurada tipo zine — revela no hover */
+.redacted {
+  background: currentColor;
+  color: transparent;
+  border-radius: 1px;
+  transition: background 0.2s ease, color 0.2s ease;
+  user-select: none;
+}
+.redacted:hover { background: transparent; color: inherit; }
+
+/* Fita de papel decorativa */
+.paper-tape { position: relative; }
+
+/* ===== Case study page ===== */
+.case-page { min-height: 100vh; position: relative; }
+.case-container { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 4rem; position: relative; z-index: 1; }
+.case-back {
+  display: inline-block; font-family: var(--font-mono); font-size: 0.75rem;
+  letter-spacing: 0.1em; color: var(--color-text-secondary); text-decoration: none; margin-bottom: 1.5rem;
+}
+.case-back:hover { color: var(--color-accent); }
+.case-head { border: 2px solid var(--color-border); padding: 1.5rem; margin-bottom: 2rem; position: relative; }
+.case-head-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.case-holes { display: flex; gap: 0.4rem; }
+.case-holes .punch-hole { width: 0.5rem; height: 0.5rem; }
+.case-num { font-family: var(--font-mono); font-size: 0.75rem; background: color-mix(in srgb, var(--color-accent) 18%, transparent); color: var(--color-accent); padding: 0.1rem 0.5rem; border-radius: 2px; }
+.case-eyebrow { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-accent); margin-bottom: 0.75rem; }
+.case-titlerow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.case-title { font-size: clamp(1.75rem, 5vw, 2.75rem); font-weight: 700; color: var(--color-text-primary); letter-spacing: var(--font-heading-tracking); }
+.dark .case-title { font-family: var(--font-punk); }
+.case-summary { color: var(--color-text-secondary); line-height: 1.6; max-width: 60ch; margin-bottom: 1.25rem; }
+.case-stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+.case-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.case-btn { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; border: 2px solid var(--color-border); padding: 0.5rem 1rem; color: var(--color-text-primary); text-decoration: none; transition: all 150ms; }
+.case-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.case-meta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 2rem; font-family: var(--font-mono); }
+@media (min-width: 640px) { .case-meta { grid-template-columns: repeat(4, 1fr); } }
+.case-meta-cell { border: 2px solid var(--color-border); padding: 0.75rem; }
+.case-meta-label { font-size: 0.625rem; color: var(--color-text-secondary); letter-spacing: 0.08em; margin-bottom: 0.25rem; }
+.case-meta-value { font-size: 0.875rem; font-weight: 700; }
+.case-body { line-height: 1.7; color: var(--color-text-primary); }
+.case-body h2 { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 0.75rem; color: var(--color-text-primary); font-family: var(--font-mono); }
+.dark .case-body h2 { color: var(--color-accent-secondary); text-shadow: 0 0 6px rgba(97,255,202,0.3); }
+.case-body h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+.case-body p { margin-bottom: 1rem; color: var(--color-text-secondary); }
+.case-body ul, .case-body ol { margin: 0 0 1rem 1.25rem; color: var(--color-text-secondary); }
+.case-body li { margin-bottom: 0.4rem; }
+.case-body a { color: var(--color-accent); text-decoration: underline; }
+.case-body code { font-family: var(--font-mono); font-size: 0.85em; background: color-mix(in srgb, var(--color-accent) 12%, transparent); padding: 0.1rem 0.3rem; border-radius: 2px; }
+.case-body pre { background: var(--color-bg-secondary); border: 1px solid var(--color-border); padding: 1rem; overflow-x: auto; margin-bottom: 1rem; }
+.case-body pre code { background: none; padding: 0; }
+.case-highlights { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 2rem; }
+@media (min-width: 640px) { .case-highlights { grid-template-columns: repeat(3, 1fr); } }
+.case-highlight { border: 2px solid var(--color-border); padding: 1.25rem; text-align: center; }
+.case-highlight-value { font-size: 1.75rem; font-weight: 700; color: var(--color-text-primary); }
+.case-highlight-label { font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-text-secondary); letter-spacing: 0.08em; margin-top: 0.25rem; }
 
 /* ============================================
    PUNK DARK MODE — Shared element styles
@@ -474,7 +665,7 @@ button,
 
 /* Pop art background for stickers with dark/black backgrounds */
 .punk-sticker-bg {
-  background: radial-gradient(circle, #a277ff 0%, #f694ff 50%, transparent 72%);
+  background: radial-gradient(circle, #61ffca 0%, #ff3e3e 50%, transparent 72%);
   border-radius: 50%;
   padding: 0.5rem;
 }
@@ -511,78 +702,6 @@ button,
   animation: neon-pulse 3s ease-in-out infinite;
 }
 
-/* MSN window chrome — authentic XP style */
-.punk-msn-chrome {
-  display: none;
-  background: linear-gradient(180deg, #0a246a 0%, #3a6ea5 3%, #0a246a 97%, #0a246a 100%);
-  color: #fff;
-  font-family: "Tahoma", "Segoe UI", sans-serif;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  padding: 3px 4px 3px 6px;
-  border-radius: 6px 6px 0 0;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  border: 1px solid #0a246a;
-  border-bottom: none;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
-}
-
-.dark .punk-msn-chrome {
-  display: flex;
-}
-
-.punk-msn-buttons {
-  display: flex;
-  gap: 1px;
-}
-
-.punk-msn-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 21px;
-  height: 21px;
-  border-radius: 3px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  line-height: 1;
-  color: #fff;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
-}
-
-.punk-msn-btn--min {
-  background: linear-gradient(180deg, #3c8eef 0%, #2663c1 50%, #1a4fa0 100%);
-  border: 1px solid #1a3f7a;
-}
-
-.punk-msn-btn--max {
-  background: linear-gradient(180deg, #3c8eef 0%, #2663c1 50%, #1a4fa0 100%);
-  border: 1px solid #1a3f7a;
-}
-
-.punk-msn-btn--close {
-  background: linear-gradient(180deg, #c75050 0%, #b33030 50%, #8c1a1a 100%);
-  border: 1px solid #6b1010;
-}
-
-.punk-msn-status {
-  display: none;
-  background: linear-gradient(180deg, #ece9d8 0%, #d6d2c2 100%);
-  color: #444;
-  font-family: "Tahoma", "Segoe UI", sans-serif;
-  font-size: 0.625rem;
-  padding: 3px 8px;
-  border-radius: 0 0 4px 4px;
-  border: 1px solid #aca899;
-  border-top: 1px solid #fff;
-}
-
-.dark .punk-msn-status {
-  display: block;
-}
-
 /* Glitch RGB */
 .dark .punk-glitch {
   animation: glitch-rgb 5s ease-in-out infinite;
@@ -612,7 +731,7 @@ button,
 .punk-collage-strip svg {
   width: 40px;
   height: 40px;
-  filter: drop-shadow(0 2px 12px rgba(162, 119, 255, 0.4));
+  filter: drop-shadow(0 2px 12px rgba(97, 255, 202, 0.4));
   transition: transform 200ms ease, filter 200ms ease;
   transform: rotate(var(--punk-rotate, 0deg));
   margin: 0 2px;
@@ -626,7 +745,7 @@ button,
 
 .punk-collage-strip svg:hover {
   transform: rotate(var(--punk-rotate, 0deg)) scale(1.5);
-  filter: drop-shadow(0 4px 20px rgba(246, 148, 255, 0.6));
+  filter: drop-shadow(0 4px 20px rgba(255, 62, 62, 0.6));
   z-index: 10;
 }
 
@@ -653,19 +772,6 @@ button,
   .punk-menacing {
     font-size: 0.75rem !important;
     opacity: 0.4 !important;
-  }
-
-  /* MSN chrome: smaller text */
-  .punk-msn-chrome {
-    font-size: 0.5625rem !important;
-  }
-  .punk-msn-btn {
-    width: 16px !important;
-    height: 16px !important;
-    font-size: 0.5rem !important;
-  }
-  .punk-msn-status {
-    font-size: 0.5rem !important;
   }
 
   /* Collage strip: smaller icons */
@@ -731,8 +837,6 @@ button,
   .punk-sticker,
   .punk-menacing,
   .punk-ono,
-  .punk-msn-chrome,
-  .punk-msn-status,
   .punk-collage-strip {
     display: none !important;
   }
