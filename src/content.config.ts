@@ -56,4 +56,18 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { stats, timeline, projects };
+const caseStudies = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/caseStudies' }),
+  schema: z.object({
+    slug: z.string(),
+    locale: z.enum(['pt-br', 'en', 'es']),
+    title: z.string(),
+    summary: z.string(),
+    seoTitle: z.string().optional(),
+    highlights: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
+    meta: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
+    ogImage: z.string().optional(),
+  }),
+});
+
+export const collections = { stats, timeline, projects, caseStudies };
