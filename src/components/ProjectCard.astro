@@ -9,6 +9,8 @@ interface Props {
   techStack: string[];
   startDate: string;
   locale?: string;
+  type?: 'project' | 'contribution';
+  typeLabel?: string;
   links: {
     github?: string;
     demo?: string;
@@ -20,7 +22,7 @@ interface Props {
   };
 }
 
-const { number, title, description, techStack, startDate, locale = 'pt-br', links, caseStudy } = Astro.props;
+const { number, title, description, techStack, startDate, locale = 'pt-br', type = 'project', typeLabel, links, caseStudy } = Astro.props;
 
 const displayNumber = String(number).padStart(2, '0');
 const year = startDate.slice(0, 4);
@@ -66,6 +68,7 @@ const year = startDate.slice(0, 4);
       </div>
     </div>
     <div class="project-meta">
+      <span class={`project-type-stamp project-type-stamp--${type}`}>{typeLabel}</span>
       <span class="project-year">{year}</span>
       <span class="project-meta-sep" aria-hidden="true">·</span>
       {techStack.map((tech) => <TechBadge name={tech} />)}
@@ -203,6 +206,28 @@ const year = startDate.slice(0, 4);
     font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--color-accent-secondary);
+  }
+
+  /* Type stamp: PROJETO vs CONTRIB */
+  .project-type-stamp {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.1rem 0.4rem;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    line-height: 1.4;
+  }
+  .project-type-stamp--project {
+    color: var(--color-text-secondary);
+  }
+  .project-type-stamp--contribution {
+    color: var(--color-accent);
+  }
+  .dark .project-type-stamp--contribution {
+    color: var(--color-accent-tertiary);
   }
 
   .project-meta-sep {

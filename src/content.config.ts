@@ -37,6 +37,7 @@ const projects = defineCollection({
   schema: z.object({
     items: z.array(z.object({
       id: z.string(),
+      type: z.enum(['project', 'contribution']).default('project'),
       title: i18nText,
       description: i18nText,
       techStack: z.array(z.string()),

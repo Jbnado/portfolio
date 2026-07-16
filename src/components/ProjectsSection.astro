@@ -30,6 +30,8 @@ const localeKey = locale as 'pt-br' | 'en' | 'es';
           techStack={item.techStack}
           startDate={item.startDate}
           locale={locale}
+          type={item.type}
+          typeLabel={item.type === 'contribution' ? t('projects.typeContribution', locale) : t('projects.typeProject', locale)}
           links={item.links}
           caseStudy={{
             problem: item.caseStudy.problem[localeKey] ?? item.caseStudy.problem['pt-br'],

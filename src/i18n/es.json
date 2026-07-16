@@ -43,7 +43,9 @@
     "github": "GitHub",
     "demo": "Demo",
     "githubLabel": "GitHub: {title} (nueva ventana)",
-    "demoLabel": "Demo: {title} (nueva ventana)"
+    "demoLabel": "Demo: {title} (nueva ventana)",
+    "typeProject": "PROYECTO",
+    "typeContribution": "CONTRIB"
   },
   "contact": {
     "cta": "Hablemos.",

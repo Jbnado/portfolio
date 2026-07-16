@@ -1,7 +1,118 @@
 {
   "items": [
     {
+      "id": "instanta",
+      "type": "project",
+      "title": {
+        "pt-br": "Instanta",
+        "en": "Instanta",
+        "es": "Instanta"
+      },
+      "description": {
+        "pt-br": "Feed colaborativo de fotos por evento: os convidados alimentam um mural ao vivo com as fotos da festa. App 100% edge-native rodando em Cloudflare Workers, com autenticação forte (Argon2 no edge + 2FA) e suporte offline. Projeto pessoal em desenvolvimento.",
+        "en": "Collaborative per-event photo feed: guests fill a live wall with the party's photos. A fully edge-native app running on Cloudflare Workers, with strong auth (edge Argon2 + 2FA) and offline support. Personal project in progress.",
+        "es": "Feed colaborativo de fotos por evento: los invitados alimentan un muro en vivo con las fotos de la fiesta. App 100% edge-native en Cloudflare Workers, con autenticación fuerte (Argon2 en el edge + 2FA) y soporte offline. Proyecto personal en desarrollo."
+      },
+      "techStack": ["Hono", "Cloudflare Workers", "D1", "Drizzle", "React 19", "TypeScript"],
+      "startDate": "2026-06-22",
+      "isFeatured": true,
+      "links": {},
+      "caseStudy": {
+        "problem": {
+          "pt-br": "Todo evento espalha fotos por dezenas de celulares e grupos de mensagem — nunca existe um álbum único, vivo e compartilhado. Eu queria algo instantâneo, mobile-first, que funcionasse até com o wi-fi ruim de um salão de festa.",
+          "en": "Every event scatters photos across dozens of phones and chat groups — there's never one shared, living album. I wanted something instant, mobile-first, that works even on a venue's flaky wi-fi.",
+          "es": "Cada evento dispersa fotos entre decenas de celulares y grupos de mensajes — nunca existe un álbum único, vivo y compartido. Quería algo instantáneo, mobile-first, que funcionara hasta con el wi-fi malo de un salón de fiestas."
+        },
+        "decision": {
+          "pt-br": "Arquitetura edge-native: Hono rodando em Cloudflare Workers + D1 (SQLite no edge) via Drizzle, então a API fica a milissegundos de qualquer usuário. Front em React 19 + TanStack Router. Arquitetura limpa imposta por regras de fronteira no ESLint — os serviços de domínio não podem importar o framework, ficando testáveis sem subir um Worker. Segurança levada a sério mesmo sendo projeto pessoal: hash de senha com Argon2 em WASM no edge, 2FA por TOTP e força de senha com zxcvbn (dicionário pt-BR). Offline-first com IndexedDB e compressão de imagem no cliente antes do upload.",
+          "en": "Edge-native architecture: Hono on Cloudflare Workers + D1 (SQLite at the edge) via Drizzle, so the API sits milliseconds from any user. React 19 + TanStack Router front end. Clean architecture enforced by ESLint boundary rules — domain services can't import the framework, staying testable without spinning up a Worker. Security taken seriously even for a personal project: Argon2 password hashing in WASM at the edge, TOTP 2FA, and zxcvbn password strength (pt-BR dictionary). Offline-first with IndexedDB and client-side image compression before upload.",
+          "es": "Arquitectura edge-native: Hono en Cloudflare Workers + D1 (SQLite en el edge) vía Drizzle, así la API queda a milisegundos de cualquier usuario. Front en React 19 + TanStack Router. Arquitectura limpia impuesta por reglas de frontera en ESLint — los servicios de dominio no pueden importar el framework, quedando testeables sin levantar un Worker. Seguridad tomada en serio aun siendo proyecto personal: hash de contraseña con Argon2 en WASM en el edge, 2FA por TOTP y fuerza de contraseña con zxcvbn (diccionario pt-BR). Offline-first con IndexedDB y compresión de imagen en el cliente antes del upload."
+        },
+        "result": {
+          "pt-br": "Front e API sobem juntos pro mesmo Worker, com HMR abaixo de 500ms no dev. Qualidade garantida por testes baseados em propriedades (fast-check), testes de acessibilidade (axe-core) e portões de cobertura e tamanho de bundle no CI. Em desenvolvimento ativo.",
+          "en": "Front end and API deploy together to the same Worker, with sub-500ms HMR in dev. Quality backed by property-based tests (fast-check), accessibility tests (axe-core), and coverage + bundle-size gates in CI. Under active development.",
+          "es": "Front y API suben juntos al mismo Worker, con HMR por debajo de 500ms en dev. Calidad respaldada por tests basados en propiedades (fast-check), tests de accesibilidad (axe-core) y controles de cobertura y tamaño de bundle en el CI. En desarrollo activo."
+        }
+      }
+    },
+    {
+      "id": "adg",
+      "type": "contribution",
+      "title": {
+        "pt-br": "ADG — Arena Draft Guide",
+        "en": "ADG — Arena Draft Guide",
+        "es": "ADG — Arena Draft Guide"
+      },
+      "description": {
+        "pt-br": "Tracker de estatísticas de League of Legends (Arena e ARAM: Mayhem) e Valorant para uma turma de amigos, com rankings e conquistas. Contribuí com a infraestrutura de produção self-hosted e com o app companion que captura dados que a API pública da Riot não expõe.",
+        "en": "Stats tracker for League of Legends (Arena and ARAM: Mayhem) and Valorant among a friend group, with rankings and achievements. I contributed the self-hosted production infrastructure and the companion app that captures data Riot's public API doesn't expose.",
+        "es": "Tracker de estadísticas de League of Legends (Arena y ARAM: Mayhem) y Valorant para un grupo de amigos, con rankings y logros. Contribuí con la infraestructura de producción self-hosted y con la app companion que captura datos que la API pública de Riot no expone."
+      },
+      "techStack": ["Docker Swarm", "Traefik", "Portainer", "Grafana", "Tauri", "Rust", "Express", "PostgreSQL"],
+      "startDate": "2026-06-08",
+      "isFeatured": true,
+      "links": {
+        "demo": "https://adg.gg"
+      },
+      "caseStudy": {
+        "problem": {
+          "pt-br": "A Riot não expõe os dados de ARAM: Mayhem (fila 2400) na API pública — logo, era impossível ranquear as partidas desse modo, justo o que a turma mais jogava. Em paralelo, o projeto precisava sair de serviços gerenciados caros e ganhar uma infra de produção confiável, observável e barata.",
+          "en": "Riot doesn't expose ARAM: Mayhem data (queue 2400) in its public API — so ranking that mode's matches was impossible, and it was exactly what the group played most. In parallel, the project needed to move off expensive managed services onto reliable, observable, cheap production infrastructure.",
+          "es": "Riot no expone los datos de ARAM: Mayhem (cola 2400) en su API pública — así que rankear las partidas de ese modo era imposible, y era justo lo que el grupo más jugaba. En paralelo, el proyecto necesitaba salir de servicios gestionados caros hacia una infraestructura de producción confiable, observable y barata."
+        },
+        "decision": {
+          "pt-br": "Ataquei por duas frentes. (1) Um companion desktop em Tauri + Rust que lê o cliente local da Riot (APIs LCU e LiveClient) para capturar as partidas de Mayhem que a API pública esconde, com padrão outbox offline para entrega confiável e credenciais guardadas no Windows Credential Manager. (2) Uma infra self-hosted no Oracle Cloud Free Tier (VM ARM sempre-gratuita) orquestrada com Docker Swarm: API Express em 2 réplicas com rolling update sem downtime, Postgres 16, Traefik cuidando do ingress com TLS automático (Let's Encrypt), deploy GitOps via Portainer (o compose é lido direto do Git e o redeploy dispara por webhook) e observabilidade completa com Grafana + Loki + Prometheus. Backups a cada 6h para dois destinos remotos, como seguro contra perda da conta.",
+          "en": "I tackled it on two fronts. (1) A Tauri + Rust desktop companion that reads the local Riot client (LCU and LiveClient APIs) to capture the Mayhem matches the public API hides, with an offline outbox pattern for reliable delivery and credentials stored in Windows Credential Manager. (2) Self-hosted infrastructure on Oracle Cloud Free Tier (an always-free ARM VM) orchestrated with Docker Swarm: an Express API scaled to 2 replicas with zero-downtime rolling updates, Postgres 16, Traefik handling ingress with automatic TLS (Let's Encrypt), GitOps deploys via Portainer (compose read straight from Git, redeploy triggered by webhook), and full observability with Grafana + Loki + Prometheus. Backups every 6h to two remote destinations, as insurance against losing the account.",
+          "es": "Lo ataqué por dos frentes. (1) Un companion desktop en Tauri + Rust que lee el cliente local de Riot (APIs LCU y LiveClient) para capturar las partidas de Mayhem que la API pública esconde, con patrón outbox offline para entrega confiable y credenciales guardadas en el Windows Credential Manager. (2) Una infraestructura self-hosted en Oracle Cloud Free Tier (VM ARM siempre-gratuita) orquestada con Docker Swarm: API Express en 2 réplicas con rolling update sin downtime, Postgres 16, Traefik gestionando el ingress con TLS automático (Let's Encrypt), deploy GitOps vía Portainer (el compose se lee directo del Git y el redeploy se dispara por webhook) y observabilidad completa con Grafana + Loki + Prometheus. Backups cada 6h a dos destinos remotos, como seguro contra la pérdida de la cuenta."
+        },
+        "result": {
+          "pt-br": "Deploy contínuo com zero downtime: push na main constrói a imagem arm64 no GHCR e dispara o redeploy automático. Dashboards de API, Postgres e infra no Grafana, com alertas sobre a saúde do serviço. Custo de servidor: zero, no Free Tier da Oracle. E o principal: os dados de ARAM: Mayhem — invisíveis pela API pública — passaram a ser capturados e ranqueados.",
+          "en": "Continuous, zero-downtime deploys: a push to main builds the arm64 image on GHCR and triggers an automatic redeploy. Grafana dashboards for API, Postgres, and infra, with alerts on service health. Server cost: zero, on Oracle's Free Tier. And the headline: ARAM: Mayhem data — invisible through the public API — is now captured and ranked.",
+          "es": "Deploy continuo con cero downtime: un push a main construye la imagen arm64 en GHCR y dispara el redeploy automático. Dashboards de API, Postgres e infra en Grafana, con alertas sobre la salud del servicio. Costo de servidor: cero, en el Free Tier de Oracle. Y lo principal: los datos de ARAM: Mayhem — invisibles por la API pública — pasaron a capturarse y rankearse."
+        }
+      }
+    },
+    {
+      "id": "alethe",
+      "type": "contribution",
+      "title": {
+        "pt-br": "Alethe",
+        "en": "Alethe",
+        "es": "Alethe"
+      },
+      "description": {
+        "pt-br": "Workspace desktop local-first e open source para rodar e retomar vários agentes de código (Claude Code, Codex, OpenCode) e terminais reais em paralelo. Contribuí com o projeto do mantenedor, mexendo no backend em Rust e na experiência de terminais.",
+        "en": "A local-first, open-source desktop workspace for running and resuming multiple coding agents (Claude Code, Codex, OpenCode) and real terminals in parallel. I contributed to the maintainer's project, working on the Rust backend and the terminal experience.",
+        "es": "Un workspace de escritorio local-first y open source para ejecutar y retomar varios agentes de código (Claude Code, Codex, OpenCode) y terminales reales en paralelo. Contribuí al proyecto del mantenedor, trabajando en el backend en Rust y en la experiencia de terminales."
+      },
+      "techStack": ["Tauri", "Rust", "React", "TypeScript", "xterm.js"],
+      "startDate": "2026-06-15",
+      "isFeatured": true,
+      "links": {
+        "github": "https://github.com/Kc1t/alethe-agents",
+        "demo": "https://alethe-agents.kc1t.com/"
+      },
+      "caseStudy": {
+        "problem": {
+          "pt-br": "Rodar vários agentes de código e terminais ao mesmo tempo vira um caos de janelas — e, pior, fechar uma aba mata o processo por baixo, jogando fora a sessão do agente e todo o contexto acumulado.",
+          "en": "Running several coding agents and terminals at once becomes a chaos of windows — and worse, closing a tab kills the underlying process, throwing away the agent's session and all its accumulated context.",
+          "es": "Ejecutar varios agentes de código y terminales a la vez se vuelve un caos de ventanas — y peor, cerrar una pestaña mata el proceso por debajo, tirando la sesión del agente y todo el contexto acumulado."
+        },
+        "decision": {
+          "pt-br": "Backend de PTY real em Rust (portable-pty), com a sacada de desacoplar o processo do container visual: fechar a aba na interface não mata o terminal por baixo. Em cima disso, um sistema de painéis divididos com vários layouts, sub-abas por terminal para empilhar agentes e shells, suspensão de grupos para liberar memória e persistência de scrollback e sessão para retomar o contexto de onde parou.",
+          "en": "A real PTY backend in Rust (portable-pty), with the key move of decoupling the process from the visual container: closing a tab in the UI doesn't kill the terminal underneath. On top of that, a split-pane system with multiple layouts, per-terminal sub-tabs to stack agents and shells, group suspension to free memory, and scrollback + session persistence to resume context right where you left off.",
+          "es": "Un backend de PTY real en Rust (portable-pty), con la clave de desacoplar el proceso del container visual: cerrar una pestaña en la interfaz no mata el terminal por debajo. Encima de eso, un sistema de paneles divididos con varios layouts, sub-pestañas por terminal para apilar agentes y shells, suspensión de grupos para liberar memoria y persistencia de scrollback y sesión para retomar el contexto donde se dejó."
+        },
+        "result": {
+          "pt-br": "Instaladores assinados para Windows, macOS (Apple Silicon e Intel) e Linux, gerados por um pipeline no GitHub Actions. Terminais que continuam vivos ao trocar de layout ou fechar containers visuais, sem perder sessão.",
+          "en": "Signed installers for Windows, macOS (Apple Silicon and Intel), and Linux, built by a GitHub Actions pipeline. Terminals that stay alive when switching layouts or closing visual containers, without losing the session.",
+          "es": "Instaladores firmados para Windows, macOS (Apple Silicon e Intel) y Linux, generados por un pipeline en GitHub Actions. Terminales que siguen vivos al cambiar de layout o cerrar containers visuales, sin perder la sesión."
+        }
+      }
+    },
+    {
       "id": "ribeirao-noir",
+      "type": "project",
       "title": {
         "pt-br": "Ribeirão Noir",
         "en": "Ribeirão Noir",
@@ -38,6 +149,7 @@
     },
     {
       "id": "rpjs-community",
+      "type": "project",
       "title": {
         "pt-br": "RP.js — Comunidade JavaScript",
         "en": "RP.js — JavaScript Community",
@@ -74,6 +186,7 @@
     },
     {
       "id": "portfolio-jb",
+      "type": "project",
       "title": {
         "pt-br": "Portfolio Pessoal",
         "en": "Personal Portfolio",
