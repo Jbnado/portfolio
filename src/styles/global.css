@@ -203,7 +203,7 @@
 }
 
 .dark ::selection {
-  background: rgba(162, 119, 255, 0.3);
+  background: rgba(97, 255, 202, 0.25);
   color: inherit;
 }
 
@@ -240,8 +240,8 @@ html {
   background-image:
     repeating-linear-gradient(
       0deg,
-      rgba(162, 119, 255, 0.03) 0px,
-      rgba(162, 119, 255, 0.03) 1px,
+      rgba(97, 255, 202, 0.04) 0px,
+      rgba(97, 255, 202, 0.04) 1px,
       transparent 1px,
       transparent 3px
     ),
@@ -307,14 +307,14 @@ button,
 
 .dark .tech-badge {
   border-color: rgba(97, 255, 202, 0.3);
-  color: #82e2ff;
-  text-shadow: 0 0 6px rgba(130, 226, 255, 0.3);
-  box-shadow: inset 0 0 6px rgba(162, 119, 255, 0.08);
+  color: #61ffca;
+  text-shadow: 0 0 6px rgba(97, 255, 202, 0.3);
+  box-shadow: inset 0 0 6px rgba(97, 255, 202, 0.08);
 }
 
 /* Dark mode scrollbar — neon */
 .dark::-webkit-scrollbar-thumb {
-  background: rgba(162, 119, 255, 0.4);
+  background: rgba(97, 255, 202, 0.4);
 }
 
 /* ============================================
@@ -363,37 +363,37 @@ button,
 @keyframes glitch-rgb {
   0%, 82%, 97%, 100% {
     text-shadow:
-      0 0 20px rgba(162, 119, 255, 0.4),
-      0 0 60px rgba(162, 119, 255, 0.15);
+      0 0 20px rgba(97, 255, 202, 0.4),
+      0 0 60px rgba(97, 255, 202, 0.15);
   }
   83% {
     text-shadow:
-      -3px 0 #ff0040,
-      3px 0 #0ff,
-      0 0 20px rgba(162, 119, 255, 0.4);
+      -3px 0 #ff3e3e,
+      3px 0 #61ffca,
+      0 0 20px rgba(97, 255, 202, 0.4);
   }
   86% {
     text-shadow:
-      4px 0 #ff0040,
-      -4px 0 #0ff,
-      0 0 30px rgba(246, 148, 255, 0.5);
+      4px 0 #ff3e3e,
+      -4px 0 #61ffca,
+      0 0 30px rgba(255, 62, 62, 0.5);
   }
   89% {
     text-shadow:
-      -2px 2px #ff0040,
-      2px -2px #0ff,
+      -2px 2px #ff3e3e,
+      2px -2px #61ffca,
       0 0 20px rgba(97, 255, 202, 0.4);
   }
   92% {
     text-shadow:
-      3px -1px #ff0040,
-      -3px 1px #0ff,
-      0 0 40px rgba(162, 119, 255, 0.5);
+      3px -1px #ff3e3e,
+      -3px 1px #61ffca,
+      0 0 40px rgba(97, 255, 202, 0.5);
   }
   95% {
     text-shadow:
-      0 0 20px rgba(162, 119, 255, 0.4),
-      0 0 60px rgba(162, 119, 255, 0.15);
+      0 0 20px rgba(97, 255, 202, 0.4),
+      0 0 60px rgba(97, 255, 202, 0.15);
   }
 }
 
@@ -425,14 +425,14 @@ button,
 @keyframes curtain-to-dark {
   0% { opacity: 1; background: #000; }
   40% { opacity: 1; background: #000; }
-  60% { opacity: 1; background: #1a0a2e; }
-  80% { opacity: 1; background: rgba(162, 119, 255, 0.15); }
+  60% { opacity: 1; background: #06120c; }
+  80% { opacity: 1; background: rgba(97, 255, 202, 0.15); }
   100% { opacity: 0; background: transparent; }
 }
 
 @keyframes curtain-to-light {
-  0% { opacity: 1; background: rgba(162, 119, 255, 0.15); }
-  30% { opacity: 1; background: #1a0a2e; }
+  0% { opacity: 1; background: rgba(97, 255, 202, 0.15); }
+  30% { opacity: 1; background: #06120c; }
   60% { opacity: 1; background: #000; }
   100% { opacity: 0; background: transparent; }
 }
@@ -621,7 +621,7 @@ button,
 
 /* Pop art background for stickers with dark/black backgrounds */
 .punk-sticker-bg {
-  background: radial-gradient(circle, #a277ff 0%, #f694ff 50%, transparent 72%);
+  background: radial-gradient(circle, #61ffca 0%, #ff3e3e 50%, transparent 72%);
   border-radius: 50%;
   padding: 0.5rem;
 }
@@ -759,7 +759,7 @@ button,
 .punk-collage-strip svg {
   width: 40px;
   height: 40px;
-  filter: drop-shadow(0 2px 12px rgba(162, 119, 255, 0.4));
+  filter: drop-shadow(0 2px 12px rgba(97, 255, 202, 0.4));
   transition: transform 200ms ease, filter 200ms ease;
   transform: rotate(var(--punk-rotate, 0deg));
   margin: 0 2px;
@@ -773,7 +773,7 @@ button,
 
 .punk-collage-strip svg:hover {
   transform: rotate(var(--punk-rotate, 0deg)) scale(1.5);
-  filter: drop-shadow(0 4px 20px rgba(246, 148, 255, 0.6));
+  filter: drop-shadow(0 4px 20px rgba(255, 62, 62, 0.6));
   z-index: 10;
 }
 
