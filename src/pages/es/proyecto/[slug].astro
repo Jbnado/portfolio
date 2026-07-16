@@ -1,0 +1,57 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CaseStudyPage from '../../../components/CaseStudyPage.astro';
+import { caseStudyUrl, SITE_URL } from '../../../utils/constants';
+import { t } from '../../../i18n/utils';
+
+const TYPE = 'project';
+const LOCALE = 'es';
+
+export async function getStaticPaths() {
+  const projectEntries = await getCollection('projects');
+  const items = projectEntries[0].data.items;
+  return items
+    .map((item, index) => ({ item, number: index + 1 }))
+    .filter(({ item }) => item.type === 'project')
+    .map(({ item, number }) => ({ params: { slug: item.id }, props: { item, number } }));
+}
+
+const { item, number } = Astro.props;
+// entrada da collection: `${slug}.${locale}` com fallback pt-br
+let entry = await getEntry('caseStudies', `${item.id}.${LOCALE}`);
+if (!entry) entry = await getEntry('caseStudies', `${item.id}.pt-br`);
+
+const title = entry.data.seoTitle ?? `${entry.data.title} — João Bernardo`;
+const description = entry.data.summary;
+const canonical = `${SITE_URL}${caseStudyUrl(TYPE, item.id, LOCALE)}`;
+const alternates = {
+  'pt-br': `${SITE_URL}${caseStudyUrl(TYPE, item.id, 'pt-br')}`,
+  en: `${SITE_URL}${caseStudyUrl(TYPE, item.id, 'en')}`,
+  es: `${SITE_URL}${caseStudyUrl(TYPE, item.id, 'es')}`,
+};
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  headline: entry.data.title,
+  description: entry.data.summary,
+  inLanguage: LOCALE,
+  url: canonical,
+  author: { '@type': 'Person', name: 'João Bernardo' },
+  keywords: item.techStack.join(', '),
+};
+const typeLabel = t('projects.typeProject', LOCALE);
+---
+
+<BaseLayout
+  locale={LOCALE}
+  title={title}
+  description={description}
+  canonical={canonical}
+  alternates={alternates}
+  ogType="article"
+  jsonLd={jsonLd}
+  showScrollSpy={false}
+>
+  <CaseStudyPage project={item} number={number} locale={LOCALE} entry={entry} typeLabel={typeLabel} />
+</BaseLayout>
