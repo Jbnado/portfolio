@@ -131,6 +131,8 @@
   --color-accent-quinary: var(--color-accent-quinary);
   --color-border: var(--color-border);
   --color-border-accent: var(--color-border-accent);
+  --color-revolt: var(--color-revolt);
+  --color-ink-blue: var(--color-ink-blue);
 
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-display: "Sora", "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -139,6 +141,17 @@
 
   --shadow-sm: var(--shadow-sm);
   --shadow-md: var(--shadow-md);
+}
+
+/* ============================================
+   BASE STYLES — Layout & Typography
+   ============================================ */
+
+@layer base {
+  /* Terminal: corpo monoespaçado só no escuro */
+  .dark body {
+    font-family: var(--font-mono);
+  }
 }
 
 /* ============================================
