@@ -1,22 +1,6 @@
 {
   "items": [
     {
-      "type": "project",
-      "date": "2026",
-      "title": {
-        "pt-br": "Instanta + Contribuições Open Source",
-        "en": "Instanta + Open Source Contributions",
-        "es": "Instanta + Contribuciones Open Source"
-      },
-      "description": {
-        "pt-br": "Instanta, feed de fotos edge-native em Cloudflare Workers. Contribuições no ADG (infra self-hosted com Docker Swarm + observabilidade) e no Alethe (workspace desktop em Tauri/Rust).",
-        "en": "Instanta, an edge-native photo feed on Cloudflare Workers. Contributions to ADG (self-hosted infra with Docker Swarm + observability) and Alethe (desktop workspace in Tauri/Rust).",
-        "es": "Instanta, un feed de fotos edge-native en Cloudflare Workers. Contribuciones a ADG (infra self-hosted con Docker Swarm + observabilidad) y a Alethe (workspace de escritorio en Tauri/Rust)."
-      },
-      "tech": ["Cloudflare Workers", "Tauri", "Rust", "Docker Swarm"],
-      "href": "#projetos"
-    },
-    {
       "type": "career",
       "date": "2025",
       "title": {
@@ -30,22 +14,6 @@
         "es": "APIs RESTful en Python, Java (Spring Boot) y NestJS para sistemas de tarjetas, SAC y CRM. Automatización RPA con Playwright. Interfaces React con Vite."
       },
       "tech": ["Python", "Java", "NestJS", "React", "Oracle"]
-    },
-    {
-      "type": "project",
-      "date": "2025",
-      "title": {
-        "pt-br": "Ribeirão Noir — Jogo Educativo",
-        "en": "Ribeirão Noir — Educational Game",
-        "es": "Ribeirão Noir — Juego Educativo"
-      },
-      "description": {
-        "pt-br": "Jogo investigativo desenvolvido solo com Godot Engine. Lançado na 24ª Feira Internacional do Livro, disponível no Google Play e itch.io. Usado como case no TCC da FATEC.",
-        "en": "Investigative game developed solo with Godot Engine. Launched at the 24th International Book Fair, available on Google Play and itch.io. Used as case study for FATEC thesis.",
-        "es": "Juego investigativo desarrollado solo con Godot Engine. Lanzado en la 24ª Feria Internacional del Libro, disponible en Google Play e itch.io. Usado como case en el TCC de FATEC."
-      },
-      "tech": ["Godot 4", "GDScript"],
-      "href": "#projetos"
     },
     {
       "type": "career",
@@ -91,21 +59,6 @@
         "es": "Sistema empresarial con Kanban, rastreo de rutas (Google Maps API) e informes automáticos PDF/Excel. Interfaces Angular con RxJS. Plugin Adobe XD. App móvil Flutter."
       },
       "tech": ["Angular", "TypeScript", "Flutter", "Express"]
-    },
-    {
-      "type": "project",
-      "date": "2024",
-      "title": {
-        "pt-br": "Co-fundador RP.js",
-        "en": "Co-founder RP.js",
-        "es": "Co-fundador RP.js"
-      },
-      "description": {
-        "pt-br": "Comunidade JavaScript de Ribeirão Preto. Organização de meetups, workshops e eventos para conectar desenvolvedores da região.",
-        "en": "JavaScript community of Ribeirão Preto. Organizing meetups, workshops, and events to connect developers in the region.",
-        "es": "Comunidad JavaScript de Ribeirão Preto. Organización de meetups, workshops y eventos para conectar desarrolladores de la región."
-      },
-      "tech": ["JavaScript", "Community"]
     }
   ]
 }
