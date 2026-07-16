@@ -64,7 +64,8 @@
     "github": "GitHub",
     "githubLabel": "Abrir perfil do GitHub (nova janela)",
     "downloadCv": "Baixar CV",
-    "downloadCvLabel": "Baixar CV em PDF"
+    "downloadCvLabel": "Baixar CV em PDF",
+    "stamp": "SEM CLT"
   },
   "footer": {
     "builtWith": "Construído com",

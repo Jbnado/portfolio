@@ -37,6 +37,7 @@ const { locale = 'pt-br' } = Astro.props;
 
   <div class="contact-gradient-border" aria-hidden="true"></div>
   <div class="contact-container">
+    <span class="ink-stamp contact-stamp">{t('contact.stamp', locale)}</span>
     <p class="contact-cta">{t('contact.cta', locale)}</p>
     <p class="contact-subtitle">{t('contact.subtitle', locale)}</p>
 
@@ -204,10 +205,15 @@ const { locale = 'pt-br' } = Astro.props;
 
   .dark .contact-cta {
     font-family: var(--font-punk);
+    color: var(--color-revolt);
     text-shadow:
-      0 0 30px rgba(97, 255, 202, 0.4),
-      0 0 60px rgba(97, 255, 202, 0.15);
+      0 0 30px rgba(255, 62, 62, 0.4),
+      0 0 60px rgba(255, 62, 62, 0.15);
     transform: rotate(-1deg);
+  }
+
+  .contact-stamp {
+    margin-bottom: 0.5rem;
   }
 
   .dark .contact-link {

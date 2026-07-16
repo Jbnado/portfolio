@@ -64,7 +64,8 @@
     "github": "GitHub",
     "githubLabel": "Open GitHub profile (new window)",
     "downloadCv": "Download CV",
-    "downloadCvLabel": "Download CV as PDF"
+    "downloadCvLabel": "Download CV as PDF",
+    "stamp": "OPEN TO WORK"
   },
   "footer": {
     "builtWith": "Built with",
