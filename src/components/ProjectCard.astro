@@ -28,15 +28,14 @@ const displayNumber = String(number).padStart(2, '0');
 const year = startDate.slice(0, 4);
 ---
 
-<article class="project-card" style="position:relative">
-  <!-- MSN chrome — authentic Windows XP title bar -->
-  <div class="punk-msn-chrome" style="grid-column:1/-1" aria-hidden="true">
-    <span>📁 {title}.exe</span>
-    <span class="punk-msn-buttons">
-      <span class="punk-msn-btn punk-msn-btn--min">_</span>
-      <span class="punk-msn-btn punk-msn-btn--max">□</span>
-      <span class="punk-msn-btn punk-msn-btn--close">×</span>
-    </span>
+<article class="project-card vintage-card" style="position:relative">
+  <!-- Punch-card header: sprocket holes + card number -->
+  <div class="pc-head" style="grid-column:1/-1" aria-hidden="true">
+    <div class="pc-sprockets">
+      {[...Array(8)].map(() => <span class="punch-hole"></span>)}
+    </div>
+    <span class="pc-title">{title}</span>
+    <span class="pc-num">#{displayNumber}</span>
   </div>
   <span class="project-number" aria-hidden="true">{displayNumber}</span>
   <div class="project-content">
@@ -90,12 +89,16 @@ const year = startDate.slice(0, 4);
       </div>
     </details>
   </div>
-  <!-- MSN status bar -->
-  <div class="punk-msn-status" style="grid-column:1/-1" aria-hidden="true">
-    Status: Compiling... | {year} | 🖥️ Ready
+  <!-- Punch-card footer -->
+  <div class="pc-foot" style="grid-column:1/-1" aria-hidden="true">
+    <span>COL: 80 · ROW: 12</span>
+    <span>{'>'} IBM_FORMAT · {year}</span>
+    <div class="pc-sprockets">
+      {[...Array(8)].map(() => <span class="punch-hole"></span>)}
+    </div>
   </div>
   <!-- Menacing decoration -->
-  <span class="punk-menacing" style="bottom:-0.75rem;right:1rem;font-size:0.75rem;color:rgba(162,119,255,0.15);--punk-rotate:5deg" aria-hidden="true">gogo</span>
+  <span class="punk-menacing" style="bottom:-0.75rem;right:1rem;font-size:0.75rem;color:rgba(97,255,202,0.15);--punk-rotate:5deg" aria-hidden="true">gogo</span>
 </article>
 
 <style is:global>
