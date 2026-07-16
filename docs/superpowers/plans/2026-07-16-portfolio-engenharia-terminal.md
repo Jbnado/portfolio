@@ -665,6 +665,13 @@ rtk git commit -m "refactor(hero): migra neon p/ verde/revolta e reduz stickers 
 
 ## WAVE C — Projetos (punch-card)
 
+> **Pré-existente (commit de conteúdo):** `ProjectCard.astro` já recebe os props
+> `type` (`'project' | 'contribution'`) e `typeLabel` (string localizada) e renderiza
+> `<span class="project-type-stamp project-type-stamp--{type}">`. `ProjectsSection.astro`
+> já passa esses props. **Não duplicar** — preservar o markup do carimbo e, no C2,
+> **reestilizar** `.project-type-stamp` como `.ink-stamp` (oxblood/rotacionado no claro,
+> verde fósforo no escuro), mantendo a distinção project vs contribution.
+
 ### Task C1: Substituir MSN chrome por cabeçalho/rodapé punch-card no markup
 
 **Files:**
@@ -770,6 +777,32 @@ Adicionar ao final do `<style is:global>` do ProjectCard:
     color: var(--color-accent-secondary);
     text-shadow: 0 0 6px rgba(97, 255, 202, 0.3);
   }
+```
+
+- [ ] **Step 1b: Reestilizar `.project-type-stamp` como ink-stamp**
+
+Substituir o bloco `.project-type-stamp*` existente por uma variação que usa a linguagem de carimbo:
+```css
+  .project-type-stamp {
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.1rem 0.45rem;
+    border: 2px solid currentColor;
+    border-radius: 2px;
+    line-height: 1.4;
+    transform: rotate(-4deg);
+  }
+  .project-type-stamp--project { color: var(--color-text-secondary); }
+  .project-type-stamp--contribution { color: var(--color-accent); }
+  .dark .project-type-stamp {
+    transform: none;
+    text-shadow: 0 0 6px rgba(97, 255, 202, 0.4);
+  }
+  .dark .project-type-stamp--project { color: var(--color-accent-secondary); }
+  .dark .project-type-stamp--contribution { color: var(--color-revolt); }
 ```
 
 - [ ] **Step 2: Migrar os `.dark .project-*` hexes**
