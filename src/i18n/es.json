@@ -14,7 +14,9 @@
   "hero": {
     "role": "Fullstack Developer",
     "name": "João Bernardo",
-    "description": "Fullstack developer en Ribeirão Preto, Brasil. Construyo APIs, interfaces y a veces juegos."
+    "description": "Fullstack developer en Ribeirão Preto, Brasil. Construyo APIs, interfaces y a veces juegos.",
+    "boot": "> SISTEMA_ONLINE — READY",
+    "status": "DISPONIBLE P/ PROYECTOS"
   },
   "about": {
     "title": "Sobre Mí",
