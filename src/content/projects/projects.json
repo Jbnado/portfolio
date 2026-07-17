@@ -81,12 +81,12 @@
         "es": "Alethe"
       },
       "description": {
-        "pt-br": "Workspace desktop local-first e open source para rodar e retomar vários agentes de código (Claude Code, Codex, OpenCode) e terminais reais em paralelo. Contribuí com o projeto do mantenedor, mexendo no backend em Rust e na experiência de terminais.",
-        "en": "A local-first, open-source desktop workspace for running and resuming multiple coding agents (Claude Code, Codex, OpenCode) and real terminals in parallel. I contributed to the maintainer's project, working on the Rust backend and the terminal experience.",
-        "es": "Un workspace de escritorio local-first y open source para ejecutar y retomar varios agentes de código (Claude Code, Codex, OpenCode) y terminales reales en paralelo. Contribuí al proyecto del mantenedor, trabajando en el backend en Rust y en la experiencia de terminales."
+        "pt-br": "Workspace desktop open-source pra rodar e retomar vários agentes de código e terminais em paralelo, criado pelo Kauã (Kc1t). Eu uso todo dia e contribuí de volta com PRs e issues, do fix de scroll em TUIs ao auto-update in-app.",
+        "en": "An open-source desktop workspace for running and resuming multiple coding agents and real terminals in parallel, created by Kauã (Kc1t). I use it every day and contributed back with PRs and issues, from a TUI scroll fix to an in-app auto-update.",
+        "es": "Un workspace de escritorio open-source para ejecutar y retomar varios agentes de código y terminales en paralelo, creado por Kauã (Kc1t). Lo uso todos los días y contribuí de vuelta con PRs e issues, del fix de scroll en TUIs al auto-update in-app."
       },
       "techStack": ["Tauri", "Rust", "React", "TypeScript", "xterm.js"],
-      "startDate": "2026-06-15",
+      "startDate": "2026-06-26",
       "isFeatured": true,
       "links": {
         "github": "https://github.com/Kc1t/alethe-agents",
@@ -94,19 +94,19 @@
       },
       "caseStudy": {
         "problem": {
-          "pt-br": "Rodar vários agentes de código e terminais ao mesmo tempo vira um caos de janelas — e, pior, fechar uma aba mata o processo por baixo, jogando fora a sessão do agente e todo o contexto acumulado.",
-          "en": "Running several coding agents and terminals at once becomes a chaos of windows — and worse, closing a tab kills the underlying process, throwing away the agent's session and all its accumulated context.",
-          "es": "Ejecutar varios agentes de código y terminales a la vez se vuelve un caos de ventanas — y peor, cerrar una pestaña mata el proceso por debajo, tirando la sesión del agente y todo el contexto acumulado."
+          "pt-br": "Usando o Alethe pesado no dia a dia, esbarrei em coisas reais. A memória subindo por processos de PTY órfãos, o scroll do mouse morto dentro de TUIs, e ter que ir no GitHub na mão pra saber de versão nova.",
+          "en": "Using Alethe heavily day to day, I ran into real things. Memory climbing from orphaned PTY processes, the mouse scroll dead inside TUIs, and having to go to GitHub by hand to learn about a new version.",
+          "es": "Usando Alethe pesado en el día a día, me topé con cosas reales. La memoria subiendo por procesos de PTY huérfanos, el scroll del mouse muerto dentro de TUIs, y tener que ir a GitHub a mano para saber de una versión nueva."
         },
         "decision": {
-          "pt-br": "Backend de PTY real em Rust (portable-pty), com a sacada de desacoplar o processo do container visual: fechar a aba na interface não mata o terminal por baixo. Em cima disso, um sistema de painéis divididos com vários layouts, sub-abas por terminal para empilhar agentes e shells, suspensão de grupos para liberar memória e persistência de scrollback e sessão para retomar o contexto de onde parou.",
-          "en": "A real PTY backend in Rust (portable-pty), with the key move of decoupling the process from the visual container: closing a tab in the UI doesn't kill the terminal underneath. On top of that, a split-pane system with multiple layouts, per-terminal sub-tabs to stack agents and shells, group suspension to free memory, and scrollback + session persistence to resume context right where you left off.",
-          "es": "Un backend de PTY real en Rust (portable-pty), con la clave de desacoplar el proceso del container visual: cerrar una pestaña en la interfaz no mata el terminal por debajo. Encima de eso, un sistema de paneles divididos con varios layouts, sub-pestañas por terminal para apilar agentes y shells, suspensión de grupos para liberar memoria y persistencia de scrollback y sesión para retomar el contexto donde se dejó."
+          "pt-br": "Reportei os bugs com causa-raiz e mandei três PRs merged. O fix de scroll em buffer alternativo (com testes), a separação do ciclo de vida do terminal (pausar, matar, apagar) e o auto-update in-app com o plugin do Tauri 2, de ponta a ponta.",
+          "en": "I reported the bugs with root-cause analysis and sent three merged PRs. The alternate-buffer scroll fix (with tests), splitting the terminal lifecycle (pause, kill, delete), and an end-to-end in-app auto-update with the Tauri 2 plugin.",
+          "es": "Reporté los bugs con análisis de causa raíz y mandé tres PRs merged. El fix de scroll en buffer alternativo (con tests), la separación del ciclo de vida de la terminal (pausar, matar, borrar) y el auto-update in-app de punta a punta con el plugin de Tauri 2."
         },
         "result": {
-          "pt-br": "Instaladores assinados para Windows, macOS (Apple Silicon e Intel) e Linux, gerados por um pipeline no GitHub Actions. Terminais que continuam vivos ao trocar de layout ou fechar containers visuais, sem perder sessão.",
-          "en": "Signed installers for Windows, macOS (Apple Silicon and Intel), and Linux, built by a GitHub Actions pipeline. Terminals that stay alive when switching layouts or closing visual containers, without losing the session.",
-          "es": "Instaladores firmados para Windows, macOS (Apple Silicon e Intel) y Linux, generados por un pipeline en GitHub Actions. Terminales que siguen vivos al cambiar de layout o cerrar containers visuales, sin perder la sesión."
+          "pt-br": "Três contribuições no ar num projeto que é do Kauã, meu colega e amigo. Não é meu app, é uma contribuição focada, mas cada uma me fez entender melhor terminal, PTY e Tauri. Ainda tem uma issue minha aberta que eu quero construir.",
+          "en": "Three contributions live in a project that's Kauã's, my coworker and friend. It's not my app, it's a focused contribution, but each one made me understand terminals, PTY, and Tauri better. There's still an open issue of mine I want to build.",
+          "es": "Tres contribuciones en vivo en un proyecto que es de Kauã, mi compañero y amigo. No es mi app, es una contribución enfocada, pero cada una me hizo entender mejor terminales, PTY y Tauri. Todavía hay una issue mía abierta que quiero construir."
         }
       }
     },
