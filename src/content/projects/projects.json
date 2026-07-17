@@ -119,9 +119,9 @@
         "es": "Ribeirão Noir"
       },
       "description": {
-        "pt-br": "Jogo investigativo noir ambientado nos anos 1950 de Ribeirão Preto. Protagonizado por Dandara, investigadora negra que enfrenta machismo e racismo. Desenvolvimento solo em 6 meses com Godot 4, arquitetura SOLID e testes automatizados. Lançado na 24ª Feira do Livro e validado por 3 doutores.",
-        "en": "Noir investigative game set in 1950s Ribeirão Preto, Brazil. Starring Dandara, a Black investigator facing sexism and racism. Solo development in 6 months with Godot 4, SOLID architecture and automated tests. Launched at the 24th Book Fair and validated by 3 PhD academics.",
-        "es": "Juego investigativo noir ambientado en los años 1950 de Ribeirão Preto. Protagonizado por Dandara, investigadora negra que enfrenta machismo y racismo. Desarrollo solo en 6 meses con Godot 4, arquitectura SOLID y tests automatizados. Lanzado en la 24ª Feria del Libro y validado por 3 doctores."
+        "pt-br": "Jogo investigativo noir nos anos 1950 de Ribeirão Preto, protagonizado por Dandara, como ferramenta de educação antirracista. Desenvolvido em Godot (GDScript) com arquitetura SOLID e narrativa orientada a dados. Validado por três doutores e lançado na Feira do Livro.",
+        "en": "Noir investigative game in 1950s Ribeirão Preto, Brazil, starring Dandara, built as a tool for antiracist education. Developed in Godot (GDScript) with a SOLID architecture and a data-driven narrative. Validated by three PhD academics and launched at the Book Fair.",
+        "es": "Juego investigativo noir en los años 1950 de Ribeirão Preto, protagonizado por Dandara, como herramienta de educación antirracista. Desarrollado en Godot (GDScript) con arquitectura SOLID y narrativa orientada a datos. Validado por tres doctores y lanzado en la Feria del Libro."
       },
       "techStack": ["Godot 4", "GDScript", "SOLID", "Design Patterns"],
       "startDate": "2025-01-01",
@@ -131,19 +131,19 @@
       },
       "caseStudy": {
         "problem": {
-          "pt-br": "O jogo de mesa original (Curupira Educação) sobre história e patrimônio de Ribeirão Preto precisava de uma adaptação digital gratuita e acessível. Financiado pela Lei Paulo Gustavo, o desafio era entregar um RPG narrativo completo como desenvolvedor solo em 6 meses.",
-          "en": "The original tabletop game (Curupira Education) about the history and heritage of Ribeirão Preto needed a free, accessible digital adaptation. Funded by the Paulo Gustavo Law, the challenge was delivering a complete narrative RPG as a solo developer in 6 months.",
-          "es": "El juego de mesa original (Curupira Educación) sobre la historia y patrimonio de Ribeirão Preto necesitaba una adaptación digital gratuita y accesible. Financiado por la Ley Paulo Gustavo, el desafío era entregar un RPG narrativo completo como desarrollador solo en 6 meses."
+          "pt-br": "Transformar história e cultura afro-brasileira em experiência envolvente para jovens, ajudando a cumprir as leis 10.639 e 11.645. O desafio de engenharia era entregar um RPG narrativo completo em Godot, em seis meses.",
+          "en": "Turn Afro-Brazilian history and culture into an engaging experience for young people, helping schools meet laws 10.639 and 11.645. The engineering challenge was shipping a complete narrative RPG in Godot, in six months.",
+          "es": "Transformar la historia y cultura afrobrasileña en una experiencia envolvente para jóvenes, ayudando a cumplir las leyes 10.639 y 11.645. El desafío de ingeniería era entregar un RPG narrativo completo en Godot, en seis meses."
         },
         "decision": {
-          "pt-br": "Godot 4.4 com GDScript, princípios SOLID e padrões Singleton/Observer/Composition. Narrativa ramificada com 3 profissões, 4 posturas e 11 marcos históricos reais. Sistema de dados probabilístico com HP. Testes automatizados com framework do Godot. Multiplataforma: web e Android. Desenvolvimento solo em 6 meses.",
-          "en": "Godot 4.4 with GDScript, SOLID principles and Singleton/Observer/Composition patterns. Branching narrative with 3 professions, 4 stances, and 11 real historical landmarks. Probabilistic dice system with HP. Automated testing with Godot's framework. Cross-platform: web and Android. Solo development in 6 months.",
-          "es": "Godot 4.4 con GDScript, principios SOLID y patrones Singleton/Observer/Composition. Narrativa ramificada con 3 profesiones, 4 posturas y 11 marcos históricos reales. Sistema de dados probabilístico con HP. Tests automatizados con framework de Godot. Multiplataforma: web y Android. Desarrollo solo en 6 meses."
+          "pt-br": "Narrativa orientada a dados em JSON, interpretada por um motor próprio, com sistema de dado, postura e risco, e um save que reconstrói a partida inteira. Arquitetura SOLID, com SRP por delegação, Observer via signals e composição sobre herança. Nove locais de Ribeirão, 3 profissões e 4 posturas.",
+          "en": "A data-driven narrative in JSON, run by a custom engine, with a dice, stance and risk system, and a save that rebuilds the whole playthrough. SOLID architecture, with SRP by delegation, Observer via signals, and composition over inheritance. Nine Ribeirão locations, 3 professions, and 4 stances.",
+          "es": "Narrativa orientada a datos en JSON, interpretada por un motor propio, con sistema de dado, postura y riesgo, y un guardado que reconstruye la partida entera. Arquitectura SOLID, con SRP por delegación, Observer vía signals y composición sobre herencia. Nueve lugares de Ribeirão, 3 profesiones y 4 posturas."
         },
         "result": {
-          "pt-br": "Lançamento na 24ª Feira Internacional do Livro. Validado por 3 doutores (USP, UFTM, Metodista). Cobertura de imprensa (Portal Zumm, Revide). Material pedagógico publicado em domínio público. Disponível gratuitamente no Google Play e itch.io. Usado como case no TCC da FATEC.",
-          "en": "Launched at the 24th International Book Fair. Validated by 3 PhD academics (USP, UFTM, Metodista). Press coverage (Portal Zumm, Revide). Pedagogical material published in public domain. Available for free on Google Play and itch.io. Used as case study for FATEC thesis.",
-          "es": "Lanzamiento en la 24ª Feria Internacional del Libro. Validado por 3 doctores (USP, UFTM, Metodista). Cobertura de prensa (Portal Zumm, Revide). Material pedagógico publicado en dominio público. Disponible gratuitamente en Google Play e itch.io. Usado como case en el TCC de FATEC."
+          "pt-br": "Lançado na Feira Internacional do Livro, gratuito, no itch.io. Validado por três doutores (USP, Metodista, UFTM) e mapeado à BNCC do 9º ano, com material pedagógico acompanhando o jogo. Virou também meu TCC na FATEC.",
+          "en": "Launched at the International Book Fair, free, on itch.io. Validated by three PhD academics (USP, Metodista, UFTM) and mapped to the 9th-grade BNCC, with a teaching booklet alongside the game. It also became my thesis at FATEC.",
+          "es": "Lanzado en la Feria Internacional del Libro, gratuito, en itch.io. Validado por tres doctores (USP, Metodista, UFTM) y mapeado a la BNCC de 9º año, con material pedagógico acompañando el juego. También se volvió mi tesis en FATEC."
         }
       }
     },
