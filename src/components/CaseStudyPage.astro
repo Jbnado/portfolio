@@ -64,6 +64,31 @@ const homeHref = locale === 'pt-br' ? '/#projetos' : `/${locale}/#projetos`;
       <Content />
     </article>
 
+    {data.record && (
+      <section class="case-record">
+        <div class="case-record-label crt-glow">{data.record.label}</div>
+        <div class="case-record-cards">
+          {data.record.cards.map((c: any) => (
+            <div class="case-record-card vintage-card">
+              <div class="case-record-head">
+                <span class="case-record-champ crt-glow">{c.champ}</span>
+                <span class="case-record-kda">{c.kda}</span>
+              </div>
+              <div class="case-record-who">{c.who}</div>
+              <dl class="case-record-stats">
+                {c.stats.map((s: any) => (
+                  <div class="case-record-stat">
+                    <dt>{s.k}</dt>
+                    <dd class="crt-glow">{s.v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
     {data.highlights && data.highlights.length > 0 && (
       <div class="case-highlights">
         {data.highlights.map((h: any) => (

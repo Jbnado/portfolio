@@ -73,6 +73,15 @@ const caseStudies = defineCollection({
     seoTitle: z.string().optional(),
     highlights: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
     meta: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
+    record: z.object({
+      label: z.string(),
+      cards: z.array(z.object({
+        champ: z.string(),
+        who: z.string(),
+        kda: z.string(),
+        stats: z.array(z.object({ k: z.string(), v: z.string() })),
+      })),
+    }).optional(),
     ogImage: z.string().optional(),
   }),
 });

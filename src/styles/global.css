@@ -628,6 +628,22 @@ button,
 .case-highlight-value { font-size: 1.75rem; font-weight: 700; color: var(--color-text-primary); }
 .case-highlight-label { font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-text-secondary); letter-spacing: 0.08em; margin-top: 0.25rem; }
 
+/* Case record card (ex.: stats finais top-bug) */
+.case-record { margin-top: 2.5rem; }
+.case-record-label { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 0.75rem; }
+.case-record-cards { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
+@media (min-width: 640px) { .case-record-cards { grid-template-columns: 1fr 1fr; } }
+.case-record-card { border: 2px solid var(--color-border); padding: 1rem 1.1rem; }
+.case-record-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+.case-record-champ { font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem; color: var(--color-text-primary); }
+.dark .case-record-champ { color: var(--color-accent-secondary); }
+.case-record-kda { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-secondary); }
+.case-record-who { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-secondary); margin-bottom: 0.75rem; letter-spacing: 0.04em; }
+.case-record-stats { margin: 0; }
+.case-record-stat { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; border-top: 1px dashed var(--color-border); padding: 0.35rem 0; }
+.case-record-stat dt { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.case-record-stat dd { font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; color: var(--color-text-primary); margin: 0; }
+
 /* ============================================
    PUNK DARK MODE — Shared element styles
    ============================================ */
