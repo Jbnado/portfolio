@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import SectionTitle from './SectionTitle.astro';
+import SectionEyebrow from './SectionEyebrow.astro';
 import { t, getCvPath } from '../i18n/utils';
 import fistImg from '../assets/imgs/pngtree-powerful-fist-with-wrench-a-symbol-of-worker-empowerment.png';
 import angelaDavisImg from '../assets/imgs/pngtree-angela-davis-black-panther-portrait-bold-afro-graphic-style-flat-colors.webp';
@@ -37,6 +37,11 @@ const { locale = 'pt-br' } = Astro.props;
 
   <div class="contact-gradient-border" aria-hidden="true"></div>
   <div class="contact-container">
+    <SectionEyebrow
+      term={t('terminal.contact', locale)}
+      out={t('terminal.contactOut', locale)}
+      paper={t('paper.contact', locale)}
+    />
     <p class="contact-cta">{t('contact.cta', locale)}</p>
     <p class="contact-subtitle">{t('contact.subtitle', locale)}</p>
 

@@ -22,6 +22,11 @@ const year = new Date().getFullYear();
     <p class="footer-text">
       © {year} João Bernardo · {t('footer.builtWith', locale)} <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="footer-link">Astro</a> · <a href="https://github.com/Jbnado/portfolio-jb" target="_blank" rel="noopener noreferrer" class="footer-link" aria-label={t('footer.repoLabel', locale)}>{t('footer.openSource', locale)}</a>
     </p>
+    <div class="footer-term" aria-hidden="true">
+      <span class="term-line crt-glow">{t('terminal.footer', locale)}</span>
+      <span class="term-out">{t('terminal.footerOut', locale)}</span>
+      <span class="paper-tag footer-paper">{t('paper.footer', locale)}</span>
+    </div>
     <!-- Punk SVG icon strip (dark mode only) — original hand-drawn punk icons -->
     <div class="punk-collage-strip" aria-hidden="true">
       <!-- Lightning bolt -->
@@ -105,6 +110,19 @@ const year = new Date().getFullYear();
     font-size: 0.8125rem;
     color: var(--color-text-secondary);
     line-height: 1.6;
+  }
+
+  .footer-term {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+  .footer-term .term-line { color: var(--color-accent); }
+  .footer-paper {
+    font-size: 0.625rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
   }
 
   .footer-link {

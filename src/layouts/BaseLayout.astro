@@ -5,6 +5,7 @@ import SkipToContent from '../components/SkipToContent.astro';
 import SEOHead from '../components/SEOHead.astro';
 import NavBar from '../components/NavBar.astro';
 import ScrollSpy from '../islands/ScrollSpy.tsx';
+import TermStatusline from '../islands/TermStatusline.tsx';
 import Footer from '../components/Footer.astro';
 
 interface Props {
@@ -97,5 +98,6 @@ const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
       <slot />
     </main>
     <Footer locale={locale} />
+    <TermStatusline client:idle />
   </body>
 </html>

@@ -15,6 +15,13 @@ const locales = [
 
 const current = locales.find((l) => l.code === locale) ?? locales[0];
 const others = locales.filter((l) => l.code !== locale);
+
+// Comando exibido na statusline (dark) ao trocar de idioma.
+const LANG_CMD: Record<string, string> = {
+  'pt-br': 'export LANG=pt_BR.UTF-8',
+  en: 'export LANG=en_US.UTF-8',
+  es: 'export LANG=es_ES.UTF-8',
+};
 ---
 
 <details class="lang-switcher" aria-label={t('language.switch', locale)}>
@@ -25,7 +32,7 @@ const others = locales.filter((l) => l.code !== locale);
   <ul class="lang-dropdown" role="list">
     {others.map((l) => (
       <li>
-        <a href={l.path} class="lang-option" hreflang={l.code === 'pt-br' ? 'pt-BR' : l.code} aria-label={l.fullName}>
+        <a href={l.path} class="lang-option" hreflang={l.code === 'pt-br' ? 'pt-BR' : l.code} aria-label={l.fullName} data-cmd={LANG_CMD[l.code]}>
           {l.label}
         </a>
       </li>

@@ -14,9 +14,7 @@
   "hero": {
     "role": "Fullstack Developer",
     "name": "João Bernardo",
-    "description": "Fullstack developer from Ribeirão Preto, Brazil. I build APIs, interfaces, and sometimes games.",
-    "boot": "> SYSTEM_ONLINE — READY",
-    "status": "AVAILABLE FOR WORK"
+    "description": "Fullstack developer from Ribeirão Preto, Brazil. I build APIs, interfaces, and sometimes games."
   },
   "about": {
     "title": "About Me",
@@ -42,7 +40,6 @@
     "result": "Result",
     "back": "BACK",
     "readMore": "Read case study",
-    "eyebrow": "> CASE_STUDY",
     "code": "CODE",
     "liveDemo": "LIVE DEMO"
   },
@@ -77,6 +74,34 @@
     "ptBr": "Português (Brasil)",
     "en": "English",
     "es": "Español"
+  },
+  "terminal": {
+    "heroCmd": "jbnado@rp:~$ whoami",
+    "heroStatus": "● active (running) — open to work",
+    "heroStack": "jbnado@rp:~$ cat ~/.stack",
+    "about": "jbnado@rp:~$ cat sobre-mim.md",
+    "timeline": "jbnado@rp:~$ git log --oneline --reverse",
+    "projects": "jbnado@rp:~$ cd ~/projetos && ls -la",
+    "contact": "jbnado@rp:~$ ping -c 1 bernardo",
+    "contactOut": "64 bytes from Ribeirão Preto: icmp_seq=1 ttl=64 time=1.0 ms",
+    "case": "jbnado@rp:~/projetos$ less",
+    "back": "cd ..",
+    "footer": "jbnado@rp:~$ exit",
+    "footerOut": "Connection to jbnado.dev closed.",
+    "notFound": "bash: cd: essa-página: No such file or directory"
+  },
+  "paper": {
+    "heroProj": "PROJ. No. 001/2026 · REV. 03",
+    "heroStatus": "AVAILABLE",
+    "heroStack": "MATERIALS:",
+    "about": "SHEET 02/06 · TECHNICAL LEAD ON RECORD",
+    "timeline": "REVISION HISTORY",
+    "projects": "SHEET 04/06 · SPECIFICATION REPORT",
+    "contact": "SIGNATURE OF RECORD",
+    "case": "SPECIFICATION REPORT · SHEET 01",
+    "back": "← BACK TO INDEX",
+    "footer": "END OF DOCUMENT · SHEET 06/06",
+    "notFound": "SHEET NOT FOUND · CHECK NUMBERING"
   },
   "seo": {
     "title": "João Bernardo — Fullstack Developer",

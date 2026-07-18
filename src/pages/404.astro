@@ -10,9 +10,13 @@ const locale = 'pt-br';
     <div class="not-found-logo" aria-hidden="true">
       jb<span class="not-found-dot">.</span>
     </div>
+    <div class="not-found-eyebrow" aria-hidden="true">
+      <span class="term-line crt-glow">{t('terminal.notFound', locale)}</span>
+      <span class="paper-tag">{t('paper.notFound', locale)}</span>
+    </div>
     <h1 class="not-found-heading">{t('notFound.heading', locale)}</h1>
     <p class="not-found-message">{t('notFound.message', locale)}</p>
-    <a href="/" class="not-found-link">{t('notFound.back', locale)}</a>
+    <a href="/" class="not-found-link" data-cmd="cd ~">{t('notFound.back', locale)}</a>
   </section>
 </BaseLayout>
 
@@ -28,7 +32,7 @@ const locale = 'pt-br';
   }
 
   .not-found-logo {
-    font-family: var(--font-heading);
+    font-family: var(--font-display);
     font-size: clamp(4rem, 10vw, 8rem);
     font-weight: 800;
     color: var(--color-text-primary);
@@ -38,6 +42,23 @@ const locale = 'pt-br';
 
   .not-found-dot {
     color: var(--color-accent);
+  }
+
+  .not-found-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .not-found-eyebrow .term-line {
+    color: var(--color-accent);
+  }
+
+  .not-found-eyebrow .paper-tag {
+    color: var(--color-text-secondary);
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
   }
 
   .not-found-heading {
@@ -65,7 +86,7 @@ const locale = 'pt-br';
     border-radius: 8px;
     font-weight: 600;
     text-decoration: none;
-    transition: background 200ms var(--ease-out);
+    transition: background 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .not-found-link:hover {

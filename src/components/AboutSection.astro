@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import SectionTitle from './SectionTitle.astro';
+import SectionEyebrow from './SectionEyebrow.astro';
 import { t } from '../i18n/utils';
 import killuaImg from '../assets/imgs/Killua_full_body.webp';
 import esqueletoImg from '../assets/imgs/esqueleto-de-surf-tropical.webp';
@@ -28,8 +29,8 @@ const { locale = 'pt-br' } = Astro.props;
   <span class="punk-ono" style="bottom:5%;right:20%;font-size:1rem;color:#61ffca;transform:rotate(8deg);text-shadow:0 0 8px rgba(97,255,202,0.4)" aria-hidden="true">&#9733;</span>
 
   <div class="about-container">
+    <SectionEyebrow term={t('terminal.about', locale)} paper={t('paper.about', locale)} />
     <SectionTitle title={t('about.title', locale)} />
-    <span class="ink-stamp" style="font-size:0.625rem">DOSSIÊ</span>
     <div class="about-content">
       <p class="about-description">{t('about.intro', locale)}</p>
       <blockquote class="about-pullquote">

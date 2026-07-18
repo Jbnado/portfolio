@@ -1,7 +1,6 @@
 ---
 import { render } from 'astro:content';
 import { t } from '../i18n/utils';
-import { caseStudyUrl } from '../utils/constants';
 import TechBadge from './TechBadge.astro';
 
 interface Props {
@@ -15,13 +14,21 @@ const { project, number, locale, entry, typeLabel } = Astro.props;
 const { Content } = await render(entry);
 const data = entry.data;
 const displayNumber = String(number).padStart(2, '0');
-const year = project.startDate.slice(0, 4);
 const homeHref = locale === 'pt-br' ? '/#projetos' : `/${locale}/#projetos`;
+const caseCmd = `${t('terminal.case', locale)} ${project.id}.case.md`;
 ---
 
 <div class="case-page blueprint-wrap">
   <div class="case-container">
-    <a href={homeHref} class="case-back">← {t('caseStudy.back', locale)}_AO_DECK</a>
+    <a
+      href={homeHref}
+      class="case-back"
+      data-cmd={t('terminal.back', locale)}
+      aria-label={t('caseStudy.back', locale)}
+    >
+      <span class="term-line">{t('terminal.back', locale)}</span>
+      <span class="paper-tag">{t('paper.back', locale)}</span>
+    </a>
 
     <header class="case-head card-edge-holes vintage-card">
       <div class="case-head-top">
@@ -30,7 +37,10 @@ const homeHref = locale === 'pt-br' ? '/#projetos' : `/${locale}/#projetos`;
         </div>
         <span class="case-num">#{displayNumber}</span>
       </div>
-      <p class="case-eyebrow crt-glow">{t('caseStudy.eyebrow', locale)}</p>
+      <p class="case-eyebrow" aria-hidden="true">
+        <span class="term-line crt-glow">{caseCmd}</span>
+        <span class="paper-tag">{t('paper.case', locale)}</span>
+      </p>
       <div class="case-titlerow">
         <h1 class="case-title crt-glow">{data.title}</h1>
         <span class={`project-type-stamp project-type-stamp--${project.type}`}>{typeLabel}</span>

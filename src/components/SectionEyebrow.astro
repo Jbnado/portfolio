@@ -1,0 +1,17 @@
+---
+// Eyebrow decorativo acima de um SectionTitle.
+// Dark = linha de shell real; Light = rótulo de prancheta de engenharia.
+// Ambos aria-hidden: o h2 do SectionTitle continua sendo o texto acessível.
+interface Props {
+  term: string; // linha de shell (dark) — inclui o prompt quando aplicável
+  paper: string; // rótulo de prancheta (light)
+  out?: string; // output de shell opcional (dark only), ex.: resposta de ping
+}
+const { term, paper, out } = Astro.props;
+---
+
+<div class="section-eyebrow" aria-hidden="true">
+  <span class="term-line crt-glow">{term}</span>
+  {out && <span class="term-out">{out}</span>}
+  <span class="paper-tag">{paper}</span>
+</div>

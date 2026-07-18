@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import SectionTitle from './SectionTitle.astro';
+import SectionEyebrow from './SectionEyebrow.astro';
 import TimelineEntry from './TimelineEntry.astro';
 import { t } from '../i18n/utils';
 import thorfinnImg from '../assets/imgs/Thorfinn-full-body.webp';
@@ -38,8 +39,8 @@ const localeKey = locale as 'pt-br' | 'en' | 'es';
   <span class="punk-ono" style="bottom:10%;left:15%;font-size:0.875rem;color:#61ffca;transform:rotate(20deg);text-shadow:0 0 8px rgba(97,255,202,0.4)" aria-hidden="true">ZAP!</span>
 
   <div class="timeline-container">
+    <SectionEyebrow term={t('terminal.timeline', locale)} paper={t('paper.timeline', locale)} />
     <SectionTitle title={t('sections.timeline', locale)} />
-    <span class="ink-stamp" style="font-size:0.625rem">LOG</span>
     <ol class="timeline-list">
       {items.map((item) => (
         <TimelineEntry
