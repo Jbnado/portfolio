@@ -7,6 +7,7 @@ import NavBar from '../components/NavBar.astro';
 import ScrollSpy from '../islands/ScrollSpy.tsx';
 import TermStatusline from '../islands/TermStatusline.tsx';
 import Footer from '../components/Footer.astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 
 interface Props {
   title?: string;
@@ -99,5 +100,6 @@ const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
     </main>
     <Footer locale={locale} />
     <TermStatusline client:idle />
+    <SpeedInsights />
   </body>
 </html>
