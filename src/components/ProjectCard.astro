@@ -50,9 +50,9 @@ const year = startDate.slice(0, 4);
           target="_blank"
           rel="noopener noreferrer"
           class="project-link"
-          aria-label={`GitHub: ${title}`}
+          aria-label={t('projects.githubLabel', locale, { title })}
         >
-          GitHub <span aria-hidden="true">↗</span>
+          {t('projects.github', locale)} <span aria-hidden="true">↗</span>
         </a>
         )}
         {links.demo && (
@@ -61,9 +61,9 @@ const year = startDate.slice(0, 4);
             target="_blank"
             rel="noopener noreferrer"
             class="project-link"
-            aria-label={`Demo: ${title}`}
+            aria-label={t('projects.demoLabel', locale, { title })}
           >
-            Demo <span aria-hidden="true">↗</span>
+            {t('projects.demo', locale)} <span aria-hidden="true">↗</span>
           </a>
         )}
       </div>
@@ -78,7 +78,7 @@ const year = startDate.slice(0, 4);
 
     <details class="case-study-details">
       <summary class="case-study-trigger">
-        <span>Case Study</span>
+        <span>{t('caseStudy.expand', locale)}</span>
         <span class="case-study-chevron" aria-hidden="true">›</span>
       </summary>
       <div class="case-study-body">

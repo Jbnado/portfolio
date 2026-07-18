@@ -12,10 +12,16 @@ const { locale = 'pt-br' } = Astro.props;
 
 const localePrefix = locale === 'pt-br' ? '' : `/${locale}`;
 
+// Na home as âncoras são in-page (#sobre). Fora dela (ex.: página de case study)
+// essas seções não existem, então precisam voltar pra home + âncora.
+const path = Astro.url.pathname.replace(/\/$/, '');
+const isHome = path === '' || path === '/en' || path === '/es';
+const hashPrefix = isHome ? '' : `${localePrefix}/`;
+
 const navLinks = [
-  { href: '#sobre', label: t('nav.about', locale) },
-  { href: '#projetos', label: t('nav.projects', locale) },
-  { href: '#contacto', label: t('nav.contact', locale) },
+  { href: `${hashPrefix}#sobre`, label: t('nav.about', locale) },
+  { href: `${hashPrefix}#projetos`, label: t('nav.projects', locale) },
+  { href: `${hashPrefix}#contacto`, label: t('nav.contact', locale) },
 ];
 ---
 

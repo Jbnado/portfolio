@@ -24,7 +24,11 @@ const translations: Record<string, Record<string, unknown>> = {
  * Get translation by dot-notation key.
  * Falls back to key itself if not found.
  */
-export function t(key: string, locale: string = DEFAULT_LOCALE): string {
+export function t(
+  key: string,
+  locale: string = DEFAULT_LOCALE,
+  params?: Record<string, string | number>,
+): string {
   const lang = translations[locale] ?? translations[DEFAULT_LOCALE];
   const keys = key.split('.');
   let value: unknown = lang;
@@ -37,7 +41,13 @@ export function t(key: string, locale: string = DEFAULT_LOCALE): string {
     }
   }
 
-  return typeof value === 'string' ? value : key;
+  let out = typeof value === 'string' ? value : key;
+  if (params) {
+    for (const [pk, pv] of Object.entries(params)) {
+      out = out.split(`{${pk}}`).join(String(pv));
+    }
+  }
+  return out;
 }
 
 /**

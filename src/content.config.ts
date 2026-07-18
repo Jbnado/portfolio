@@ -13,7 +13,7 @@ const stats = defineCollection({
     items: z.array(z.object({
       value: z.number(),
       suffix: z.string(),
-      label: z.string(),
+      label: i18nText,
     })),
   }),
 });

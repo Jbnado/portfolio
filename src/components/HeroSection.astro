@@ -12,6 +12,7 @@ interface Props {
 }
 
 const { locale = 'pt-br' } = Astro.props;
+const localeKey = locale as 'pt-br' | 'en' | 'es';
 
 const statsEntries = await getCollection('stats');
 const statsData = statsEntries[0]?.data?.items ?? [];
@@ -67,7 +68,7 @@ const techString = techStack.join(' · ');
       <!-- Right: Stats -->
       <div class="hero-stats hero-stagger" style="--stagger: 5">
         {statsData.map((stat) => (
-          <StatCard value={stat.value} suffix={stat.suffix} label={stat.label}>
+          <StatCard value={stat.value} suffix={stat.suffix} label={stat.label[localeKey] ?? stat.label['pt-br']}>
             <StatsCounter client:visible value={stat.value} suffix={stat.suffix} />
           </StatCard>
         ))}
