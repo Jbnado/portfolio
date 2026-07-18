@@ -11,7 +11,7 @@ const { term, paper, out } = Astro.props;
 ---
 
 <div class="section-eyebrow" aria-hidden="true">
-  <span class="term-line crt-glow">{term}</span>
-  {out && <span class="term-out">{out}</span>}
-  <span class="paper-tag">{paper}</span>
+  <span class="term-line crt-glow" data-txt={term}></span>
+  {out && <span class="term-out" data-txt={out}></span>}
+  <span class="paper-tag" data-txt={paper}></span>
 </div>

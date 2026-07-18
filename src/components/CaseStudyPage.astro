@@ -26,8 +26,8 @@ const caseCmd = `${t('terminal.case', locale)} ${project.id}.case.md`;
       data-cmd={t('terminal.back', locale)}
       aria-label={t('caseStudy.back', locale)}
     >
-      <span class="term-line">{t('terminal.back', locale)}</span>
-      <span class="paper-tag">{t('paper.back', locale)}</span>
+      <span class="term-line" data-txt={t('terminal.back', locale)}></span>
+      <span class="paper-tag" data-txt={t('paper.back', locale)}></span>
     </a>
 
     <header class="case-head card-edge-holes vintage-card">
@@ -38,8 +38,8 @@ const caseCmd = `${t('terminal.case', locale)} ${project.id}.case.md`;
         <span class="case-num">#{displayNumber}</span>
       </div>
       <p class="case-eyebrow" aria-hidden="true">
-        <span class="term-line crt-glow">{caseCmd}</span>
-        <span class="paper-tag">{t('paper.case', locale)}</span>
+        <span class="term-line crt-glow" data-txt={caseCmd}></span>
+        <span class="paper-tag" data-txt={t('paper.case', locale)}></span>
       </p>
       <div class="case-titlerow">
         <h1 class="case-title crt-glow">{data.title}</h1>

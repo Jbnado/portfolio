@@ -584,6 +584,13 @@ button,
 .dark .term-out { display: block; }
 .light .paper-tag { display: inline-block; }
 
+/* O texto decorativo vive num data-attr e é pintado por pseudo-elemento.
+   No modo leitura do navegador (que joga o CSS fora) o span fica vazio e
+   some, deixando só o conteúdo real. Sem duplicar shell + prancheta. */
+.term-line::before,
+.term-out::before,
+.paper-tag::before { content: attr(data-txt); }
+
 /* Eyebrow de seção (imediatamente acima do SectionTitle) */
 .section-eyebrow {
   font-family: var(--font-mono);
@@ -854,12 +861,18 @@ button,
    PUNK — Mobile Responsive (shared elements)
    ============================================ */
 
-@media (max-width: 767px) {
-  /* Stickers: shrink dramatically */
-  .punk-sticker {
-    opacity: 0.5 !important;
+/* As imagens de personagem sobrepõem texto e links no celular e no tablet
+   (o hero 2-col aperta o Gon sobre as estatísticas). São flourish de desktop:
+   aparecem só a partir de 1024px. No mobile a identidade punk fica no texto
+   verde, glow, glitch, nos gogo/BOOM e na tira de ícones do rodapé. */
+@media (max-width: 1023px) {
+  .punk-sticker,
+  .punk-sticker-bg {
+    display: none !important;
   }
+}
 
+@media (max-width: 767px) {
   /* Text decorations: smaller, fewer visible */
   .punk-ono {
     font-size: 0.75rem !important;

@@ -23,9 +23,9 @@ const year = new Date().getFullYear();
       © {year} João Bernardo · {t('footer.builtWith', locale)} <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="footer-link">Astro</a> · <a href="https://github.com/Jbnado/portfolio" target="_blank" rel="noopener noreferrer" class="footer-link" aria-label={t('footer.repoLabel', locale)}>{t('footer.openSource', locale)}</a>
     </p>
     <div class="footer-term" aria-hidden="true">
-      <span class="term-line crt-glow">{t('terminal.footer', locale)}</span>
-      <span class="term-out">{t('terminal.footerOut', locale)}</span>
-      <span class="paper-tag footer-paper">{t('paper.footer', locale)}</span>
+      <span class="term-line crt-glow" data-txt={t('terminal.footer', locale)}></span>
+      <span class="term-out" data-txt={t('terminal.footerOut', locale)}></span>
+      <span class="paper-tag footer-paper" data-txt={t('paper.footer', locale)}></span>
     </div>
     <!-- Punk SVG icon strip (dark mode only) — original hand-drawn punk icons -->
     <div class="punk-collage-strip" aria-hidden="true">
