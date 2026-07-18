@@ -9,9 +9,9 @@
         "es": "Instanta"
       },
       "description": {
-        "pt-br": "Feed colaborativo de fotos por evento: os convidados alimentam um mural ao vivo com as fotos da festa. App 100% edge-native rodando em Cloudflare Workers, com autenticação forte (Argon2 no edge + 2FA) e suporte offline. Projeto pessoal em desenvolvimento.",
-        "en": "Collaborative per-event photo feed: guests fill a live wall with the party's photos. A fully edge-native app running on Cloudflare Workers, with strong auth (edge Argon2 + 2FA) and offline support. Personal project in progress.",
-        "es": "Feed colaborativo de fotos por evento: los invitados alimentan un muro en vivo con las fotos de la fiesta. App 100% edge-native en Cloudflare Workers, con autenticación fuerte (Argon2 en el edge + 2FA) y soporte offline. Proyecto personal en desarrollo."
+        "pt-br": "Feed colaborativo de fotos por evento, com mural ao vivo e telão no salão. Projeto pessoal, solo, edge-native na Cloudflare (Workers, D1, R2, Durable Objects), com uma pegada de segurança e arquitetura mais séria do que um app de festa pediria.",
+        "en": "A collaborative per-event photo feed, with a live wall and a big-screen mode for the venue. A solo personal project, edge-native on Cloudflare (Workers, D1, R2, Durable Objects), with a security and architecture posture more serious than a party app would ask for.",
+        "es": "Un feed colaborativo de fotos por evento, con muro en vivo y modo pantalla grande para el salón. Un proyecto personal, solo, edge-native en Cloudflare (Workers, D1, R2, Durable Objects), con una postura de seguridad y arquitectura más seria de la que un app de fiesta pediría."
       },
       "techStack": ["Hono", "Cloudflare Workers", "D1", "Drizzle", "React 19", "TypeScript"],
       "startDate": "2026-06-22",
@@ -19,19 +19,19 @@
       "links": {},
       "caseStudy": {
         "problem": {
-          "pt-br": "Todo evento espalha fotos por dezenas de celulares e grupos de mensagem — nunca existe um álbum único, vivo e compartilhado. Eu queria algo instantâneo, mobile-first, que funcionasse até com o wi-fi ruim de um salão de festa.",
-          "en": "Every event scatters photos across dozens of phones and chat groups — there's never one shared, living album. I wanted something instant, mobile-first, that works even on a venue's flaky wi-fi.",
-          "es": "Cada evento dispersa fotos entre decenas de celulares y grupos de mensajes — nunca existe un álbum único, vivo y compartido. Quería algo instantáneo, mobile-first, que funcionara hasta con el wi-fi malo de un salón de fiestas."
+          "pt-br": "Todo evento espalha as fotos por dezenas de celulares e grupos de mensagem, e nunca existe um álbum único, vivo e compartilhado. Eu queria algo instantâneo, mobile-first, que funcionasse até com o wi-fi ruim de um salão de festa.",
+          "en": "Every event scatters its photos across dozens of phones and chat groups, and there's never one shared, living album. I wanted something instant, mobile-first, that works even on a venue's flaky wi-fi.",
+          "es": "Todo evento dispersa sus fotos entre decenas de celulares y grupos de mensajes, y nunca existe un álbum único, vivo y compartido. Quería algo instantáneo, mobile-first, que funcionara hasta con el wi-fi malo de un salón de fiestas."
         },
         "decision": {
-          "pt-br": "Arquitetura edge-native: Hono rodando em Cloudflare Workers + D1 (SQLite no edge) via Drizzle, então a API fica a milissegundos de qualquer usuário. Front em React 19 + TanStack Router. Arquitetura limpa imposta por regras de fronteira no ESLint — os serviços de domínio não podem importar o framework, ficando testáveis sem subir um Worker. Segurança levada a sério mesmo sendo projeto pessoal: hash de senha com Argon2 em WASM no edge, 2FA por TOTP e força de senha com zxcvbn (dicionário pt-BR). Offline-first com IndexedDB e compressão de imagem no cliente antes do upload.",
-          "en": "Edge-native architecture: Hono on Cloudflare Workers + D1 (SQLite at the edge) via Drizzle, so the API sits milliseconds from any user. React 19 + TanStack Router front end. Clean architecture enforced by ESLint boundary rules — domain services can't import the framework, staying testable without spinning up a Worker. Security taken seriously even for a personal project: Argon2 password hashing in WASM at the edge, TOTP 2FA, and zxcvbn password strength (pt-BR dictionary). Offline-first with IndexedDB and client-side image compression before upload.",
-          "es": "Arquitectura edge-native: Hono en Cloudflare Workers + D1 (SQLite en el edge) vía Drizzle, así la API queda a milisegundos de cualquier usuario. Front en React 19 + TanStack Router. Arquitectura limpia impuesta por reglas de frontera en ESLint — los servicios de dominio no pueden importar el framework, quedando testeables sin levantar un Worker. Seguridad tomada en serio aun siendo proyecto personal: hash de contraseña con Argon2 en WASM en el edge, 2FA por TOTP y fuerza de contraseña con zxcvbn (diccionario pt-BR). Offline-first con IndexedDB y compresión de imagen en el cliente antes del upload."
+          "pt-br": "Arquitetura edge-native de verdade. Hono num Cloudflare Worker, D1 (SQLite no edge) via Drizzle, R2 pras fotos e Durable Object pro rate limit, com front (React 19 + TanStack Router) e API subindo juntos num deploy só. A regra de negócio fica numa camada pura, isolada do framework por uma regra de ESLint, testável sem subir nada. Segurança bem além do que um app de festa pede, com 2FA, anti-enumeração no login e um controle de sessão que detecta token roubado.",
+          "en": "Genuinely edge-native. Hono in a Cloudflare Worker, D1 (SQLite at the edge) via Drizzle, R2 for photos and a Durable Object for rate limiting, with the front end (React 19 + TanStack Router) and API shipping together in a single deploy. The business logic lives in a pure layer, isolated from the framework by an ESLint rule, testable without spinning anything up. Security well beyond what a party app needs, with 2FA, login anti-enumeration, and session handling that detects a stolen token.",
+          "es": "Genuinamente edge-native. Hono en un Cloudflare Worker, D1 (SQLite en el edge) vía Drizzle, R2 para las fotos y un Durable Object para el rate limit, con el front (React 19 + TanStack Router) y la API subiendo juntos en un único deploy. La lógica de negocio vive en una capa pura, aislada del framework por una regla de ESLint, testeable sin levantar nada. Seguridad mucho más allá de lo que un app de fiesta necesita, con 2FA, anti-enumeración en el login y un manejo de sesión que detecta un token robado."
         },
         "result": {
-          "pt-br": "Front e API sobem juntos pro mesmo Worker, com HMR abaixo de 500ms no dev. Qualidade garantida por testes baseados em propriedades (fast-check), testes de acessibilidade (axe-core) e portões de cobertura e tamanho de bundle no CI. Em desenvolvimento ativo.",
-          "en": "Front end and API deploy together to the same Worker, with sub-500ms HMR in dev. Quality backed by property-based tests (fast-check), accessibility tests (axe-core), and coverage + bundle-size gates in CI. Under active development.",
-          "es": "Front y API suben juntos al mismo Worker, con HMR por debajo de 500ms en dev. Calidad respaldada por tests basados en propiedades (fast-check), tests de accesibilidad (axe-core) y controles de cobertura y tamaño de bundle en el CI. En desarrollo activo."
+          "pt-br": "Os testes de integração rodam no workerd, o runtime real dos Workers, com D1, R2 e Durable Object de verdade, mais acessibilidade com axe-core no Playwright. Hoje sobe num endereço workers.dev. É projeto pessoal em construção, ainda não lançado.",
+          "en": "The integration tests run on workerd, the real Workers runtime, with actual D1, R2, and Durable Object, plus accessibility with axe-core in Playwright. Today it ships to a workers.dev address. It's a personal project under construction, not yet launched.",
+          "es": "Los tests de integración corren en workerd, el runtime real de los Workers, con D1, R2 y Durable Object de verdad, más accesibilidad con axe-core en Playwright. Hoy sube a una dirección workers.dev. Es un proyecto personal en construcción, todavía no lanzado."
         }
       }
     },
@@ -201,7 +201,7 @@
       "startDate": "2025-01-01",
       "isFeatured": false,
       "links": {
-        "github": "https://github.com/Jbnado/portfolio-jb",
+        "github": "https://github.com/Jbnado/portfolio",
         "demo": "https://jbnado.dev"
       },
       "caseStudy": {
