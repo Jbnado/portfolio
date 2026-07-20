@@ -85,16 +85,18 @@ El `aria-hidden` en los dos importa. Quien usa lector de pantalla no quiere oír
 
 Ese fue el detalle con el que más me divertí. En el modo oscuro, cuando haces clic en un enlace, una barra fina aparece en el pie y escribe el comando equivalente antes de llevarte a la página. Hacer clic en "leer case study" escribe `cd /projeto/instanta`. Un enlace externo escribe `xdg-open`. La descarga del CV escribe `scp jbnado.dev:cv.pdf ~/Downloads/`.
 
-Parece una tontería, pero hay un montón de reglas para que esto no le estorbe a nadie. La barra solo existe en el oscuro. Si marcaste "reducir movimiento" en el sistema, no intercepta nada y la navegación es instantánea. Un clic con ctrl o con el botón del medio, para abrir en una pestaña nueva, pasa directo sin que yo lo toque. Un enlace que abre en otra pestaña, un correo y una descarga corren la animación en paralelo, sin retener la acción. Solo la navegación normal, en la misma pestaña, es la que retengo para escribir, con un tope de 300 milisegundos para que nunca se convierta en espera.
+Parece una tontería, pero hay un montón de reglas para que esto no le estorbe a nadie. La barra solo existe en el oscuro. Si marcaste "reducir movimiento" en el sistema, igual aparece, solo que con el comando entero de una vez, sin la escritura, y luego navega. Un clic con ctrl o con el botón del medio, para abrir en una pestaña nueva, pasa directo sin que yo lo toque. Un enlace que abre en otra pestaña, un correo y una descarga corren la animación en paralelo, sin retener la acción. Solo la navegación normal, en la misma pestaña, es la que retengo para escribir, con un tope de 300 milisegundos para que nunca se convierta en espera.
 
 ```tsx
-// solo en el oscuro, y se respeta a quien pidió menos movimiento
-if (!isDark() || prefersReduced) return;
+// solo en el universo del terminal (oscuro)
+if (!isDark()) return;
 // ctrl/cmd/shift/alt o el botón del medio nunca se interceptan
 if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
 e.preventDefault();
 type(command, () => { window.location.href = dest; });
+// type() respeta "reducir movimiento": muestra el comando entero,
+// sin escribir, y luego sigue.
 ```
 
 Si el JavaScript no carga, los enlaces funcionan normal, porque el `preventDefault` solo se ejecuta dentro de la isla, que puede ni haber subido. Es adorno encima de un enlace que ya funcionaba solo. Y el correo nunca va a la barra, ni en el comando de mandar mensaje, porque la dirección queda ofuscada en el sitio y no iba a mostrarla en la pantalla en un easter egg.

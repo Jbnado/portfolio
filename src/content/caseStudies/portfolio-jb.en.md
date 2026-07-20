@@ -85,16 +85,18 @@ The `aria-hidden` on both matters. Someone using a screen reader doesn't want to
 
 This was the detail I had the most fun building. In dark mode, when you click a link, a thin bar appears at the bottom and types the equivalent command before taking you to the page. Clicking "read case study" types `cd /projeto/instanta`. An external link types `xdg-open`. The CV download types `scp jbnado.dev:cv.pdf ~/Downloads/`.
 
-It sounds silly, but there are a ton of rules so it never gets in anyone's way. The bar only exists in the dark. If you've set "reduce motion" in your system, it doesn't intercept anything and navigation is instant. A ctrl-click or a middle-click, to open in a new tab, passes straight through untouched. A link that opens in another tab, email, and downloads run the animation in parallel, without holding up the action. Only normal navigation, in the same tab, is what I hold back to type, with a 300-millisecond ceiling so it never turns into waiting.
+It sounds silly, but there are a ton of rules so it never gets in anyone's way. The bar only exists in the dark. If you've set "reduce motion" in your system, it still appears, just with the whole command at once, without the typing, and then navigates. A ctrl-click or a middle-click, to open in a new tab, passes straight through untouched. A link that opens in another tab, email, and downloads run the animation in parallel, without holding up the action. Only normal navigation, in the same tab, is what I hold back to type, with a 300-millisecond ceiling so it never turns into waiting.
 
 ```tsx
-// dark mode only, and anyone who asked for less motion is respected
-if (!isDark() || prefersReduced) return;
+// terminal universe only (dark)
+if (!isDark()) return;
 // ctrl/cmd/shift/alt or middle button are never intercepted
 if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
 e.preventDefault();
 type(command, () => { window.location.href = dest; });
+// type() respects "reduce motion": shows the whole command,
+// without typing, then moves on.
 ```
 
 If JavaScript doesn't load, the links work normally, because the `preventDefault` only runs inside the island, which may not even have come up. It's decoration on top of a link that already worked on its own. And the email never goes to the bar, not even in the send-a-message command, because the address is obfuscated on the site and I wasn't about to throw it on screen in an easter egg.

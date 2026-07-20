@@ -6,7 +6,8 @@ import { useEffect, useRef, useState } from 'preact/hooks';
  *
  * Regras (todas obrigatórias):
  * - Dark only: no tema claro nada acontece.
- * - Respeita prefers-reduced-motion: não intercepta, navegação instantânea.
+ * - Respeita prefers-reduced-motion: mostra o comando inteiro de uma vez
+ *   (sem digitar) e então navega. Menos movimento, não menos recurso.
  * - Nunca intercepta cliques modificados (ctrl/cmd/shift/alt, botão do meio).
  * - target="_blank", download e mailto: fire-and-forget (não atrasa a ação nativa).
  * - Âncoras internas (#...): ignoradas (o scroll começa na hora).
@@ -50,6 +51,15 @@ export default function TermStatusline() {
     const type = (cmd: string, done: () => void) => {
       clearTimers();
       setVisible(true);
+
+      // Movimento reduzido: sem digitação. Mostra o comando inteiro de uma
+      // vez (texto estático não é movimento), segura um instante e segue.
+      if (prefersReduced) {
+        setText(cmd);
+        timers.current.push(window.setTimeout(done, 250));
+        return;
+      }
+
       setText('');
       const budget = 260; // ms — teto abaixo de 300 exigido no spec
       const per = Math.max(6, Math.min(14, Math.floor(budget / cmd.length)));
@@ -84,8 +94,8 @@ export default function TermStatusline() {
       const raw = a.getAttribute('href');
       if (!raw) return;
 
-      // Só no universo do terminal, e nunca com movimento reduzido.
-      if (!isDark() || prefersReduced) return;
+      // Só no universo do terminal. Movimento reduzido é tratado no type().
+      if (!isDark()) return;
 
       // Âncoras internas: sem statusline (scroll imediato).
       if (raw.startsWith('#')) return;

@@ -85,16 +85,18 @@ O `aria-hidden` nos dois importa. Quem usa leitor de tela não quer ouvir "jbnad
 
 Esse foi o detalhe que eu mais me diverti fazendo. No modo escuro, quando você clica num link, uma barra fina aparece no rodapé e digita o comando equivalente antes de te levar pra página. Clicar em "ler case study" digita `cd /projeto/instanta`. Um link externo digita `xdg-open`. O download do CV digita `scp jbnado.dev:cv.pdf ~/Downloads/`.
 
-Parece bobagem, mas tem regra pra caramba pra isso não atrapalhar ninguém. A barra só existe no escuro. Se você marcou "reduzir movimento" no sistema, ela não intercepta nada e a navegação é instantânea. Clique com ctrl ou no botão do meio, pra abrir em nova aba, passa direto sem eu tocar. Link que abre em outra aba, e-mail e download rodam a animação em paralelo, sem segurar a ação. Só a navegação normal, na mesma aba, é que eu seguro pra digitar, com um teto de 300 milissegundos pra nunca virar espera.
+Parece bobagem, mas tem regra pra caramba pra isso não atrapalhar ninguém. A barra só existe no escuro. Se você marcou "reduzir movimento" no sistema, ela ainda aparece, só que com o comando inteiro de uma vez, sem a digitação, e aí navega. Clique com ctrl ou no botão do meio, pra abrir em nova aba, passa direto sem eu tocar. Link que abre em outra aba, e-mail e download rodam a animação em paralelo, sem segurar a ação. Só a navegação normal, na mesma aba, é que eu seguro pra digitar, com um teto de 300 milissegundos pra nunca virar espera.
 
 ```tsx
-// só no escuro, e quem pediu menos movimento é respeitado
-if (!isDark() || prefersReduced) return;
+// só no universo do terminal (escuro)
+if (!isDark()) return;
 // ctrl/cmd/shift/alt ou botão do meio nunca são interceptados
 if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
 e.preventDefault();
 type(command, () => { window.location.href = dest; });
+// type() respeita "reduzir movimento": mostra o comando inteiro,
+// sem digitar, e então segue.
 ```
 
 Se o JavaScript não carrega, os links funcionam normal, porque o `preventDefault` só roda dentro da ilha, que pode nem ter subido. É enfeite por cima de um link que já funcionava sozinho. E o e-mail nunca vai pra barra, nem no comando de mandar mensagem, porque o endereço fica ofuscado no site e eu não ia jogar ele na tela num easter egg.
