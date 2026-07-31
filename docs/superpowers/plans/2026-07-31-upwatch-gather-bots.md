@@ -89,24 +89,19 @@ Conteúdo dos campos de texto, nos três idiomas:
 - `decision` — ports and adapters, com o núcleo sem conhecer Azure DevOps, Google, Microsoft nem o Gather. A fonte reporta fato e a superfície decide apresentação, então dois provedores de agenda não custam nada. O dispatcher compara com o último estado enviado e manda só a diferença, porque o rate limit do Gather é por space.
 - `result` — 130 casos de teste, com as superfícies como funções puras testadas sem rede. Um minuto sem novidade custa zero requisições. A imagem acrescenta cerca de 1 MB sobre o `node:24-alpine`, com memória limitada a 128 MB.
 
-- [ ] **Step 3: Validar o JSON e o schema**
+- [ ] **Step 3: Validar o schema**
 
 Run: `pnpm build`
-Expected: build passa. Se o Zod reclamar, a mensagem aponta o campo — `links.github` e `links.demo` precisam ser URLs válidas, e os três idiomas são obrigatórios em todo campo `i18nText`.
+Expected: o carregamento das collections passa sem erro de Zod. `links.github` e `links.demo` precisam ser URLs válidas, e os três idiomas são obrigatórios em todo campo `i18nText`.
 
-- [ ] **Step 4: Conferir os cards renderizados**
+**Corrigido durante a execução, 2026-07-31.** O build **não fica verde neste ponto**, e o plano original errava ao dizer que ficaria. A rota `/projeto/[slug]` gera uma página por item de `projects.json` e busca a entrada correspondente em `caseStudies`; card sem `.md` quebra a geração com `Entry caseStudies → upwatch.pt-br was not found`.
 
-Run: `pnpm preview` e abrir `http://localhost:4321/#projetos`
-Expected: UpWatch e gather-bots como cards 1 e 2, com selo PROJETO, badges da stack, link do GitHub, link do site, e o case study inline abrindo com os três campos. Conferir também `/en` e `/es`.
+Consequência para o resto do plano:
 
-O link "Ler case study" ainda leva a 404 nesse ponto. É esperado. As páginas nascem na Task 2.
-
-- [ ] **Step 5: Commit**
-
-```bash
-rtk git add src/content/projects/projects.json
-rtk git commit -m "content: cards do UpWatch e do gather-bots"
-```
+- este Step verifica só que o Zod aceitou o JSON, e o erro esperado a seguir é o de entrada não encontrada
+- não há commit no fim da Task 1
+- `projects.json` é commitado junto com os seis arquivos de case study, no fim da Task 5, que é o primeiro ponto em que o build fica verde
+- o Step 4 original, de conferir os cards no `pnpm preview`, migra para a Task 7
 
 ---
 
