@@ -1,6 +1,82 @@
 {
   "items": [
     {
+      "id": "upwatch",
+      "type": "project",
+      "title": {
+        "pt-br": "UpWatch",
+        "en": "UpWatch",
+        "es": "UpWatch"
+      },
+      "description": {
+        "pt-br": "Monitoramento de disponibilidade em Go que cabe num binário e mostra latência junto com o estado. A interface vem embarcada no executável, então não tem nginx ao lado nem pasta de estáticos pra ficar defasada. Projeto meu, open source sob AGPL-3.0.",
+        "en": "Uptime monitoring in Go that fits in one binary and shows latency next to state. The UI is embedded in the executable, so there's no nginx alongside it and no static folder to drift out of sync. A personal project of mine, open source under AGPL-3.0.",
+        "es": "Monitoreo de disponibilidad en Go que cabe en un binario y muestra latencia junto al estado. La interfaz viene embebida en el ejecutable, así que no hay nginx al lado ni carpeta de estáticos que quede desfasada. Proyecto mío, open source bajo AGPL-3.0."
+      },
+      "techStack": ["Go", "SQLite", "PostgreSQL", "React 19", "Docker", "Prometheus"],
+      "startDate": "2026-07-29",
+      "isFeatured": true,
+      "links": {
+        "github": "https://github.com/Jbnado/upwatch",
+        "demo": "https://jbnado.github.io/upwatch/"
+      },
+      "caseStudy": {
+        "problem": {
+          "pt-br": "Quase todo incidente começa com o serviço ficando lento, não caindo, e monitor que só sabe dizer no ar ou fora do ar chega tarde nessa história. Boa parte das opções ainda pede nginx ao lado e uma pasta de arquivos estáticos, virando mais peça pra manter do que o serviço monitorado.",
+          "en": "Almost every incident starts with a service getting slow, not going down, and a monitor that only knows up or down arrives late to that story. Most options also want an nginx alongside and a folder of static files, which makes the monitor more machinery to maintain than the service it watches.",
+          "es": "Casi todo incidente empieza con el servicio poniéndose lento, no cayéndose, y un monitor que solo sabe decir arriba o abajo llega tarde a esa historia. Buena parte de las opciones además pide nginx al lado y una carpeta de archivos estáticos, volviéndose más pieza para mantener que el servicio monitoreado."
+        },
+        "decision": {
+          "pt-br": "Um binário só, com a interface embarcada por go:embed. Armazenamento plugável entre SQLite e PostgreSQL, com a mesma bateria de conformidade rodando idêntica nos dois pra impedir que banco plugável vire fachada. As batidas cruas viram agregado horário e diário, e o percentil sai sempre do dado cru, nunca percentil de percentil. Uma sonda independente separa a queda do alvo da queda da própria rede, e só ganha o poder de silenciar alerta depois de provar que funciona, porque sonda bloqueada por firewall calaria tudo pra sempre.",
+          "en": "One binary, with the UI embedded via go:embed. Pluggable storage across SQLite and PostgreSQL, with the same conformance battery running identically on both so pluggable database doesn't become a facade. Raw beats roll up into hourly and daily aggregates, and percentiles always come from the raw data, never a percentile of percentiles. An independent probe separates the target going down from the network going down, and it only earns the power to silence an alert after proving it works, because a probe blocked by a firewall would mute everything forever.",
+          "es": "Un solo binario, con la interfaz embebida por go:embed. Almacenamiento enchufable entre SQLite y PostgreSQL, con la misma batería de conformidad corriendo idéntica en los dos para impedir que base enchufable se vuelva fachada. Los latidos crudos se agregan por hora y por día, y el percentil sale siempre del dato crudo, nunca percentil de percentil. Una sonda independiente separa la caída del objetivo de la caída de la propia red, y solo gana el poder de silenciar una alerta después de probar que funciona, porque una sonda bloqueada por firewall callaría todo para siempre."
+        },
+        "result": {
+          "pt-br": "27 mil linhas de Go, 12 mil delas de teste, em 651 funções de teste. A única superfície sem credencial, a página pública de estado, apanha de uma bateria de invasão com travessia de caminho, injeção no slug e cabeçalho Host forjado. Imagem no GHCR, site do projeto no ar e licença AGPL-3.0.",
+          "en": "27 thousand lines of Go, 12 thousand of them tests, across 651 test functions. The only surface without credentials, the public status page, takes a battery of intrusion tests with path traversal, injection in the slug, and a forged Host header. Image on GHCR, project site live, AGPL-3.0.",
+          "es": "27 mil líneas de Go, 12 mil de ellas de prueba, en 651 funciones de test. La única superficie sin credencial, la página pública de estado, recibe una batería de intrusión con travesía de ruta, inyección en el slug y cabecera Host forjada. Imagen en GHCR, sitio del proyecto en el aire y licencia AGPL-3.0."
+        }
+      }
+    },
+    {
+      "id": "gather-bots",
+      "type": "project",
+      "title": {
+        "pt-br": "gather-bots",
+        "en": "gather-bots",
+        "es": "gather-bots"
+      },
+      "description": {
+        "pt-br": "Alimenta os Smart Objects do Gather com o trabalho de verdade. PR esperando review, pipeline vermelha, tarefa em andamento e reunião prestes a começar, tudo na mesa do escritório virtual. Projeto meu, open source sob MIT.",
+        "en": "Feeds Gather's Smart Objects with your actual work. A PR waiting on you, a red pipeline, a task in progress, a meeting about to start, all on your desk in the virtual office. A personal project of mine, open source under MIT.",
+        "es": "Alimenta los Smart Objects de Gather con el trabajo de verdad. Un PR esperando review, un pipeline rojo, una tarea en curso y una reunión a punto de empezar, todo en tu escritorio de la oficina virtual. Proyecto mío, open source bajo MIT."
+      },
+      "techStack": ["TypeScript", "Node 24", "Azure DevOps", "Docker", "Vitest"],
+      "startDate": "2026-07-30",
+      "isFeatured": true,
+      "links": {
+        "github": "https://github.com/Jbnado/gather-bots",
+        "demo": "https://jbnado.github.io/gather-bots/"
+      },
+      "caseStudy": {
+        "problem": {
+          "pt-br": "Saber o que espera por mim exigia abrir quatro ferramentas, e nenhuma delas conversava com as outras. Enquanto isso, a mesa do escritório virtual ficava ali de enfeite, podendo ser o painel.",
+          "en": "Knowing what was waiting on me meant opening four tools, and none of them talked to each other. Meanwhile my desk in the virtual office sat there as decoration, when it could be the dashboard.",
+          "es": "Saber qué estaba esperando por mí exigía abrir cuatro herramientas, y ninguna hablaba con las otras. Mientras tanto, el escritorio de la oficina virtual estaba ahí de adorno, pudiendo ser el panel."
+        },
+        "decision": {
+          "pt-br": "Ports and adapters do começo ao fim, com o núcleo sem conhecer Azure DevOps, Google, Microsoft nem o próprio Gather. A fonte reporta o fato e a superfície decide a apresentação, então Google e Outlook emitem o mesmo sinal e o segundo provedor de agenda não custa nada. O rate limit do Gather é por space, não por objeto, então o despachante compara com o último estado enviado e manda só a diferença.",
+          "en": "Ports and adapters end to end, with a core that knows nothing about Azure DevOps, Google, Microsoft, or Gather itself. Sources report facts and surfaces decide presentation, so Google and Outlook emit the same signal and the second calendar provider costs nothing. Gather's rate limit is per space, not per object, so the dispatcher compares against the last state it sent and pushes only the difference.",
+          "es": "Ports and adapters de punta a punta, con el núcleo sin conocer Azure DevOps, Google, Microsoft ni el propio Gather. La fuente reporta el hecho y la superficie decide la presentación, así que Google y Outlook emiten la misma señal y el segundo proveedor de agenda no cuesta nada. El rate limit de Gather es por space, no por objeto, así que el despachante compara con el último estado enviado y manda solo la diferencia."
+        },
+        "result": {
+          "pt-br": "130 casos de teste, com as superfícies escritas como funções puras e testadas sem rede. Um minuto sem novidade custa zero requisições. A imagem acrescenta cerca de 1 MB sobre o node:24-alpine, com memória limitada a 128 MB, porque monitor que atrapalha a máquina que ele monitora falhou no trabalho dele.",
+          "en": "130 test cases, with the surfaces written as pure functions and tested without a network. A minute with no news costs zero requests. The image adds about 1 MB on top of node:24-alpine, capped at 128 MB of memory, because a monitor that gets in the way of the machine it monitors has failed at its job.",
+          "es": "130 casos de prueba, con las superficies escritas como funciones puras y testeadas sin red. Un minuto sin novedad cuesta cero peticiones. La imagen agrega cerca de 1 MB sobre node:24-alpine, con memoria limitada a 128 MB, porque un monitor que estorba a la máquina que monitorea falló en su trabajo."
+        }
+      }
+    },
+    {
       "id": "instanta",
       "type": "project",
       "title": {
