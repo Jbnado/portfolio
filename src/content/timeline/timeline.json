@@ -1,6 +1,38 @@
 {
   "items": [
     {
+      "type": "project",
+      "date": "2026",
+      "title": {
+        "pt-br": "UpWatch",
+        "en": "UpWatch",
+        "es": "UpWatch"
+      },
+      "description": {
+        "pt-br": "Monitoramento de disponibilidade em Go num binário único, open source sob AGPL. Interface embarcada por go:embed, latência junto com o estado, e a mesma bateria de conformidade rodando verde em SQLite e PostgreSQL.",
+        "en": "Uptime monitoring in Go in a single binary, open source under AGPL. UI embedded via go:embed, latency next to state, and the same conformance battery running green on SQLite and PostgreSQL.",
+        "es": "Monitoreo de disponibilidad en Go en un único binario, open source bajo AGPL. Interfaz embebida por go:embed, latencia junto al estado, y la misma batería de conformidad corriendo verde en SQLite y PostgreSQL."
+      },
+      "tech": ["Go", "SQLite", "PostgreSQL", "React 19"],
+      "caseStudySlug": "upwatch"
+    },
+    {
+      "type": "project",
+      "date": "2026",
+      "title": {
+        "pt-br": "gather-bots",
+        "en": "gather-bots",
+        "es": "gather-bots"
+      },
+      "description": {
+        "pt-br": "Smart Objects do Gather alimentados por PR, pipeline, tarefa e agenda, open source sob MIT. Ports and adapters, com o despachante mandando só a diferença pra caber no rate limit do space.",
+        "en": "Gather Smart Objects fed by PRs, pipelines, tasks, and calendars, open source under MIT. Ports and adapters, with the dispatcher sending only the difference to fit inside the space's rate limit.",
+        "es": "Smart Objects de Gather alimentados por PR, pipeline, tarea y agenda, open source bajo MIT. Ports and adapters, con el despachante mandando solo la diferencia para caber en el rate limit del space."
+      },
+      "tech": ["TypeScript", "Node 24", "Docker"],
+      "caseStudySlug": "gather-bots"
+    },
+    {
       "type": "career",
       "date": "2025",
       "title": {

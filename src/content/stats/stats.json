@@ -2,6 +2,6 @@
   "items": [
     { "value": 5, "suffix": "+", "label": { "pt-br": "Anos de experiência", "en": "Years of experience", "es": "Años de experiencia" } },
     { "value": 4, "suffix": "", "label": { "pt-br": "Empresas", "en": "Companies", "es": "Empresas" } },
-    { "value": 42, "suffix": "", "label": { "pt-br": "Repos no GitHub", "en": "Repos on GitHub", "es": "Repos en GitHub" } }
+    { "value": 46, "suffix": "", "label": { "pt-br": "Repos no GitHub", "en": "Repos on GitHub", "es": "Repos en GitHub" } }
   ]
 }
