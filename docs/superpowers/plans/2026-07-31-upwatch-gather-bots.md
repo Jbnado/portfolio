@@ -309,6 +309,8 @@ rtk git commit -m "content: case study do gather-bots em en e es"
 
 ### Task 6: Timeline e stats
 
+**Revertida em parte, 2026-07-31.** Depois de ver na tela, o João pediu pra tirar os dois projetos do "Percurso", porque aquela seção é só trabalho formal. As duas entradas saíram, e com elas o `caseStudySlug` no schema e a resolução de URL no `TimelineSection.astro`, que ficariam sem nenhum consumidor. A atualização das stats no Step 4 continua valendo. O que está escrito abaixo é o registro do que foi feito antes da reversão.
+
 **Files:**
 - Modify: `src/content.config.ts:29` (campo `caseStudySlug` opcional na collection `timeline`)
 - Modify: `src/components/TimelineSection.astro:7,21,52` (montar o `href` localizado)

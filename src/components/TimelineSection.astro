@@ -5,7 +5,6 @@ import SectionTitle from './SectionTitle.astro';
 import SectionEyebrow from './SectionEyebrow.astro';
 import TimelineEntry from './TimelineEntry.astro';
 import { t } from '../i18n/utils';
-import { caseStudyUrl } from '../utils/constants';
 import thorfinnImg from '../assets/imgs/Thorfinn-full-body.webp';
 import killuaBloodImg from '../assets/imgs/killua-covered-blood.png';
 
@@ -50,7 +49,7 @@ const localeKey = locale as 'pt-br' | 'en' | 'es';
           description={item.description[localeKey] ?? item.description['pt-br']}
           type={item.type}
           tech={item.tech}
-          href={item.caseStudySlug ? caseStudyUrl('project', item.caseStudySlug, localeKey) : item.href}
+          href={item.href}
         />
       ))}
     </ol>

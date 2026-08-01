@@ -28,9 +28,6 @@ const timeline = defineCollection({
       description: i18nText,
       tech: z.array(z.string()).optional(),
       href: z.string().optional(),
-      // Slug de um case study. Resolvido para a URL do idioma da página em
-      // TimelineSection; `href` continua servindo para link arbitrário.
-      caseStudySlug: z.string().optional(),
     })),
   }),
 });
