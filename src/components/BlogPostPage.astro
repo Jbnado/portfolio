@@ -5,7 +5,7 @@ import VideoEmbed from './VideoEmbed.astro';
 import { t } from '../i18n/utils';
 import { formatDateLong, readingMinutes } from '../utils/blog';
 import { getPostAlternates, type BlogEntry } from '../utils/blog-content';
-import { SITE_URL, blogUrl, blogPostUrl, type Locale } from '../utils/constants';
+import { SITE_URL, PERSON_ID, blogUrl, blogPostUrl, type Locale } from '../utils/constants';
 
 interface Props {
   entry: BlogEntry;
@@ -35,8 +35,10 @@ const jsonLd = {
   dateModified: data.updated ?? data.date,
   image: data.video.thumbnail,
   keywords: data.tags.join(', '),
-  author: { '@type': 'Person', name: 'João Bernardo', url: SITE_URL },
-  publisher: { '@type': 'Person', name: 'João Bernardo', url: SITE_URL },
+  // Referencia o Person que o SEOHead emite em toda página, em vez de repetir
+  // os dados e criar um autor diferente por post.
+  author: { '@id': PERSON_ID },
+  publisher: { '@id': PERSON_ID },
   mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
   video: {
     '@type': 'VideoObject',
@@ -114,6 +116,22 @@ const jsonLd = {
       )}
 
       <footer class="post-foot">
+        <div class="post-author">
+          <img
+            src="/jbnado.webp"
+            alt=""
+            width="48"
+            height="48"
+            loading="lazy"
+            decoding="async"
+            class="post-author-avatar"
+          />
+          <div class="post-author-text">
+            <p class="post-author-name">João Bernardo</p>
+            <p class="post-author-role">{t('blog.authorBio', locale)}</p>
+          </div>
+        </div>
+
         <a href={data.video.url} target="_blank" rel="noopener noreferrer" class="post-watch">
           {t('blog.watchOnYoutube', locale)} ↗
         </a>

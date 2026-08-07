@@ -6,7 +6,7 @@ import { t } from '../i18n/utils';
 import { getBlogPosts, toIndexEntry } from '../utils/blog-content';
 import { paginate, POSTS_PER_PAGE } from '../utils/blog';
 import {
-  SITE_URL, LOCALES, blogUrl, blogPageUrl, blogIndexUrl, type Locale,
+  SITE_URL, PERSON_ID, LOCALES, blogUrl, blogPageUrl, blogIndexUrl, type Locale,
 } from '../utils/constants';
 
 interface Props {
@@ -56,7 +56,7 @@ const jsonLd = {
   description,
   inLanguage: locale,
   url: canonical,
-  author: { '@type': 'Person', name: 'João Bernardo', url: SITE_URL },
+  author: { '@id': PERSON_ID },
 };
 ---
 
