@@ -1,4 +1,12 @@
 export const SITE_URL = 'https://jbnado.dev';
+
+/**
+ * `@id` estável da entidade Person do site. Toda página emite o Person com
+ * esse id, e os schemas de página (BlogPosting, TechArticle) referenciam o id
+ * em vez de repetir os dados do autor. É o que faz o buscador consolidar tudo
+ * numa entidade só em vez de enxergar um autor diferente por página.
+ */
+export const PERSON_ID = `${SITE_URL}/#joao-bernardo`;
 export const DEFAULT_LOCALE = 'pt-br';
 export const LOCALES = ['pt-br', 'en', 'es'] as const;
 export type Locale = (typeof LOCALES)[number];

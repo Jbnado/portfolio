@@ -1,6 +1,6 @@
 ---
 import { t } from '../i18n/utils';
-import { SITE_URL, rssUrl, type Locale } from '../utils/constants';
+import { SITE_URL, PERSON_ID, rssUrl, type Locale } from '../utils/constants';
 
 interface Props {
   locale?: string;
@@ -44,15 +44,40 @@ const ogLocaleAlternates = Object.values(ogLocaleMap).filter((l) => l !== ogLoca
 
 const alternateLinks = alternates ?? hreflangMap;
 
-const defaultPersonJsonLd = {
+/**
+ * Identidade autoral do site, emitida em TODA página.
+ *
+ * Só entra aqui o que é verificável no próprio site.
+ * Fora de propósito: `email` (a página de contato ofusca o endereço contra
+ * spam, e repeti-lo em texto puro aqui anularia isso), `worksFor` e
+ * `alumniOf` (o site não declara vínculo atual nem instituição de ensino).
+ */
+const personJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': PERSON_ID,
   name: 'João Bernardo',
+  alternateName: 'Jbnado',
   jobTitle: 'Fullstack Developer',
+  description: t('hero.description', locale),
   url: SITE_URL,
+  image: `${SITE_URL}/jbnado.jpg`,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Ribeirão Preto',
+    addressRegion: 'SP',
+    addressCountry: 'BR',
+  },
+  knowsAbout: [
+    'TypeScript', 'JavaScript', 'React', 'Astro', 'Node.js', 'Go', 'Rust',
+    'PostgreSQL', 'SQLite', 'Docker', 'Docker Swarm', 'Traefik', 'Prometheus',
+    'Grafana', 'Tailwind CSS', 'Preact', 'Tauri', 'Cloudflare Workers',
+    'Desenvolvimento web fullstack', 'Observabilidade', 'Segurança de aplicações',
+  ],
   sameAs: [
     'https://linkedin.com/in/jbnado',
     'https://github.com/Jbnado',
+    'https://www.youtube.com/@jbnad',
   ],
 };
 ---
@@ -97,4 +122,5 @@ const defaultPersonJsonLd = {
 />
 
 <!-- SEO: JSON-LD Structured Data -->
-<script type="application/ld+json" set:html={JSON.stringify(jsonLd ?? defaultPersonJsonLd)} />
+{jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+<script type="application/ld+json" set:html={JSON.stringify(personJsonLd)} />
