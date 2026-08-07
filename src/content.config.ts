@@ -86,4 +86,40 @@ const caseStudies = defineCollection({
   }),
 });
 
-export const collections = { stats, timeline, projects, caseStudies };
+const blog = defineCollection({
+  loader: glob({
+    pattern: '*.md',
+    base: './src/content/blog',
+    // Mesmo motivo dos caseStudies: o id default sai do `slug` do front-matter,
+    // que é igual nos 3 idiomas e colidiria.
+    generateId: ({ data }) => `${data.slug}.${data.locale}`,
+  }),
+  schema: z.object({
+    slug: z.string(),
+    locale: z.enum(['pt-br', 'en', 'es']),
+    urlSlug: z.string(),
+    title: z.string(),
+    seoTitle: z.string().optional(),
+    summary: z.string(),
+    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    updated: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    tags: z.array(z.string()).default([]),
+    video: z.object({
+      youtubeId: z.string(),
+      url: z.string().url(),
+      title: z.string(),
+      thumbnail: z.string().url(),
+      duration: z.string().optional(),
+      channel: z.string().default('Jbnado'),
+    }),
+    sources: z.array(z.object({
+      title: z.string(),
+      url: z.string().url(),
+      note: z.string().optional(),
+    })).default([]),
+    draft: z.boolean().default(false),
+    ogImage: z.string().optional(),
+  }),
+});
+
+export const collections = { stats, timeline, projects, caseStudies, blog };
