@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -19,5 +21,8 @@
     "sharp": "^0.34.0",
     "tailwindcss": "^4.1.18"
   },
-  "packageManager": "pnpm@9.15.4"
+  "packageManager": "pnpm@9.15.4",
+  "devDependencies": {
+    "vitest": "^4.1.10"
+  }
 }

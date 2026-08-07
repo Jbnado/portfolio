@@ -18,3 +18,37 @@ export function caseStudyUrl(
   const seg = CASE_SEGMENTS[type][locale];
   return `${prefix}/${seg}/${slug}`;
 }
+
+/** Segmento de paginação por idioma. `/blog/pagina/2` em pt-br, `/en/blog/page/2` em en. */
+export const PAGE_SEGMENTS: Record<Locale, string> = {
+  'pt-br': 'pagina',
+  en: 'page',
+  es: 'pagina',
+};
+
+/** Prefixo de URL do idioma. Vazio no idioma padrão, que não tem prefixo. */
+export function localePrefix(locale: Locale = DEFAULT_LOCALE): string {
+  return locale === DEFAULT_LOCALE ? '' : `/${locale}`;
+}
+
+export function blogUrl(locale: Locale = DEFAULT_LOCALE): string {
+  return `${localePrefix(locale)}/blog`;
+}
+
+export function blogPostUrl(urlSlug: string, locale: Locale = DEFAULT_LOCALE): string {
+  return `${blogUrl(locale)}/${urlSlug}`;
+}
+
+/** Página 1 é a própria raiz do blog. Não existe `/blog/pagina/1`, que duplicaria conteúdo. */
+export function blogPageUrl(page: number, locale: Locale = DEFAULT_LOCALE): string {
+  if (page <= 1) return blogUrl(locale);
+  return `${blogUrl(locale)}/${PAGE_SEGMENTS[locale]}/${page}`;
+}
+
+export function blogIndexUrl(locale: Locale = DEFAULT_LOCALE): string {
+  return `/blog-index/${locale}.json`;
+}
+
+export function rssUrl(locale: Locale = DEFAULT_LOCALE): string {
+  return `${localePrefix(locale)}/rss.xml`;
+}
