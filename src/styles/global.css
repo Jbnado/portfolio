@@ -1037,7 +1037,9 @@ button,
   border-bottom: 1px dashed var(--color-border);
 }
 
+/* .punch-hole só traz cor. O tamanho vem do container, como em .case-holes. */
 .blog-card-holes { display: flex; gap: 0.375rem; }
+.blog-card-holes .punch-hole { width: 0.4375rem; height: 0.4375rem; }
 
 .blog-card-num {
   font-family: var(--font-mono);
