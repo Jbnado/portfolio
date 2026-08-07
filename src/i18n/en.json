@@ -101,7 +101,8 @@
     "prevPage": "Previous page",
     "nextPage": "Next page",
     "pageOf": "Page {page} of {total}",
-    "empty": "No posts published here yet."
+    "empty": "No posts published here yet.",
+    "authorBio": "Fullstack developer based in Ribeirão Preto, Brazil. I write here about what I turn into video on the Jbnado channel."
   },
   "language": {
     "switch": "Change language",

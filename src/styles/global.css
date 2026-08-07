@@ -1306,3 +1306,38 @@ button,
   .video-facade-play { transition: none; }
   .video-facade-trigger:hover .video-facade-play { transform: none; }
 }
+
+/* Assinatura do autor no fim do post */
+.post-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+.post-author-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--color-accent);
+}
+
+.post-author-name {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.post-author-role {
+  margin-top: 0.125rem;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+.dark .post-author-avatar { box-shadow: 0 0 12px rgba(97, 255, 202, 0.25); }

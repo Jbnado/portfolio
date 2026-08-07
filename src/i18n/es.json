@@ -101,7 +101,8 @@
     "prevPage": "Página anterior",
     "nextPage": "Página siguiente",
     "pageOf": "Página {page} de {total}",
-    "empty": "Todavía no hay ningún post publicado aquí."
+    "empty": "Todavía no hay ningún post publicado aquí.",
+    "authorBio": "Fullstack developer en Ribeirão Preto, Brasil. Escribo aquí sobre lo que convierto en vídeo en el canal Jbnado."
   },
   "language": {
     "switch": "Cambiar idioma",
