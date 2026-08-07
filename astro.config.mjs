@@ -12,7 +12,13 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  integrations: [preact(), sitemap()],
+  integrations: [
+    preact(),
+    sitemap({
+      // O índice de busca é dado de máquina, não página. Fora do sitemap.
+      filter: (page) => !page.includes('/blog-index/'),
+    }),
+  ],
   i18n: {
     defaultLocale: 'pt-br',
     locales: ['pt-br', 'en', 'es'],

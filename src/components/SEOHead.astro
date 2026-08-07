@@ -1,6 +1,6 @@
 ---
 import { t } from '../i18n/utils';
-import { SITE_URL } from '../utils/constants';
+import { SITE_URL, rssUrl, type Locale } from '../utils/constants';
 
 interface Props {
   locale?: string;
@@ -81,10 +81,20 @@ const defaultPersonJsonLd = {
 <meta name="twitter:image" content={ogImageUrl} />
 
 <!-- SEO: hreflang -->
-<link rel="alternate" hreflang="pt-BR" href={alternateLinks['pt-br']} />
-<link rel="alternate" hreflang="en" href={alternateLinks['en']} />
-<link rel="alternate" hreflang="es" href={alternateLinks['es']} />
-<link rel="alternate" hreflang="x-default" href={alternateLinks['pt-br']} />
+<!-- Só emite a linha do idioma que realmente existe. Um post publicado em
+     apenas uma língua geraria <link hreflang="en"> sem href. -->
+{alternateLinks['pt-br'] && <link rel="alternate" hreflang="pt-BR" href={alternateLinks['pt-br']} />}
+{alternateLinks['en'] && <link rel="alternate" hreflang="en" href={alternateLinks['en']} />}
+{alternateLinks['es'] && <link rel="alternate" hreflang="es" href={alternateLinks['es']} />}
+{alternateLinks['pt-br'] && <link rel="alternate" hreflang="x-default" href={alternateLinks['pt-br']} />}
+
+<!-- RSS -->
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title="João Bernardo — Blog"
+  href={`${SITE_URL}${rssUrl(locale as Locale)}`}
+/>
 
 <!-- SEO: JSON-LD Structured Data -->
 <script type="application/ld+json" set:html={JSON.stringify(jsonLd ?? defaultPersonJsonLd)} />

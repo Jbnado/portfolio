@@ -1,5 +1,6 @@
 ---
 import { t } from '../i18n/utils';
+import { blogUrl, rssUrl, type Locale } from '../utils/constants';
 
 interface Props {
   locale?: string;
@@ -20,7 +21,7 @@ const year = new Date().getFullYear();
   <div class="footer-container">
     <span class="footer-logo" aria-hidden="true">jb<span class="footer-logo-dot">.</span></span>
     <p class="footer-text">
-      © {year} João Bernardo · {t('footer.builtWith', locale)} <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="footer-link">Astro</a> · <a href="https://github.com/Jbnado/portfolio" target="_blank" rel="noopener noreferrer" class="footer-link" aria-label={t('footer.repoLabel', locale)}>{t('footer.openSource', locale)}</a>
+      © {year} João Bernardo · {t('footer.builtWith', locale)} <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="footer-link">Astro</a> · <a href="https://github.com/Jbnado/portfolio" target="_blank" rel="noopener noreferrer" class="footer-link" aria-label={t('footer.repoLabel', locale)}>{t('footer.openSource', locale)}</a> · <a href={blogUrl(locale as Locale)} class="footer-link">{t('nav.blog', locale)}</a> · <a href={rssUrl(locale as Locale)} class="footer-link" aria-label={t('footer.rssLabel', locale)}>{t('footer.rss', locale)}</a>
     </p>
     <div class="footer-term" aria-hidden="true">
       <span class="term-line crt-glow" data-txt={t('terminal.footer', locale)}></span>

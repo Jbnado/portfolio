@@ -97,7 +97,7 @@ const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
       </defs>
     </svg>
     <SkipToContent />
-    <NavBar locale={locale} />
+    <NavBar locale={locale} alternates={alternates} />
     {showScrollSpy && <ScrollSpy client:idle />}
     <main id="main" class="pt-16">
       <slot />

@@ -3,15 +3,33 @@ import { t } from '../i18n/utils';
 
 interface Props {
   locale?: string;
+  /** URLs absolutas por idioma. Quando ausente, o seletor vai pra home. */
+  alternates?: Record<string, string>;
 }
 
-const { locale = 'pt-br' } = Astro.props;
+const { locale = 'pt-br', alternates } = Astro.props;
 
 const locales = [
   { code: 'pt-br', label: 'PT', fullName: 'Português', path: '/' },
   { code: 'en', label: 'EN', fullName: 'English', path: '/en/' },
   { code: 'es', label: 'ES', fullName: 'Español', path: '/es/' },
 ];
+
+/**
+ * O hreflang já sabe onde mora cada tradução. Reaproveitamos isso aqui, senão
+ * trocar de idioma numa página interna jogaria o visitante na home.
+ * A URL vem absoluta (SITE_URL é fixo), então viramos caminho pra não pular
+ * pra produção durante o `astro dev`.
+ */
+function hrefFor(code: string, fallback: string): string {
+  const absolute = alternates?.[code];
+  if (!absolute) return fallback;
+  try {
+    return new URL(absolute).pathname;
+  } catch {
+    return absolute;
+  }
+}
 
 const current = locales.find((l) => l.code === locale) ?? locales[0];
 const others = locales.filter((l) => l.code !== locale);
@@ -32,7 +50,7 @@ const LANG_CMD: Record<string, string> = {
   <ul class="lang-dropdown" role="list">
     {others.map((l) => (
       <li>
-        <a href={l.path} class="lang-option" hreflang={l.code === 'pt-br' ? 'pt-BR' : l.code} aria-label={l.fullName} data-cmd={LANG_CMD[l.code]}>
+        <a href={hrefFor(l.code, l.path)} class="lang-option" hreflang={l.code === 'pt-br' ? 'pt-BR' : l.code} aria-label={l.fullName} data-cmd={LANG_CMD[l.code]}>
           {l.label}
         </a>
       </li>
