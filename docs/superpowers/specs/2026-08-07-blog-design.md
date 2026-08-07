@@ -240,7 +240,7 @@ Layout do card:
 │ o o o o o o          #001   │  pc-head, furos + número
 ├─────────────────────────────┤
 │ ╭─────────────────────────╮ │
-│ │    thumb 16:9      ▶    │ │  loading=lazy, width/height fixos
+│ │    thumb 16:9      ▶    │ │  loading=lazy, width/height fixos, alt descritivo
 │ ╰─────────────────────────╯ │
 │ 04 AGO 2026      [ VÍDEO ]  │  data + ink-stamp
 │ IA Hackeou uma empresa      │  h2, link cobrindo o card
@@ -334,6 +334,12 @@ blue, dark continua fósforo verde com vermelho revolta e corpo em mono.
 
 Grid: 1 coluna abaixo de 640px, 2 a partir de 640px, 3 a partir de 1024px. Os stickers
 decorativos seguem a regra do site e só aparecem em ≥1024px.
+
+**Alt text das thumbs.** As capas dos vídeos são as primeiras imagens não decorativas do
+site. Todas as 9 imagens que existem hoje são sticker com `alt=""`, que é o correto pra
+imagem decorativa. A thumb é diferente: carrega informação, então recebe alt descritivo,
+no formato "Capa do vídeo: {video.title}". Nem o card nem a fachada do post podem herdar
+o `alt=""` dos stickers.
 
 O `ScrollSpy` casa `href === '#id'`, então o link `/blog` nunca é marcado como ativo por
 engano e não precisa de tratamento especial.
