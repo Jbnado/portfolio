@@ -1,0 +1,48 @@
+---
+interface Props {
+  youtubeId: string;
+  thumbnail: string;
+  thumbAlt: string;
+  playLabel: string;
+}
+
+const { youtubeId, thumbnail, thumbAlt, playLabel } = Astro.props;
+---
+
+<div class="video-facade" data-youtube-id={youtubeId}>
+  <a
+    class="video-facade-trigger"
+    href={`https://youtu.be/${youtubeId}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={playLabel}
+  >
+    <img src={thumbnail} alt={thumbAlt} width="1280" height="720" fetchpriority="high" decoding="async" />
+    <span class="video-facade-play" aria-hidden="true"></span>
+  </a>
+</div>
+
+<script>
+  // Sem JS o bloco acima é um link pro YouTube. Com JS ele toca no lugar,
+  // e o iframe (~1MB de script de terceiro) só entra depois do clique.
+  document.querySelectorAll<HTMLElement>('.video-facade').forEach((facade) => {
+    const trigger = facade.querySelector<HTMLAnchorElement>('.video-facade-trigger');
+    const id = facade.dataset.youtubeId;
+    if (!trigger || !id) return;
+
+    trigger.addEventListener('click', (event) => {
+      event.preventDefault();
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+      iframe.title = trigger.getAttribute('aria-label') ?? '';
+      iframe.width = '560';
+      iframe.height = '315';
+      iframe.allow =
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allowFullscreen = true;
+      facade.replaceChildren(iframe);
+      iframe.focus();
+    });
+  });
+</script>

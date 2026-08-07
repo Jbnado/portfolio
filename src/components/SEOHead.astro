@@ -37,7 +37,8 @@ const hreflangMap: Record<string, string> = {
 };
 
 const canonicalUrl = canonical ?? (hreflangMap[locale] ?? `${SITE_URL}/`);
-const ogImageUrl = `${SITE_URL}${ogImage}`;
+// A capa do YouTube já vem absoluta. Prefixar geraria https://jbnado.dev/https://i.ytimg.com/...
+const ogImageUrl = /^https?:\/\//.test(ogImage) ? ogImage : `${SITE_URL}${ogImage}`;
 const ogLocale = ogLocaleMap[locale] ?? 'pt_BR';
 const ogLocaleAlternates = Object.values(ogLocaleMap).filter((l) => l !== ogLocale);
 
