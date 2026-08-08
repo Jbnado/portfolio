@@ -38,9 +38,10 @@ verificar sem adivinhar. O João confirmou depois, e os três entraram:
   Ribeirão Noir, mas sem o campus.
 - `email`: `contato@jbnado.dev`.
 
-**Divergência aberta:** a `ContactSection.astro:92` monta o mailto do botão "Email" com
-`bernardojoao9@gmail.com`. O schema agora declara `contato@jbnado.dev`. São endereços
-diferentes na mesma página, e vale unificar.
+**Divergência resolvida:** a `ContactSection.astro:92` montava o mailto do botão "Email"
+com `bernardojoao9@gmail.com`, enquanto o schema passou a declarar `contato@jbnado.dev`.
+Dois endereços na mesma página. O botão foi trocado para o endereço do domínio, e a
+ofuscação por JavaScript continua igual, só com outro par usuário/domínio.
 
 ## O que foi feito
 
