@@ -1,0 +1,18 @@
+---
+import BlogFeedPage from '../../../components/BlogFeedPage.astro';
+import { getBlogPosts } from '../../../utils/blog-content';
+import { POSTS_PER_PAGE } from '../../../utils/blog';
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts('pt-br');
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+  // A página 1 é a própria /blog. Aqui só saem da 2 em diante.
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
+    params: { page: String(i + 2) },
+    props: { page: i + 2 },
+  }));
+}
+
+const { page } = Astro.props;
+---
+<BlogFeedPage locale="pt-br" page={page} />

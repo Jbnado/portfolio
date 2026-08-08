@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BlogFeed from '../islands/BlogFeed.tsx';
+import BlogCard from '../islands/BlogCard.tsx';
+import { t } from '../i18n/utils';
+import { getBlogPosts, toIndexEntry } from '../utils/blog-content';
+import { paginate, POSTS_PER_PAGE } from '../utils/blog';
+import {
+  SITE_URL, PERSON_ID, LOCALES, blogUrl, blogPageUrl, blogIndexUrl, type Locale,
+} from '../utils/constants';
+
+interface Props {
+  locale: Locale;
+  page: number;
+}
+
+const { locale, page } = Astro.props;
+
+const posts = await getBlogPosts(locale);
+const index = posts.map((p) => toIndexEntry(p, locale));
+const paged = paginate(index, page);
+const isFirstPage = paged.page === 1;
+
+const labels = {
+  typeStamp: t('blog.typeStamp', locale),
+  readMore: t('blog.readMore', locale),
+  minutes: t('blog.minutes', locale),
+  thumbAlt: t('blog.thumbAlt', locale),
+  searchLabel: t('blog.searchLabel', locale),
+  searchPlaceholder: t('blog.searchPlaceholder', locale),
+  clearSearch: t('blog.clearSearch', locale),
+  resultsOne: t('blog.resultsOne', locale),
+  resultsMany: t('blog.resultsMany', locale),
+  noResults: t('blog.noResults', locale),
+  loadMore: t('blog.loadMore', locale),
+  loading: t('blog.loading', locale),
+  endOfList: t('blog.endOfList', locale),
+};
+
+const pageLabel = t('blog.pageOf', locale)
+  .replace('{page}', String(paged.page))
+  .replace('{total}', String(paged.totalPages));
+
+const title = isFirstPage ? t('blog.seoTitle', locale) : `${t('blog.seoTitle', locale)} — ${pageLabel}`;
+const description = t('blog.seoDescription', locale);
+const canonical = `${SITE_URL}${blogPageUrl(paged.page, locale)}`;
+
+const alternates = Object.fromEntries(
+  LOCALES.map((l) => [l, `${SITE_URL}${blogUrl(l)}`]),
+) as Record<string, string>;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: t('blog.seoTitle', locale),
+  description,
+  inLanguage: locale,
+  url: canonical,
+  author: { '@id': PERSON_ID },
+};
+---
+
+<BaseLayout
+  locale={locale}
+  title={title}
+  description={description}
+  canonical={canonical}
+  alternates={alternates}
+  jsonLd={jsonLd}
+  showScrollSpy={false}
+>
+  <Fragment slot="head">
+    {paged.hasPrev && <link rel="prev" href={`${SITE_URL}${blogPageUrl(paged.page - 1, locale)}`} />}
+    {paged.hasNext && <link rel="next" href={`${SITE_URL}${blogPageUrl(paged.page + 1, locale)}`} />}
+  </Fragment>
+
+  <div class="blog-page blueprint-wrap">
+    <div class="blog-container">
+      <header class="blog-header">
+        <p class="blog-eyebrow" aria-hidden="true">
+          <span class="term-line crt-glow" data-txt={t('terminal.blog', locale)}></span>
+          <span class="paper-tag" data-txt={t('paper.blog', locale)}></span>
+        </p>
+        <h1 class="blog-title crt-glow">{t('blog.title', locale)}</h1>
+        <p class="blog-subtitle">{t('blog.subtitle', locale)}</p>
+      </header>
+
+      {index.length === 0 && <p class="blog-empty">{t('blog.empty', locale)}</p>}
+
+      {index.length > 0 && isFirstPage && (
+        <BlogFeed
+          client:load
+          initial={paged.items}
+          total={index.length}
+          indexUrl={blogIndexUrl(locale)}
+          perPage={POSTS_PER_PAGE}
+          labels={labels}
+        />
+      )}
+
+      {index.length > 0 && !isFirstPage && (
+        <div class="blog-grid">
+          {paged.items.map((post, i) => (
+            <BlogCard
+              post={post}
+              number={index.length - ((paged.page - 1) * POSTS_PER_PAGE + i)}
+              labels={labels}
+            />
+          ))}
+        </div>
+      )}
+
+      {paged.totalPages > 1 && (
+        <nav class="blog-pagination" aria-label={t('blog.title', locale)}>
+          {paged.hasPrev && (
+            <a href={blogPageUrl(paged.page - 1, locale)} rel="prev" class="blog-pagination-link">
+              ← {t('blog.prevPage', locale)}
+            </a>
+          )}
+          <span class="blog-pagination-status">{pageLabel}</span>
+          {paged.hasNext && (
+            <a href={blogPageUrl(paged.page + 1, locale)} rel="next" class="blog-pagination-link">
+              {t('blog.nextPage', locale)} →
+            </a>
+          )}
+        </nav>
+      )}
+    </div>
+  </div>
+</BaseLayout>

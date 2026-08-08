@@ -2,7 +2,7 @@
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CaseStudyPage from '../../components/CaseStudyPage.astro';
-import { caseStudyUrl, SITE_URL } from '../../utils/constants';
+import { caseStudyUrl, SITE_URL, PERSON_ID } from '../../utils/constants';
 import { t } from '../../i18n/utils';
 
 const TYPE = 'project';
@@ -32,12 +32,16 @@ const alternates = {
 };
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'CreativeWork',
+  '@type': 'TechArticle',
   headline: entry.data.title,
   description: entry.data.summary,
   inLanguage: LOCALE,
   url: canonical,
-  author: { '@type': 'Person', name: 'João Bernardo' },
+  author: { '@id': PERSON_ID },
+  publisher: { '@id': PERSON_ID },
+  datePublished: item.startDate,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+  proficiencyLevel: 'Expert',
   keywords: item.techStack.join(', '),
 };
 const typeLabel = t('projects.typeProject', LOCALE);
