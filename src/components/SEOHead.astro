@@ -47,10 +47,9 @@ const alternateLinks = alternates ?? hreflangMap;
 /**
  * Identidade autoral do site, emitida em TODA página.
  *
- * Só entra aqui o que é verificável no próprio site.
- * Fora de propósito: `email` (a página de contato ofusca o endereço contra
- * spam, e repeti-lo em texto puro aqui anularia isso), `worksFor` e
- * `alumniOf` (o site não declara vínculo atual nem instituição de ensino).
+ * `worksFor`, `alumniOf` e `email` foram confirmados pelo João em 2026-08-08.
+ * O endereço aqui é o de contato profissional, diferente do mailto que a
+ * ContactSection monta por JavaScript.
  */
 const personJsonLd = {
   '@context': 'https://schema.org',
@@ -62,6 +61,15 @@ const personJsonLd = {
   description: t('hero.description', locale),
   url: SITE_URL,
   image: `${SITE_URL}/jbnado.jpg`,
+  email: 'contato@jbnado.dev',
+  worksFor: {
+    '@type': 'Organization',
+    name: 'Verzel',
+  },
+  alumniOf: {
+    '@type': 'CollegeOrUniversity',
+    name: 'Fatec Ribeirão Preto',
+  },
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Ribeirão Preto',

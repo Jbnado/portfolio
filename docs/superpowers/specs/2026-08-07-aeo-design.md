@@ -25,11 +25,22 @@ porque a parte mais valiosa aqui é o que decidimos **não** fazer.
 - **`Organization`**. Tipo errado para portfolio pessoal. `Person` é o correto e é o que
   está lá. O problema real por trás da recomendação era o `Person` ser magro demais.
 - **`SearchAction`**. Descontinuado pelo Google.
-- **`email` no JSON-LD**. A página de contato ofusca o endereço por JavaScript contra
-  coleta automática. Repetir o email em texto puro no schema anularia essa proteção.
-- **`worksFor` e `alumniOf`**. O site não declara vínculo empregatício atual nem
-  instituição de ensino. Preencher exigiria adivinhar, e dado estruturado errado sobre
-  emprego é pior que dado ausente. **Pendente de confirmação do João.**
+- **`SearchAction`**. Descontinuado pelo Google.
+
+### Confirmados pelo João em 2026-08-08
+
+`email`, `worksFor` e `alumniOf` ficaram de fora na primeira passada porque não dava para
+verificar sem adivinhar. O João confirmou depois, e os três entraram:
+
+- `worksFor`: Verzel, e é o vínculo **atual**. A timeline mostrava "2025 @ Verzel" sem
+  data de fim, o que também poderia ser emprego passado.
+- `alumniOf`: Fatec Ribeirão Preto. O `projects.json:220` já citava "FATEC" no case do
+  Ribeirão Noir, mas sem o campus.
+- `email`: `contato@jbnado.dev`.
+
+**Divergência aberta:** a `ContactSection.astro:92` monta o mailto do botão "Email" com
+`bernardojoao9@gmail.com`. O schema agora declara `contato@jbnado.dev`. São endereços
+diferentes na mesma página, e vale unificar.
 
 ## O que foi feito
 
