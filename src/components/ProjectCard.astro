@@ -35,30 +35,6 @@ const year = startDate.slice(0, 4);
   <div class="project-content">
     <div class="project-header">
       <h3 class="project-title">{title}</h3>
-      <div class="project-links">
-        {links.github && (
-        <a
-          href={links.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-link"
-          aria-label={t('projects.githubLabel', locale, { title })}
-        >
-          {t('projects.github', locale)} <span aria-hidden="true">↗</span>
-        </a>
-        )}
-        {links.demo && (
-          <a
-            href={links.demo}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="project-link"
-            aria-label={t('projects.demoLabel', locale, { title })}
-          >
-            {t('projects.demo', locale)} <span aria-hidden="true">↗</span>
-          </a>
-        )}
-      </div>
     </div>
     <div class="project-meta">
       <span class={`project-type-stamp project-type-stamp--${type}`}>{typeLabel}</span>
@@ -67,6 +43,35 @@ const year = startDate.slice(0, 4);
       {techStack.map((tech) => <TechBadge name={tech} />)}
     </div>
     <p class="project-description">{description}</p>
+
+    {/* Os links de evidencia sairam do .project-header, onde o
+        justify-content: space-between os empurrava para o extremo direito de
+        uma linha de 1072px — 300 a 400px de vazio entre a afirmacao e a coisa
+        que a verifica. Agora encostam na descricao que verificam. */}
+    <div class="project-links">
+      {links.github && (
+      <a
+        href={links.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="project-link"
+        aria-label={t('projects.githubLabel', locale, { title })}
+      >
+        {t('projects.github', locale)} <span aria-hidden="true">↗</span>
+      </a>
+      )}
+      {links.demo && (
+        <a
+          href={links.demo}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="project-link"
+          aria-label={t('projects.demoLabel', locale, { title })}
+        >
+          {t('projects.demo', locale)} <span aria-hidden="true">↗</span>
+        </a>
+      )}
+    </div>
 
     <details class="case-study-details">
       <summary class="case-study-trigger" aria-label={t('caseStudy.expandLabel', locale, { title })}>
@@ -143,10 +148,6 @@ const year = startDate.slice(0, 4);
   }
 
   .project-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
     margin-bottom: 0.5rem;
   }
 
@@ -166,16 +167,18 @@ const year = startDate.slice(0, 4);
   /* Links */
   .project-links {
     display: flex;
-    gap: 0.75rem;
-    flex-shrink: 0;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 0.75rem;
   }
 
   .project-link {
     position: relative;
     font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: var(--color-text-secondary);
-    text-decoration: none;
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
     white-space: nowrap;
     transition: color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }

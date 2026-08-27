@@ -31,7 +31,7 @@ const { locale = 'pt-br' } = Astro.props;
 
   <!-- PUNK: Decorations -->
   <span class="punk-ono" style="top:5%;right:30%;font-size:2rem;color:#61ffca;transform:rotate(-10deg);text-shadow:0 0 15px rgba(97,255,202,0.5)" aria-hidden="true">&#9733;</span>
-  <span class="punk-ono" style="bottom:20%;left:10%;font-size:1.5rem;color:#ff3e3e;transform:rotate(15deg);text-shadow:0 0 12px rgba(255,62,62,0.4)" aria-hidden="true">&#9733;</span>
+  <span class="punk-ono" style="bottom:20%;left:10%;font-size:1.5rem;color:#61ffca;transform:rotate(15deg);text-shadow:0 0 12px rgba(97,255,202,0.4)" aria-hidden="true">&#9733;</span>
   <span class="punk-ono" style="top:50%;left:5%;font-size:1rem;color:#61ffca;transform:rotate(-25deg);text-shadow:0 0 10px rgba(97,255,202,0.4)" aria-hidden="true">YEAH!</span>
   <span class="punk-menacing" style="bottom:10%;right:15%;font-size:1.5rem;color:rgba(97,255,202,0.15);--punk-rotate:-8deg;animation-delay:1.5s" aria-hidden="true">gogo</span>
 
@@ -100,7 +100,9 @@ const { locale = 'pt-br' } = Astro.props;
 <style is:global>
   .contact-section {
     position: relative;
-    padding: 8rem 0 6rem;
+    /* Era 8rem no topo: 192px de vao antes de "Fala comigo.", que lia como
+       se a pagina ja tivesse acabado. */
+    padding: 4rem 0;
   }
 
   .contact-gradient-border {

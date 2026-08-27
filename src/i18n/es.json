@@ -141,17 +141,17 @@
     "notFound": "bash: cd: essa-página: No such file or directory"
   },
   "paper": {
-    "heroProj": "PROJ. Nº 001/2026 · REV. 03",
+    "heroProj": "HOJA 01/06 · PORTADA",
     "heroStatus": "DISPONIBLE",
     "heroStack": "MATERIALES:",
     "about": "HOJA 02/06 · RESPONSABLE TÉCNICO",
-    "timeline": "HISTORIAL DE REVISIONES",
+    "timeline": "HOJA 03/06 · HISTORIAL DE REVISIONES",
     "projects": "HOJA 04/06 · MEMORIA DESCRIPTIVA",
-    "blog": "HOJA 05/06 · CUADERNO DE NOTAS",
-    "contact": "FIRMA DEL RESPONSABLE",
-    "case": "MEMORIA DESCRIPTIVA · HOJA 01",
+    "blog": "CUADERNO DE NOTAS",
+    "contact": "HOJA 05/06 · FIRMA DEL RESPONSABLE",
+    "case": "MEMORIA DESCRIPTIVA",
     "back": "← VOLVER AL ÍNDICE",
-    "footer": "FIN DEL DOCUMENTO · HOJA 06/06",
+    "footer": "HOJA 06/06 · FIN DEL DOCUMENTO",
     "notFound": "HOJA NO ENCONTRADA · VERIFICAR NUMERACIÓN"
   },
   "seo": {

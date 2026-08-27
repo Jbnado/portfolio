@@ -141,17 +141,17 @@
     "notFound": "bash: cd: essa-página: No such file or directory"
   },
   "paper": {
-    "heroProj": "PROJ. No. 001/2026 · REV. 03",
+    "heroProj": "SHEET 01/06 · COVER SHEET",
     "heroStatus": "AVAILABLE",
     "heroStack": "MATERIALS:",
     "about": "SHEET 02/06 · TECHNICAL LEAD ON RECORD",
-    "timeline": "REVISION HISTORY",
+    "timeline": "SHEET 03/06 · REVISION HISTORY",
     "projects": "SHEET 04/06 · SPECIFICATION REPORT",
-    "blog": "SHEET 05/06 · FIELD NOTEBOOK",
-    "contact": "SIGNATURE OF RECORD",
-    "case": "SPECIFICATION REPORT · SHEET 01",
+    "blog": "FIELD NOTEBOOK",
+    "contact": "SHEET 05/06 · SIGNATURE OF RECORD",
+    "case": "SPECIFICATION REPORT",
     "back": "← BACK TO INDEX",
-    "footer": "END OF DOCUMENT · SHEET 06/06",
+    "footer": "SHEET 06/06 · END OF DOCUMENT",
     "notFound": "SHEET NOT FOUND · CHECK NUMBERING"
   },
   "seo": {

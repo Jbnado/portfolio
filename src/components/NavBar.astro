@@ -25,7 +25,7 @@ const navLinks = [
   { href: `${hashPrefix}#timeline`, label: t('sections.timeline', locale) },
   { href: `${hashPrefix}#projetos`, label: t('nav.projects', locale) },
   // Caminho absoluto, não âncora. Usa localePrefix e nunca hashPrefix.
-  { href: `${localePrefix}/blog`, label: t('nav.blog', locale) },
+  { href: `${localePrefix}/blog`, label: t('nav.blog', locale), leavesPage: true },
   { href: `${hashPrefix}#contacto`, label: t('nav.contact', locale) },
 ];
 ---
@@ -39,9 +39,9 @@ const navLinks = [
 
     <!-- Desktop links -->
     <div class="navbar-links">
-      {navLinks.map(({ href, label }) => (
-        <a href={href} class="navbar-link">
-          {label}
+      {navLinks.map(({ href, label, leavesPage }) => (
+        <a href={href} class={`navbar-link${leavesPage ? " navbar-link--page" : ""}`}>
+          {label}{leavesPage && <span class="navbar-link-mark" aria-hidden="true">/</span>}
         </a>
       ))}
     </div>
@@ -96,13 +96,10 @@ const navLinks = [
   }
 
   .navbar.scrolled {
-    background-color: color-mix(
-      in srgb,
-      var(--color-bg-primary) 95%,
-      transparent
-    );
+    /* 100%, nao 95%: sem backdrop-filter o h2 e o eyebrow da secao
+       atravessavam a barra durante o scroll. */
+    background-color: var(--color-bg-primary);
     border-bottom-color: var(--color-border);
-    will-change: background-color;
   }
 
   .navbar-container {
@@ -174,6 +171,14 @@ const navLinks = [
 
   .navbar-link:hover {
     color: var(--color-accent);
+  }
+
+  /* BLOG e outra pagina, nao uma ancora. Sem sinal ele vestia a aparencia
+     exata dos tres links internos. A barra e de caminho, nao seta de link
+     externo: o blog e do proprio site. */
+  .navbar-link-mark {
+    margin-left: 0.25rem;
+    opacity: 0.55;
   }
 
   /* Sublinhado por scaleX, não por width: animar width força layout a cada

@@ -43,7 +43,9 @@ const { locale = 'pt-br' } = Astro.props;
 
 <style is:global>
   .about-section {
-    padding: 6rem 0;
+    /* 4rem como as demais: 6rem dava um vao de 160px entre secoes,
+       fora da escala e diferente dos vizinhos. */
+    padding: 4rem 0;
   }
 
   .about-container {
