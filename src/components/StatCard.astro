@@ -3,17 +3,20 @@ interface Props {
   value: number;
   suffix?: string;
   label: string;
+  /** Quando presente, a linha inteira vira âncora para a seção que comprova o número. */
+  href?: string;
 }
 
-const { value, suffix = '', label } = Astro.props;
+const { value, suffix = '', label, href } = Astro.props;
+const Tag = href ? 'a' : 'div';
 ---
 
-<div class="stat-card">
+<Tag class:list={['stat-card', href && 'stat-card--link']} href={href}>
   <span class="stat-card-label">{label}</span>
   <span class="stat-card-value">
     <slot>{value}{suffix}</slot>
   </span>
-</div>
+</Tag>
 
 <style is:global>
   /* Linha de ficha técnica: rótulo à esquerda, valor à direita, filete tracejado
@@ -30,6 +33,27 @@ const { value, suffix = '', label } = Astro.props;
 
   .stat-card:first-child {
     border-top: none;
+  }
+
+  /* O painel tinha zero links: a linha "CASE STUDIES 8" enunciava o diferencial
+     do produto e não levava a lugar nenhum. Agora cada número aponta para a
+     seção que o comprova — e o acento passa a marcar ação, como manda a Regra
+     do Carimbo, em vez de decorar dado. */
+  .stat-card--link {
+    text-decoration: none;
+    margin: 0 -0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    transition: background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .stat-card--link:hover {
+    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  }
+
+  .stat-card--link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 
   .stat-card-label {

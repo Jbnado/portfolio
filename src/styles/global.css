@@ -146,11 +146,12 @@
    BASE STYLES — Layout & Typography
    ============================================ */
 
-@layer base {
-  /* Terminal: corpo monoespaçado só no escuro */
-  .dark body {
-    font-family: var(--font-mono);
-  }
+/* Fora do @layer de proposito. Dentro de @layer base esta regra PERDIA para o
+   utilitario `font-sans` no <body>, e a fonte computada do corpo no escuro era
+   Inter — a Regra do Body Terminal estava morta e so dava para ver no computed
+   style, nao na fonte. CSS sem camada vence qualquer camada. */
+.dark body {
+  font-family: var(--font-mono);
 }
 
 /* ============================================
@@ -1156,7 +1157,7 @@ button,
 .blog-card:hover .blog-card-cta { color: var(--color-accent); }
 
 /* Dark — terminal CRT */
-.dark .blog-card { background: color-mix(in srgb, var(--color-bg-secondary) 88%, #000); }
+.dark .blog-card { background: color-mix(in srgb, var(--color-bg-secondary) 88%, var(--color-surface-well)); }
 .dark .blog-card-title { text-shadow: 0 0 10px rgba(97, 255, 202, 0.25); }
 .dark .blog-card:hover { box-shadow: 0 0 18px rgba(97, 255, 202, 0.15); }
 

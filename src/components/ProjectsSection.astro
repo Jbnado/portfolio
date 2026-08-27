@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import SectionTitle from './SectionTitle.astro';
 import SectionEyebrow from './SectionEyebrow.astro';
 import ProjectCard from './ProjectCard.astro';
-import CaseStudyExpander from '../islands/CaseStudyExpander.tsx';
 import { t } from '../i18n/utils';
 import { caseStudyUrl } from '../utils/constants';
 
@@ -19,7 +18,6 @@ const items = projectEntries[0]?.data?.items ?? [];
 const localeKey = locale as 'pt-br' | 'en' | 'es';
 ---
 
-<CaseStudyExpander client:visible />
 {/* blueprint-wrap: a grade milimetrada estava no hero, no sobre, na timeline e
     no contato, mas faltava justo em #projetos — a seção mais longa da página.
     A única textura que o turno diurno tem não pode faltar em metade dele. */}

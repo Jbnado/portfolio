@@ -24,11 +24,14 @@ const projectEntries = await getCollection('projects');
 const catalogItems = projectEntries[0]?.data?.items ?? [];
 const caseStudyEntries = await getCollection('caseStudies');
 
+// Cada linha aponta para a seção que comprova o número. As de catálogo levam a
+// #projetos, as de trajetória a #timeline, e "idiomas" fica sem link porque é
+// propriedade do site, não item do registro.
 const catalog = [
-  { value: new Set(caseStudyEntries.map((e) => e.data.slug)).size, label: t('hero.catalog.caseStudies', locale) },
-  { value: catalogItems.filter((i) => i.type === 'project').length, label: t('hero.catalog.projects', locale) },
-  { value: catalogItems.filter((i) => i.type === 'contribution').length, label: t('hero.catalog.contributions', locale) },
-  { value: new Set(catalogItems.flatMap((i) => i.techStack)).size, label: t('hero.catalog.technologies', locale) },
+  { value: new Set(caseStudyEntries.map((e) => e.data.slug)).size, label: t('hero.catalog.caseStudies', locale), href: '#projetos' },
+  { value: catalogItems.filter((i) => i.type === 'project').length, label: t('hero.catalog.projects', locale), href: '#projetos' },
+  { value: catalogItems.filter((i) => i.type === 'contribution').length, label: t('hero.catalog.contributions', locale), href: '#projetos' },
+  { value: new Set(catalogItems.flatMap((i) => i.techStack)).size, label: t('hero.catalog.technologies', locale), href: '#projetos' },
   { value: 3, label: t('hero.catalog.locales', locale) },
 ];
 
@@ -95,7 +98,7 @@ const techString = techStack.join(' · ');
         </div>
         <div class="hero-stats">
           {catalog.map((row) => (
-            <StatCard value={row.value} label={row.label} />
+            <StatCard value={row.value} label={row.label} href={row.href} />
           ))}
           {/* Sem a island StatsCounter: ela e ssr:false, entao estas duas linhas
               saiam VAZIAS do build e so ganhavam valor depois da hidratacao —
@@ -104,7 +107,7 @@ const techString = techStack.join(' · ');
               trabalho e afirmar fatos, duas linhas em branco custam mais do que
               a animacao vale. As outras cinco ja renderizavam no servidor. */}
           {statsData.map((stat) => (
-            <StatCard value={stat.value} suffix={stat.suffix} label={stat.label[localeKey] ?? stat.label['pt-br']} />
+            <StatCard value={stat.value} suffix={stat.suffix} label={stat.label[localeKey] ?? stat.label['pt-br']} href="#timeline" />
           ))}
         </div>
       </aside>
@@ -330,13 +333,16 @@ const techString = techStack.join(' · ');
     border-bottom: 1px dashed var(--color-border);
   }
 
+  /* Mesmo tamanho e mesmo gap dos furos do hero. Antes eram 6px/5.6px contra
+     8px/6.4px: o mesmo elemento-assinatura em dois tamanhos, com gaps a 0.8px
+     de distancia — o sintoma exato da Regra do Degrau Inteiro. */
   .hero-panel-holes {
     display: flex;
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
   .hero-panel-holes .punch-hole {
-    width: 0.375rem;
-    height: 0.375rem;
+    width: 0.5rem;
+    height: 0.5rem;
   }
 
   .hero-panel-label {

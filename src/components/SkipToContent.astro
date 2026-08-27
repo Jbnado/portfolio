@@ -1,10 +1,16 @@
 ---
+import { t } from '../i18n/utils';
+
 interface Props {
   href?: string;
   label?: string;
+  locale?: string;
 }
 
-const { href = '#main', label = 'Saltar para o conteúdo' } = Astro.props;
+// O rotulo vinha fixo em portugues e o BaseLayout renderizava sem props: o
+// PRIMEIRO elemento focavel de /en/ e /es/ estava em portugues. A chave
+// nav.skipToContent ja existia nos tres idiomas e nunca era referenciada.
+const { href = '#main', locale = 'pt-br', label = t('nav.skipToContent', locale) } = Astro.props;
 ---
 
 <a href={href} class="skip-to-content">

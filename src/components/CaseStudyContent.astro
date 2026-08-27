@@ -90,46 +90,21 @@ const { problem, decision, result, locale = 'pt-br', caseUrl, title = '' } = Ast
     transition: transform 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
-  /* Enhanced: animated expansion via JS island.
-     A island força `open` no <details> para o conteúdo existir no DOM e poder
-     animar. Sem o visibility abaixo, o corpo colapsado continuava focável e
-     anunciado por leitor de tela enquanto o aria-expanded dizia "false" — e
-     agora que existe um link lá dentro, isso seria um alvo de tab invisível.
-     visibility:hidden tira a subárvore da ordem de foco; o delay só na volta
-     deixa a altura fechar antes de sumir. */
-  .case-study-details.enhanced .case-study-body {
-    display: grid;
-    grid-template-rows: 0fr;
-    visibility: hidden;
-    transition:
-      grid-template-rows 300ms cubic-bezier(0.16, 1, 0.3, 1),
-      visibility 0s linear 300ms;
-  }
-
-  .case-study-details.enhanced.open .case-study-body {
-    grid-template-rows: 1fr;
-    visibility: visible;
-    transition:
-      grid-template-rows 300ms cubic-bezier(0.16, 1, 0.3, 1),
-      visibility 0s linear 0s;
-  }
-
-  .case-study-details.enhanced .case-study-body > * {
-    overflow: hidden;
-  }
-
-  .case-study-details.enhanced .case-study-content {
-    opacity: 0;
-    transition: opacity 200ms ease;
-  }
-
-  .case-study-details.enhanced.open .case-study-content {
-    opacity: 1;
-    transition: opacity 200ms ease 100ms;
-  }
-
-  .case-study-details.enhanced.open .case-study-chevron {
+  /* Estado aberto em CSS puro, via details[open].
+     Antes tudo isto estava escopado em `.enhanced.open`, e `.enhanced` vinha de
+     uma island que nunca hidratava — resultado: os oito gatilhos ficavam
+     PIXEL-IDÊNTICOS abertos e fechados. Chevron sem rotação, borda sem mudança,
+     rótulo igual. O conteúdo que o produto chama de diferencial ficava atrás de
+     um botão que não dava sinal nenhum de ter funcionado.
+     details[open] é nativo, não depende de JavaScript, e funciona no primeiro
+     paint. A island foi removida junto. */
+  .case-study-details[open] .case-study-chevron {
     transform: rotate(90deg);
+  }
+
+  .case-study-details[open] .case-study-trigger {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
   }
 
   /* Case study content layout */
