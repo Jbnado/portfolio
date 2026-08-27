@@ -19,7 +19,14 @@
     "description": "Fullstack developer en Ribeirão Preto, Brasil. Construyo APIs, interfaces y a veces juegos.",
     "ctaProjects": "Ver proyectos",
     "ctaContact": "Hablemos",
-    "panelLabel": "TRAYECTORIA"
+    "panelLabel": "TRAYECTORIA",
+    "catalog": {
+      "caseStudies": "Case studies",
+      "projects": "Proyectos",
+      "contributions": "Contribuciones",
+      "locales": "Idiomas",
+      "technologies": "Tecnologías"
+    }
   },
   "about": {
     "title": "Sobre Mí",

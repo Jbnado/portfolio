@@ -22,6 +22,7 @@ const hashPrefix = isHome ? '' : `${localePrefix}/`;
 
 const navLinks = [
   { href: `${hashPrefix}#sobre`, label: t('nav.about', locale) },
+  { href: `${hashPrefix}#timeline`, label: t('sections.timeline', locale) },
   { href: `${hashPrefix}#projetos`, label: t('nav.projects', locale) },
   // Caminho absoluto, não âncora. Usa localePrefix e nunca hashPrefix.
   { href: `${localePrefix}/blog`, label: t('nav.blog', locale) },

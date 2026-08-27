@@ -19,7 +19,14 @@
     "description": "Fullstack developer from Ribeirão Preto, Brazil. I build APIs, interfaces, and sometimes games.",
     "ctaProjects": "View projects",
     "ctaContact": "Say hello",
-    "panelLabel": "TRACK RECORD"
+    "panelLabel": "TRACK RECORD",
+    "catalog": {
+      "caseStudies": "Case studies",
+      "projects": "Projects",
+      "contributions": "Contributions",
+      "locales": "Languages",
+      "technologies": "Technologies"
+    }
   },
   "about": {
     "title": "About Me",

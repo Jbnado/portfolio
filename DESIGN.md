@@ -463,7 +463,8 @@ O carimbo de tinta é rotacionado -6° e o carimbo de tipo de projeto -4° no tu
 - **Don't** cometer os tells de UI gerada: gradiente em texto de título, borda colorida grossa num lado só do card, easing de bounce ou elástico em transição de estado.
 - **Don't** animar `width`, `height`, `padding` ou `margin`. Use `transform` e `opacity`, ou `grid-template-rows` quando precisar animar altura.
 - **Don't** passar de 8px de raio. Pílula existe para o tech badge e disco para avatar e play; a lista não cresce.
-- **Don't** usar branco puro como superfície no turno diurno nem `#000` como fundo no noturno. O papel é manila e a sala é preto-esverdeado.
+- **Don't** usar branco puro como superfície no turno diurno nem `#000` como fundo de página no noturno. O papel é manila e a sala é preto-esverdeado.
+  **Exceção, e ela é fechada:** preto e branco puros valem onde não são superfície do sistema e sim ausência de imagem ou véu sobre a página — a tarja da fachada de vídeo, o scrim da gaveta mobile, os quadros da cortina de troca de tema e o bloco de impressão. Nesses quatro, `#000` e `#fff` são o valor correto e não drift de paleta: uma tarja de vídeo cinza-esverdeada seria erro, não identidade. Fora deles, a proibição continua valendo integralmente.
 - **Don't** deixar adesivo ou decoração de personagem aparecer abaixo de 1024px. Eles sobrepõem texto e link no celular.
 - **Don't** aplicar Permanent Marker fora de título, e nunca no turno diurno.
 - **Don't** empilhar duas peças em Alarme na mesma dobra.

@@ -19,7 +19,14 @@
     "description": "Fullstack developer em Ribeirão Preto. Construo APIs, interfaces e às vezes jogos.",
     "ctaProjects": "Ver projetos",
     "ctaContact": "Fala comigo",
-    "panelLabel": "TRAJETÓRIA"
+    "panelLabel": "TRAJETÓRIA",
+    "catalog": {
+      "caseStudies": "Case studies",
+      "projects": "Projetos",
+      "contributions": "Contribuições",
+      "locales": "Idiomas",
+      "technologies": "Tecnologias"
+    }
   },
   "about": {
     "title": "Sobre Mim",

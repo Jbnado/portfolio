@@ -128,28 +128,4 @@ const { locale = 'pt-br' } = Astro.props;
     transform: rotate(-2deg);
     border-radius: 2px;
   }
-
-  /* Mobile: sticker repositioning */
-  @media (max-width: 767px) {
-    .dark .about-section .punk-sticker:first-of-type {
-      width: 120px !important;
-      top: -2% !important;
-      right: -2% !important;
-    }
-    .dark .about-section .punk-sticker:nth-of-type(2) {
-      width: 70px !important;
-      bottom: 2% !important;
-      left: -1% !important;
-    }
-  }
-
-  /* Extra small screens (≤480px) */
-  @media (max-width: 480px) {
-    .dark .about-section .punk-sticker:first-of-type {
-      width: 80px !important;
-    }
-    .dark .about-section .punk-sticker:nth-of-type(2) {
-      display: none !important;
-    }
-  }
 </style>

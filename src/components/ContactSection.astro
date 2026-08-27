@@ -42,13 +42,16 @@ const { locale = 'pt-br' } = Astro.props;
       out={t('terminal.contactOut', locale)}
       paper={t('paper.contact', locale)}
     />
-    <p class="contact-cta">{t('contact.cta', locale)}</p>
+    {/* h2, não p: o esquema de headings da home ia h1 → Sobre → Percurso →
+        Projetos → nada. #contacto era a única seção sem título, então quem
+        navega por heading não alcançava o bloco de contato — e o item
+        CONTACTO do menu apontava para uma região sem nome. */}
+    <h2 class="contact-cta">{t('contact.cta', locale)}</h2>
     <p class="contact-subtitle">{t('contact.subtitle', locale)}</p>
 
     <div class="contact-links">
       <a
-        id="email-link"
-        href="#"
+        href="mailto:contato@jbnado.dev"
         class="contact-link"
         aria-label={t('contact.emailLabel', locale)}
       >
@@ -87,13 +90,11 @@ const { locale = 'pt-br' } = Astro.props;
     </div>
   </div>
 
-  <script is:inline>
-    (function(){
-      var u='contato';var d='jbnado.dev';
-      var l=document.getElementById('email-link');
-      if(l){l.href='mailto:'+u+'@'+d;}
-    })();
-  </script>
+  {/* O script que montava o mailto em runtime saiu. Ele ofuscava o endereco
+      contra scraper, ao custo de a principal via de contato nao fazer nada com
+      JavaScript desligado — o link ia para "#" e pulava pro topo, sem erro e
+      sem alternativa. O endereco ja e publico no README e no PRODUCT.md, entao
+      a ofuscacao protegia pouco e custava o caminho degradado inteiro. */}
 </section>
 
 <style is:global>
@@ -248,8 +249,6 @@ const { locale = 'pt-br' } = Astro.props;
     text-shadow: 0 0 12px rgba(97, 255, 202, 0.3);
     animation: menacing-float 2s ease-in-out infinite;
   }
-
-  /* Mobile: sticker repositioning */
   @media (max-width: 767px) {
     .dark .contact-section .punk-sticker-bg {
       width: 100px !important;
@@ -268,16 +267,6 @@ const { locale = 'pt-br' } = Astro.props;
     }
     .dark .contact-cta {
       transform: rotate(-0.5deg);
-    }
-  }
-
-  /* Extra small screens (≤480px) */
-  @media (max-width: 480px) {
-    .dark .contact-section .punk-sticker-bg {
-      width: 70px !important;
-    }
-    .dark .contact-section .punk-sticker:nth-of-type(3) {
-      display: none !important;
     }
   }
 </style>

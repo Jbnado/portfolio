@@ -2,7 +2,6 @@
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import StatCard from './StatCard.astro';
-import StatsCounter from '../islands/StatsCounter.tsx';
 import { t } from '../i18n/utils';
 import gonImg from '../assets/imgs/Gon-full-body-hi.webp';
 import skullRockImg from '../assets/imgs/skull-rockandroll.webp';
@@ -16,6 +15,22 @@ const localeKey = locale as 'pt-br' | 'en' | 'es';
 
 const statsEntries = await getCollection('stats');
 const statsData = statsEntries[0]?.data?.items ?? [];
+
+// Indice do catalogo, contado do proprio conteudo em tempo de build. Nada aqui
+// e escrito a mao, entao nao envelhece: publicou um projeto, o numero sobe.
+// O painel media 403x149 numa celula de 403x519 — 370px de coluna morta, com o
+// moat do produto comecando 2.776px abaixo da dobra.
+const projectEntries = await getCollection('projects');
+const catalogItems = projectEntries[0]?.data?.items ?? [];
+const caseStudyEntries = await getCollection('caseStudies');
+
+const catalog = [
+  { value: new Set(caseStudyEntries.map((e) => e.data.slug)).size, label: t('hero.catalog.caseStudies', locale) },
+  { value: catalogItems.filter((i) => i.type === 'project').length, label: t('hero.catalog.projects', locale) },
+  { value: catalogItems.filter((i) => i.type === 'contribution').length, label: t('hero.catalog.contributions', locale) },
+  { value: new Set(catalogItems.flatMap((i) => i.techStack)).size, label: t('hero.catalog.technologies', locale) },
+  { value: 3, label: t('hero.catalog.locales', locale) },
+];
 
 const techStack = ['React', 'Node.js', 'TypeScript', 'Java', 'Python', 'AWS'];
 const techString = techStack.join(' · ');
@@ -79,10 +94,17 @@ const techString = techStack.join(' · ');
           <span class="hero-panel-label">{t('hero.panelLabel', locale)}</span>
         </div>
         <div class="hero-stats">
+          {catalog.map((row) => (
+            <StatCard value={row.value} label={row.label} />
+          ))}
+          {/* Sem a island StatsCounter: ela e ssr:false, entao estas duas linhas
+              saiam VAZIAS do build e so ganhavam valor depois da hidratacao —
+              nada com JavaScript desligado, e um piscar de 0 para todo mundo,
+              porque o efeito zerava o display antes de contar. Num painel cujo
+              trabalho e afirmar fatos, duas linhas em branco custam mais do que
+              a animacao vale. As outras cinco ja renderizavam no servidor. */}
           {statsData.map((stat) => (
-            <StatCard value={stat.value} suffix={stat.suffix} label={stat.label[localeKey] ?? stat.label['pt-br']}>
-              <StatsCounter client:visible value={stat.value} suffix={stat.suffix} />
-            </StatCard>
+            <StatCard value={stat.value} suffix={stat.suffix} label={stat.label[localeKey] ?? stat.label['pt-br']} />
           ))}
         </div>
       </aside>
@@ -364,8 +386,6 @@ const techString = techStack.join(' · ');
     color: #61ffca;
     text-shadow: 0 0 10px rgba(97, 255, 202, 0.3);
   }
-
-  /* Mobile: sticker repositioning */
   @media (max-width: 767px) {
     .dark .hero-section .punk-sticker:first-of-type {
       width: 140px !important;
@@ -384,17 +404,6 @@ const techString = techStack.join(' · ');
     }
     .dark .hero-title {
       transform: rotate(-0.5deg);
-    }
-  }
-
-  /* Extra small screens (≤480px) */
-  @media (max-width: 480px) {
-    .dark .hero-section .punk-sticker:first-of-type {
-      width: 100px !important;
-    }
-    .dark .hero-section .punk-sticker:nth-of-type(2),
-    .dark .hero-section .punk-sticker:nth-of-type(3) {
-      width: 40px !important;
     }
   }
 </style>
