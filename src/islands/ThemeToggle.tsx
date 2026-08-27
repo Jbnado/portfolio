@@ -1,6 +1,15 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 
-export default function ThemeToggle() {
+interface Props {
+  /** Rotulos ja traduzidos; o aria-label estava fixo em portugues nos 3 idiomas. */
+  toggleLight?: string;
+  toggleDark?: string;
+}
+
+export default function ThemeToggle({
+  toggleLight = 'Mudar para modo claro',
+  toggleDark = 'Mudar para modo escuro',
+}: Props) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const isAnimating = useRef(false);
 
@@ -22,7 +31,7 @@ export default function ThemeToggle() {
       document.documentElement.classList.add(next);
       localStorage.setItem('theme', next);
       document.querySelector('meta[name="theme-color"]')
-        ?.setAttribute('content', next === 'dark' ? '#0c0a09' : '#faf9f6');
+        ?.setAttribute('content', next === 'dark' ? '#0a0f0c' : '#f2efe4');
       setTheme(next);
       return;
     }
@@ -39,7 +48,7 @@ export default function ThemeToggle() {
       document.documentElement.classList.add(next);
       localStorage.setItem('theme', next);
       document.querySelector('meta[name="theme-color"]')
-        ?.setAttribute('content', next === 'dark' ? '#0c0a09' : '#faf9f6');
+        ?.setAttribute('content', next === 'dark' ? '#0a0f0c' : '#f2efe4');
       setTheme(next);
     }, 400);
 
@@ -58,10 +67,7 @@ export default function ThemeToggle() {
     }, 1200);
   };
 
-  const label =
-    theme === 'dark'
-      ? 'Mudar para modo claro'
-      : 'Mudar para modo escuro';
+  const label = theme === 'dark' ? toggleLight : toggleDark;
 
   return (
     <button

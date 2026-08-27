@@ -44,3 +44,11 @@ nul
 src/nul
 
 .vercel
+
+# Impeccable — artefatos locais (config por maquina e cache do hook)
+.impeccable/config.local.json
+.impeccable/hook.cache.json
+.impeccable/live/
+
+# Codex agent config
+.codex/

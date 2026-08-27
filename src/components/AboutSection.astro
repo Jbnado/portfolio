@@ -43,7 +43,9 @@ const { locale = 'pt-br' } = Astro.props;
 
 <style is:global>
   .about-section {
-    padding: 6rem 0;
+    /* 4rem como as demais: 6rem dava um vao de 160px entre secoes,
+       fora da escala e diferente dos vizinhos. */
+    padding: 4rem 0;
   }
 
   .about-container {
@@ -88,7 +90,10 @@ const { locale = 'pt-br' } = Astro.props;
   .about-pullquote {
     margin: 2rem 0;
     padding-left: 1.25rem;
-    border-left: 3px solid var(--color-accent);
+    /* 1px, não 3px: a Regra da Espessura Falante do DESIGN.md diz que 1px é
+       papel e 2px é instrumento, e um pullquote é papel. Borda colorida grossa
+       num lado só também é o tell de UI gerada que o próprio DESIGN.md proíbe. */
+    border-left: 1px solid var(--color-accent);
     font-size: 1.125rem;
     line-height: 1.6;
     color: var(--color-text-primary);
@@ -104,7 +109,9 @@ const { locale = 'pt-br' } = Astro.props;
 
   /* Dark mode — punk pullquote */
   .dark .about-pullquote {
-    border-left: 4px dashed #ff3e3e;
+    /* var(--color-revolt) no lugar do #ff3e3e literal: o token existe e é
+       exatamente esta cor, então o literal era só drift. */
+    border-left: 1px dashed var(--color-revolt);
     padding: 1.25rem 1.5rem;
     background: rgba(97, 255, 202, 0.04);
     border-radius: 0 4px 4px 0;
@@ -122,29 +129,5 @@ const { locale = 'pt-br' } = Astro.props;
     border: 1px solid rgba(255, 62, 62, 0.25);
     transform: rotate(-2deg);
     border-radius: 2px;
-  }
-
-  /* Mobile: sticker repositioning */
-  @media (max-width: 767px) {
-    .dark .about-section .punk-sticker:first-of-type {
-      width: 120px !important;
-      top: -2% !important;
-      right: -2% !important;
-    }
-    .dark .about-section .punk-sticker:nth-of-type(2) {
-      width: 70px !important;
-      bottom: 2% !important;
-      left: -1% !important;
-    }
-  }
-
-  /* Extra small screens (≤480px) */
-  @media (max-width: 480px) {
-    .dark .about-section .punk-sticker:first-of-type {
-      width: 80px !important;
-    }
-    .dark .about-section .punk-sticker:nth-of-type(2) {
-      display: none !important;
-    }
   }
 </style>

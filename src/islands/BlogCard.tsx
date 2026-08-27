@@ -17,7 +17,7 @@ interface Props {
 export default function BlogCard({ post, number, labels }: Props) {
   return (
     <article class="blog-card vintage-card card-edge-holes">
-      <div class="pc-head blog-card-head">
+      <div class="blog-card-head">
         <div class="blog-card-holes" aria-hidden="true">
           {[0, 1, 2, 3, 4, 5].map((i) => (
             <span key={i} class="punch-hole" />
@@ -59,7 +59,7 @@ export default function BlogCard({ post, number, labels }: Props) {
         )}
       </div>
 
-      <div class="pc-foot blog-card-foot">
+      <div class="blog-card-foot">
         <span>{post.readingMinutes} {labels.minutes}</span>
         <span class="blog-card-cta" aria-hidden="true">{labels.readMore} →</span>
       </div>

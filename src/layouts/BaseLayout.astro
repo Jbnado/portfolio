@@ -70,9 +70,9 @@ const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#faf9f6" />
+    <meta name="theme-color" content="#f2efe4" />
     <script is:inline>
-      if(document.documentElement.classList.contains('dark')){document.querySelector('meta[name="theme-color"]').setAttribute('content','#0c0a09');}
+      if(document.documentElement.classList.contains('dark')){document.querySelector('meta[name="theme-color"]').setAttribute('content','#0a0f0c');}
     </script>
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -96,7 +96,7 @@ const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
         </filter>
       </defs>
     </svg>
-    <SkipToContent />
+    <SkipToContent locale={locale} />
     <NavBar locale={locale} alternates={alternates} />
     {showScrollSpy && <ScrollSpy client:idle />}
     <main id="main" class="pt-16">

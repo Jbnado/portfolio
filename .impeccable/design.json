@@ -1,0 +1,698 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-27T19:26:14Z",
+  "title": "Design System: jbnado.dev",
+  "extensions": {
+    "colorMeta": {
+      "midday-light": {
+        "role": "neutral",
+        "displayName": "Luz de Meio-Dia",
+        "canonical": "oklch(95.1% 0.0149 94.2)",
+        "tonalRamp": [
+          "#0d0b05",
+          "#26241c",
+          "#424037",
+          "#605e54",
+          "#807d73",
+          "#a19e94",
+          "#c7c4ba",
+          "#f2efe4"
+        ]
+      },
+      "service-sheet": {
+        "role": "neutral",
+        "displayName": "Folha de Serviço",
+        "canonical": "oklch(88.9% 0.0171 88.0)",
+        "tonalRamp": [
+          "#0e0b04",
+          "#27241b",
+          "#433f36",
+          "#625d53",
+          "#817d72",
+          "#a39e93",
+          "#c9c4b8",
+          "#f3eee2"
+        ]
+      },
+      "paper-well": {
+        "role": "neutral",
+        "displayName": "Poço de Papel",
+        "canonical": "oklch(83.1% 0.0203 87.5)",
+        "tonalRamp": [
+          "#0f0b03",
+          "#282419",
+          "#443f34",
+          "#625d51",
+          "#827d70",
+          "#a49e90",
+          "#cac4b6",
+          "#f4eee0"
+        ]
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Grafite",
+        "canonical": "oklch(26.1% 0.0134 272.8)",
+        "tonalRamp": [
+          "#090b11",
+          "#22242b",
+          "#3d3f47",
+          "#5b5d65",
+          "#7a7d86",
+          "#9b9ea7",
+          "#c1c4cd",
+          "#ebeef8"
+        ]
+      },
+      "worn-pencil": {
+        "role": "neutral",
+        "displayName": "Lápis Gasto",
+        "canonical": "oklch(48.0% 0.0220 75.1)",
+        "tonalRamp": [
+          "#110a03",
+          "#2a2318",
+          "#473e33",
+          "#655c50",
+          "#857c6f",
+          "#a79d90",
+          "#cdc2b5",
+          "#f7eddf"
+        ]
+      },
+      "approval-stamp": {
+        "role": "primary",
+        "displayName": "Carimbo de Aprovação",
+        "canonical": "oklch(44.4% 0.1341 28.8)",
+        "tonalRamp": [
+          "#310000",
+          "#530000",
+          "#77140e",
+          "#9b382e",
+          "#c05a4d",
+          "#e67b6d",
+          "#ffa192",
+          "#ffcbbb"
+        ]
+      },
+      "approval-stamp-deep": {
+        "role": "primary",
+        "displayName": "Carimbo de Aprovação, Fundo",
+        "canonical": "oklch(37.8% 0.1187 28.7)",
+        "tonalRamp": [
+          "#2d0000",
+          "#4f0000",
+          "#721e17",
+          "#953f35",
+          "#b95f53",
+          "#de8073",
+          "#ffa698",
+          "#ffd0c1"
+        ]
+      },
+      "approval-stamp-diluted": {
+        "role": "primary",
+        "displayName": "Carimbo Diluído no Papel",
+        "canonical": "oklch(67.9% 0.0504 31.4)",
+        "tonalRamp": [
+          "#1c0201",
+          "#391a14",
+          "#57362f",
+          "#77534c",
+          "#99736b",
+          "#bc938b",
+          "#e3b9b0",
+          "#ffe3da"
+        ]
+      },
+      "draftsman-line": {
+        "role": "secondary",
+        "displayName": "Traço de Desenhista",
+        "canonical": "oklch(47.9% 0.1343 261.2)",
+        "tonalRamp": [
+          "#000042",
+          "#001963",
+          "#113a85",
+          "#2f5aa8",
+          "#4e7bcc",
+          "#6e9df1",
+          "#92c4ff",
+          "#bbefff"
+        ]
+      },
+      "paper-edge": {
+        "role": "neutral",
+        "displayName": "Borda de Papel",
+        "canonical": "oklch(70.5% 0.0301 86.7)",
+        "tonalRamp": [
+          "#110a00",
+          "#2a2313",
+          "#473f2d",
+          "#655d4a",
+          "#857c69",
+          "#a79e8a",
+          "#cdc3af",
+          "#f7eed8"
+        ]
+      },
+      "instrument-edge": {
+        "role": "neutral",
+        "displayName": "Borda de Instrumento",
+        "canonical": "oklch(51.7% 0.0263 84.6)",
+        "tonalRamp": [
+          "#100a01",
+          "#2a2315",
+          "#463f30",
+          "#655d4d",
+          "#857c6c",
+          "#a69d8c",
+          "#ccc3b1",
+          "#f7eedb"
+        ]
+      },
+      "room-at-2am": {
+        "role": "neutral",
+        "displayName": "Sala às 2h",
+        "canonical": "oklch(16.2% 0.0101 158.7)",
+        "tonalRamp": [
+          "#080c0a",
+          "#202622",
+          "#3b413e",
+          "#595f5b",
+          "#787f7b",
+          "#99a09c",
+          "#bfc6c2",
+          "#e9f1ec"
+        ]
+      },
+      "room-at-2am-raised": {
+        "role": "neutral",
+        "displayName": "Sala às 2h, Elevada",
+        "canonical": "oklch(18.8% 0.0110 163.5)",
+        "tonalRamp": [
+          "#070d0a",
+          "#1f2622",
+          "#3b423e",
+          "#58605c",
+          "#787f7b",
+          "#99a19c",
+          "#bec6c2",
+          "#e8f1ec"
+        ]
+      },
+      "room-at-2am-well": {
+        "role": "neutral",
+        "displayName": "Sala às 2h, Poço",
+        "canonical": "oklch(13.9% 0.0089 165.2)",
+        "tonalRamp": [
+          "#080c0a",
+          "#202523",
+          "#3c413e",
+          "#595f5c",
+          "#797f7c",
+          "#9aa09d",
+          "#bfc6c3",
+          "#e9f0ed"
+        ]
+      },
+      "screen-glow": {
+        "role": "neutral",
+        "displayName": "Brilho de Tela",
+        "canonical": "oklch(88.1% 0.1496 155.5)",
+        "tonalRamp": [
+          "#001800",
+          "#003500",
+          "#005416",
+          "#007535",
+          "#009655",
+          "#39b975",
+          "#67e09a",
+          "#94ffc3"
+        ]
+      },
+      "screen-glow-dim": {
+        "role": "neutral",
+        "displayName": "Brilho de Tela, Fraco",
+        "canonical": "oklch(72.5% 0.1337 157.8)",
+        "tonalRamp": [
+          "#001700",
+          "#003403",
+          "#005321",
+          "#00733e",
+          "#14945d",
+          "#46b77e",
+          "#70dea2",
+          "#9cffcc"
+        ]
+      },
+      "command-accepted": {
+        "role": "primary",
+        "displayName": "Comando Aceito",
+        "canonical": "oklch(86.1% 0.1900 156.0)",
+        "tonalRamp": [
+          "#001a00",
+          "#003800",
+          "#005800",
+          "#007a28",
+          "#009c49",
+          "#00bf69",
+          "#2ae78e",
+          "#6affb7"
+        ]
+      },
+      "command-accepted-bright": {
+        "role": "primary",
+        "displayName": "Comando Aceito, Vivo",
+        "canonical": "oklch(90.6% 0.1602 154.8)",
+        "tonalRamp": [
+          "#001800",
+          "#003600",
+          "#00550f",
+          "#007630",
+          "#009850",
+          "#2cbb70",
+          "#5ee295",
+          "#8cffbe"
+        ]
+      },
+      "live-cursor": {
+        "role": "secondary",
+        "displayName": "Cursor Vivo",
+        "canonical": "oklch(90.3% 0.1530 167.3)",
+        "tonalRamp": [
+          "#001900",
+          "#003713",
+          "#00562e",
+          "#00774b",
+          "#00996a",
+          "#00bc8b",
+          "#3ce3b0",
+          "#74ffd9"
+        ]
+      },
+      "muted-phosphor": {
+        "role": "secondary",
+        "displayName": "Fósforo Apagado",
+        "canonical": "oklch(74.8% 0.1178 168.1)",
+        "tonalRamp": [
+          "#001702",
+          "#003318",
+          "#005233",
+          "#007251",
+          "#099370",
+          "#42b690",
+          "#6dddb6",
+          "#9affe0"
+        ]
+      },
+      "alarm": {
+        "role": "tertiary",
+        "displayName": "Alarme",
+        "canonical": "oklch(65.8% 0.2284 26.2)",
+        "tonalRamp": [
+          "#450000",
+          "#6d0000",
+          "#950000",
+          "#bd0000",
+          "#e61c28",
+          "#ff4f4b",
+          "#ff7a71",
+          "#ffa79a"
+        ]
+      },
+      "conduit-green": {
+        "role": "neutral",
+        "displayName": "Verde de Conduíte",
+        "canonical": "oklch(42.0% 0.0784 158.7)",
+        "tonalRamp": [
+          "#001301",
+          "#002f15",
+          "#0d4c30",
+          "#316b4d",
+          "#528c6c",
+          "#73ae8c",
+          "#98d4b2",
+          "#c2ffdb"
+        ]
+      },
+      "conduit-green-strong": {
+        "role": "neutral",
+        "displayName": "Conduíte Aceso",
+        "canonical": "oklch(56.8% 0.1101 158.6)",
+        "tonalRamp": [
+          "#001600",
+          "#00320d",
+          "#005028",
+          "#037046",
+          "#379164",
+          "#5cb385",
+          "#82daaa",
+          "#adffd3"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Só o h1 do hero. No turno noturno troca para Permanent Marker com rotação e glow."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Títulos de seção, acompanhados da linha que ocupa o resto da largura."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Títulos de projeto, card de blog e case study."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "A frase que abre uma secao, o resumo do post, o pullquote. 18px."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto corrido. Também é o corpo de post e case no turno noturno, pela Regra dos Oito Minutos."
+      },
+      "body-terminal": {
+        "displayName": "Body Terminal",
+        "purpose": "A casca do site no turno noturno: nav, hero, listas e cards viram mono."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "O degrau menor, 10px: o dado sobre o dado. Tech badge, carimbo de tipo, numeracao."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Rótulo, comando, badge, número, metadado. Sempre mono, quase sempre caixa alta."
+      },
+      "marker": {
+        "displayName": "Marker",
+        "purpose": "Permanent Marker, só no turno noturno e só em títulos."
+      }
+    },
+    "shadows": [
+      {
+        "name": "apoio-de-papel",
+        "value": "0 1px 3px rgba(34, 36, 43, 0.08)",
+        "purpose": "Turno diurno, uso raro. Uma folha em cima de outra."
+      },
+      {
+        "name": "papel-levantado",
+        "value": "0 4px 12px rgba(34, 36, 43, 0.10)",
+        "purpose": "Turno diurno, o degrau mais alto que o sistema tem."
+      },
+      {
+        "name": "glow-de-fosforo",
+        "value": "0 0 18px rgba(97, 255, 202, 0.15)",
+        "purpose": "Turno noturno, card em hover. Não é sombra, é emissão."
+      },
+      {
+        "name": "glow-de-cta",
+        "value": "0 0 12px rgba(97, 255, 202, 0.25)",
+        "purpose": "Turno noturno, CTA primário e foco de campo."
+      },
+      {
+        "name": "glow-de-texto",
+        "value": "0 0 2px rgba(97,255,202,0.7), 0 0 8px rgba(97,255,202,0.35)",
+        "purpose": "A classe .crt-glow, em comandos e títulos do escuro."
+      },
+      {
+        "name": "glow-de-titulo",
+        "value": "0 0 30px rgba(97, 255, 202, 0.5), 0 0 80px rgba(97, 255, 202, 0.2)",
+        "purpose": "H1 do hero no turno noturno."
+      },
+      {
+        "name": "led-de-badge",
+        "value": "inset 0 0 6px rgba(97, 255, 202, 0.08)",
+        "purpose": "Brilho interno do tech badge no escuro; faz parecer LED de painel."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-padrao",
+        "value": "cubic-bezier(0.25, 0.1, 0.25, 1)",
+        "purpose": "Easing padrão de todo o sistema: cor, borda, transform, stagger."
+      },
+      {
+        "name": "ease-gaveta",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Entrada da gaveta mobile, 300ms. O único easing distinto do sistema."
+      },
+      {
+        "name": "dur-estado",
+        "value": "150ms",
+        "purpose": "Hover e foco de botão, link e card."
+      },
+      {
+        "name": "dur-superficie",
+        "value": "200ms",
+        "purpose": "Borda de card, campo, barra de navegação."
+      },
+      {
+        "name": "dur-tema",
+        "value": "300ms",
+        "purpose": "Transição escalonada de tema: fundo 0ms, texto 50ms, links 100ms."
+      },
+      {
+        "name": "dur-cortina",
+        "value": "1s",
+        "purpose": "Cortina de troca de tema, preto → fósforo → transparente."
+      },
+      {
+        "name": "stagger-hero",
+        "value": "calc(var(--stagger) * 100ms)",
+        "purpose": "Entrada escalonada dos elementos do hero, seis degraus."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "xs",
+        "value": "480px"
+      },
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ],
+    "containers": [
+      {
+        "name": "sistema",
+        "value": "1200px",
+        "purpose": "Nav, hero, feed do blog, seções da home."
+      },
+      {
+        "name": "case",
+        "value": "860px",
+        "purpose": "Leitura de case study."
+      },
+      {
+        "name": "post",
+        "value": "720px",
+        "purpose": "Leitura de post do blog."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "CTA Primário",
+      "kind": "button",
+      "refersTo": "button-cta-primary",
+      "description": "A saída principal da primeira dobra. Preenchido com o acento do turno.",
+      "html": "<a class=\"ds-cta-primary\" href=\"#projetos\">Ver projetos</a>",
+      "css": ".ds-cta-primary { display: inline-flex; align-items: center; min-height: 44px; padding: 0.75rem 1.25rem; border: 2px solid #8f2d24; border-radius: 0; background: #8f2d24; color: #f2efe4; font-family: \"JetBrains Mono\", ui-monospace, monospace; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: background-color 150ms cubic-bezier(0.25,0.1,0.25,1), border-color 150ms cubic-bezier(0.25,0.1,0.25,1); } .ds-cta-primary:hover { background: #742019; border-color: #742019; } .ds-cta-primary:focus-visible { outline: 2px solid #8f2d24; outline-offset: 2px; }"
+    },
+    {
+      "name": "CTA Secundário",
+      "kind": "button",
+      "refersTo": "button-cta-secondary",
+      "description": "A segunda saída da dobra. Mesma borda, sem preenchimento.",
+      "html": "<a class=\"ds-cta-secondary\" href=\"#contacto\">Fala comigo</a>",
+      "css": ".ds-cta-secondary { display: inline-flex; align-items: center; min-height: 44px; padding: 0.75rem 1.25rem; border: 2px solid #8f2d24; border-radius: 0; background: transparent; color: #22242b; font-family: \"JetBrains Mono\", ui-monospace, monospace; font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; transition: background-color 150ms cubic-bezier(0.25,0.1,0.25,1); } .ds-cta-secondary:hover { background: rgba(143, 45, 36, 0.12); } .ds-cta-secondary:focus-visible { outline: 2px solid #8f2d24; outline-offset: 2px; }"
+    },
+    {
+      "name": "Botão de CV",
+      "kind": "button",
+      "refersTo": "button-cv",
+      "description": "O único botão com canto de 6px do sistema. Vive na barra de navegação e na gaveta mobile.",
+      "html": "<a class=\"ds-btn-cv\" href=\"/Bernardo-CV.pdf\">CV</a>",
+      "css": ".ds-btn-cv { display: inline-flex; align-items: center; padding: 0.375rem 0.75rem; border-radius: 6px; background: #8f2d24; color: #ffffff; font-family: \"JetBrains Mono\", ui-monospace, monospace; font-size: 0.75rem; font-weight: 600; text-decoration: none; transition: background-color 300ms cubic-bezier(0.25,0.1,0.25,1) 100ms; } .ds-btn-cv:hover { background: #742019; } .ds-btn-cv:active { transform: scale(0.98); } .ds-btn-cv:focus-visible { outline: 2px solid #8f2d24; outline-offset: 2px; }"
+    },
+    {
+      "name": "Botão de Contorno",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Ação secundária de feed e de case. Borda neutra em repouso, acento no hover.",
+      "html": "<button class=\"ds-btn-outline\" type=\"button\">Carregar mais</button>",
+      "css": ".ds-btn-outline { padding: 0.5rem 1.25rem; border: 1px solid #a89f8b; border-radius: 4px; background: none; color: #22242b; font-family: \"JetBrains Mono\", ui-monospace, monospace; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: border-color 200ms cubic-bezier(0.25,0.1,0.25,1), color 200ms cubic-bezier(0.25,0.1,0.25,1); } .ds-btn-outline:hover:not(:disabled) { color: #8f2d24; border-color: #8f2d24; } .ds-btn-outline:disabled { opacity: 0.6; cursor: progress; } .ds-btn-outline:focus-visible { outline: 2px solid #8f2d24; outline-offset: 2px; }"
+    },
+    {
+      "name": "Tech Badge",
+      "kind": "chip",
+      "refersTo": "badge-tech",
+      "description": "A única pílula do sistema. No turno noturno vira LED de painel.",
+      "html": "<span class=\"ds-badge-tech\">TypeScript</span>",
+      "css": ".ds-badge-tech { display: inline-block; padding: 0.25rem 0.75rem; border: 1px solid #a89f8b; border-radius: 20px; color: #655c50; font-family: \"JetBrains Mono\", ui-monospace, monospace; font-size: 0.75rem; white-space: nowrap; }"
+    },
+    {
+      "name": "Carimbo de Tinta",
+      "kind": "chip",
+      "refersTo": "stamp-ink",
+      "description": "Como o sistema diz PROJETO ou CONTRIB. Rotacionado no dia, reto e aceso na noite.",
+      "html": "<span class=\"ds-stamp-ink\">CONTRIB</span>",
+      "css": ".ds-stamp-ink { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.2rem 0.6rem; border: 2px solid #8f2d24; border-radius: 2px; color: #8f2d24; font-family: \"JetBrains Mono\", ui-monospace, monospace; font-weight: 700; font-size: 0.625rem; letter-spacing: 0.15em; text-transform: uppercase; transform: rotate(-6deg); opacity: 0.9; box-shadow: inset 0 0 0 1px #8f2d24; }"
+    },
+    {
+      "name": "Card de Blog",
+      "kind": "card",
+      "refersTo": "card-sheet",
+      "description": "A peça mais completa do sistema: furos de punch card, numeração, corpo e rodapé tracejado.",
+      "html": "<article class=\"ds-card-blog\"><div class=\"ds-card-blog-head\"><span class=\"ds-card-blog-holes\"><i></i><i></i><i></i><i></i></span><span class=\"ds-card-blog-num\">POST 002</span></div><div class=\"ds-card-blog-body\"><h3 class=\"ds-card-blog-title\">O mural secreto dos agentes</h3><p class=\"ds-card-blog-summary\">Um recorte do que aparece quando você abre o capô de um sistema de agentes e olha o que eles deixam escrito.</p></div><div class=\"ds-card-blog-foot\"><span>27 AGO 2026</span><span class=\"ds-card-blog-cta\">Ler →</span></div></article>",
+      "css": ".ds-card-blog { display: flex; flex-direction: column; max-width: 340px; border: 1px solid #a89f8b; border-radius: 4px; background: #dfdace; overflow: hidden; transition: transform 200ms cubic-bezier(0.25,0.1,0.25,1), border-color 200ms cubic-bezier(0.25,0.1,0.25,1); } .ds-card-blog:hover { transform: translateY(-3px); border-color: #8f2d24; } .ds-card-blog-head { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; border-bottom: 1px dashed #a89f8b; } .ds-card-blog-holes { display: flex; gap: 0.375rem; } .ds-card-blog-holes i { width: 0.4375rem; height: 0.4375rem; border-radius: 2px; background: rgba(111, 103, 87, 0.6); } .ds-card-blog-num { font-family: \"JetBrains Mono\", ui-monospace, monospace; font-size: 0.625rem; letter-spacing: 0.08em; color: #655c50; } .ds-card-blog-body { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.875rem; } .ds-card-blog-title { margin: 0; font-size: 1.0625rem; line-height: 1.3; font-weight: 700; color: #22242b; } .ds-card-blog-summary { margin: 0; font-size: 0.8125rem; line-height: 1.55; color: #655c50; } .ds-card-blog-foot { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.875rem; border-top: 1px dashed #a89f8b; font-family: \"JetBrains Mono\", ui-monospace, monospace; font-size: 0.625rem; letter-spacing: 0.06em; color: #655c50; } .ds-card-blog:hover .ds-card-blog-cta { color: #8f2d24; }"
+    },
+    {
+      "name": "Campo de Busca",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "O único campo do sistema. Rótulo mono em caixa alta acima, foco que troca a borda para o acento.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-q\">Buscar no blog</label><input class=\"ds-field-input\" id=\"ds-q\" type=\"text\" placeholder=\"agentes, astro, go...\" /></div>",
+      "css": ".ds-field { display: block; max-width: 320px; } .ds-field-label { display: block; margin-bottom: 0.375rem; font-family: \"JetBrains Mono\", ui-monospace, monospace; font-size: 0.625rem; letter-spacing: 0.12em; text-transform: uppercase; color: #655c50; } .ds-field-input { width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #a89f8b; border-radius: 4px; background: #dfdace; color: #22242b; font-family: \"JetBrains Mono\", ui-monospace, monospace; font-size: 0.875rem; transition: border-color 200ms cubic-bezier(0.25,0.1,0.25,1); } .ds-field-input::placeholder { color: #655c50; opacity: 0.7; } .ds-field-input:focus { outline: none; border-color: #8f2d24; } .ds-field-input:focus-visible { outline: 2px solid #8f2d24; outline-offset: 2px; }"
+    },
+    {
+      "name": "Link de Navegação",
+      "kind": "nav",
+      "description": "Sublinhado que cresce de 0 a 100% em 150ms; o item ativo já nasce completo.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link is-active\" href=\"#sobre\">Sobre</a><a class=\"ds-nav-link\" href=\"#projetos\">Projetos</a><a class=\"ds-nav-link\" href=\"#blog\">Blog</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 2rem; align-items: center; } .ds-nav-link { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: #655c50; text-decoration: none; transition: color 300ms cubic-bezier(0.25,0.1,0.25,1) 100ms; } .ds-nav-link::after { content: \"\"; display: block; width: 0; height: 1.5px; background: #8f2d24; transition: width 150ms cubic-bezier(0.25,0.1,0.25,1); } .ds-nav-link:hover { color: #8f2d24; } .ds-nav-link:hover::after { width: 100%; } .ds-nav-link.is-active { color: #8f2d24; } .ds-nav-link.is-active::after { width: 100%; } .ds-nav-link:focus-visible { outline: 2px solid #8f2d24; outline-offset: 2px; }"
+    },
+    {
+      "name": "Cabeçalho de Case",
+      "kind": "custom",
+      "refersTo": "panel-instrument",
+      "description": "Painel de instrumento: borda de 2px, canto reto, furos de punch card e número do registro.",
+      "html": "<header class=\"ds-case-head\"><div class=\"ds-case-head-top\"><span class=\"ds-case-holes\"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class=\"ds-case-num\">REG 004</span></div><h2 class=\"ds-case-title\">UpWatch</h2><p class=\"ds-case-summary\">Monitoramento de disponibilidade em Go que cabe num binário e mostra latência junto com o estado.</p></header>",
+      "css": ".ds-case-head { max-width: 420px; padding: 1.5rem; border: 2px solid #6f6757; border-radius: 0; } .ds-case-head-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; } .ds-case-holes { display: flex; gap: 0.4rem; } .ds-case-holes i { width: 0.5rem; height: 0.5rem; border-radius: 2px; background: rgba(143, 45, 36, 0.2); } .ds-case-num { padding: 0.1rem 0.5rem; border-radius: 2px; background: rgba(143, 45, 36, 0.18); color: #8f2d24; font-family: \"JetBrains Mono\", ui-monospace, monospace; font-size: 0.75rem; } .ds-case-title { margin: 0 0 0.75rem; font-family: Sora, Inter, sans-serif; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; color: #22242b; } .ds-case-summary { margin: 0; max-width: 60ch; line-height: 1.6; color: #655c50; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Turno Diurno, Turno Noturno",
+    "overview": "O mesmo engenheiro, a mesma mesa, duas horas do dia. No turno diurno a mesa está sob luz natural: papel manila, tinta oxblood, traço azul de desenhista, grade milimetrada quase invisível sob o conteúdo. No turno noturno a luz natural acabou e sobrou o monitor: fósforo verde sobre preto-esverdeado, linhas de varredura, cursor piscando, o alarme vermelho quando alguma coisa exige atenção. A troca de tema não é troca de marca. É passagem de tempo, e a cortina de transição de 1s existe justamente para que ela seja lida como isso.\n\nO sistema é preciso e sóbrio: o alinhamento e a escolha de tipo carregam a confiança, não o tratamento visual. É físico antes de digital: furos de cartão perfurado, carimbos rotacionados, etiquetas, bordas tracejadas e papel gasto vêm antes de qualquer efeito que só um navegador saberia fazer. E é ruidoso quando quer — mas a licença para ruído é do turno noturno, onde glitch RGB, glow de fósforo, Permanent Marker torto e adesivos são parte do vocabulário. O turno diurno não tem essa licença; a contenção é o traço dele, não uma falta.\n\nA dupla personalidade é implementada inteiramente em custom properties sobre o mesmo HTML. Nenhum elemento é duplicado por tema: o texto decorativo vive em data-txt e é pintado por ::before, então o turno errado simplesmente não pinta nada, e o modo de leitura do navegador recebe markup limpo.",
+    "keyCharacteristics": [
+      "Dois turnos completos sob os mesmos nomes de token; nenhum é o outro com filtro aplicado",
+      "Vocabulário de papelaria técnica: furos, carimbos, etiquetas, numeração, tracejado",
+      "Bordas fazem o trabalho que sombras fariam em outro sistema",
+      "Mono para tudo que é rótulo, comando ou metadado; proporcional para tudo que se lê em quantidade",
+      "Cantos quase retos: o padrão é 0–4px, e 8px já é exceção",
+      "Decoração de personagem só existe a partir de 1024px; a identidade no celular vive no tipo e na cor"
+    ],
+    "rules": [
+      {
+        "name": "A Regra do Turno",
+        "body": "Todo par cor/uso é declarado duas vezes — uma em .light, outra em .dark — e nunca herdado entre os dois. Um tema não é o outro com filtro; é outra paleta inteira sob os mesmos nomes de token. Se você precisou de um filter: para fazer um tema virar o outro, o token está faltando.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Carimbo",
+        "body": "O acento marca ação e estado, nunca decora superfície. Se o acento está preenchendo uma área grande e parada, ele virou fundo e perdeu a função. As exceções são as duas superfícies que realmente são ação: o CTA primário e a statusline do terminal. Corolário: coisas que não são ação não usam a cor de ação — a perfuração do cartão é ausência, então ela usa a tinta de instrumento.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Alarme",
+        "body": "Alarme só existe no turno noturno e só em ocorrências únicas. Duas peças em Alarme visíveis ao mesmo tempo na mesma dobra já é uma a mais.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra dos Oito Minutos",
+        "body": "Texto corrido longo sai do mono mesmo no turno noturno. .dark .case-body volta explicitamente para Inter, e a mesma regra vale para posts. O terminal é a casca do site, não o corpo de um artigo de oito minutos de leitura.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Marcador",
+        "body": "Permanent Marker aparece só no turno noturno e só em títulos — h1 do hero, título de seção, título de case. Nunca em texto que precise ser lido em quantidade, nunca em rótulo, nunca no turno diurno.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Degrau Inteiro",
+        "body": "Todo tamanho fixo sai da rampa de doze degraus (10/12/14/16/18/20/24/28/32/36/40/44) e cai em pixel inteiro a 16px de raiz. Um valor novo entra na rampa ou nao entra no sistema. O sintoma de quebra e sempre o mesmo: dois valores a menos de 1px um do outro, que nao conseguem carregar papeis diferentes.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Rótulo Mono",
+        "body": "Se o texto é um dado sobre outro texto — data, contagem, tag, tempo de leitura, número do projeto — ele é mono. Essa é a fronteira entre os dois universos tipográficos, e ela é rígida.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra da Coluna Decrescente",
+        "body": "Quanto mais longo o texto, mais estreita a coluna. 1200px para catalogar, 860px para o case, 720px para o post. Uma página nova herda a largura do tipo de leitura que ela é, não a do container mais próximo.",
+        "section": "layout"
+      },
+      {
+        "name": "A Regra da Coluna que se Preenche",
+        "body": "Uma coluna de grid e uma promessa do tamanho dela. Se o conteudo mede 136px dentro de 403px, ou o conteudo cresce ate a largura ou a coluna deixa de existir. O padrao de linha com space-between (rotulo a esquerda, valor a direita, filete tracejado entre) e o mecanismo padrao do sistema para isso.",
+        "section": "layout"
+      },
+      {
+        "name": "A Regra do Vao na Escala",
+        "body": "Todo espacamento vertical sai de 4/8/12/16/24/32/48/64. Um vao fora da escala quase sempre e acidente e nao decisao: meia-entrelinha de inline-block, 0.35rem escrito a mao. Meca o valor renderizado, nao o declarado.",
+        "section": "layout"
+      },
+      {
+        "name": "A Regra dos 44px",
+        "body": "Todo alvo de toque tem no mínimo 44px de altura ou lado — CTA do hero, hambúrguer, botão de fechar da gaveta, links da gaveta, CV mobile. Não é sugestão.",
+        "section": "layout"
+      },
+      {
+        "name": "A Regra Sem Elevação, Só Emissão",
+        "body": "Sombra difusa de elevação é vocabulário estrangeiro. No dia, se você precisa separar duas coisas, use borda ou camada tonal. Na noite, se precisa destacar, acenda — não levante.",
+        "section": "elevation"
+      },
+      {
+        "name": "A Regra do Recuo Único",
+        "body": "Toda superfície que recua escurece, nos dois turnos. O poço nunca é mais claro que o cartão, e o cartão nunca é mais claro que a mesa. Uma superfície que clareia ao recuar lê como buraco, não como camada.",
+        "section": "elevation"
+      },
+      {
+        "name": "A Regra da Borda Compensatória",
+        "body": "O turno diurno não tem emissão, então a borda dele precisa trabalhar pelo menos tanto quanto a do noturno. Filete de 1px em 2,28:1 no claro contra 2,38:1 no escuro; se um valor novo de borda clara ficar abaixo de 2:1, ele não separa nada e o design volta a parecer inacabado.",
+        "section": "elevation"
+      },
+      {
+        "name": "A Regra do Canto Quase Reto",
+        "body": "Se um elemento novo pede mais de 8px de raio, ele não pertence a este sistema. Pílula existe para o tech badge e disco para avatar e play; a lista não cresce.",
+        "section": "shapes"
+      },
+      {
+        "name": "A Regra da Espessura Falante",
+        "body": "A espessura da borda diz o que a coisa é: 2px é equipamento, 1px é papel, 1px tracejado é costura interna. Escolher a espessura errada é classificar o objeto errado.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do declarar cor nova nos dois turnos, em .light e .dark, sob o mesmo nome de token. Um turno nunca é o outro com filtro.",
+      "Do usar borda para separar e camada tonal para agrupar no turno diurno; usar emissão para destacar no noturno.",
+      "Do manter texto corrido longo em Inter mesmo no escuro, seguindo a Regra dos Oito Minutos.",
+      "Do colocar texto decorativo em data-txt com ::before, para que o modo de leitura e o leitor de tela recebam markup limpo.",
+      "Do derivar a cor do texto de um botão preenchido do token de fundo do turno (var(--color-bg-primary)), nunca de um #ffffff literal — o acento do turno noturno é claro, e branco sobre ele não passa em AA.",
+      "Do escalonar o padding horizontal em 1rem → 2rem (768px) → 4rem (1024px) em qualquer container novo de sistema.",
+      "Do dar 44px de alvo a tudo que se toca.",
+      "Do desligar animação decorativa em prefers-reduced-motion: reduce e manter o conteúdo visível — elementos com stagger voltam a opacity: 1, nunca ficam invisíveis."
+    ],
+    "donts": [
+      "Don't trazer de volta neon roxo, rosa ou ciano. Essa paleta foi aposentada quando o fósforo verde entrou, e a decisão está fechada.",
+      "Don't reintroduzir cromo de MSN ou moldura de janelinha de chat nos cards. Foi removido de propósito.",
+      "Don't usar ticker ou marquee de texto rolando em nenhuma superfície. Foi recusado explicitamente.",
+      "Don't cometer os tells de UI gerada: gradiente em texto de título, borda colorida grossa num lado só do card, easing de bounce ou elástico em transição de estado.",
+      "Don't animar width, height, padding ou margin. Use transform e opacity, ou grid-template-rows quando precisar animar altura.",
+      "Don't passar de 8px de raio. Pílula existe para o tech badge e disco para avatar e play; a lista não cresce.",
+      "Don't usar branco puro como superfície no turno diurno nem #000 como fundo no noturno. O papel é manila e a sala é preto-esverdeado.",
+      "Don't deixar adesivo ou decoração de personagem aparecer abaixo de 1024px. Eles sobrepõem texto e link no celular.",
+      "Don't aplicar Permanent Marker fora de título, e nunca no turno diurno.",
+      "Don't empilhar duas peças em Alarme na mesma dobra."
+    ]
+  }
+}

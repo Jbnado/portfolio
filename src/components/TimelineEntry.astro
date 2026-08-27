@@ -129,6 +129,8 @@ const { date, title, description, type, tech = [], href } = Astro.props;
     line-height: 1.6;
     color: var(--color-text-secondary);
     margin-bottom: 0.75rem;
+    /* Mesma correção de medida do .project-description */
+    max-width: 70ch;
   }
 
   @media (min-width: 768px) {

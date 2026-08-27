@@ -108,7 +108,7 @@ const year = new Date().getFullYear();
   }
 
   .footer-text {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     color: var(--color-text-secondary);
     line-height: 1.6;
   }
@@ -127,6 +127,11 @@ const year = new Date().getFullYear();
   }
 
   .footer-link {
+    display: inline-flex;
+    align-items: center;
+    /* mediam 16px de altura, o pior alvo da página. Altura real e não overlay:
+       se a linha quebrar, alvos empilhados não se sobrepõem. */
+    min-height: 44px;
     color: var(--color-text-secondary);
     text-decoration: none;
     background-image: linear-gradient(currentColor, currentColor);

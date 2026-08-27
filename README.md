@@ -1,326 +1,181 @@
-# jb. — Portfolio Pessoal
+# jbnado.dev
 
 [![Astro](https://img.shields.io/badge/Astro-5-BC52EE?logo=astro&logoColor=white)](https://astro.build)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Preact](https://img.shields.io/badge/Preact-10-673AB8?logo=preact&logoColor=white)](https://preactjs.com)
-[![Vercel](https://img.shields.io/badge/Deploy-Vercel-000?logo=vercel&logoColor=white)](https://vercel.com)
-[![Lighthouse](https://img.shields.io/badge/Lighthouse-95%2B-0CCE6B?logo=lighthouse&logoColor=white)](#performance--lighthouse)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Vercel](https://img.shields.io/badge/Vercel-deploy-000?logo=vercel&logoColor=white)](https://vercel.com)
 
-Portfolio pessoal de **João Bernardo** — desenvolvedor fullstack, Brasil.
+Código-fonte do portfólio pessoal de [João Bernardo](https://jbnado.dev), desenvolvedor fullstack em Ribeirão Preto, SP.
 
-**[jbnado.dev](https://jbnado.dev)**
+O site reúne trajetória profissional, projetos, contribuições open source, estudos de caso e artigos técnicos. Foi construído com Astro para entregar HTML por padrão e usa ilhas Preact somente nas interações que precisam de JavaScript no navegador.
 
----
+**Site:** [jbnado.dev](https://jbnado.dev) · **GitHub:** [@Jbnado](https://github.com/Jbnado) · **LinkedIn:** [jbnado](https://linkedin.com/in/jbnado)
 
-## Sumário
+## Principais recursos
 
-- [Sobre](#sobre)
-- [Tech Stack](#tech-stack)
-- [Funcionalidades](#funcionalidades)
-- [Começando](#começando)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Internacionalização (i18n)](#internacionalização-i18n)
-- [Sistema de Conteúdo](#sistema-de-conteúdo)
-- [Design System](#design-system)
-- [Performance & Lighthouse](#performance--lighthouse)
-- [Acessibilidade](#acessibilidade)
-- [Licença](#licença)
+- conteúdo em português, inglês e espanhol, com rotas e currículos próprios para cada idioma;
+- páginas de projetos e contribuições com estudos de caso escritos em Markdown;
+- blog técnico com busca no cliente, tags, paginação, tempo de leitura e vídeos incorporados com privacidade aprimorada;
+- feeds RSS independentes por idioma;
+- tema claro e escuro com preferência persistida;
+- componentes interativos isolados em Preact: navegação mobile, scroll spy, contadores, busca do blog e expansores;
+- metadados canônicos, `hreflang`, Open Graph, Twitter Cards e JSON-LD;
+- sitemap, `robots.txt`, manifesto web e endpoint `llms.txt` gerado a partir do conteúdo publicado;
+- cabeçalhos de segurança configurados para a Vercel;
+- fontes variáveis hospedadas localmente e suporte a `prefers-reduced-motion`.
 
----
+## Stack
 
-## Sobre
+| Área | Tecnologia |
+| --- | --- |
+| Framework | [Astro 5](https://astro.build) |
+| Interatividade | [Preact 10](https://preactjs.com) |
+| Estilos | [Tailwind CSS 4](https://tailwindcss.com) e CSS global |
+| Linguagem | TypeScript |
+| Conteúdo | Astro Content Collections, Markdown e JSON |
+| Testes | [Vitest](https://vitest.dev) |
+| Imagens | [Sharp](https://sharp.pixelplumbing.com) |
+| Hospedagem | Vercel com adapter oficial do Astro |
+| Pacotes | pnpm 9 |
 
-Site pessoal construído com foco em **performance**, **acessibilidade** e **design intencional**. Apresenta trajetória profissional, projetos em destaque com case studies, e informações de contato — tudo em três idiomas.
-
-> _"Bom software é invisível: carrega rápido, é intuitivo e acessível a todos."_
-
----
-
-## Tech Stack
-
-| Camada          | Tecnologia                                                                  |
-| --------------- | --------------------------------------------------------------------------- |
-| Framework       | [Astro 5](https://astro.build) — static-first, island architecture          |
-| Interatividade  | [Preact](https://preactjs.com) — islands para componentes interativos       |
-| Estilização     | [Tailwind CSS 4](https://tailwindcss.com) — utility-first com design tokens |
-| Tipografia      | Inter, Sora, JetBrains Mono — variable fonts auto-hospedadas                |
-| Deploy          | [Vercel](https://vercel.com) — edge deployment com adapter nativo           |
-| CI/CD           | GitHub Actions — auditorias Lighthouse automatizadas                        |
-| Package Manager | [pnpm](https://pnpm.io)                                                     |
-| Linguagem       | TypeScript                                                                  |
-
----
-
-## Funcionalidades
-
-- **Island Architecture** — zero JS por padrão, hidratação seletiva apenas onde necessário
-- **3 idiomas** — Português (BR), English, Español com rotas dedicadas
-- **Dark / Light mode** — duas identidades visuais distintas, persistidas em `localStorage`
-- **SEO completo** — Open Graph, Twitter Card, JSON-LD (Person schema), hreflang, sitemap automático
-- **PWA-ready** — manifest.json, ícones em múltiplas resoluções, apple-touch-icon
-- **Case studies** — accordion progressivamente aprimorado (funciona sem JS)
-- **Stats animados** — contadores com easing que respeitam `prefers-reduced-motion`
-- **Mobile-first** — menu hamburger com focus trap, scroll lock, e tecla Escape
-- **Scroll spy** — navegação ativa baseada na viewport
-- **Security headers** — CSP, X-Frame-Options, Permissions-Policy via `vercel.json`
-- **Print stylesheet** — versão otimizada para impressão
-
----
-
-## Começando
+## Como executar
 
 ### Pré-requisitos
 
-- **Node.js** >= 18
-- **pnpm** >= 9
+- Node.js 18 ou superior;
+- [pnpm](https://pnpm.io/installation) 9.
 
 ```bash
-# Instalar pnpm (se necessário)
-npm install -g pnpm
-```
-
-### Instalação
-
-```bash
-# Clonar o repositório
-git clone https://github.com/Jbnado/portfolio-jb.git
-cd portfolio-jb
-
-# Instalar dependências
+git clone https://github.com/Jbnado/portfolio.git
+cd portfolio
 pnpm install
-```
-
-### Desenvolvimento
-
-```bash
-# Iniciar servidor de desenvolvimento (http://localhost:4321)
 pnpm dev
 ```
 
-O hot-reload está habilitado por padrão. Edite qualquer arquivo em `src/` e veja as alterações instantaneamente.
+O servidor de desenvolvimento estará disponível em `http://localhost:4321`.
 
-### Build & Preview
+### Scripts
+
+| Comando | Descrição |
+| --- | --- |
+| `pnpm dev` | Inicia o servidor de desenvolvimento |
+| `pnpm build` | Valida o conteúdo e gera a build de produção |
+| `pnpm preview` | Serve localmente a última build |
+| `pnpm test` | Executa os testes uma vez com Vitest |
+| `pnpm test:watch` | Executa os testes em modo interativo |
+| `pnpm astro` | Encaminha argumentos para a CLI do Astro |
+
+Para validar a mesma saída que será publicada:
 
 ```bash
-# Gerar build de produção
+pnpm test
 pnpm build
-
-# Pré-visualizar a build localmente
 pnpm preview
 ```
 
-### Deploy
+## Arquitetura
 
-O projeto está configurado para deploy automático na **Vercel**. Qualquer push para `main` dispara um novo deploy.
-
-Para deploy manual:
-
-```bash
-# Instalar Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-```
-
----
-
-## Estrutura do Projeto
-
-```
+```text
 portfolio-jb/
-├── .github/
-│   ├── workflows/
-│   │   └── lighthouse.yml        # CI — auditorias Lighthouse
-│   └── lighthouse/
-│       └── lighthouserc.json      # Config Lighthouse CI
-├── public/
-│   ├── fonts/                     # Variable fonts (woff2)
-│   ├── Bernardo-CV.pdf            # CV para download
-│   ├── manifest.json              # PWA manifest
-│   ├── og-image.png               # Open Graph image
-│   ├── robots.txt                 # Crawlers config
-│   └── favicon.*                  # Favicons em múltiplos formatos
+├── public/                  # CVs, favicons, imagens sociais, fontes e manifesto
+├── scripts/                 # geração de favicons e imagem Open Graph
 ├── src/
-│   ├── components/                # Componentes Astro (server-rendered)
-│   │   ├── HeroSection.astro
-│   │   ├── AboutSection.astro
-│   │   ├── TimelineSection.astro
-│   │   ├── ProjectsSection.astro
-│   │   ├── ContactSection.astro
-│   │   ├── NavBar.astro
-│   │   ├── Footer.astro
-│   │   ├── SEOHead.astro          # Meta tags, OG, JSON-LD
-│   │   ├── LanguageSwitcher.astro
-│   │   └── ...
-│   ├── islands/                   # Preact islands (client-side)
-│   │   ├── ThemeToggle.tsx        # Dark/light mode
-│   │   ├── MobileNav.tsx          # Menu mobile com focus trap
-│   │   ├── ScrollSpy.tsx          # Nav link ativo
-│   │   ├── StatsCounter.tsx       # Contadores animados
-│   │   ├── CaseStudyExpander.tsx  # Accordion de case studies
-│   │   └── ScrollIndicator.tsx    # Indicador de scroll
-│   ├── content/                   # Astro Content Collections (JSON)
-│   │   ├── stats/
-│   │   ├── timeline/
-│   │   └── projects/
-│   ├── i18n/                      # Traduções
-│   │   ├── utils.ts               # Helpers t() e getLocaleFromUrl()
-│   │   ├── pt-br.json
-│   │   ├── en.json
-│   │   └── es.json
-│   ├── layouts/
-│   │   └── BaseLayout.astro       # Layout principal
-│   ├── pages/
-│   │   ├── index.astro            # / (pt-br)
-│   │   ├── 404.astro              # Página 404
-│   │   ├── en/index.astro         # /en/
-│   │   └── es/index.astro         # /es/
-│   ├── styles/
-│   │   └── global.css             # Design system completo
-│   └── utils/
-│       └── constants.ts           # SITE_URL, LOCALES, tipos
-├── astro.config.mjs               # Config Astro + i18n + Vercel
-├── vercel.json                    # Headers de segurança
-├── tsconfig.json
-└── package.json
+│   ├── components/          # componentes Astro e composição das páginas
+│   ├── content/
+│   │   ├── blog/            # artigos Markdown, um arquivo por idioma
+│   │   ├── caseStudies/     # estudos de caso Markdown, um arquivo por idioma
+│   │   ├── projects/        # catálogo e resumo dos projetos em JSON
+│   │   ├── stats/           # números exibidos no portfólio
+│   │   └── timeline/        # experiência profissional
+│   ├── i18n/                # dicionários e utilitários de tradução
+│   ├── islands/             # componentes Preact hidratados no cliente
+│   ├── layouts/             # layout base compartilhado
+│   ├── pages/               # rotas Astro em pt-BR, inglês e espanhol
+│   ├── styles/              # estilos globais e das ilhas
+│   └── utils/               # constantes, conteúdo e regras do blog
+├── astro.config.mjs         # Astro, Preact, Tailwind, sitemap, i18n e Vercel
+├── src/content.config.ts    # schemas das Content Collections
+├── vercel.json              # redirect do sitemap e cabeçalhos de segurança
+└── vitest.config.ts         # configuração dos testes
 ```
 
----
+Astro renderiza a maior parte da interface no servidor. Os arquivos em `src/islands/` são hidratados apenas quando uma funcionalidade exige estado ou APIs do navegador, reduzindo o JavaScript enviado nas páginas essencialmente editoriais.
 
-## Internacionalização (i18n)
+## Design system
 
-O site suporta **3 idiomas** usando o sistema nativo de i18n do Astro:
+Os tokens ficam em `src/styles/global.css`, nos blocos `.dark` e `.light`. Os dois temas não são o mesmo layout com brilho invertido: o claro imita uma mesa de engenharia, com papel manila, tinta oxblood e azul de blueprint; o escuro imita um terminal CRT, com fósforo verde sobre preto esverdeado. O tema claro é o padrão.
 
-| Locale           | Rota   | Exemplo          |
-| ---------------- | ------ | ---------------- |
-| `pt-br` (padrão) | `/`    | `jbnado.dev/`    |
-| `en`             | `/en/` | `jbnado.dev/en/` |
-| `es`             | `/es/` | `jbnado.dev/es/` |
+| Token | Claro | Escuro |
+| --- | --- | --- |
+| `--color-bg-primary` | `#f2efe4` papel manila | `#0a0f0c` preto-esverdeado |
+| `--color-bg-secondary` | `#f8f6ef` | `#0f1512` |
+| `--color-text-primary` | `#22242b` tinta azulada | `#7cf5ad` verde fósforo |
+| `--color-text-secondary` | `#5f636e` | `#4fbf85` |
+| `--color-accent` | `#8f2d24` oxblood | `#42f59b` verde ácido |
+| `--color-accent-secondary` | `#2f5aa8` azul blueprint | `#61ffca` fósforo brilhante |
+| `--color-revolt` | `#8f2d24` | `#ff3e3e` |
+| `--color-border` | `#cbc7ba` borda de papel | `#1f5a3d` |
+| `--color-ink-blue` | `#2f5aa8` | `#54c59f` |
 
-### Adicionando um novo idioma
+Quatro famílias variáveis são hospedadas localmente e expostas como tokens:
 
-1. Criar arquivo de tradução em `src/i18n/` (ex: `fr.json`)
-2. Adicionar o locale em `astro.config.mjs` no array `locales`
-3. Adicionar o locale no tipo `Locale` em `src/utils/constants.ts`
-4. Criar a pasta de páginas `src/pages/fr/index.astro`
-5. Adicionar traduções nos Content Collections (`timeline.json`, `projects.json`)
+| Token | Fonte | Uso |
+| --- | --- | --- |
+| `--font-sans` | Inter | corpo do texto no tema claro |
+| `--font-display` | Sora | títulos e display |
+| `--font-mono` | JetBrains Mono | código, etiquetas e todo o corpo do tema escuro |
+| `--font-punk` | Permanent Marker | destaques manuscritos do tema escuro |
 
-### Usando traduções
+A troca de tema aplica a classe `dark` ou `light` na tag `<html>`, e as custom properties cascateiam para os utilitários do Tailwind pelo bloco `@theme`. Um script inline no `<head>` do `BaseLayout.astro` resolve o tema antes das folhas de estilo carregarem, evitando o flash de tema errado.
 
-```typescript
-import { t } from "../i18n/utils";
+## Conteúdo e internacionalização
 
-// Nos componentes Astro:
-const label = t(locale, "nav.about"); // "Sobre Mim" | "About Me" | "Sobre Mí"
-```
+O idioma padrão é `pt-br` e não recebe prefixo. Inglês e espanhol vivem sob `/en/` e `/es/`.
 
----
+| Conteúdo | Português | Inglês | Espanhol |
+| --- | --- | --- | --- |
+| Página inicial | `/` | `/en/` | `/es/` |
+| Blog | `/blog/` | `/en/blog/` | `/es/blog/` |
+| RSS | `/rss.xml` | `/en/rss.xml` | `/es/rss.xml` |
+| Projeto | `/projeto/:slug/` | `/en/project/:slug/` | `/es/proyecto/:slug/` |
+| Contribuição | `/contribuicao/:slug/` | `/en/contribution/:slug/` | `/es/contribucion/:slug/` |
 
-## Sistema de Conteúdo
+Textos compartilhados da interface ficam em `src/i18n/*.json`. Estatísticas, timeline e catálogo de projetos usam objetos com as chaves `pt-br`, `en` e `es`. Artigos e estudos de caso têm um arquivo Markdown por locale e frontmatter validado por Zod em `src/content.config.ts`.
 
-O conteúdo é gerenciado via [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/) com arquivos JSON:
+Ao publicar conteúdo, mantenha o mesmo `slug` entre as traduções e defina o `locale` correto em cada arquivo. No blog, `urlSlug` controla o endereço público traduzido; posts com `draft: true` não entram nas listagens públicas.
 
-| Collection | Arquivo                              | Descrição                               |
-| ---------- | ------------------------------------ | --------------------------------------- |
-| `stats`    | `src/content/stats/stats.json`       | Métricas do hero (anos, projetos, etc.) |
-| `timeline` | `src/content/timeline/timeline.json` | Trajetória profissional e projetos      |
-| `projects` | `src/content/projects/projects.json` | Projetos em destaque com case studies   |
+## SEO, descoberta e segurança
 
-Todos os textos voltados ao usuário usam o formato i18n:
+Cada página pode fornecer título, descrição, canonical, alternates, imagem social e dados estruturados próprios. O componente `SEOHead.astro` centraliza as tags comuns e publica uma entidade `Person` estável, referenciada pelos schemas de artigos e estudos de caso.
 
-```json
-{
-  "title": {
-    "pt-br": "Título em Português",
-    "en": "Title in English",
-    "es": "Título en Español"
-  }
-}
-```
+A aplicação também oferece:
 
----
-
-## Design System
-
-O tema é definido em `src/styles/global.css` com design tokens via CSS custom properties.
-
-### Cores principais
-
-| Token      | Dark      | Light     | Uso                      |
-| ---------- | --------- | --------- | ------------------------ |
-| `--accent` | `#C2703E` | `#C2703E` | Links, destaques, botões |
-| `--bg`     | `#1A1A1A` | `#FAFAF8` | Fundo principal          |
-| `--text`   | `#E8E8E8` | `#1A1A1A` | Texto principal          |
-| `--muted`  | `#A0A0A0` | `#6B7280` | Texto secundário         |
-
-### Tipografia
-
-| Fonte              | Uso                | Formato        |
-| ------------------ | ------------------ | -------------- |
-| **Sora**           | Headings e display | Variable woff2 |
-| **Inter**          | Body text          | Variable woff2 |
-| **JetBrains Mono** | Código e badges    | Variable woff2 |
-
-### Temas
-
-O modo dark e light são tratados como **duas personalidades visuais** distintas:
-
-- **Dark** — textura de ruído, gradiente radial no hero, sombras quentes
-- **Light** — barra de acento no topo, sombras leves, fundo off-white limpo
-
----
-
-## Performance & Lighthouse
-
-O projeto mantém scores **95+** em Performance e Acessibilidade, validados automaticamente via GitHub Actions em cada push.
-
-```
-Performance:    95+
-Accessibility:  95+
-Best Practices: 95+
-SEO:            95+
-```
-
-As auditorias rodam em todas as rotas (`/`, `/en/`, `/es/`) via [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci).
-
----
+- sitemap gerado por `@astrojs/sitemap`;
+- feeds RSS localizados;
+- `llms.txt` derivado das collections;
+- índice JSON enxuto para a busca do blog;
+- política de segurança de conteúdo, bloqueio de frames, política de referência e restrições de permissões em `vercel.json`.
 
 ## Acessibilidade
 
-O site segue as diretrizes **WCAG 2.1 AA**:
+O que já está implementado:
 
-- Skip-to-content link
-- Focus-visible em todos os elementos interativos
-- ARIA labels em navegação, botões e landmarks
-- `prefers-reduced-motion` — desabilita animações
-- `prefers-contrast: high` — ajusta contrastes
-- Focus trap no menu mobile
-- Semantic HTML com landmarks apropriados
-- Targets de toque mínimos de 44px
-- Testes automatizados via Lighthouse CI
+- link de pular para o conteúdo (`src/components/SkipToContent.astro`);
+- HTML semântico com landmarks e `lang` correto por rota;
+- `aria-label` nos links de contato, na navegação e nos controles de idioma e tema;
+- texto decorativo dos eyebrows em `data-txt` renderizado por `::before`, o que mantém o modo leitura e os leitores de tela livres de ruído;
+- `prefers-reduced-motion: reduce` desliga as animações, em seis blocos de `global.css`;
+- `prefers-contrast: high` sobe o contraste do texto e das bordas nos dois temas;
+- foco preso na gaveta do menu mobile e fechamento por `Escape`.
 
----
-
-## Scripts Disponíveis
-
-| Comando        | Descrição                                              |
-| -------------- | ------------------------------------------------------ |
-| `pnpm dev`     | Inicia servidor de desenvolvimento em `localhost:4321` |
-| `pnpm build`   | Gera build de produção                                 |
-| `pnpm preview` | Pré-visualiza build de produção localmente             |
-| `pnpm astro`   | Acessa o CLI do Astro diretamente                      |
-
----
+Não há auditoria automatizada de acessibilidade no CI, e o projeto não afirma conformidade WCAG 2.1 AA. As pendências conhecidas, incluindo alvos de toque abaixo de 44px e o ciclo de foco do menu mobile, estão registradas nos relatórios em `docs/`.
 
 ## Licença
 
-Este projeto é de código aberto. Sinta-se livre para usar como referência ou inspiração para seu próprio portfolio.
+Distribuído sob a [licença MIT](./LICENSE). O código pode ser estudado e reutilizado conforme os termos da licença; textos, identidade pessoal, currículos e imagens do autor permanecem materiais próprios do portfólio.
 
 ---
 
 <p align="center">
-  Feito com <a href="https://astro.build">Astro</a> + <a href="https://preactjs.com">Preact</a> + <a href="https://tailwindcss.com">Tailwind CSS</a>
-  <br />
-  <strong><a href="https://jbnado.dev">jbnado.dev</a></strong>
+  Feito por <a href="https://jbnado.dev">João Bernardo</a> com Astro, Preact e Tailwind CSS.
 </p>

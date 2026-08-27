@@ -80,11 +80,9 @@
   --color-accent-hover: #7dffb0;
   --color-accent-muted: rgba(97, 255, 202, 0.18);
   --color-accent-secondary: #61ffca; /* Fósforo brilhante */
-  --color-accent-tertiary: #ff3e3e;  /* Revolta */
-  --color-accent-quaternary: #61ffca;
-  --color-accent-quinary: #54c59f;
-  --color-border: #1f5a3d;          /* Verde escuro */
-  --color-border-accent: rgba(97, 255, 202, 0.25);
+  --color-border: #1f5a3d;          /* Verde escuro — filete de superfície */
+  --color-border-strong: #2f8a5e;   /* Borda de instrumento (2px) — 4.53:1 */
+  --color-surface-well: #060a08;    /* Poço de mídia — recesso abaixo do cartão */
   --color-revolt: #ff3e3e;          /* Vermelho revolta — CTAs */
   --color-ink-blue: #54c59f;        /* No CRT dobra em verde apagado */
   --font-heading-tracking: -0.01em;
@@ -92,20 +90,23 @@
   --shadow-md: none;
 }
 
+/* Turno diurno. A mesa é o campo mais CLARO; o cartão é buff e assenta sobre
+   ela, como um IBM 5081 de verdade sobre a prancheta. Papel branco sobre bege
+   é site; cartão buff sobre manila é o objeto. Os ratios em comentário são
+   contra a mesa (#f2efe4) e definem a estrutura: sem emissão para compensar,
+   quem separa aqui é a borda. */
 .light {
-  --color-bg-primary: #f2efe4;      /* Papel manila / creme frio */
-  --color-bg-secondary: #f8f6ef;    /* Papel de card */
-  --color-text-primary: #22242b;    /* Tinta quase-preta azulada */
-  --color-text-secondary: #5f636e;  /* Cinza-tinta */
-  --color-accent: #8f2d24;          /* Oxblood — carimbo */
+  --color-bg-primary: #f2efe4;      /* Luz de Meio-Dia — a mesa */
+  --color-bg-secondary: #dfdace;    /* Folha de Serviço — cartão buff, 1.21:1 */
+  --color-text-primary: #22242b;    /* Grafite — tinta azul-preta, 13.46:1 */
+  --color-text-secondary: #655c50;  /* Lápis Gasto — quente, 5.70:1 (era slate frio 5.22:1) */
+  --color-accent: #8f2d24;          /* Carimbo de Aprovação — oxblood, 7.10:1 */
   --color-accent-hover: #742019;
-  --color-accent-muted: #f3e6e2;
-  --color-accent-secondary: #2f5aa8; /* Azul-blueprint */
-  --color-accent-tertiary: #8f2d24;
-  --color-accent-quaternary: #2f5aa8;
-  --color-accent-quinary: #5f636e;
-  --color-border: #cbc7ba;          /* Borda de papel */
-  --color-border-accent: rgba(143, 45, 36, 0.25);
+  --color-accent-muted: #b58d85;    /* Oxblood diluído no papel — scrollbar, 2.56:1 */
+  --color-accent-secondary: #2f5aa8; /* Traço de Desenhista — azul blueprint, 5.79:1 */
+  --color-border: #a89f8b;          /* Borda de Papel — filete de formulário, 2.28:1 */
+  --color-border-strong: #6f6757;   /* Borda de Instrumento (2px) — painel, 4.86:1 */
+  --color-surface-well: #cdc7b9;    /* Poço de mídia — recesso abaixo do cartão, não acima */
   --color-revolt: #8f2d24;          /* Oxblood também no claro */
   --color-ink-blue: #2f5aa8;        /* Blueprint */
   --font-heading-tracking: -0.02em;
@@ -126,11 +127,9 @@
   --color-accent-hover: var(--color-accent-hover);
   --color-accent-muted: var(--color-accent-muted);
   --color-accent-secondary: var(--color-accent-secondary);
-  --color-accent-tertiary: var(--color-accent-tertiary);
-  --color-accent-quaternary: var(--color-accent-quaternary);
-  --color-accent-quinary: var(--color-accent-quinary);
   --color-border: var(--color-border);
-  --color-border-accent: var(--color-border-accent);
+  --color-border-strong: var(--color-border-strong);
+  --color-surface-well: var(--color-surface-well);
   --color-revolt: var(--color-revolt);
   --color-ink-blue: var(--color-ink-blue);
 
@@ -147,11 +146,12 @@
    BASE STYLES — Layout & Typography
    ============================================ */
 
-@layer base {
-  /* Terminal: corpo monoespaçado só no escuro */
-  .dark body {
-    font-family: var(--font-mono);
-  }
+/* Fora do @layer de proposito. Dentro de @layer base esta regra PERDIA para o
+   utilitario `font-sans` no <body>, e a fonte computada do corpo no escuro era
+   Inter — a Regra do Body Terminal estava morta e so dava para ver no computed
+   style, nao na fonte. CSS sem camada vence qualquer camada. */
+.dark body {
+  font-family: var(--font-mono);
 }
 
 /* ============================================
@@ -175,20 +175,29 @@
   outline-offset: 2px;
 }
 
+/* A nav é fixa e mede 77px. Sem isto, toda âncora interna aterrissa com o
+   eyebrow da seção inteiramente coberto pela barra e o título a 15px dela —
+   a primeira ação deliberada do visitante chegava errada. */
+section[id],
+main[id] {
+  scroll-margin-top: 96px;
+}
+
 @media (prefers-contrast: high) {
   .dark {
     --color-accent: #6affb3;
     --color-accent-secondary: #8affd4;
-    --color-accent-tertiary: #ff6a6a;
-    --color-accent-quaternary: #8affd4;
+    --color-revolt: #ff6a6a;
     --color-text-primary: #b6ffd6;
     --color-text-secondary: #d6ffe8;
     --color-border: currentColor;
+    --color-border-strong: currentColor;
   }
   .light {
     --color-accent: #742019;
     --color-text-secondary: #22242b;
     --color-border: currentColor;
+    --color-border-strong: currentColor;
   }
 }
 
@@ -462,9 +471,11 @@ button,
    ENGENHARIA / TERMINAL — utilitários portados
    ============================================ */
 
-/* Furos de punch card */
+/* Furos de punch card. No claro o furo é um buraco, não um enfeite: ele usa a
+   tinta de instrumento, não o acento. Carimbo é ação; perfuração é ausência.
+   Isso devolve o oxblood para onde ele decide alguma coisa. */
 .punch-hole {
-  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  background: color-mix(in srgb, var(--color-border-strong) 60%, transparent);
   border-radius: 2px;
 }
 .dark .punch-hole {
@@ -477,11 +488,11 @@ button,
   background:
     linear-gradient(90deg,
       transparent 0%, transparent 2%,
-      color-mix(in srgb, var(--color-border) 60%, transparent) 2%,
-      color-mix(in srgb, var(--color-border) 60%, transparent) 4%,
+      var(--color-border) 2%,
+      var(--color-border) 4%,
       transparent 4%, transparent 96%,
-      color-mix(in srgb, var(--color-border) 60%, transparent) 96%,
-      color-mix(in srgb, var(--color-border) 60%, transparent) 98%,
+      var(--color-border) 96%,
+      var(--color-border) 98%,
       transparent 98%);
 }
 
@@ -490,9 +501,9 @@ button,
   position: relative;
   background:
     linear-gradient(135deg,
-      color-mix(in srgb, var(--color-bg-secondary) 92%, #d8d2bf) 0%,
+      color-mix(in srgb, var(--color-bg-secondary) 82%, #b8ae95) 0%,
       var(--color-bg-secondary) 50%,
-      color-mix(in srgb, var(--color-bg-secondary) 95%, #d8d2bf) 100%);
+      color-mix(in srgb, var(--color-bg-secondary) 88%, #b8ae95) 100%);
 }
 .vintage-card::before {
   content: '';
@@ -598,12 +609,12 @@ button,
   line-height: 1.5;
 }
 .section-eyebrow .term-line {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--color-accent);
   letter-spacing: 0.01em;
 }
 .section-eyebrow .term-out {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
   opacity: 0.85;
 }
@@ -628,7 +639,7 @@ button,
   gap: 0.5rem;
   padding: 0.3rem 0.9rem;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #0a0f0c;
   background: var(--color-accent-secondary);
   box-shadow: 0 -2px 12px rgba(97, 255, 202, 0.25);
@@ -678,7 +689,7 @@ button,
   letter-spacing: 0.1em; color: var(--color-text-secondary); text-decoration: none; margin-bottom: 1.5rem;
 }
 .case-back:hover { color: var(--color-accent); }
-.case-head { border: 2px solid var(--color-border); padding: 1.5rem; margin-bottom: 2rem; position: relative; }
+.case-head { border: 2px solid var(--color-border-strong); padding: 1.5rem; margin-bottom: 2rem; position: relative; }
 .case-head-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
 .case-holes { display: flex; gap: 0.4rem; }
 .case-holes .punch-hole { width: 0.5rem; height: 0.5rem; }
@@ -691,17 +702,21 @@ button,
 .case-summary { color: var(--color-text-secondary); line-height: 1.6; max-width: 60ch; margin-bottom: 1.25rem; }
 .case-stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
 .case-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-.case-btn { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; border: 2px solid var(--color-border); padding: 0.5rem 1rem; color: var(--color-text-primary); text-decoration: none; transition: all 150ms; }
+.case-btn { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; border: 2px solid var(--color-border-strong); padding: 0.5rem 1rem; color: var(--color-text-primary); text-decoration: none; transition: all 150ms; }
 .case-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
 .case-meta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 2rem; font-family: var(--font-mono); }
 @media (min-width: 640px) { .case-meta { grid-template-columns: repeat(4, 1fr); } }
-.case-meta-cell { border: 2px solid var(--color-border); padding: 0.75rem; }
+.case-meta-cell { border: 2px solid var(--color-border-strong); padding: 0.75rem; }
 .case-meta-label { font-size: 0.625rem; color: var(--color-text-secondary); letter-spacing: 0.08em; margin-bottom: 0.25rem; }
 .case-meta-value { font-size: 0.875rem; font-weight: 700; }
 .case-body { line-height: 1.7; color: var(--color-text-primary); }
+/* O terminal vale para a casca do site, não para texto corrido de oito minutos.
+   No escuro, post e case study voltam pra Inter no corpo; títulos, código e
+   etiquetas continuam em mono, então a identidade não se perde. */
+.dark .case-body { font-family: var(--font-sans); }
 .case-body h2 { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 0.75rem; color: var(--color-text-primary); font-family: var(--font-mono); }
 .dark .case-body h2 { color: var(--color-accent-secondary); text-shadow: 0 0 6px rgba(97,255,202,0.3); }
-.case-body h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+.case-body h3 { font-size: 1.125rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
 .case-body p { margin-bottom: 1rem; color: var(--color-text-secondary); }
 .case-body ul, .case-body ol { margin: 0 0 1rem 1.25rem; color: var(--color-text-secondary); }
 .case-body li { margin-bottom: 0.4rem; }
@@ -711,7 +726,7 @@ button,
 .case-body pre code { background: none; padding: 0; }
 .case-highlights { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 2rem; }
 @media (min-width: 640px) { .case-highlights { grid-template-columns: repeat(3, 1fr); } }
-.case-highlight { border: 2px solid var(--color-border); padding: 1.25rem; text-align: center; }
+.case-highlight { border: 2px solid var(--color-border-strong); padding: 1.25rem; text-align: center; }
 .case-highlight-value { font-size: 1.75rem; font-weight: 700; color: var(--color-text-primary); }
 .case-highlight-label { font-family: var(--font-mono); font-size: 0.625rem; color: var(--color-text-secondary); letter-spacing: 0.08em; margin-top: 0.25rem; }
 
@@ -720,16 +735,16 @@ button,
 .case-record-label { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 0.75rem; }
 .case-record-cards { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
 @media (min-width: 640px) { .case-record-cards { grid-template-columns: 1fr 1fr; } }
-.case-record-card { border: 2px solid var(--color-border); padding: 1rem 1.1rem; }
+.case-record-card { border: 2px solid var(--color-border-strong); padding: 1rem 1.1rem; }
 .case-record-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
-.case-record-champ { font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem; color: var(--color-text-primary); }
+.case-record-champ { font-family: var(--font-mono); font-weight: 700; font-size: 1.125rem; color: var(--color-text-primary); }
 .dark .case-record-champ { color: var(--color-accent-secondary); }
 .case-record-kda { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-secondary); }
-.case-record-who { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-secondary); margin-bottom: 0.75rem; letter-spacing: 0.04em; }
+.case-record-who { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-secondary); margin-bottom: 0.75rem; letter-spacing: 0.04em; }
 .case-record-stats { margin: 0; }
 .case-record-stat { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; border-top: 1px dashed var(--color-border); padding: 0.35rem 0; }
-.case-record-stat dt { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
-.case-record-stat dd { font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; color: var(--color-text-primary); margin: 0; }
+.case-record-stat dt { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.case-record-stat dd { font-family: var(--font-mono); font-weight: 700; font-size: 1rem; color: var(--color-text-primary); margin: 0; }
 
 /* ============================================
    PUNK DARK MODE — Shared element styles
@@ -964,7 +979,7 @@ button,
 
 .blog-header { margin-bottom: 2rem; }
 
-.blog-eyebrow { font-family: var(--font-mono); font-size: 0.6875rem; margin-bottom: 0.5rem; }
+.blog-eyebrow { font-family: var(--font-mono); font-size: 0.75rem; margin-bottom: 0.5rem; }
 
 .blog-title {
   font-family: var(--font-display);
@@ -976,7 +991,7 @@ button,
 .blog-subtitle {
   margin-top: 0.5rem;
   max-width: 46ch;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 1.6;
   color: var(--color-text-secondary);
 }
@@ -1052,7 +1067,7 @@ button,
   position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: var(--color-bg-primary);
+  background: var(--color-surface-well);
 }
 
 .blog-card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -1099,16 +1114,16 @@ button,
   color: var(--color-text-secondary);
 }
 
-.blog-card-stamp { font-size: 0.5625rem; }
+.blog-card-stamp { font-size: 0.625rem; }
 
-.blog-card-title { font-size: 1.0625rem; line-height: 1.3; font-weight: 700; }
+.blog-card-title { font-size: 1.125rem; line-height: 1.3; font-weight: 700; }
 
 .blog-card-link { color: var(--color-text-primary); text-decoration: none; }
 .blog-card-link::after { content: ""; position: absolute; inset: 0; }
 .blog-card-link:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 
 .blog-card-summary {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1.55;
   color: var(--color-text-secondary);
   display: -webkit-box;
@@ -1142,7 +1157,7 @@ button,
 .blog-card:hover .blog-card-cta { color: var(--color-accent); }
 
 /* Dark — terminal CRT */
-.dark .blog-card { background: color-mix(in srgb, var(--color-bg-secondary) 88%, #000); }
+.dark .blog-card { background: color-mix(in srgb, var(--color-bg-secondary) 88%, var(--color-surface-well)); }
 .dark .blog-card-title { text-shadow: 0 0 10px rgba(97, 255, 202, 0.25); }
 .dark .blog-card:hover { box-shadow: 0 0 18px rgba(97, 255, 202, 0.15); }
 
@@ -1178,7 +1193,7 @@ button,
   align-items: center;
   gap: 0.5rem;
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   letter-spacing: 0.06em;
   color: var(--color-text-secondary);
 }
@@ -1193,13 +1208,13 @@ button,
 
 .post-summary {
   margin-top: 0.75rem;
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   line-height: 1.6;
   color: var(--color-text-secondary);
 }
 
 .post-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
-.post-tag { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--color-text-secondary); }
+.post-tag { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-secondary); }
 
 .video-facade {
   margin: 1.5rem 0 2rem;
@@ -1248,7 +1263,7 @@ button,
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.post-sources-note { margin-top: 0.375rem; font-size: 0.8125rem; color: var(--color-text-secondary); }
+.post-sources-note { margin-top: 0.375rem; font-size: 0.875rem; color: var(--color-text-secondary); }
 .post-sources-list {
   margin-top: 1rem;
   display: flex;
@@ -1328,7 +1343,7 @@ button,
 
 .post-author-name {
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-text-primary);
 }

@@ -10,12 +10,23 @@
     "mainNav": "Navegación principal",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
-    "goHome": "Ir al inicio"
+    "goHome": "Ir al inicio",
+    "menuLabel": "Menú de navegación"
   },
   "hero": {
     "role": "Fullstack Developer",
     "name": "João Bernardo",
-    "description": "Fullstack developer en Ribeirão Preto, Brasil. Construyo APIs, interfaces y a veces juegos."
+    "description": "Fullstack developer en Ribeirão Preto, Brasil. Construyo APIs, interfaces y a veces juegos.",
+    "ctaProjects": "Ver proyectos",
+    "ctaContact": "Hablemos",
+    "panelLabel": "TRAYECTORIA",
+    "catalog": {
+      "caseStudies": "Case studies",
+      "projects": "Proyectos",
+      "contributions": "Contribuciones",
+      "locales": "Idiomas",
+      "technologies": "Tecnologías"
+    }
   },
   "about": {
     "title": "Sobre Mí",
@@ -35,14 +46,16 @@
     "toggleDark": "Cambiar a modo oscuro"
   },
   "caseStudy": {
-    "expand": "Case Study",
+    "expand": "Problema, decisión y resultado",
     "problem": "Problema",
     "decision": "Decisión Técnica",
     "result": "Resultado",
     "back": "VOLVER",
-    "readMore": "Leer case study",
+    "readMore": "Abrir el case study completo",
     "code": "CÓDIGO",
-    "liveDemo": "DEMO"
+    "liveDemo": "DEMO",
+    "expandLabel": "Problema, decisión y resultado: {title}",
+    "readMoreLabel": "Abrir el case study completo: {title}"
   },
   "projects": {
     "github": "GitHub",
@@ -128,17 +141,17 @@
     "notFound": "bash: cd: essa-página: No such file or directory"
   },
   "paper": {
-    "heroProj": "PROJ. Nº 001/2026 · REV. 03",
+    "heroProj": "HOJA 01/06 · PORTADA",
     "heroStatus": "DISPONIBLE",
     "heroStack": "MATERIALES:",
     "about": "HOJA 02/06 · RESPONSABLE TÉCNICO",
-    "timeline": "HISTORIAL DE REVISIONES",
-    "projects": "HOJA 04/06 · MEMORIA DESCRIPTIVA",
-    "blog": "HOJA 05/06 · CUADERNO DE NOTAS",
-    "contact": "FIRMA DEL RESPONSABLE",
-    "case": "MEMORIA DESCRIPTIVA · HOJA 01",
+    "timeline": "HOJA 04/06 · HISTORIAL DE REVISIONES",
+    "projects": "HOJA 03/06 · MEMORIA DESCRIPTIVA",
+    "blog": "CUADERNO DE NOTAS",
+    "contact": "HOJA 05/06 · FIRMA DEL RESPONSABLE",
+    "case": "MEMORIA DESCRIPTIVA",
     "back": "← VOLVER AL ÍNDICE",
-    "footer": "FIN DEL DOCUMENTO · HOJA 06/06",
+    "footer": "HOJA 06/06 · FIN DEL DOCUMENTO",
     "notFound": "HOJA NO ENCONTRADA · VERIFICAR NUMERACIÓN"
   },
   "seo": {

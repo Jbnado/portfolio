@@ -8,6 +8,9 @@ interface NavLink {
 interface Props {
   links?: NavLink[];
   cvHref?: string;
+  openLabel?: string;
+  closeLabel?: string;
+  menuLabel?: string;
 }
 
 const defaultLinks: NavLink[] = [
@@ -16,7 +19,13 @@ const defaultLinks: NavLink[] = [
   { href: '#contacto', label: 'Contacto' },
 ];
 
-export default function MobileNav({ links = defaultLinks, cvHref = '/Bernardo-CV.pdf' }: Props) {
+export default function MobileNav({
+  links = defaultLinks,
+  cvHref = '/Bernardo-CV.pdf',
+  openLabel = 'Abrir menu',
+  closeLabel = 'Fechar menu',
+  menuLabel = 'Menu de navegação',
+}: Props) {
   const [open, setOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -93,7 +102,7 @@ export default function MobileNav({ links = defaultLinks, cvHref = '/Bernardo-CV
         class={`mobile-nav-trigger${open ? ' open' : ''}`}
         onClick={toggle}
         aria-expanded={open}
-        aria-label={open ? 'Fechar menu' : 'Abrir menu'}
+        aria-label={open ? closeLabel : openLabel}
       >
         <span class="hamburger-line" />
         <span class="hamburger-line" />
@@ -108,9 +117,20 @@ export default function MobileNav({ links = defaultLinks, cvHref = '/Bernardo-CV
             class="mobile-nav-drawer"
             role="dialog"
             aria-modal="true"
-            aria-label="Menu de navegação"
+            aria-label={menuLabel}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Fica dentro da gaveta de propósito: o gatilho do hambúrguer está
+                fora dela, então sem este botão o Tab circula sem nunca alcançar
+                um jeito de fechar o menu. */}
+            <button
+              type="button"
+              class="mobile-nav-close"
+              onClick={close}
+              aria-label={closeLabel}
+            >
+              <span aria-hidden="true">✕</span>
+            </button>
             <nav>
               {links.map(({ href, label }) => (
                 <a href={href} class="mobile-nav-link" onClick={close}>

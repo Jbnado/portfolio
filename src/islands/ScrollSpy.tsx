@@ -1,6 +1,8 @@
 import { useEffect } from 'preact/hooks';
 
-const sectionIds = ['sobre', 'projetos', 'contacto'];
+// timeline entra aqui: sem ela o indicador da nav ficava vazio pelos 998px
+// da secao de Percurso, que e justamente o que um recrutador mais procura.
+const sectionIds = ['sobre', 'projetos', 'timeline', 'contacto'];
 
 export default function ScrollSpy() {
   useEffect(() => {
