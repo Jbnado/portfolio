@@ -17,8 +17,15 @@ const { href = '#main', label = 'Saltar para o conteúdo' } = Astro.props;
     top: -100%;
     left: 0;
     z-index: 10001;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     background: var(--color-accent);
-    color: #ffffff;
+    /* O texto sai do token de fundo do turno, nunca de #ffffff literal: no
+       turno noturno o acento é verde fósforo claro e branco sobre ele dava
+       1.42:1. E este é o link de pular conteúdo — a falha caía exatamente no
+       caminho de quem navega por teclado. */
+    color: var(--color-bg-primary);
     padding: 0.5rem 1rem;
     font-weight: 600;
     text-decoration: none;

@@ -10,12 +10,16 @@
     "mainNav": "Navegación principal",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
-    "goHome": "Ir al inicio"
+    "goHome": "Ir al inicio",
+    "menuLabel": "Menú de navegación"
   },
   "hero": {
     "role": "Fullstack Developer",
     "name": "João Bernardo",
-    "description": "Fullstack developer en Ribeirão Preto, Brasil. Construyo APIs, interfaces y a veces juegos."
+    "description": "Fullstack developer en Ribeirão Preto, Brasil. Construyo APIs, interfaces y a veces juegos.",
+    "ctaProjects": "Ver proyectos",
+    "ctaContact": "Hablemos",
+    "panelLabel": "TRAYECTORIA"
   },
   "about": {
     "title": "Sobre Mí",
@@ -35,14 +39,16 @@
     "toggleDark": "Cambiar a modo oscuro"
   },
   "caseStudy": {
-    "expand": "Case Study",
+    "expand": "Problema, decisión y resultado",
     "problem": "Problema",
     "decision": "Decisión Técnica",
     "result": "Resultado",
     "back": "VOLVER",
-    "readMore": "Leer case study",
+    "readMore": "Abrir el case study completo",
     "code": "CÓDIGO",
-    "liveDemo": "DEMO"
+    "liveDemo": "DEMO",
+    "expandLabel": "Problema, decisión y resultado: {title}",
+    "readMoreLabel": "Abrir el case study completo: {title}"
   },
   "projects": {
     "github": "GitHub",

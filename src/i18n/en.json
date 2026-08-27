@@ -10,12 +10,16 @@
     "mainNav": "Main navigation",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "goHome": "Go to homepage"
+    "goHome": "Go to homepage",
+    "menuLabel": "Navigation menu"
   },
   "hero": {
     "role": "Fullstack Developer",
     "name": "João Bernardo",
-    "description": "Fullstack developer from Ribeirão Preto, Brazil. I build APIs, interfaces, and sometimes games."
+    "description": "Fullstack developer from Ribeirão Preto, Brazil. I build APIs, interfaces, and sometimes games.",
+    "ctaProjects": "View projects",
+    "ctaContact": "Say hello",
+    "panelLabel": "TRACK RECORD"
   },
   "about": {
     "title": "About Me",
@@ -35,14 +39,16 @@
     "toggleDark": "Switch to dark mode"
   },
   "caseStudy": {
-    "expand": "Case Study",
+    "expand": "Problem, decision, result",
     "problem": "Problem",
     "decision": "Technical Decision",
     "result": "Result",
     "back": "BACK",
-    "readMore": "Read case study",
+    "readMore": "Open the full case study",
     "code": "CODE",
-    "liveDemo": "LIVE DEMO"
+    "liveDemo": "LIVE DEMO",
+    "expandLabel": "Problem, decision, result: {title}",
+    "readMoreLabel": "Open the full case study: {title}"
   },
   "projects": {
     "github": "GitHub",

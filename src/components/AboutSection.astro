@@ -88,7 +88,10 @@ const { locale = 'pt-br' } = Astro.props;
   .about-pullquote {
     margin: 2rem 0;
     padding-left: 1.25rem;
-    border-left: 3px solid var(--color-accent);
+    /* 1px, não 3px: a Regra da Espessura Falante do DESIGN.md diz que 1px é
+       papel e 2px é instrumento, e um pullquote é papel. Borda colorida grossa
+       num lado só também é o tell de UI gerada que o próprio DESIGN.md proíbe. */
+    border-left: 1px solid var(--color-accent);
     font-size: 1.125rem;
     line-height: 1.6;
     color: var(--color-text-primary);
@@ -104,7 +107,9 @@ const { locale = 'pt-br' } = Astro.props;
 
   /* Dark mode — punk pullquote */
   .dark .about-pullquote {
-    border-left: 4px dashed #ff3e3e;
+    /* var(--color-revolt) no lugar do #ff3e3e literal: o token existe e é
+       exatamente esta cor, então o literal era só drift. */
+    border-left: 1px dashed var(--color-revolt);
     padding: 1.25rem 1.5rem;
     background: rgba(97, 255, 202, 0.04);
     border-radius: 0 4px 4px 0;

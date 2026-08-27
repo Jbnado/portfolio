@@ -154,9 +154,11 @@ const { locale = 'pt-br' } = Astro.props;
   .contact-link {
     display: inline-flex;
     align-items: center;
+    /* media 39px de altura, 5px abaixo do piso */
+    min-height: 44px;
     gap: 0.375rem;
     font-family: var(--font-mono);
-    font-size: 0.9375rem;
+    font-size: 1rem;
     font-weight: 500;
     color: var(--color-accent);
     text-decoration: none;

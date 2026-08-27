@@ -20,7 +20,10 @@ const localeKey = locale as 'pt-br' | 'en' | 'es';
 ---
 
 <CaseStudyExpander client:visible />
-<section id="projetos" class="projects-section">
+{/* blueprint-wrap: a grade milimetrada estava no hero, no sobre, na timeline e
+    no contato, mas faltava justo em #projetos — a seção mais longa da página.
+    A única textura que o turno diurno tem não pode faltar em metade dele. */}
+<section id="projetos" class="projects-section blueprint-wrap">
   <div class="projects-container">
     <SectionEyebrow term={t('terminal.projects', locale)} paper={t('paper.projects', locale)} />
     <SectionTitle title={t('sections.projects', locale)} />

@@ -30,15 +30,7 @@ const displayNumber = String(number).padStart(2, '0');
 const year = startDate.slice(0, 4);
 ---
 
-<article class="project-card vintage-card" style="position:relative">
-  <!-- Punch-card header: sprocket holes + card number -->
-  <div class="pc-head" style="grid-column:1/-1" aria-hidden="true">
-    <div class="pc-sprockets">
-      {[...Array(8)].map(() => <span class="punch-hole"></span>)}
-    </div>
-    <span class="pc-title">{title}</span>
-    <span class="pc-num">#{displayNumber}</span>
-  </div>
+<article class="project-card" style="position:relative">
   <span class="project-number" aria-hidden="true">{displayNumber}</span>
   <div class="project-content">
     <div class="project-header">
@@ -77,7 +69,7 @@ const year = startDate.slice(0, 4);
     <p class="project-description">{description}</p>
 
     <details class="case-study-details">
-      <summary class="case-study-trigger">
+      <summary class="case-study-trigger" aria-label={t('caseStudy.expandLabel', locale, { title })}>
         <span>{t('caseStudy.expand', locale)}</span>
         <span class="case-study-chevron" aria-hidden="true">›</span>
       </summary>
@@ -87,20 +79,11 @@ const year = startDate.slice(0, 4);
           decision={caseStudy.decision}
           result={caseStudy.result}
           locale={locale}
+          caseUrl={caseUrl}
+          title={title}
         />
       </div>
     </details>
-    {caseUrl && (
-      <a href={caseUrl} class="project-readmore">{t('caseStudy.readMore', locale)} →</a>
-    )}
-  </div>
-  <!-- Punch-card footer -->
-  <div class="pc-foot" style="grid-column:1/-1" aria-hidden="true">
-    <span>COL: 80 · ROW: 12</span>
-    <span>{'>'} IBM 5081 · {year}</span>
-    <div class="pc-sprockets">
-      {[...Array(8)].map(() => <span class="punch-hole"></span>)}
-    </div>
   </div>
   <!-- Menacing decoration -->
   <span class="punk-menacing" style="bottom:-0.75rem;right:1rem;font-size:0.75rem;color:rgba(97,255,202,0.15);--punk-rotate:5deg" aria-hidden="true">gogo</span>
@@ -189,12 +172,26 @@ const year = startDate.slice(0, 4);
   }
 
   .project-link {
+    position: relative;
     font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--color-text-secondary);
     text-decoration: none;
     white-space: nowrap;
     transition: color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  /* GitHub e Demo mediam 18px de altura e ficavam a 12px um do outro: falham a
+     exceção de espaçamento do WCAG 2.2 SC 2.5.8. A área cresce na vertical, que
+     é onde há espaço, sem mover o texto nem encostar no vizinho lateral. */
+  .project-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 44px;
   }
 
   .project-link:hover {
@@ -219,7 +216,7 @@ const year = startDate.slice(0, 4);
   /* Type stamp: PROJETO vs CONTRIB — ink-stamp look */
   .project-type-stamp {
     font-family: var(--font-mono);
-    font-size: 0.5625rem;
+    font-size: 0.625rem;
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -248,23 +245,18 @@ const year = startDate.slice(0, 4);
     padding: 0.125rem 0.5rem;
   }
 
-  .project-readmore {
-    display: inline-block;
-    margin-top: 0.75rem;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    color: var(--color-accent);
-    text-decoration: none;
-  }
-  .project-readmore:hover { text-decoration: underline; }
+  /* .project-readmore saiu: o link para a página completa agora vive dentro do
+     corpo expandido, como .case-study-full. Ele e o gatilho prometiam a mesma
+     coisa a 33px de distância, no mesmo mono de 12px. */
 
   /* Description */
   .project-description {
     font-size: 0.875rem;
     line-height: 1.6;
     color: var(--color-text-secondary);
+    /* Corria os 1072px do grid a 1440px, cerca de 120 caracteres por linha,
+       bem além da faixa confortável de 45–75ch. */
+    max-width: 70ch;
   }
 
   @media (min-width: 768px) {
@@ -331,32 +323,9 @@ const year = startDate.slice(0, 4);
   }
 
   /* Punch-card header/footer */
-  .pc-head, .pc-foot {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.4rem 0.75rem;
-    font-family: var(--font-mono);
-    font-size: 0.625rem;
-    letter-spacing: 0.08em;
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border);
-    background: color-mix(in srgb, var(--color-bg-secondary) 70%, transparent);
-  }
-  .pc-head { border-bottom: none; }
-  .pc-foot { border-top: none; justify-content: space-between; }
-  .pc-sprockets { display: flex; gap: 0.35rem; }
-  .pc-sprockets .punch-hole { width: 0.375rem; height: 0.375rem; }
-  .pc-title { flex: 1; font-weight: 700; text-transform: uppercase; }
-  .pc-num {
-    background: color-mix(in srgb, var(--color-accent) 20%, transparent);
-    color: var(--color-accent);
-    padding: 0.05rem 0.4rem;
-    border-radius: 2px;
-  }
-  .dark .pc-head, .dark .pc-foot {
-    border-color: var(--color-border);
-    color: var(--color-accent-secondary);
-    text-shadow: 0 0 6px rgba(97, 255, 202, 0.3);
-  }
+  /* As tiras .pc-head / .pc-foot saíram. Fora os furos, tudo que elas mostravam
+     era duplicata (o título repetia o h3, o #01 repetia .project-number) ou
+     invenção (COL: 80 · ROW: 12, IBM 5081). O card de projeto é linha de
+     catálogo, não caixa: o filete inferior já separa um do outro. Os furos de
+     cartão perfurado seguem no hero, nos cabeçalhos de case e no card de blog. */
 </style>

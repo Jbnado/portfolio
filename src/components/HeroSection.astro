@@ -63,16 +63,29 @@ const techString = techStack.join(' · ');
           <span class="paper-tag hero-materials" data-txt={t('paper.heroStack', locale)}></span>
         </p>
         <p class="hero-tech hero-stagger" style="--stagger: 4">{techString}</p>
+
+        <div class="hero-cta hero-stagger" style="--stagger: 5">
+          <a href="#projetos" class="hero-cta-btn hero-cta-primary">{t('hero.ctaProjects', locale)}</a>
+          <a href="#contacto" class="hero-cta-btn hero-cta-secondary">{t('hero.ctaContact', locale)}</a>
+        </div>
       </div>
 
-      <!-- Right: Stats -->
-      <div class="hero-stats hero-stagger" style="--stagger: 5">
-        {statsData.map((stat) => (
-          <StatCard value={stat.value} suffix={stat.suffix} label={stat.label[localeKey] ?? stat.label['pt-br']}>
-            <StatsCounter client:visible value={stat.value} suffix={stat.suffix} />
-          </StatCard>
-        ))}
-      </div>
+      <!-- Right: ficha técnica -->
+      <aside class="hero-panel hero-stagger" style="--stagger: 3" aria-label={t('hero.panelLabel', locale)}>
+        <div class="hero-panel-head">
+          <span class="hero-panel-holes" aria-hidden="true">
+            {[...Array(6)].map(() => <span class="punch-hole"></span>)}
+          </span>
+          <span class="hero-panel-label">{t('hero.panelLabel', locale)}</span>
+        </div>
+        <div class="hero-stats">
+          {statsData.map((stat) => (
+            <StatCard value={stat.value} suffix={stat.suffix} label={stat.label[localeKey] ?? stat.label['pt-br']}>
+              <StatsCounter client:visible value={stat.value} suffix={stat.suffix} />
+            </StatCard>
+          ))}
+        </div>
+      </aside>
     </div>
   </div>
 </section>
@@ -125,7 +138,10 @@ const techString = techStack.join(' · ');
     .hero-grid {
       display: grid;
       grid-template-columns: 1.2fr 0.8fr;
-      align-items: center;
+      /* start, não center: com center o painel caía a 4px do topo do h1 por
+         coincidência aritmética, o que lê como erro de build em vez de
+         alinhamento. Agora o topo do painel encosta no topo do título. */
+      align-items: start;
       gap: 4rem;
     }
   }
@@ -134,11 +150,15 @@ const techString = techStack.join(' · ');
   .hero-role {
     display: inline-block;
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-accent);
     text-transform: uppercase;
     letter-spacing: 0.06em;
+    /* line-height 1: sem isso o inline-block herda o 1.6 do corpo e a
+       meia-entrelinha somava 4px, produzindo um vão de 20px que não existe
+       na escala (4/8/12/16/24/32) e que ninguém escolheu. */
+    line-height: 1;
     margin-bottom: 1rem;
   }
 
@@ -148,6 +168,13 @@ const techString = techStack.join(' · ');
     justify-content: space-between;
     gap: 1rem;
     margin-bottom: 1rem;
+  }
+  /* No escuro o status-term ocupa 255px e o space-between preenche a linha.
+     No claro o carimbo tem 100px e o space-between o empurrava para x=921,
+     48px à direita de toda a tinta da coluna e 63px à esquerda do painel:
+     sarjeta morta, encostando em nada. Aqui ele fica junto dos furos. */
+  .light .hero-syshead {
+    justify-content: flex-start;
   }
   .hero-holes { display: flex; gap: 0.4rem; }
   .hero-holes .punch-hole { width: 0.5rem; height: 0.5rem; }
@@ -161,7 +188,7 @@ const techString = techStack.join(' · ');
   /* Status de sistema (escuro) — onde antes ficava o carimbo */
   .hero-status-term {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--color-accent);
     text-align: right;
     white-space: nowrap;
@@ -183,13 +210,13 @@ const techString = techStack.join(' · ');
   .hero-proj,
   .hero-materials {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--color-text-secondary);
   }
   .hero-materials { font-size: 0.625rem; }
-  .hero-techhead { margin-bottom: 0.35rem; }
+  .hero-techhead { margin-bottom: 0.25rem; }
   .hero-techhead .term-line {
     font-family: var(--font-mono);
     font-size: 0.75rem;
@@ -217,41 +244,97 @@ const techString = techStack.join(' · ');
   }
 
   /* Hero inline tech stack */
+  /* opacity removida: nunca esteve em vigor. O elemento também carrega
+     .hero-stagger, cuja animação `forwards` termina em opacity: 1 e vencia. */
   .hero-tech {
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     color: var(--color-text-secondary);
     letter-spacing: 0.02em;
-    opacity: 0.7;
   }
 
-  /* Stats */
+  /* CTAs — primeira dobra precisa de uma saída óbvia */
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+  .hero-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.75rem 1.25rem;
+    border: 2px solid var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 150ms, color 150ms, border-color 150ms;
+  }
+  .hero-cta-primary {
+    background: var(--color-accent);
+    color: var(--color-bg-primary);
+  }
+  .hero-cta-primary:hover {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+  }
+  .hero-cta-secondary {
+    background: transparent;
+    color: var(--color-text-primary);
+  }
+  .hero-cta-secondary:hover {
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+  .dark .hero-cta-primary { box-shadow: 0 0 12px rgba(97, 255, 202, 0.25); }
+
+  /* Ficha técnica — painel de instrumento (2px, canto reto), o mesmo
+     vocabulário de .case-head e .case-meta-cell. A coluna direita passa a
+     conter um objeto do tamanho dela em vez de 136px de legenda solta. */
+  .hero-panel {
+    border: 2px solid var(--color-border-strong);
+    background: var(--color-bg-secondary);
+  }
+
+  .hero-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0.9rem;
+    border-bottom: 1px dashed var(--color-border);
+  }
+
+  .hero-panel-holes {
+    display: flex;
+    gap: 0.35rem;
+  }
+  .hero-panel-holes .punch-hole {
+    width: 0.375rem;
+    height: 0.375rem;
+  }
+
+  .hero-panel-label {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
   .hero-stats {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    padding: 0.4rem 0.9rem 0.6rem;
   }
 
-  /* Mobile: horizontal with "|" separators */
-  .stat-card + .stat-card {
-    border-left: 1px solid var(--color-border);
-    padding-left: 1.5rem;
-    margin-left: 1.5rem;
-  }
-
-  /* Desktop: vertical stack */
-  @media (min-width: 768px) {
-    .hero-stats {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 2rem;
-    }
-    .stat-card + .stat-card {
-      border-left: none;
-      padding-left: 0;
-      margin-left: 0;
-    }
+  .dark .hero-panel-label {
+    color: var(--color-accent-secondary);
+    text-shadow: 0 0 6px rgba(97, 255, 202, 0.3);
   }
 
   /* Load stagger animation */
