@@ -1819,40 +1819,40 @@ git commit -m "feat(pesca): ilha jogavel com o motor TRAJETO"
 ### Task 8: Casca visual do SUSTENTAÇÃO
 
 **Files:**
-- Create: `src/islands/pesca/motores/sustentacao.tsx`
-- Create: `src/islands/pesca/motores/sustentacao.css`
-- Modify: `src/islands/pesca/Pesca.tsx` — liberar os peixes de sustentação no sorteio
+- Create: `src/islands/fishing/views/HoldView.tsx`
+- Create: `src/islands/fishing/views/HoldView.css`
+- Modify: `src/islands/fishing/Fishing.tsx` — liberar os fish de sustentação no sorteio
 
 **Interfaces:**
-- Consumes: `iniciarSustentacao`, `avancarSustentacao`, `ParamsSustentacao`, `Resultado`.
-- Produces: `SustentacaoView` com props `{ params: ParamsSustentacao; aoTerminar: (r: Resultado) => void }`.
+- Consumes: `startHold`, `stepHold`, `HoldParams`, `Result`.
+- Produces: `HoldView` com props `{ params: HoldParams; onDone: (r: Result) => void }`.
 
 - [ ] **Step 1: Escreva o CSS**
 
-Crie `src/islands/pesca/motores/sustentacao.css`:
+Crie `src/islands/fishing/views/HoldView.css`:
 
 ```css
-.su { display: flex; gap: 12px; align-items: stretch; height: 240px; }
+.hold { display: flex; gap: 12px; align-items: stretch; height: 240px; }
 
-.su-barra {
+.hold-bar {
   position: relative;
   width: 44px;
-  background: var(--pesca-fundo);
-  border: 2px solid var(--pesca-linha);
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
   border-radius: 4px;
   overflow: hidden;
 }
 
-.su-faixa {
+.hold-band {
   position: absolute;
   left: 0;
   right: 0;
-  background: color-mix(in srgb, var(--pesca-zona) 30%, transparent);
-  border-top: 2px dashed var(--pesca-zona);
-  border-bottom: 2px dashed var(--pesca-zona);
+  background: color-mix(in srgb, var(--fishing-zone) 30%, transparent);
+  border-top: 2px dashed var(--fishing-zone);
+  border-bottom: 2px dashed var(--fishing-zone);
 }
 
-.su-peixe {
+.hold-fish {
   position: absolute;
   left: 8px;
   right: 8px;
@@ -1860,84 +1860,84 @@ Crie `src/islands/pesca/motores/sustentacao.css`:
   border-radius: 2px;
 }
 
-.su-progresso {
+.hold-meter {
   position: relative;
   width: 12px;
-  background: var(--pesca-fundo);
-  border: 2px solid var(--pesca-linha);
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
   border-radius: 4px;
   overflow: hidden;
 }
 
-.su-progresso-cheio {
+.hold-meter-fill {
   position: absolute;
   left: 0; right: 0; bottom: 0;
-  background: var(--pesca-zona);
+  background: var(--fishing-zone);
 }
 ```
 
 - [ ] **Step 2: Escreva a casca visual**
 
-Crie `src/islands/pesca/motores/sustentacao.tsx`:
+Crie `src/islands/fishing/views/HoldView.tsx`:
 
 ```tsx
 import { useEffect, useRef, useState } from 'preact/hooks';
-import type { ParamsSustentacao, Resultado } from '../tipos';
+import type { HoldParams, Result } from '../types';
 import {
-  iniciarSustentacao,
-  avancarSustentacao,
-  type EstadoSustentacao,
-} from './sustentacao';
-import './sustentacao.css';
+  startHold,
+  stepHold,
+  type HoldState,
+} from '../engines/hold';
+import './HoldView.css';
 
 type Props = {
-  params: ParamsSustentacao;
-  cor: string;
-  aoTerminar: (r: Resultado) => void;
+  params: HoldParams;
+  color: string;
+  onDone: (r: Result) => void;
 };
 
-/** Movimento reduzido: o peixe salta entre degraus. A FAIXA nao muda, porque
+/** Movimento reduzido: o fish salta entre degraus. A FAIXA nao muda, porque
     ela e a mao do jogador e controle direto nao e animacao automatica. */
-const DEGRAUS = 12;
+const STEPS = 12;
 
-export function SustentacaoView({ params, cor, aoTerminar }: Props) {
-  const [est, setEst] = useState<EstadoSustentacao>(() => iniciarSustentacao(params));
-  const segurandoRef = useRef(false);
+export function HoldView({ params, color, onDone }: Props) {
+  const [est, setEst] = useState<HoldState>(() => startHold(params));
+  const holdingRef = useRef(false);
 
-  // Mesma razao do TRAJETO: `aoTerminar` fora das dependencias, senao o efeito
+  // Mesma razao do TRAJETO: `onDone` fora das dependencias, senao o efeito
   // reinicia a cada render e o minigame nunca termina.
-  const fimRef = useRef(aoTerminar);
-  fimRef.current = aoTerminar;
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
-    const passos = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stepped = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let raf = 0;
     let anterior = performance.now();
-    let atual = iniciarSustentacao(params);
+    let atual = startHold(params);
 
-    const laco = (agora: number) => {
-      const dt = Math.min(50, agora - anterior);
-      anterior = agora;
-      atual = avancarSustentacao(params, atual, dt, segurandoRef.current, Math.random);
+    const loop = (now: number) => {
+      const dt = Math.min(50, now - anterior);
+      anterior = now;
+      atual = stepHold(params, atual, dt, holdingRef.current, Math.random);
       setEst(
-        passos
-          ? { ...atual, peixePos: Math.round(atual.peixePos * DEGRAUS) / DEGRAUS }
+        stepped
+          ? { ...atual, fishPos: Math.round(atual.fishPos * STEPS) / STEPS }
           : atual,
       );
-      if (atual.terminado) { fimRef.current(atual.terminado); return; }
-      raf = requestAnimationFrame(laco);
+      if (atual.done) { onDoneRef.current(atual.done); return; }
+      raf = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(laco);
+    raf = requestAnimationFrame(loop);
 
     const baixo = (ev: KeyboardEvent) => {
       if (ev.code !== 'Space') return;
       ev.preventDefault();
-      segurandoRef.current = true;
+      holdingRef.current = true;
     };
     const cima = (ev: KeyboardEvent) => {
       if (ev.code !== 'Space') return;
       ev.preventDefault();
-      segurandoRef.current = false;
+      holdingRef.current = false;
     };
     window.addEventListener('keydown', baixo);
     window.addEventListener('keyup', cima);
@@ -1949,58 +1949,58 @@ export function SustentacaoView({ params, cor, aoTerminar }: Props) {
     };
   }, [params]);
 
-  const meia = params.alturaFaixa / 2;
+  const meia = params.bandHeight / 2;
   return (
-    <div class="su">
-      <div class="su-barra">
+    <div class="hold">
+      <div class="hold-bar">
         <div
-          class="su-faixa"
+          class="hold-band"
           style={{
-            bottom: `${(est.faixaPos - meia) * 100}%`,
-            height: `${params.alturaFaixa * 100}%`,
+            bottom: `${(est.bandPos - meia) * 100}%`,
+            height: `${params.bandHeight * 100}%`,
           }}
         />
         <div
-          class="su-peixe"
-          style={{ bottom: `calc(${est.peixePos * 100}% - 8px)`, background: cor }}
+          class="hold-fish"
+          style={{ bottom: `calc(${est.fishPos * 100}% - 8px)`, background: color }}
         />
       </div>
-      <div class="su-progresso">
-        <div class="su-progresso-cheio" style={{ height: `${est.progresso * 100}%` }} />
+      <div class="hold-meter">
+        <div class="hold-meter-fill" style={{ height: `${est.progress * 100}%` }} />
       </div>
     </div>
   );
 }
 ```
 
-- [ ] **Step 3: Libere os peixes de sustentação na ilha**
+- [ ] **Step 3: Libere os fish de sustentação na ilha**
 
-Em `src/islands/pesca/Pesca.tsx`:
+Em `src/islands/fishing/Fishing.tsx`:
 
-1. Adicione o import: `import { SustentacaoView } from './motores/sustentacao';`
-2. Adicione ao import de tipos: `ParamsSustentacao`
+1. Adicione o import: `import { HoldView } from './views/HoldView';`
+2. Adicione ao import de tipos: `HoldParams`
 3. Troque o filtro do sorteio por:
 
 ```tsx
-const posiveis = PEIXES.filter(
-  (p) => p.motor === 'trajeto' || p.motor === 'sustentacao',
+const pool = FISH.filter(
+  (p) => p.engine === 'track' || p.engine === 'hold',
 );
 ```
 
-4. No bloco `fase.tipo === 'pescando'`, troque o `<TrajetoView …/>` por:
+4. No bloco `phase.tipo === 'pescando'`, troque o `<TrackView …/>` por:
 
 ```tsx
-{fase.peixe.motor === 'trajeto' && (
-  <TrajetoView
-    params={fase.peixe.params as ParamsTrajeto}
-    aoTerminar={aoTerminar(fase.peixe)}
+{phase.fish.engine === 'track' && (
+  <TrackView
+    params={phase.fish.params as TrackParams}
+    onDone={onDone(phase.fish)}
   />
 )}
-{fase.peixe.motor === 'sustentacao' && (
-  <SustentacaoView
-    params={fase.peixe.params as ParamsSustentacao}
-    cor={fase.peixe.cor}
-    aoTerminar={aoTerminar(fase.peixe)}
+{phase.fish.engine === 'hold' && (
+  <HoldView
+    params={phase.fish.params as HoldParams}
+    color={phase.fish.color}
+    onDone={onDone(phase.fish)}
   />
 )}
 ```
@@ -2011,17 +2011,17 @@ const posiveis = PEIXES.filter(
 pnpm build && npx --yes serve@14 dist -l 4330 --no-clipboard
 ```
 
-Em `http://localhost:4330/jogo/pesca`, lance até cair um peixe de sustentação e confirme:
+Em `http://localhost:4330/jogo/pesca`, lance até cair um fish de sustentação e confirme:
 1. Segurar espaço sobe a faixa; soltar desce.
-2. Peixe dentro da faixa enche a barra; fora, drena.
+2. Fish dentro da faixa enche a barra; fora, drena.
 3. Barra cheia fisga; barra zerada perde.
-4. Com movimento reduzido ligado no SO, o peixe salta e a faixa continua lisa.
+4. Com movimento reduzido ligado no SO, o fish salta e a faixa continua lisa.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/islands/pesca
-git commit -m "feat(pesca): casca visual do motor SUSTENTACAO"
+git add src/islands/fishing
+git commit -m "feat(pesca): casca visual do engine SUSTENTACAO"
 ```
 
 ---
@@ -2029,117 +2029,117 @@ git commit -m "feat(pesca): casca visual do motor SUSTENTACAO"
 ### Task 9: Casca visual do DRAGAGEM
 
 **Files:**
-- Create: `src/islands/pesca/motores/dragagem.tsx`
-- Create: `src/islands/pesca/motores/dragagem.css`
-- Modify: `src/islands/pesca/Pesca.tsx` — liberar os nove peixes
+- Create: `src/islands/fishing/views/DodgeView.tsx`
+- Create: `src/islands/fishing/views/DodgeView.css`
+- Modify: `src/islands/fishing/Fishing.tsx` — liberar os nove fish
 
 **Interfaces:**
-- Consumes: `iniciarDragagem`, `trocarPistaDragagem`, `avancarDragagem`, `ParamsDragagem`, `Resultado`.
-- Produces: `DragagemView` com props `{ params: ParamsDragagem; aoTerminar: (r: Resultado) => void }`.
+- Consumes: `startDodge`, `switchLane`, `stepDodge`, `DodgeParams`, `Result`.
+- Produces: `DodgeView` com props `{ params: DodgeParams; onDone: (r: Result) => void }`.
 
 - [ ] **Step 1: Escreva o CSS**
 
-Crie `src/islands/pesca/motores/dragagem.css`:
+Crie `src/islands/fishing/views/DodgeView.css`:
 
 ```css
-.dg { display: flex; flex-direction: column; gap: 12px; align-items: center; }
-.dg-anel { display: block; width: 100%; max-width: 280px; height: auto; }
-.dg-batidas {
+.dodge { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.dodge-ring { display: block; width: 100%; max-width: 280px; height: auto; }
+.dodge-bumps {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.08em;
-  color: var(--pesca-perigo);
+  color: var(--fishing-danger);
 }
 ```
 
 - [ ] **Step 2: Escreva a casca visual**
 
-Crie `src/islands/pesca/motores/dragagem.tsx`:
+Crie `src/islands/fishing/views/DodgeView.tsx`:
 
 ```tsx
 import { useEffect, useRef, useState } from 'preact/hooks';
-import type { ParamsDragagem, Resultado } from '../tipos';
+import type { DodgeParams, Result } from '../types';
 import {
-  iniciarDragagem,
-  trocarPistaDragagem,
-  avancarDragagem,
-  type EstadoDragagem,
-} from './dragagem';
-import './dragagem.css';
+  startDodge,
+  switchLane,
+  stepDodge,
+  type DodgeState,
+} from '../engines/dodge';
+import './DodgeView.css';
 
-type Props = { params: ParamsDragagem; aoTerminar: (r: Resultado) => void };
+type Props = { params: DodgeParams; onDone: (r: Result) => void };
 
-const DEGRAUS = 36;
-const RAIO_BASE = 20;
-const RAIO_PASSO = 12;
+const STEPS = 36;
+const BASE_RADIUS = 20;
+const RADIUS_STEP = 12;
 
-export function DragagemView({ params, aoTerminar }: Props) {
-  const [est, setEst] = useState<EstadoDragagem>(() => iniciarDragagem(params));
-  const [ang, setAng] = useState(0);
-  const refEst = useRef(iniciarDragagem(params));
+export function DodgeView({ params, onDone }: Props) {
+  const [est, setEst] = useState<DodgeState>(() => startDodge(params));
+  const [angle, setAng] = useState(0);
+  const stateRef = useRef(startDodge(params));
 
   // Mesma razao do TRAJETO e do SUSTENTACAO.
-  const fimRef = useRef(aoTerminar);
-  fimRef.current = aoTerminar;
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
-    const passos = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stepped = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let raf = 0;
     const inicio = performance.now();
-    refEst.current = iniciarDragagem(params);
+    stateRef.current = startDodge(params);
 
-    const laco = (agora: number) => {
-      const t = agora - inicio;
-      const proximo = avancarDragagem(params, refEst.current, t);
-      refEst.current = proximo;
-      setEst(proximo);
-      const p = (t % params.periodoMs) / params.periodoMs;
-      setAng(passos ? Math.round(p * DEGRAUS) / DEGRAUS : p);
-      if (proximo.terminado) { fimRef.current(proximo.terminado); return; }
-      raf = requestAnimationFrame(laco);
+    const loop = (now: number) => {
+      const t = now - inicio;
+      const next = stepDodge(params, stateRef.current, t);
+      stateRef.current = next;
+      setEst(next);
+      const p = (t % params.periodMs) / params.periodMs;
+      setAng(stepped ? Math.round(p * STEPS) / STEPS : p);
+      if (next.done) { onDoneRef.current(next.done); return; }
+      raf = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(laco);
+    raf = requestAnimationFrame(loop);
 
-    const aoTeclar = (ev: KeyboardEvent) => {
+    const onKey = (ev: KeyboardEvent) => {
       if (ev.code !== 'Space' || ev.repeat) return;
       ev.preventDefault();
-      refEst.current = trocarPistaDragagem(params, refEst.current);
-      setEst(refEst.current);
+      stateRef.current = switchLane(params, stateRef.current);
+      setEst(stateRef.current);
     };
-    window.addEventListener('keydown', aoTeclar);
+    window.addEventListener('keydown', onKey);
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener('keydown', aoTeclar);
+      window.removeEventListener('keydown', onKey);
     };
   }, [params]);
 
-  const rad = ang * 2 * Math.PI - Math.PI / 2;
-  const raio = RAIO_BASE + est.pista * RAIO_PASSO;
+  const rad = angle * 2 * Math.PI - Math.PI / 2;
+  const raio = BASE_RADIUS + est.lane * RADIUS_STEP;
 
   return (
-    <div class="dg">
-      <svg class="dg-anel" viewBox="0 0 100 100" role="presentation">
-        {Array.from({ length: params.pistas }, (_, i) => (
+    <div class="dodge">
+      <svg class="dodge-ring" viewBox="0 0 100 100" role="presentation">
+        {Array.from({ length: params.lanes }, (_, i) => (
           <circle
             key={i}
-            cx="50" cy="50" r={RAIO_BASE + i * RAIO_PASSO}
-            fill="none" stroke="var(--pesca-linha)" stroke-width="2"
+            cx="50" cy="50" r={BASE_RADIUS + i * RADIUS_STEP}
+            fill="none" stroke="var(--fishing-rule)" stroke-width="2"
           />
         ))}
-        {params.portoes.map((portao, i) =>
-          Array.from({ length: params.pistas }, (_, pista) => {
-            const aberto = portao.abertas.includes(pista);
-            const r = RAIO_BASE + pista * RAIO_PASSO;
+        {params.gates.map((portao, i) =>
+          Array.from({ length: params.lanes }, (_, lane) => {
+            const aberto = portao.abertas.includes(lane);
+            const r = BASE_RADIUS + lane * RADIUS_STEP;
             const a = portao.pos * 2 * Math.PI - Math.PI / 2;
             return (
               <circle
-                key={`${i}-${pista}`}
+                key={`${i}-${lane}`}
                 cx={50 + r * Math.cos(a)}
                 cy={50 + r * Math.sin(a)}
                 r={aberto ? 2 : 4}
-                fill={aberto ? 'none' : 'var(--pesca-perigo)'}
-                stroke={aberto ? 'var(--pesca-zona)' : 'none'}
+                fill={aberto ? 'none' : 'var(--fishing-danger)'}
+                stroke={aberto ? 'var(--fishing-zone)' : 'none'}
                 stroke-width="1.5"
               />
             );
@@ -2148,31 +2148,31 @@ export function DragagemView({ params, aoTerminar }: Props) {
         <circle
           cx={50 + raio * Math.cos(rad)}
           cy={50 + raio * Math.sin(rad)}
-          r="4" fill="var(--pesca-marcador)"
+          r="4" fill="var(--fishing-marker)"
         />
       </svg>
-      <p class="dg-batidas">
-        {est.batidas} / {params.batidasToleradas + 1}
+      <p class="dodge-bumps">
+        {est.bumps} / {params.bumpsAllowed + 1}
       </p>
     </div>
   );
 }
 ```
 
-- [ ] **Step 3: Libere os nove peixes na ilha**
+- [ ] **Step 3: Libere os nove fish na ilha**
 
-Em `src/islands/pesca/Pesca.tsx`:
+Em `src/islands/fishing/Fishing.tsx`:
 
-1. Adicione: `import { DragagemView } from './motores/dragagem';`
-2. Adicione ao import de tipos: `ParamsDragagem`
-3. Troque o filtro do sorteio por: `const posiveis = PEIXES;`
+1. Adicione: `import { DodgeView } from './views/DodgeView';`
+2. Adicione ao import de tipos: `DodgeParams`
+3. Troque o filtro do sorteio por: `const pool = FISH;`
 4. Adicione o terceiro ramo ao bloco de pesca:
 
 ```tsx
-{fase.peixe.motor === 'dragagem' && (
-  <DragagemView
-    params={fase.peixe.params as ParamsDragagem}
-    aoTerminar={aoTerminar(fase.peixe)}
+{phase.fish.engine === 'dodge' && (
+  <DodgeView
+    params={phase.fish.params as DodgeParams}
+    onDone={onDone(phase.fish)}
   />
 )}
 ```
@@ -2184,17 +2184,17 @@ pnpm build && npx --yes serve@14 dist -l 4330 --no-clipboard
 ```
 
 Confirme:
-1. Espaço troca de pista e o marcador salta de anel.
-2. Passar por um portão fechado incrementa o contador de batidas.
-3. Batidas além da tolerância perdem o peixe.
+1. Espaço troca de lane e o marcador salta de anel.
+2. Passar por um portão fechado incrementa o contador de bumps.
+3. Batidas além da tolerância perdem o fish.
 4. Completar as voltas fisga.
-5. **Os nove peixes aparecem** ao longo de uns 20 lances.
+5. **Os nove fish aparecem** ao longo de uns 20 lances.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/islands/pesca
-git commit -m "feat(pesca): casca visual do motor DRAGAGEM e os nove peixes no sorteio"
+git add src/islands/fishing
+git commit -m "feat(pesca): casca visual do engine DRAGAGEM e os nove fish no sorteio"
 ```
 
 ---
@@ -2202,18 +2202,18 @@ git commit -m "feat(pesca): casca visual do motor DRAGAGEM e os nove peixes no s
 ### Task 10: Costura do Canvas, inerte
 
 **Files:**
-- Create: `src/islands/pesca/mar.ts`
-- Modify: `src/islands/pesca/Pesca.tsx` — chamar `montarMar`/`desmontarMar`
+- Create: `src/islands/fishing/sea.ts`
+- Modify: `src/islands/fishing/Fishing.tsx` — chamar `mountSea`/`unmountSea`
 
 **Interfaces:**
 - Consumes: nada.
-- Produces: `montarMar(canvas: HTMLCanvasElement): void`, `desenharMar(): void`, `desmontarMar(): void`.
+- Produces: `mountSea(canvas: HTMLCanvasElement): void`, `drawSea(): void`, `unmountSea(): void`.
 
-**A camada existe e não roda.** Não crie `requestAnimationFrame` sem nada para desenhar: isso queima bateria e aparece em profiling como se o jogo fosse pesado.
+**A camada existe e não roda.** Não crie `requestAnimationFrame` sem nada para desenhar: isso queima bateria e aparece em profiling como se o game fosse pesado.
 
 - [ ] **Step 1: Escreva o módulo**
 
-Crie `src/islands/pesca/mar.ts`:
+Crie `src/islands/fishing/sea.ts`:
 
 ```ts
 /**
@@ -2223,12 +2223,12 @@ Crie `src/islands/pesca/mar.ts`:
  * ser necessaria, e quando o mundo (barco, biomas, particulas) chegar, ele tem
  * onde morar sem reorganizar a ilha.
  *
- * Nao adicione um laco de animacao aqui enquanto nao houver o que desenhar.
+ * Nao adicione um loop de animacao aqui enquanto nao houver o que desenhar.
  */
 
 let ctx: CanvasRenderingContext2D | null = null;
 
-export function montarMar(canvas: HTMLCanvasElement): void {
+export function mountSea(canvas: HTMLCanvasElement): void {
   const dpr = window.devicePixelRatio || 1;
   const r = canvas.getBoundingClientRect();
   canvas.width = Math.round(r.width * dpr);
@@ -2237,19 +2237,19 @@ export function montarMar(canvas: HTMLCanvasElement): void {
   ctx?.scale(dpr, dpr);
 }
 
-/** Sem conteudo no v1. Chamada explicita, nunca em laco. */
-export function desenharMar(): void {
+/** Sem conteudo no v1. Chamada explicita, nunca em loop. */
+export function drawSea(): void {
   if (!ctx) return;
 }
 
-export function desmontarMar(): void {
+export function unmountSea(): void {
   ctx = null;
 }
 ```
 
 - [ ] **Step 2: Ligue na ilha**
 
-Em `src/islands/pesca/Pesca.tsx`:
+Em `src/islands/fishing/Fishing.tsx`:
 
 1. **Não crie um segundo import de `preact/hooks`.** Acrescente `useEffect` ao import que já existe, deixando a linha assim:
 
@@ -2260,18 +2260,18 @@ import { useCallback, useEffect, useState } from 'preact/hooks';
 2. Adicione o import do módulo do mar junto dos outros:
 
 ```tsx
-import { montarMar, desmontarMar } from './mar';
+import { mountSea, unmountSea } from './sea';
 ```
 
-3. Dentro do componente `Pesca`, logo depois dos `useState`, adicione:
+3. Dentro do componente `Fishing`, logo depois dos `useState`, adicione:
 
 ```tsx
 // O <canvas> pertence a pagina Astro, nao a ilha, entao a ilha o alcanca por
-// seletor. Efeito de montagem unica: nao ha laco de animacao no v1.
+// seletor. Efeito de montagem unica: nao ha loop de animacao no v1.
 useEffect(() => {
-  const canvas = document.querySelector<HTMLCanvasElement>('.pesca-mar');
-  if (canvas) montarMar(canvas);
-  return () => desmontarMar();
+  const canvas = document.querySelector<HTMLCanvasElement>('.fishing-sea');
+  if (canvas) mountSea(canvas);
+  return () => unmountSea();
 }, []);
 ```
 
@@ -2281,12 +2281,12 @@ useEffect(() => {
 pnpm build && npx --yes serve@14 dist -l 4330 --no-clipboard
 ```
 
-Abra `http://localhost:4330/jogo/pesca`, deixe a página **parada no estado inicial** e no DevTools rode o Performance por 5 segundos. Expected: nenhum frame de animação enquanto nenhum minigame está ativo.
+Abra `http://localhost:4330/jogo/pesca`, deixe a página **parada no state inicial** e no DevTools rode o Performance por 5 segundos. Expected: nenhum frame de animação enquanto nenhum minigame está ativo.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add src/islands/pesca/mar.ts src/islands/pesca/Pesca.tsx
+git add src/islands/fishing/sea.ts src/islands/fishing/Fishing.tsx
 git commit -m "feat(pesca): costura da camada de Canvas, inerte no v1"
 ```
 
@@ -2295,68 +2295,68 @@ git commit -m "feat(pesca): costura da camada de Canvas, inerte no v1"
 ### Task 11: Acessibilidade — anúncio, modo garantido e foco
 
 **Files:**
-- Modify: `src/islands/pesca/Pesca.tsx`
-- Modify: `src/styles/pesca.css`
-- Modify: `src/i18n/pt-br.json`, `en.json`, `es.json` — já contêm `modoGarantido` desde a Task 6
+- Modify: `src/islands/fishing/Fishing.tsx`
+- Modify: `src/styles/fishing.css`
+- Modify: `src/i18n/pt-br.json`, `en.json`, `es.json` — já contêm `guaranteedMode` desde a Task 6
 
 **Interfaces:**
 - Consumes: as três `*View` já existentes.
-- Produces: nada novo exportado.
+- Produces: nada updated exportado.
 
 - [ ] **Step 1: Adicione a live region e o modo garantido**
 
-Em `src/islands/pesca/Pesca.tsx`:
+Em `src/islands/fishing/Fishing.tsx`:
 
-1. Some ao tipo `Textos`: `modoGarantido: string; modoGarantidoAjuda: string;`
-2. Adicione o estado: `const [garantido, setGarantido] = useState(false);`
-3. Em `aoTerminar`, force a captura quando o modo estiver ligado:
+1. Some ao tipo `Texts`: `guaranteedMode: string; guaranteedModeHelp: string;`
+2. Adicione o state: `const [garantido, setGarantido] = useState(false);`
+3. Em `onDone`, force a captura quando o modo estiver ligado:
 
 ```tsx
-const aoTerminar = useCallback(
-  (peixe: Peixe) => (bruto: Resultado) => {
-    const resultado = garantido ? { pego: true, qualidade: bruto.qualidade } : bruto;
-    const tamanho = tamanhoDe(peixe, resultado.qualidade);
-    if (resultado.pego) {
-      const novo = registrarCaptura(caderno, peixe.id, tamanho);
-      setCaderno(novo);
-      salvarCaderno(novo);
+const onDone = useCallback(
+  (fish: Fish) => (bruto: Result) => {
+    const result = garantido ? { caught: true, quality: bruto.quality } : bruto;
+    const tamanho = sizeOf(fish, result.quality);
+    if (result.caught) {
+      const updated = recordCatch(log, fish.id, tamanho);
+      setCaderno(updated);
+      saveLog(updated);
     }
-    setFase({ tipo: 'resultado', peixe, resultado, tamanho });
+    setFase({ tipo: 'result', fish, result, tamanho });
   },
-  [caderno, garantido],
+  [log, garantido],
 );
 ```
 
 4. Adicione a live region e o controle no JSX, logo abaixo do `<div>` externo:
 
 ```tsx
-<p class="pesca-vivo" role="status" aria-live="polite">
-  {fase.tipo === 'resultado'
-    ? fase.resultado.pego
-      ? `${textos.fisgou}: ${textos.peixes[fase.peixe.id]}, ${fase.tamanho} cm`
-      : `${textos.escapou}: ${textos.peixes[fase.peixe.id]}`
+<p class="fishing-live" role="status" aria-live="polite">
+  {phase.tipo === 'result'
+    ? phase.result.caught
+      ? `${texts.caught}: ${texts.fish[phase.fish.id]}, ${phase.tamanho} cm`
+      : `${texts.escaped}: ${texts.fish[phase.fish.id]}`
     : ''}
 </p>
 
-<label class="pesca-opcao">
+<label class="fishing-option">
   <input
     type="checkbox"
     checked={garantido}
     onChange={(e) => setGarantido((e.target as HTMLInputElement).checked)}
   />
-  <span>{textos.modoGarantido}</span>
-  <small>{textos.modoGarantidoAjuda}</small>
+  <span>{texts.guaranteedMode}</span>
+  <small>{texts.guaranteedModeHelp}</small>
 </label>
 ```
 
 - [ ] **Step 2: Adicione o CSS**
 
-Acrescente ao fim de `src/styles/pesca.css`:
+Acrescente ao fim de `src/styles/fishing.css`:
 
 ```css
 /* Anuncio para leitor de tela. Visualmente escondido, nunca display:none,
    que remove do leitor tambem. */
-.pesca-vivo {
+.fishing-live {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -2368,7 +2368,7 @@ Acrescente ao fim de `src/styles/pesca.css`:
   border: 0;
 }
 
-.pesca-opcao {
+.fishing-option {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -2379,8 +2379,8 @@ Acrescente ao fim de `src/styles/pesca.css`:
   cursor: pointer;
 }
 
-.pesca-opcao small { color: var(--color-text-secondary); }
-.pesca-opcao input:focus-visible {
+.fishing-option small { color: var(--color-text-secondary); }
+.fishing-option input:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
@@ -2393,11 +2393,11 @@ pnpm build && npx --yes serve@14 dist -l 4330 --no-clipboard
 ```
 
 Confirme, nos três idiomas:
-1. Só com Tab e espaço dá para jogar do começo ao fim.
+1. Só com Tab e espaço dá para play do começo ao fim.
 2. Todo elemento focável mostra foco visível.
-3. Com o modo garantido ligado, nenhum peixe escapa.
+3. Com o modo garantido ligado, nenhum fish escapa.
 4. Ligando movimento reduzido no SO, os três motores continuam jogáveis.
-5. Com um leitor de tela, o resultado é anunciado.
+5. Com um leitor de tela, o result é anunciado.
 
 - [ ] **Step 4: Rode a suíte inteira e o detector**
 
@@ -2412,7 +2412,7 @@ Expected: testes verdes; detector sem achados novos além dos adjudicados (`ai-c
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/islands/pesca src/styles/pesca.css
+git add src/islands/fishing src/styles/fishing.css
 git commit -m "feat(pesca): anuncio por live region, modo garantido e foco por teclado"
 ```
 
@@ -2424,7 +2424,7 @@ git commit -m "feat(pesca): anuncio por live region, modo garantido e foco por t
 - Modify: `src/components/HeroSection.astro` — a palavra "jogos" da descrição
 - Modify: `src/components/AboutSection.astro` — a palavra "games" do intro
 - Modify: `src/i18n/pt-br.json`, `en.json`, `es.json` — fatiar as frases
-- Modify: `src/styles/pesca.css`
+- Modify: `src/styles/fishing.css`
 
 **Interfaces:**
 - Consumes: as rotas da Task 6.
@@ -2437,7 +2437,7 @@ A frase precisa ser fatiada no i18n, porque a palavra que vira link está no mei
 Em `src/i18n/pt-br.json`, dentro de `hero`, some as três chaves (mantendo `description` intacta para quem já a usa):
 
 ```json
-"descricaoAntes": "Fullstack developer em Ribeirão Preto. Construo APIs, interfaces e às vezes ",
+"descricaoAntes": "Fullstack developer em Ribeirão Preto. Construo APIs, interfaces e às times ",
 "descricaoLink": "jogos",
 "descricaoDepois": "."
 ```
@@ -2477,7 +2477,7 @@ E substitua o parágrafo da descrição por:
 
 ```astro
 <p class="hero-description hero-stagger" style="--stagger: 3">
-  {t('hero.descricaoAntes', locale)}<a class="pesca-isca" href={rotaJogo}>{t('hero.descricaoLink', locale)}</a>{t('hero.descricaoDepois', locale)}
+  {t('hero.descricaoAntes', locale)}<a class="fishing-bait" href={rotaJogo}>{t('hero.descricaoLink', locale)}</a>{t('hero.descricaoDepois', locale)}
 </p>
 ```
 
@@ -2492,7 +2492,7 @@ Em `src/i18n/pt-br.json`, dentro de `about`, some:
 ```json
 "introAntes": "Sou um developer fullstack com 5 anos de experiência construindo aplicações web que fazem a diferença. Já passei por empresas de marketing (Authorify, EUA), e-commerce B2B (Take) e fintech (Verzel). Tudo começou pelos ",
 "introLink": "games",
-"introDepois": ". Eu amava jogar e sempre quis entender como eram feitos, então fui parar em Análise e Desenvolvimento de Sistemas e me apaixonei pela programação e por esse mundo da tecnologia. Aquela curiosidade de desmontar as coisas pra ver como funcionam virou paixão por criar soluções completas, do backend ao pixel final."
+"introDepois": ". Eu amava play e sempre quis entender como eram feitos, então fui parar em Análise e Desenvolvimento de Sistemas e me apaixonei pela programação e por esse mundo da tecnologia. Aquela curiosidade de desmontar as coisas pra ver como funcionam virou paixão por criar soluções completas, do backend ao pixel final."
 ```
 
 Em `en.json`, dentro de `about`:
@@ -2522,27 +2522,27 @@ const rotaJogo = locale === 'en' ? '/en/game/fishing'
 E troque a linha 35 por:
 
 ```astro
-<p class="about-description">{t('about.introAntes', locale)}<a class="pesca-isca" href={rotaJogo}>{t('about.introLink', locale)}</a>{t('about.introDepois', locale)}</p>
+<p class="about-description">{t('about.introAntes', locale)}<a class="fishing-bait" href={rotaJogo}>{t('about.introLink', locale)}</a>{t('about.introDepois', locale)}</p>
 ```
 
 - [ ] **Step 5: Estilo do link**
 
 O link vive na **home**, e a home não carrega `pesca.css` — aquela folha é importada só
-pelas rotas do jogo. Portanto a regra vai para `src/styles/global.css`, não para `pesca.css`.
+pelas rotas do game. Portanto a regra vai para `src/styles/global.css`, não para `pesca.css`.
 
 Acrescente ao fim de `src/styles/global.css`:
 
 ```css
-/* A evidencia senta ao lado da alegacao: a palavra que afirma o jogo e o link
+/* A evidencia senta ao lado da alegacao: a palavra que afirma o game e o link
    para ele. Sublinhado ancorado no texto, nunca no rodape da caixa. */
-.pesca-isca {
+.fishing-bait {
   color: var(--color-accent);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
 
-.pesca-isca:focus-visible {
+.fishing-bait:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
@@ -2565,60 +2565,60 @@ Confirme, em `/`, `/en/` e `/es/`:
 ```bash
 pnpm test && pnpm build
 git add src/components/HeroSection.astro src/components/AboutSection.astro src/i18n src/styles
-git commit -m "feat(pesca): as palavras que afirmam o jogo viram o link para ele"
+git commit -m "feat(pesca): as palavras que afirmam o game viram o link para ele"
 ```
 
 ---
 
 ---
 
-### Task 13: LP do jogo, saída por Esc e sobreposição em tela cheia
+### Task 13: LP do game, saída por Esc e sobreposição em tela cheia
 
 **Files:**
-- Modify: `src/islands/pesca/Pesca.tsx`
-- Modify: `src/styles/pesca.css`
+- Modify: `src/islands/fishing/Fishing.tsx`
+- Modify: `src/styles/fishing.css`
 - Modify: `src/i18n/pt-br.json`, `en.json`, `es.json`
 - Modify: `src/pages/jogo/pesca.astro`, `src/pages/en/game/fishing.astro`, `src/pages/es/juego/pesca.astro`
 - Modify: `src/layouts/BaseLayout.astro`
 
 **Interfaces:**
-- Consumes: o componente `Pesca` e as três `*View` já existentes.
-- Produces: nada novo exportado.
+- Consumes: o componente `Fishing` e as três `*View` já existentes.
+- Produces: nada updated exportado.
 
-A rota deixa de ser "o jogo" e passa a ser a **página do jogo**: título, como se joga, o caderno e um botão Jogar. O jogo roda numa **sobreposição em tela cheia** por cima de tudo, e Esc ou o botão Sair voltam para a página.
+A rota deixa de ser "o game" e passa a ser a **página do game**: título, como se joga, o log e um botão Jogar. O game roda numa **sobreposição em tela cheia** por cima de tudo, e Esc ou o botão Sair voltam para a página.
 
 Isso substitui o `showFooter` da Task 6. A sobreposição é `position: fixed; inset: 0`, do tamanho da viewport por construção, então não depende de aritmética de `calc()` nem de esconder o rodapé. A página volta a ter rodapé, que é o certo para quem chegou pelo link do hero e quer navegar para outro lugar.
 
 - [ ] **Step 1: Novas strings nos três idiomas**
 
-Em `src/i18n/pt-br.json`, dentro de `jogo`:
+Em `src/i18n/pt-br.json`, dentro de `game`:
 
 ```json
-"jogar": "Jogar",
-"sair": "Sair",
-"sairAjuda": "Esc também sai",
-"regiaoJogo": "Área de jogo",
-"comoJoga": "Espaço faz tudo: lança a linha e resolve o minigame de cada peixe."
+"play": "Jogar",
+"exit": "Sair",
+"exitHelp": "Esc também sai",
+"gameArea": "Área de game",
+"howToPlay": "Espaço faz tudo: lança a linha e resolve o minigame de cada fish."
 ```
 
-Em `en.json`, dentro de `jogo`:
+Em `en.json`, dentro de `game`:
 
 ```json
-"jogar": "Play",
-"sair": "Exit",
-"sairAjuda": "Esc exits too",
-"regiaoJogo": "Game area",
-"comoJoga": "Space does everything: it casts the line and plays each fish's minigame."
+"play": "Play",
+"exit": "Exit",
+"exitHelp": "Esc exits too",
+"gameArea": "Game area",
+"howToPlay": "Space does everything: it casts the line and plays each fish's minigame."
 ```
 
-Em `es.json`, dentro de `jogo`:
+Em `es.json`, dentro de `game`:
 
 ```json
-"jogar": "Jugar",
-"sair": "Salir",
-"sairAjuda": "Esc también sale",
-"regiaoJogo": "Área de juego",
-"comoJoga": "Espacio hace todo: lanza la línea y resuelve el minijuego de cada pez."
+"play": "Jugar",
+"exit": "Salir",
+"exitHelp": "Esc también sale",
+"gameArea": "Área de juego",
+"howToPlay": "Espacio hace todo: lanza la línea y resuelve el minijuego de cada pez."
 ```
 
 - [ ] **Step 2: Rode o teste de paridade**
@@ -2628,7 +2628,7 @@ Expected: PASS — as cinco chaves novas existem nos três dicionários
 
 - [ ] **Step 3: Desfaça o `showFooter`**
 
-Ele deixou de ter uso: a sobreposição cobre o rodapé, e a página do jogo deve mostrá-lo.
+Ele deixou de ter uso: a sobreposição cobre o rodapé, e a página do game deve mostrá-lo.
 
 Em `src/layouts/BaseLayout.astro`, remova a prop `showFooter` do `interface Props`, remova `showFooter = true` do destructuring, e volte a linha do rodapé para:
 
@@ -2638,16 +2638,16 @@ Em `src/layouts/BaseLayout.astro`, remova a prop `showFooter` do `interface Prop
 
 Nas três rotas, remova a linha `showFooter={false}`.
 
-Em `src/styles/pesca.css`, o `.pesca-palco` deixa de precisar travar altura. Troque `min-height: calc(100svh - 64px);` por `min-height: 0;` e apague o comentário sobre o `pt-16`, que deixou de valer.
+Em `src/styles/fishing.css`, o `.fishing-stage` deixa de precisar travar altura. Troque `min-height: calc(100svh - 64px);` por `min-height: 0;` e apague o comentário sobre o `pt-16`, que deixou de valer.
 
 - [ ] **Step 4: CSS da sobreposição**
 
-Acrescente ao fim de `src/styles/pesca.css`:
+Acrescente ao fim de `src/styles/fishing.css`:
 
 ```css
 /* Sobreposicao em tela cheia: fixed + inset zera qualquer questao de altura,
    porque a caixa E a viewport. Nada de calc() competindo com navbar e rodape. */
-.pesca-overlay {
+.fishing-overlay {
   position: fixed;
   inset: 0;
   z-index: 80;
@@ -2661,18 +2661,18 @@ Acrescente ao fim de `src/styles/pesca.css`:
 
 /* Enquanto a sobreposicao esta aberta o documento atras nao rola. Sem isto a
    barra de espaco volta a rolar a pagina de baixo. */
-body.pesca-travado {
+body.fishing-locked {
   overflow: hidden;
 }
 
-.pesca-overlay-topo {
+.fishing-overlay-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
 }
 
-.pesca-sair {
+.fishing-exit {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -2690,24 +2690,24 @@ body.pesca-travado {
   cursor: pointer;
 }
 
-.pesca-sair:hover {
+.fishing-exit:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
 
-.pesca-sair:focus-visible {
+.fishing-exit:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
-.pesca-sair small {
+.fishing-exit small {
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
   color: var(--color-text-secondary);
 }
 
-.pesca-arena {
+.fishing-arena {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -2718,19 +2718,19 @@ body.pesca-travado {
 }
 ```
 
-- [ ] **Step 5: A ilha ganha o estado de tela**
+- [ ] **Step 5: A ilha ganha o state de tela**
 
-Em `src/islands/pesca/Pesca.tsx`:
+Em `src/islands/fishing/Fishing.tsx`:
 
-1. Some ao tipo `Textos`: `jogar: string; sair: string; sairAjuda: string; regiaoJogo: string; comoJoga: string;`
+1. Some ao tipo `Texts`: `play: string; exit: string; exitHelp: string; gameArea: string; howToPlay: string;`
 
 2. Acrescente `useRef` ao import que já existe de `preact/hooks` — não crie um segundo import do mesmo módulo.
 
-3. Adicione o estado e as duas referências, junto dos outros `useState`:
+3. Adicione o state e as duas referências, junto dos outros `useState`:
 
 ```tsx
-const [jogando, setJogando] = useState(false);
-const btnJogarRef = useRef<HTMLButtonElement>(null);
+const [playing, setJogando] = useState(false);
+const playBtnRef = useRef<HTMLButtonElement>(null);
 const overlayRef = useRef<HTMLDivElement>(null);
 ```
 
@@ -2739,85 +2739,85 @@ const overlayRef = useRef<HTMLDivElement>(null);
 ```tsx
 // A sobreposicao e um dialogo modal: enquanto ela esta aberta o documento
 // atras nao rola, Esc fecha, o foco entra nela e VOLTA para o botao Jogar ao
-// sair — sem isso quem navega por teclado e largado no meio da pagina.
+// exit — sem isso quem navega por teclado e largado no meio da pagina.
 useEffect(() => {
-  if (!jogando) return;
-  document.body.classList.add('pesca-travado');
+  if (!playing) return;
+  document.body.classList.add('fishing-locked');
   overlayRef.current?.focus();
 
-  const aoTeclar = (ev: KeyboardEvent) => {
+  const onKey = (ev: KeyboardEvent) => {
     if (ev.key !== 'Escape') return;
     ev.preventDefault();
     setJogando(false);
   };
-  window.addEventListener('keydown', aoTeclar);
+  window.addEventListener('keydown', onKey);
 
   return () => {
-    document.body.classList.remove('pesca-travado');
-    window.removeEventListener('keydown', aoTeclar);
-    btnJogarRef.current?.focus();
+    document.body.classList.remove('fishing-locked');
+    window.removeEventListener('keydown', onKey);
+    playBtnRef.current?.focus();
   };
-}, [jogando]);
+}, [playing]);
 ```
 
-5. Crie a função que entra no jogo, junto de `sortear`:
+5. Crie a função que entra no game, junto de `cast`:
 
 ```tsx
-const entrar = useCallback(() => {
+const enter = useCallback(() => {
   setJogando(true);
   setFase({ tipo: 'parado' });
 }, []);
 ```
 
-6. Reestruture o `return` para as duas telas. A página (LP) fica assim, e a sobreposição só existe quando `jogando`:
+6. Reestruture o `return` para as duas telas. A página (LP) fica assim, e a sobreposição só existe quando `playing`:
 
 ```tsx
 return (
   <div>
-    <p class="pesca-vivo" role="status" aria-live="polite">
+    <p class="fishing-live" role="status" aria-live="polite">
       {/* a live region existente continua exatamente como esta */}
     </p>
 
-    <p class="pesca-prompt">{textos.comoJoga}</p>
+    <p class="fishing-prompt">{texts.howToPlay}</p>
 
-    <button class="pesca-botao" ref={btnJogarRef} onClick={entrar}>
-      {textos.jogar}
+    <button class="fishing-button" ref={playBtnRef} onClick={enter}>
+      {texts.play}
     </button>
 
     <section>
-      <h2>{textos.caderno}</h2>
-      {Object.keys(caderno).length === 0 ? (
-        <p>{textos.cadernoVazio}</p>
+      <h2>{texts.log}</h2>
+      {Object.keys(log).length === 0 ? (
+        <p>{texts.logEmpty}</p>
       ) : (
         <ul>
-          {Object.entries(caderno).map(([id, r]) => (
+          {Object.entries(log).map(([id, r]) => (
             <li key={id}>
-              {textos.peixes[id]} — {r.vezes} {textos.vezes}, {textos.maior} {r.maior} cm
+              {texts.fish[id]} — {r.times} {texts.times}, {texts.largest} {r.largest} cm
             </li>
           ))}
         </ul>
       )}
     </section>
 
-    {jogando && (
+    {playing && (
       <div
-        class="pesca-overlay"
+        class="fishing-overlay"
         ref={overlayRef}
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        aria-label={textos.regiaoJogo}
+        aria-label={texts.gameArea}
       >
-        <div class="pesca-overlay-topo">
-          <button class="pesca-sair" onClick={() => setJogando(false)}>
-            {textos.sair} <small>{textos.sairAjuda}</small>
+        <div class="fishing-overlay-bar">
+          <button class="fishing-exit" onClick={() => setJogando(false)}>
+            {texts.exit} <small>{texts.exitHelp}</small>
           </button>
         </div>
 
-        <div class="pesca-arena">
+        <div class="fishing-arena">
           {/* aqui entram, sem alteracao nenhuma na logica: o bloco 'parado',
-              o bloco 'pescando' com os tres ramos de motor, o bloco
-              'resultado', e o controle de modo garantido */}
+              o bloco 'pescando' com os tres ramos de engine, o bloco
+              'result', e o controle de modo garantido */}
         </div>
       </div>
     )}
@@ -2825,7 +2825,7 @@ return (
 );
 ```
 
-**Preserve o que já existe.** A live region, o controle de modo garantido e os três ramos de motor continuam exatamente como estão — este passo move a árvore, não reescreve a lógica. Se algum bloco sumir do diff, é regressão.
+**Preserve o que já existe.** A live region, o controle de modo garantido e os três ramos de engine continuam exatamente como estão — este passo move a árvore, não reescreve a lógica. Se algum bloco sumir do diff, é regressão.
 
 - [ ] **Step 6: Verifique na mão**
 
@@ -2835,13 +2835,13 @@ pnpm build && npx --yes serve@14 dist -l 4330 --no-clipboard
 
 Em `http://localhost:4330/jogo/pesca`, confirme:
 
-1. A página mostra título, como se joga, o caderno, o botão Jogar **e o rodapé**.
+1. A página mostra título, como se joga, o log, o botão Jogar **e o rodapé**.
 2. Jogar abre a sobreposição cobrindo a tela inteira.
-3. Com a sobreposição aberta, `document.body` tem a classe `pesca-travado` e a página de trás não rola. Meça: `document.documentElement.scrollHeight` contra `window.innerHeight`.
+3. Com a sobreposição aberta, `document.body` tem a classe `fishing-locked` e a página de trás não rola. Meça: `document.documentElement.scrollHeight` contra `window.innerHeight`.
 4. **Esc** volta para a página. O botão **Sair** também.
-5. Ao sair, `document.activeElement` é o botão Jogar.
+5. Ao exit, `document.activeElement` é o botão Jogar.
 6. Esc no meio de um minigame abandona e volta, sem deixar laço de animação rodando — confirme no Performance do DevTools que não há frames após a saída.
-7. Só com Tab e Espaço dá para chegar ao jogo, jogar e sair.
+7. Só com Tab e Espaço dá para chegar ao game, play e exit.
 8. As outras páginas seguem com rodapé — confira `/` e `/blog/`.
 9. Repita em `/en/game/fishing` e `/es/juego/pesca`.
 
@@ -2849,8 +2849,8 @@ Em `http://localhost:4330/jogo/pesca`, confirme:
 
 ```bash
 pnpm test && pnpm build
-git add src/islands/pesca src/styles/pesca.css src/i18n src/pages src/layouts/BaseLayout.astro
-git commit -m "feat(pesca): pagina do jogo, sobreposicao em tela cheia e saida por Esc"
+git add src/islands/fishing src/styles/fishing.css src/i18n src/pages src/layouts/BaseLayout.astro
+git commit -m "feat(pesca): pagina do game, sobreposicao em tela cheia e saida por Esc"
 ```
 
 ## Verificação final
@@ -2864,5 +2864,5 @@ git commit -m "feat(pesca): pagina do jogo, sobreposicao em tela cheia e saida p
 - [ ] Detector sem achados novos
 - [ ] Esc e o botao Sair voltam para a pagina, e o foco volta para o botao Jogar
 - [ ] Com a sobreposicao aberta, a pagina de tras nao rola
-- [ ] A pagina do jogo TEM rodape; as outras 37 tambem
-- [ ] **Dez lances seguidos sem querer parar** — se falhar, o próximo trabalho é afinar parâmetros em `peixes.ts`, nunca construir o mundo
+- [ ] A pagina do game TEM rodape; as outras 37 tambem
+- [ ] **Dez lances seguidos sem querer parar** — se falhar, o próximo trabalho é afinar parâmetros em `fish.ts`, nunca construir o mundo
