@@ -9,12 +9,12 @@ export function recordCatch(
   fishId: string,
   size: number,
 ): Log {
-  const antes = log[fishId];
+  const previous = log[fishId];
   return {
     ...log,
     [fishId]: {
-      times: (antes?.times ?? 0) + 1,
-      largest: Math.max(antes?.largest ?? 0, size),
+      times: (previous?.times ?? 0) + 1,
+      largest: Math.max(previous?.largest ?? 0, size),
     },
   };
 }
@@ -26,8 +26,8 @@ export function recordCatch(
  */
 export function loadLog(): Log {
   try {
-    const bruto = localStorage.getItem(LOG_KEY);
-    return bruto ? (JSON.parse(bruto) as Log) : EMPTY_LOG;
+    const raw = localStorage.getItem(LOG_KEY);
+    return raw ? (JSON.parse(raw) as Log) : EMPTY_LOG;
   } catch {
     return EMPTY_LOG;
   }

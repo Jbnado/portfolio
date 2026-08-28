@@ -40,11 +40,11 @@ export function pressTrack(
 
   if (dist > half) {
     const misses = state.misses + 1;
-    const perdeu = params.tolerance !== null && misses > params.tolerance;
+    const lost = params.tolerance !== null && misses > params.tolerance;
     return {
       ...state,
       misses,
-      done: perdeu ? { caught: false, quality: 0 } : null,
+      done: lost ? { caught: false, quality: 0 } : null,
     };
   }
 

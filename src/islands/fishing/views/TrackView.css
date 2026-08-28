@@ -19,7 +19,7 @@
   border-right: 2px dashed var(--fishing-zone);
 }
 
-.track-zone[data-ativa='false'] { opacity: 0.25; border-style: dotted; }
+.track-zone[data-active='false'] { opacity: 0.25; border-style: dotted; }
 
 .track-marker {
   position: absolute;

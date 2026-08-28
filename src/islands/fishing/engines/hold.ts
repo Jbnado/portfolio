@@ -47,8 +47,8 @@ export function stepHold(
   if (state.done) return state;
 
   // Faixa: controle direto do jogador.
-  const acel = holding ? params.lift : -params.gravity;
-  let bandVel = state.bandVel + acel * dtMs;
+  const accel = holding ? params.lift : -params.gravity;
+  let bandVel = state.bandVel + accel * dtMs;
   let bandPos = state.bandPos + bandVel * dtMs;
   if (bandPos <= 0 || bandPos >= 1) bandVel = 0;
   bandPos = clamp(bandPos);
@@ -60,10 +60,10 @@ export function stepHold(
     fishTarget = rnd();
     fishWait = WAIT_BY_PATTERN[params.pattern];
   }
-  const passo = params.fishSpeed * dtMs;
+  const step = params.fishSpeed * dtMs;
   const delta = fishTarget - state.fishPos;
   const fishPos = clamp(
-    Math.abs(delta) <= passo ? fishTarget : state.fishPos + Math.sign(delta) * passo,
+    Math.abs(delta) <= step ? fishTarget : state.fishPos + Math.sign(delta) * step,
   );
 
   // Progresso.

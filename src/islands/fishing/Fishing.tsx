@@ -50,9 +50,9 @@ export default function Fishing({ texts }: { texts: Texts }) {
     (fish: Fish) => (result: Result) => {
       const size = sizeOf(fish, result.quality);
       if (result.caught) {
-        const novo = recordCatch(log, fish.id, size);
-        setLog(novo);
-        saveLog(novo);
+        const updated = recordCatch(log, fish.id, size);
+        setLog(updated);
+        saveLog(updated);
       }
       setPhase({ kind: 'result', fish, result, size });
     },

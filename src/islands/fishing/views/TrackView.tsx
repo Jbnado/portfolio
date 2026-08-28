@@ -36,8 +36,8 @@ export function TrackView({ params, onDone }: Props) {
     let raf = 0;
     startRef.current = performance.now();
 
-    const loop = (agora: number) => {
-      const t = agora - startRef.current;
+    const loop = (now: number) => {
+      const t = now - startRef.current;
       const p = positionAt(params, t);
       setPos(stepped ? Math.round(p * STEPS) / STEPS : p);
       raf = requestAnimationFrame(loop);
@@ -97,7 +97,7 @@ export function TrackView({ params, onDone }: Props) {
           <div
             key={i}
             class="track-zone"
-            data-ativa={String(i === activeZone)}
+            data-active={String(i === activeZone)}
             style={{ left: `${(z.pos - z.size / 2) * 100}%`, width: `${z.size * 100}%` }}
           />
         ))}
