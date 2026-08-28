@@ -48,13 +48,17 @@ export type DodgeParams = {
   periodMs: number;
   gates: Gate[];
   lapsToCatch: number;
-  bumpsAllowed: number;
+  /** null = nunca perde o peixe; as batidas custam so tamanho. */
+  bumpsAllowed: number | null;
 };
 
 type Base = {
   id: string;
   /** Faixa de dificuldade: 1 e o raso que ensina, 3 e o abissal sem perdao. */
   tier: 1 | 2 | 3;
+  /** Peso relativo no sorteio dentro da faixa elegivel. Existe para que o
+      peixe que ensina a perder seja raro de encontrar, e nao um em tres. */
+  weight: number;
   /** Retangulo colorido de placeholder. Token CSS, nunca hex literal. */
   color: string;
   sizeMin: number;

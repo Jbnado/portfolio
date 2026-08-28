@@ -87,6 +87,15 @@ describe('stepDodge', () => {
     expect(sujo.done!.quality).toBeLessThan(limpo.done!.quality);
   });
 
+  it('bumpsAllowed null nunca perde, mas as batidas custam qualidade', () => {
+    const p = { ...base, bumpsAllowed: null };
+    let e = switchLane(p, startDodge(p)); // lane 1, vai bater no portao 0.25
+    e = stepDodge(p, e, 1100);
+    expect(e.bumps).toBeGreaterThan(0);
+    expect(e.done?.caught).toBe(true);
+    expect(e.done!.quality).toBeLessThan(1);
+  });
+
   it('nao avanca depois de terminado', () => {
     const fim = stepDodge(base, startDodge(base), 1100);
     expect(stepDodge(base, fim, 2000)).toBe(fim);

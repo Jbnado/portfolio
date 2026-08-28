@@ -51,7 +51,11 @@ export default function Fishing({ texts }: { texts: Texts }) {
     const pool = FISH.filter(
       (f) => f.tier <= maxTier && (f.engine === 'track' || f.engine === 'hold'),
     );
-    const fish = pool[Math.floor(Math.random() * pool.length)];
+    // Sorteio ponderado: sorteio uniforme faria o peixe raro (HOLD na faixa 1)
+    // aparecer um em tres, e ele precisa ser raro pra ensinar por surpresa.
+    const total = pool.reduce((sum, f) => sum + f.weight, 0);
+    let roll = Math.random() * total;
+    const fish = pool.find((f) => (roll -= f.weight) < 0) ?? pool[pool.length - 1];
     setPhase({ kind: 'playing', fish });
   }, [log]);
 

@@ -53,7 +53,7 @@ export function stepDodge(
     if (!gate.open.includes(state.lane)) bumps++;
   }
 
-  if (bumps > params.bumpsAllowed) {
+  if (params.bumpsAllowed !== null && bumps > params.bumpsAllowed) {
     return { ...state, bumps, tMs, done: { caught: false, quality: 0 } };
   }
 
