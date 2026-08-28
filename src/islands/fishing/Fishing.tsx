@@ -65,17 +65,49 @@ export default function Fishing({ texts }: { texts: Texts }) {
   }, []);
 
   // A sobreposicao e um dialogo modal: enquanto ela esta aberta o documento
-  // atras nao rola, Esc fecha, o foco entra nela e VOLTA para o botao Jogar ao
-  // sair — sem isso quem navega por teclado e largado no meio da pagina.
+  // atras nao rola, Esc fecha, Tab fica preso dentro dela, o foco entra nela e
+  // VOLTA para o botao Jogar ao sair — sem isso quem navega por teclado e
+  // largado no meio da pagina, ou pior, escapa do dialogo por Tab enquanto
+  // ele ainda cobre a tela inteira.
   useEffect(() => {
     if (!playing) return;
     document.body.classList.add('fishing-locked');
     overlayRef.current?.focus();
 
     const onKey = (ev: KeyboardEvent) => {
-      if (ev.key !== 'Escape') return;
-      ev.preventDefault();
-      setPlaying(false);
+      if (ev.key === 'Escape') {
+        ev.preventDefault();
+        setPlaying(false);
+        return;
+      }
+      if (ev.key !== 'Tab') return;
+      const dialog = overlayRef.current;
+      if (!dialog) return;
+      // Consultado a cada Tab, nunca cacheado na abertura: o conjunto de
+      // focaveis muda entre fases (o botao de lancar existe em idle/result,
+      // nenhum em playing), entao uma lista presa na abertura prenderia o
+      // foco num elemento que ja nao existe mais. Inclui input: o checkbox
+      // do modo garantido fica de fora de 'a[href], button, [tabindex]' e
+      // sem ele o playing tem um unico match (Sair), o que faz o trap se
+      // fechar em si mesmo antes de alcancar o checkbox.
+      const focusable = dialog.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (ev.shiftKey) {
+        // O container tem tabindex=-1: no playing o foco pousa nele (nenhum
+        // motor tem controle proprio), e dali Shift+Tab sairia do dialogo por
+        // padrao se nao tratarmos esse caso tambem.
+        if (document.activeElement === first || document.activeElement === dialog) {
+          ev.preventDefault();
+          last.focus();
+        }
+      } else if (document.activeElement === last) {
+        ev.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener('keydown', onKey);
 
