@@ -59,6 +59,11 @@ const GUARANTEED_SLOWDOWN = 1.6;
  * nao mudam — so o ritmo do minigame muda.
  */
 export function guaranteedFish(fish: Fish): Fish {
+  // Ramifica por engine, nao por `!== 'hold'` (achado C3 do rereview): negar
+  // 'hold' deixa o resto como a uniao `track | dodge`, e o spread de
+  // `fish.params` nessa uniao descorrelaciona de `fish.engine` — o unico
+  // erro de tipo do diretorio, invisivel porque o projeto nao roda
+  // typecheck em lugar nenhum.
   if (fish.engine === 'hold') {
     return {
       ...fish,
@@ -67,6 +72,12 @@ export function guaranteedFish(fish: Fish): Fish {
         fishSpeed: fish.params.fishSpeed / GUARANTEED_SLOWDOWN,
         drainRate: fish.params.drainRate / GUARANTEED_SLOWDOWN,
       },
+    };
+  }
+  if (fish.engine === 'track') {
+    return {
+      ...fish,
+      params: { ...fish.params, periodMs: fish.params.periodMs * GUARANTEED_SLOWDOWN },
     };
   }
   return {
