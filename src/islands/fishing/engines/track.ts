@@ -61,11 +61,15 @@ export function pressTrack(
     const lost = params.tolerance !== null && misses > params.tolerance;
     // Perda preserva a media acumulada em vez de zerar (achado I3): um
     // peixe resgatado no modo garantido reflete a luta, nao sai sempre do
-    // tamanho minimo.
+    // tamanho minimo. E aplica o MESMO desconto por erro do caminho de
+    // vitoria (achado C4 do rereview): sem isto, no modo garantido, perder
+    // depois de acertos precisos podia pescar peixe MAIOR que vencer com a
+    // mesma precisao mais erros — perder nunca pode valer mais que vencer.
+    const quality = Math.max(0, Math.min(1, meanAccuracy(state.accuracies) - misses * 0.15));
     return {
       ...state,
       misses,
-      done: lost ? { caught: false, quality: meanAccuracy(state.accuracies) } : null,
+      done: lost ? { caught: false, quality } : null,
     };
   }
 

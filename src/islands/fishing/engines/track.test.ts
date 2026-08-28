@@ -145,6 +145,44 @@ describe('pressTrack', () => {
     e = pressTrack(p, e, 0); // erro: fora da zona, estoura tolerancia 0
     expect(e.done?.caught).toBe(false);
     expect(e.done!.quality).toBeGreaterThan(0);
+    // media (dois acertos ~0.2667 cada) menos 1 erro * 0.15 (achado C4).
+    expect(e.done!.quality).toBeCloseTo(0.26666666 - 0.15, 5);
+  });
+
+  it('perder nunca vale mais que vencer com a mesma precisao e mais erros (achado C4)', () => {
+    // p7 (TRAJETO do abissal): dois acertos perfeitos e dai duas jogadas
+    // divergem com o MESMO tanto de erro pelo caminho — uma completa a
+    // captura com um terceiro acerto perfeito, a outra estoura a tolerancia
+    // no erro seguinte. Antes do fix, so o caminho de vitoria descontava
+    // erro (0.15 por erro): a perda saia sempre em quality:mean(acertos),
+    // entao perder com 3 erros podia pescar peixe MAIOR que vencer com 2 —
+    // 1.0 > 0.7. O fix aplica o mesmo desconto nos dois caminhos.
+    const p: TrackParams = {
+      path: 'pendulo', periodMs: 1500,
+      zones: [{ pos: 0.2, size: 0.12 }, { pos: 0.8, size: 0.12 }],
+      hits: 3, alternates: true, tolerance: 2,
+    };
+
+    let vence = startTrack(p);
+    vence = pressTrack(p, vence, 150); // zona 0, centro exato
+    vence = pressTrack(p, vence, 600); // zona 1, centro exato
+    vence = pressTrack(p, vence, 0);   // erro 1 (zona 0 de novo, longe do centro)
+    vence = pressTrack(p, vence, 0);   // erro 2 (tolerancia 2 ainda aguenta)
+    expect(vence.done).toBeNull();
+    vence = pressTrack(p, vence, 1350); // zona 0, centro exato: terceiro acerto, fisga
+    expect(vence.done).toEqual({ caught: true, quality: 0.7 }); // 1 - 2*0.15
+
+    let perde = startTrack(p);
+    perde = pressTrack(p, perde, 150); // zona 0, centro exato
+    perde = pressTrack(p, perde, 600); // zona 1, centro exato
+    perde = pressTrack(p, perde, 0);   // erro 1
+    perde = pressTrack(p, perde, 0);   // erro 2 (tolerancia 2 ainda aguenta)
+    expect(perde.done).toBeNull();
+    perde = pressTrack(p, perde, 0);   // erro 3: estoura tolerancia 2, perde
+    expect(perde.done?.caught).toBe(false);
+    expect(perde.done!.quality).toBeCloseTo(0.55); // 1 - 3*0.15
+
+    expect(perde.done!.quality).toBeLessThan(vence.done!.quality);
   });
 
   it('tempo quantizado (movimento reduzido) produz o mesmo julgamento — achado I1', () => {
