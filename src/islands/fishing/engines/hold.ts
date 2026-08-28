@@ -16,6 +16,9 @@ export type HoldState = {
       vale exatamente 1 sempre, e a qualidade seria constante. */
   msInside: number;
   msTotal: number;
+  /** Milissegundos acumulados com a barra em zero. Volta a zero assim que o
+      progresso sobe: recuperou, recuperou de verdade. */
+  msAtZero: number;
   done: Result | null;
 };
 
@@ -31,6 +34,7 @@ export function startHold(params: HoldParams): HoldState {
     progress: 0.5,
     msInside: 0,
     msTotal: 0,
+    msAtZero: 0,
     done: null,
   };
 }
@@ -49,6 +53,7 @@ export function stepHold(
   // Faixa: controle direto do jogador.
   const accel = holding ? params.lift : -params.gravity;
   let bandVel = state.bandVel + accel * dtMs;
+  bandVel = Math.min(params.maxSpeed, Math.max(-params.maxSpeed, bandVel));
   let bandPos = state.bandPos + bandVel * dtMs;
   if (bandPos <= 0 || bandPos >= 1) bandVel = 0;
   bandPos = clamp(bandPos);
@@ -75,16 +80,17 @@ export function stepHold(
 
   const msTotal = state.msTotal + dtMs;
   const msInside = state.msInside + (inside ? dtMs : 0);
+  const msAtZero = progress <= 0 ? state.msAtZero + dtMs : 0;
 
   let done: Result | null = null;
   if (progress >= 1) {
     done = { caught: true, quality: msTotal > 0 ? msInside / msTotal : 0 };
-  } else if (progress <= 0) {
+  } else if (msAtZero >= params.graceMs) {
     done = { caught: false, quality: 0 };
   }
 
   return {
     bandPos, bandVel, fishPos, fishTarget, fishWait,
-    progress, msInside, msTotal, done,
+    progress, msInside, msTotal, msAtZero, done,
   };
 }

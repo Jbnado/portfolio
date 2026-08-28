@@ -40,14 +40,20 @@ export default function Fishing({ texts }: { texts: Texts }) {
   const [log, setLog] = useState<Log>(() => validLog(loadLog()));
 
   // Agora TRACK e HOLD entram no sorteio. A tarefa 9 libera DODGE ao
-  // adicionar a casca que falta.
+  // adicionar a casca que falta — ate la o filtro de engine continua junto
+  // do filtro de faixa, senao o sorteio pode entregar um peixe sem vista.
+  //
+  // Sem mapa no v1, a profundidade e simulada pelo caderno: as faixas abrem
+  // conforme se pesca. Sem isto a curva de aprendizado da matriz nao aparece.
   const cast = useCallback(() => {
+    const known = Object.keys(log).length;
+    const maxTier = known >= 6 ? 3 : known >= 3 ? 2 : 1;
     const pool = FISH.filter(
-      (p) => p.engine === 'track' || p.engine === 'hold',
+      (f) => f.tier <= maxTier && (f.engine === 'track' || f.engine === 'hold'),
     );
     const fish = pool[Math.floor(Math.random() * pool.length)];
     setPhase({ kind: 'playing', fish });
-  }, []);
+  }, [log]);
 
   const onDone = useCallback(
     (fish: Fish) => (result: Result) => {

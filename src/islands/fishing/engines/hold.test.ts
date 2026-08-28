@@ -6,10 +6,12 @@ const base: HoldParams = {
   bandHeight: 0.2,
   gravity: 0.000004,
   lift: 0.00001,
+  maxSpeed: 0.0009,
   pattern: 'calmo',
   fishSpeed: 0.0003,
   fillRate: 0.0005,
   drainRate: 0.0004,
+  graceMs: 2000,
 };
 
 /** rnd fixo: o peixe sempre mira o mesmo ponto, entao o teste e deterministico. */
@@ -67,10 +69,34 @@ describe('stepHold', () => {
     expect(e.done!.quality).toBeGreaterThan(0);
   });
 
-  it('progresso zerado perde o peixe', () => {
+  // A perda instantanea no zero saiu: agora zerar abre a carencia (achado 4
+  // do teste de jogo). Estes quatro testes substituem o antigo
+  // 'progresso zerado perde o peixe', que descrevia a perda imediata.
+  it('a velocidade da faixa nao passa do teto', () => {
+    let e = startHold(base);
+    for (let i = 0; i < 200; i++) e = stepHold(base, e, 16, true, rnd);
+    expect(Math.abs(e.bandVel)).toBeLessThanOrEqual(base.maxSpeed);
+  });
+
+  it('barra zerada nao perde na hora: comeca a carencia', () => {
     let e = { ...startHold(base), bandPos: 0.1, fishPos: 0.9, progress: 0.01 };
     e = stepHold(base, e, 200, false, rnd);
+    expect(e.progress).toBe(0);
+    expect(e.done).toBeNull();
+    expect(e.msAtZero).toBeGreaterThan(0);
+  });
+
+  it('carencia estourada perde o peixe', () => {
+    let e = { ...startHold(base), bandPos: 0.1, fishPos: 0.9, progress: 0.01, msAtZero: 1900 };
+    e = stepHold(base, e, 200, false, rnd);
     expect(e.done).toEqual({ caught: false, quality: 0 });
+  });
+
+  it('recuperar zera a carencia', () => {
+    let e = { ...startHold(base), bandPos: 0.5, fishPos: 0.5, progress: 0, msAtZero: 1500 };
+    e = stepHold(base, e, 20, false, rnd);
+    expect(e.progress).toBeGreaterThan(0);
+    expect(e.msAtZero).toBe(0);
   });
 
   it('qualidade reflete a fracao do tempo com o peixe dentro da faixa', () => {
@@ -103,7 +129,12 @@ describe('stepHold', () => {
   });
 
   it('nao avanca depois de terminado', () => {
-    const inicial = { ...startHold(base), progress: 0.01, bandPos: 0.1, fishPos: 0.9 };
+    // msAtZero perto do teto: o passo de 200ms estoura a carencia e fisga
+    // 'done', entao o segundo passo tem que encontrar state.done e devolver
+    // a mesma referencia sem processar nada.
+    const inicial = {
+      ...startHold(base), progress: 0.01, bandPos: 0.1, fishPos: 0.9, msAtZero: 1900,
+    };
     const fim = stepHold(base, inicial, 200, false, rnd);
     expect(stepHold(base, fim, 200, false, rnd)).toBe(fim);
   });

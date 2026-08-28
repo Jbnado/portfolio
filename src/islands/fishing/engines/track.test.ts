@@ -8,7 +8,7 @@ import {
 } from './track';
 
 const base: TrackParams = {
-  path: 'reta',
+  path: 'pendulo',
   periodMs: 1000,
   zones: [{ pos: 0.5, size: 0.2 }],
   hits: 1,
@@ -17,31 +17,24 @@ const base: TrackParams = {
 };
 
 describe('positionAt', () => {
-  it('reta anda de 0 a 1 e reinicia', () => {
-    expect(positionAt(base, 0)).toBeCloseTo(0);
-    expect(positionAt(base, 500)).toBeCloseTo(0.5);
-    expect(positionAt(base, 1000)).toBeCloseTo(0);
-  });
-
   it('pendulo vai e volta dentro de um periodo', () => {
-    const p = { ...base, path: 'pendulo' as const };
-    expect(positionAt(p, 0)).toBeCloseTo(0);
-    expect(positionAt(p, 250)).toBeCloseTo(0.5);
-    expect(positionAt(p, 500)).toBeCloseTo(1);
-    expect(positionAt(p, 750)).toBeCloseTo(0.5);
+    expect(positionAt(base, 0)).toBeCloseTo(0);
+    expect(positionAt(base, 250)).toBeCloseTo(0.5);
+    expect(positionAt(base, 500)).toBeCloseTo(1);
+    expect(positionAt(base, 750)).toBeCloseTo(0.5);
   });
 
-  it('radial e subida andam como a reta', () => {
-    for (const path of ['radial', 'subida'] as const) {
-      expect(positionAt({ ...base, path }, 250)).toBeCloseTo(0.25);
-    }
+  it('radial percorre a volta inteira e reinicia', () => {
+    const p = { ...base, path: 'radial' as const };
+    expect(positionAt(p, 250)).toBeCloseTo(0.25);
+    expect(positionAt(p, 1000)).toBeCloseTo(0);
   });
 });
 
 describe('distanceToZone', () => {
   it('mede distancia direta nos caminhos abertos', () => {
-    expect(distanceToZone('reta', 0.5, { pos: 0.5, size: 0.2 })).toBeCloseTo(0);
-    expect(distanceToZone('reta', 0.1, { pos: 0.9, size: 0.2 })).toBeCloseTo(0.8);
+    expect(distanceToZone('pendulo', 0.5, { pos: 0.5, size: 0.2 })).toBeCloseTo(0);
+    expect(distanceToZone('pendulo', 0.1, { pos: 0.9, size: 0.2 })).toBeCloseTo(0.8);
   });
 
   it('no radial a volta fecha, entao 0.1 e 0.9 estao perto', () => {
@@ -51,13 +44,14 @@ describe('distanceToZone', () => {
 
 describe('pressTrack', () => {
   it('acerto no centro da zona fisga com qualidade cheia', () => {
-    const e = pressTrack(base, startTrack(base), 500);
+    // t=250: fase 0.25 no trecho ascendente do pendulo, pos = 0.5 (centro).
+    const e = pressTrack(base, startTrack(base), 250);
     expect(e.done).toEqual({ caught: true, quality: 1 });
   });
 
   it('acerto na borda da zona fisga com qualidade baixa', () => {
-    // zona 0.5 +- 0.1; posicao 0.59 fica quase na borda
-    const e = pressTrack(base, startTrack(base), 590);
+    // zona 0.5 +- 0.1; t=295 (ascendente) da pos 0.59, quase na borda
+    const e = pressTrack(base, startTrack(base), 295);
     expect(e.done?.caught).toBe(true);
     expect(e.done!.quality).toBeLessThan(0.2);
   });
@@ -71,10 +65,11 @@ describe('pressTrack', () => {
   it('exige tantos acertos quantos params.hits pedir', () => {
     const p = { ...base, hits: 2 };
     let e = startTrack(p);
-    e = pressTrack(p, e, 500);
+    // t=250 (ascendente) e t=750 (descendente) caem no centro da zona.
+    e = pressTrack(p, e, 250);
     expect(e.done).toBeNull();
     expect(e.hits).toBe(1);
-    e = pressTrack(p, e, 1500);
+    e = pressTrack(p, e, 750);
     expect(e.done?.caught).toBe(true);
   });
 
@@ -87,9 +82,11 @@ describe('pressTrack', () => {
     };
     let e = startTrack(p);
     expect(e.activeZone).toBe(0);
-    e = pressTrack(p, e, 200);
+    // t=100 (ascendente) da pos 0.2, centro da zona 0.
+    e = pressTrack(p, e, 100);
     expect(e.activeZone).toBe(1);
-    e = pressTrack(p, e, 1800);
+    // t=600 (descendente) da pos 0.8, centro da zona 1.
+    e = pressTrack(p, e, 600);
     expect(e.done?.caught).toBe(true);
   });
 
@@ -106,14 +103,15 @@ describe('pressTrack', () => {
     let e = startTrack(base);
     e = pressTrack(base, e, 0);
     e = pressTrack(base, e, 1000);
-    e = pressTrack(base, e, 1500);
+    // t=1250: mesma fase de t=250 (0.25), pos volta ao centro da zona.
+    e = pressTrack(base, e, 1250);
     expect(e.done?.caught).toBe(true);
     expect(e.done!.quality).toBeLessThan(1);
   });
 
   it('nao aceita aperto depois de terminado', () => {
-    const e1 = pressTrack(base, startTrack(base), 500);
-    const e2 = pressTrack(base, e1, 500);
+    const e1 = pressTrack(base, startTrack(base), 250);
+    const e2 = pressTrack(base, e1, 250);
     expect(e2).toBe(e1);
   });
 });

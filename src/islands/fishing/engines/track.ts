@@ -11,9 +11,10 @@ export type TrackState = {
 /** Posicao do indicador no caminho, em 0..1, no instante tMs. */
 export function positionAt(params: TrackParams, tMs: number): number {
   const phase = (tMs % params.periodMs) / params.periodMs;
-  if (params.path === 'pendulo') {
-    return phase < 0.5 ? phase * 2 : 2 - phase * 2;
-  }
+  // Pendulo inverte no meio do periodo: 0 -> 1 -> 0, sem descontinuidade.
+  if (params.path === 'pendulo') return phase < 0.5 ? phase * 2 : 2 - phase * 2;
+  // Radial da a volta: 0.99 e 0.01 sao vizinhos no circulo, entao a fase pode
+  // reiniciar sem que o olho veja um salto.
   return phase;
 }
 

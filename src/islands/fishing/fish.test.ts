@@ -11,11 +11,16 @@ describe('FISH', () => {
     expect(motores).toEqual(new Set(['track', 'hold', 'dodge']));
   });
 
-  it('cobre os quatro caminhos do trajeto', () => {
-    const caminhos = FISH.filter((p) => p.engine === 'track').map(
-      (p) => (p.params as { path: string }).path,
-    );
-    expect(new Set(caminhos)).toEqual(new Set(['reta', 'pendulo', 'radial', 'subida']));
+  it('cada faixa tem exatamente um peixe de cada engine', () => {
+    for (const tier of [1, 2, 3]) {
+      const engines = FISH.filter((f) => f.tier === tier).map((f) => f.engine).sort();
+      expect(engines).toEqual(['dodge', 'hold', 'track']);
+    }
+  });
+
+  it('so existem os dois caminhos continuos', () => {
+    const paths = FISH.filter((f) => f.engine === 'track').map((f) => (f.params as { path: string }).path);
+    expect(new Set(paths)).toEqual(new Set(['pendulo', 'radial']));
   });
 
   it('nao repete id', () => {

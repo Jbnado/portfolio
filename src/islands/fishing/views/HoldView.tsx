@@ -87,6 +87,14 @@ export function HoldView({ params, color, onDone }: Props) {
       <div class="hold-meter">
         <div class="hold-meter-fill" style={{ height: `${state.progress * 100}%` }} />
       </div>
+      {state.msAtZero > 0 && (
+        <div class="hold-escape" role="presentation">
+          <div
+            class="hold-escape-fill"
+            style={{ height: `${Math.max(0, 1 - state.msAtZero / params.graceMs) * 100}%` }}
+          />
+        </div>
+      )}
     </div>
   );
 }

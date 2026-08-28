@@ -40,3 +40,21 @@
   left: 0; right: 0; bottom: 0;
   background: var(--fishing-zone);
 }
+
+/* Barra de fuga: so aparece quando o progresso zerou. Cor de perigo E forma
+   propria (borda grossa), porque cor sozinha nao pode carregar o aviso. */
+.hold-escape {
+  position: relative;
+  width: 12px;
+  border: 2px solid var(--fishing-danger);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.hold-escape-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--fishing-danger);
+}

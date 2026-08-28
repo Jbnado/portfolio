@@ -1,7 +1,7 @@
 /** Todo motor devolve o mesmo par. A camada de mundo nunca sabe qual rodou. */
 export type Result = { caught: boolean; quality: number };
 
-export type PathKind = 'reta' | 'pendulo' | 'radial' | 'subida';
+export type PathKind = 'pendulo' | 'radial';
 
 /** Zona alvo sobre o caminho. `pos` e `tamanho` em fracao de 0..1 do caminho. */
 export type Zone = { pos: number; size: number };
@@ -25,6 +25,9 @@ export type HoldParams = {
   /** Aceleracao por ms^2, em fracao de barra. */
   gravity: number;
   lift: number;
+  /** Teto de velocidade da faixa, em fracao de barra por ms. Sem ele a
+      aceleracao acumula sem limite e so da para tocar, nunca segurar. */
+  maxSpeed: number;
   pattern: FishPattern;
   /** Fracao de barra por ms que o peixe percorre. */
   fishSpeed: number;
@@ -32,6 +35,9 @@ export type HoldParams = {
   fillRate: number;
   /** Progresso perdido por ms fora da faixa. */
   drainRate: number;
+  /** Carencia: quanto tempo a barra pode ficar zerada antes de o peixe ir
+      embora. Zerar deixa de ser perda imediata e vira "esta escapando". */
+  graceMs: number;
 };
 
 /** Portao no anel: em `pos` (0..1 da volta), so estas pistas estao abertas. */
@@ -47,6 +53,8 @@ export type DodgeParams = {
 
 type Base = {
   id: string;
+  /** Faixa de dificuldade: 1 e o raso que ensina, 3 e o abissal sem perdao. */
+  tier: 1 | 2 | 3;
   /** Retangulo colorido de placeholder. Token CSS, nunca hex literal. */
   color: string;
   sizeMin: number;

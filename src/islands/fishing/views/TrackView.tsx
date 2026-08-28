@@ -89,7 +89,6 @@ export function TrackView({ params, onDone }: Props) {
     );
   }
 
-  const vertical = params.path === 'subida';
   return (
     <div class="track">
       <div class="track-rail">
@@ -101,10 +100,7 @@ export function TrackView({ params, onDone }: Props) {
             style={{ left: `${(z.pos - z.size / 2) * 100}%`, width: `${z.size * 100}%` }}
           />
         ))}
-        <div
-          class="track-marker"
-          style={{ left: `${(vertical ? 1 - pos : pos) * 100}%` }}
-        />
+        <div class="track-marker" style={{ left: `${pos * 100}%` }} />
       </div>
     </div>
   );
