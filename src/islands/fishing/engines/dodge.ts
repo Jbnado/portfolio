@@ -9,18 +9,30 @@ export type DodgeState = {
       como escolhida desde o comeco, entao um peixe cuja pista nunca precisa
       trocar nao e penalizado por "nunca ter trocado". */
   lastSwitchMs: number;
-  /** Soma e contagem da folga medida em cada passagem limpa por um portao:
-      quanto tempo antes do portao o jogador ja estava comprometido com a
-      pista certa. A media vira o termo continuo de qualidade (achado I2) —
-      sem ele, so a contagem de batidas decidia, e ela e inteira: cinco
-      valores possiveis, e o teto vira rotina assim que zera bumps. */
-  clearMsSum: number;
+  /** Instante do ultimo portao ja processado (limpo ou batido). Comeca em 0,
+      mesma convencao de lastSwitchMs: antes do primeiro portao, o unico
+      "portao anterior" possivel e o proprio comeco do lance. Existe pra
+      normalizar a folga de cada portao contra o espaco REAL ate o anterior
+      (achado C2), e nao contra periodMs — o espacamento entre portoes e
+      quase sempre menor que uma volta inteira, entao normalizar por periodMs
+      criava um teto inatingivel mesmo jogando perfeito. */
+  lastGateMs: number;
+  /** Soma e contagem da folga (ja normalizada 0..1 por portao) medida em
+      cada passagem limpa: quanto da janela disponivel desde o portao
+      anterior o jogador ja estava comprometido com a pista certa. A media
+      vira o termo continuo de qualidade (achado I2) — sem ele, so a
+      contagem de batidas decidia, e ela e inteira: cinco valores possiveis,
+      e o teto vira rotina assim que zera bumps. */
+  clearRatioSum: number;
   clearCount: number;
   done: Result | null;
 };
 
 export function startDodge(_params: DodgeParams): DodgeState {
-  return { lane: 0, bumps: 0, tMs: 0, lastSwitchMs: 0, clearMsSum: 0, clearCount: 0, done: null };
+  return {
+    lane: 0, bumps: 0, tMs: 0, lastSwitchMs: 0, lastGateMs: 0,
+    clearRatioSum: 0, clearCount: 0, done: null,
+  };
 }
 
 export function switchLane(
@@ -70,12 +82,11 @@ export function gatesCrossed(
     vez de sair sempre do tamanho minimo. */
 function dodgeQuality(
   bumps: number,
-  clearMsSum: number,
+  clearRatioSum: number,
   clearCount: number,
-  periodMs: number,
 ): number {
   const bumpPenalty = Math.max(0, 1 - bumps * 0.3);
-  const precision = clearCount > 0 ? clearMsSum / clearCount / periodMs : 1;
+  const precision = clearCount > 0 ? clearRatioSum / clearCount : 1;
   return Math.max(0, Math.min(1, bumpPenalty * precision));
 }
 
@@ -87,30 +98,36 @@ export function stepDodge(
   if (state.done) return state;
 
   let bumps = state.bumps;
-  let clearMsSum = state.clearMsSum;
+  let lastGateMs = state.lastGateMs;
+  let clearRatioSum = state.clearRatioSum;
   let clearCount = state.clearCount;
   for (const { gate, instant } of crossedGateEvents(params, state.tMs, tMs)) {
+    // Teto real de folga (achado C2): o espaco disponivel e o tempo desde o
+    // portao ANTERIOR, nao periodMs — uma volta quase sempre cabe varios
+    // portoes, entao periodMs e um teto que jogar perfeito nunca alcanca.
+    const sincePrevGate = instant - lastGateMs;
     if (gate.open.includes(state.lane)) {
-      // Teto: um periodo inteiro sem precisar trocar ja conta como maximamente
+      // Teto: comprometido desde o portao anterior ja conta como maximamente
       // limpo, alem disso mais antecedencia nao soma.
-      const clearance = Math.min(params.periodMs, Math.max(0, instant - state.lastSwitchMs));
-      clearMsSum += clearance;
+      const clearance = Math.min(sincePrevGate, Math.max(0, instant - state.lastSwitchMs));
+      clearRatioSum += sincePrevGate > 0 ? clearance / sincePrevGate : 1;
       clearCount++;
     } else {
       bumps++;
     }
+    lastGateMs = instant;
   }
 
   if (params.bumpsAllowed !== null && bumps > params.bumpsAllowed) {
-    const quality = dodgeQuality(bumps, clearMsSum, clearCount, params.periodMs);
-    return { ...state, bumps, tMs, clearMsSum, clearCount, done: { caught: false, quality } };
+    const quality = dodgeQuality(bumps, clearRatioSum, clearCount);
+    return { ...state, bumps, tMs, lastGateMs, clearRatioSum, clearCount, done: { caught: false, quality } };
   }
 
   const endMs = params.lapsToCatch * params.periodMs;
   if (tMs >= endMs) {
-    const quality = dodgeQuality(bumps, clearMsSum, clearCount, params.periodMs);
-    return { ...state, bumps, tMs, clearMsSum, clearCount, done: { caught: true, quality } };
+    const quality = dodgeQuality(bumps, clearRatioSum, clearCount);
+    return { ...state, bumps, tMs, lastGateMs, clearRatioSum, clearCount, done: { caught: true, quality } };
   }
 
-  return { ...state, bumps, tMs, clearMsSum, clearCount, done: null };
+  return { ...state, bumps, tMs, lastGateMs, clearRatioSum, clearCount, done: null };
 }

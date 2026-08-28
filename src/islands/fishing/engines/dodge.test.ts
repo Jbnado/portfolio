@@ -6,6 +6,7 @@ import {
   stepDodge,
   gatesCrossed,
 } from './dodge';
+import { FISH } from '../fish';
 
 const base: DodgeParams = {
   lanes: 2,
@@ -67,10 +68,13 @@ describe('stepDodge', () => {
   it('batidas alem da tolerancia perdem o peixe, com qualidade parcial (achado I3)', () => {
     let e = switchLane(base, startDodge(base), 0); // pista 1
     e = stepDodge(base, e, 300);  // batida 1, no portao 0.25 (fechado pra pista 1)
-    e = stepDodge(base, e, 1300); // cruza o 0.75 limpo (folga 750) e bate de novo no 0.25 da volta 2: perde
+    e = stepDodge(base, e, 1300); // cruza o 0.75 limpo e bate de novo no 0.25 da volta 2: perde
     expect(e.done?.caught).toBe(false);
-    // bumpPenalty 1-2*0.3=0.4; precisao 750/1000=0.75; quality=0.4*0.75.
-    expect(e.done!.quality).toBeCloseTo(0.3);
+    // bumpPenalty 1-2*0.3=0.4; a unica passagem limpa (0.75) tem folga desde
+    // o portao anterior (0.25, instante 250) ate ela (750): 500ms de espaco,
+    // e a troca ainda em t=0 cobre tudo isso, entao precisao=500/500=1
+    // (achado C2 — antes normalizava por periodMs e dava 0.75). quality=0.4.
+    expect(e.done!.quality).toBeCloseTo(0.4);
   });
 
   it('bumpsAllowed 0 perde na primeira batida (p9 usa este valor)', () => {
@@ -108,15 +112,63 @@ describe('stepDodge', () => {
     expect(sujo.done!.quality).toBeLessThan(limpo.done!.quality);
   });
 
-  it('zero batidas com folga maxima alcanca o topo da qualidade (achado I2)', () => {
-    // Estado construido: nunca bateu, e a unica passagem registrada teve
-    // folga igual a um periodo inteiro — o teto que dodgeQuality aceita.
-    const seeded = {
-      ...startDodge(base), tMs: base.periodMs, bumps: 0,
-      clearMsSum: base.periodMs, clearCount: 1,
-    };
-    const e = stepDodge(base, seeded, base.periodMs);
+  it('zero batidas com folga maxima alcanca o topo da qualidade (achado I2 e C2)', () => {
+    // Estado seguido por jogo de verdade, nao construido a dedo (o teste
+    // anterior seedava clearMsSum:periodMs com clearCount:1, um estado que
+    // nenhuma jogada produz — nem com base nem com peixe algum da tabela: a
+    // folga maxima real e o espaco ATE O PORTAO ANTERIOR, sempre menor que
+    // periodMs quando ha mais de um portao por volta). Aqui o jogador troca
+    // de pista assim que cada portao passa, comprometido o quanto antes.
+    let e = startDodge(base);
+    e = stepDodge(base, e, 250); // cruza 0.25 limpo (pista 0, folga desde o inicio)
+    e = switchLane(base, e, e.tMs); // troca pra pista 1 na hora
+    e = stepDodge(base, e, base.periodMs); // cruza 0.75 limpo, comprometido desde o portao anterior
     expect(e.done).toEqual({ caught: true, quality: 1 });
+  });
+
+  it('o topo da qualidade e alcancavel nos tres peixes de dragagem da tabela (achado C2)', () => {
+    // Busca no espaco de jogadas contra os peixes DE VERDADE (p3, p6, p9):
+    // pra cada portao, troca de pista o quanto antes (ainda no instante do
+    // portao anterior) para a pista aberta mais proxima. Verifica que essa
+    // politica realmente zera as batidas e alcanca qualidade 1 nos tres — o
+    // teto e alcancavel de verdade, nao so assintotico. Normalizar por
+    // periodMs (o defeito que este achado corrige) prendia o teto em 0.40
+    // (p3), 0.24 (p6) e 0.24 (p9): sempre menor que a folga entre portoes.
+    function bestReachable(params: DodgeParams) {
+      let state = startDodge(params);
+      const endMs = params.lapsToCatch * params.periodMs;
+      let t = 0;
+      while (t < endMs && !state.done) {
+        let nextInstant = Infinity;
+        let nextGate: DodgeParams['gates'][number] | null = null;
+        const lapFrom = Math.floor(t / params.periodMs);
+        for (let lap = lapFrom; lap <= lapFrom + 1; lap++) {
+          for (const gate of params.gates) {
+            const instant = (lap + gate.pos) * params.periodMs;
+            if (instant > t && instant < nextInstant) { nextInstant = instant; nextGate = gate; }
+          }
+        }
+        const stopAt = Math.min(nextInstant, endMs);
+        if (nextGate && stopAt === nextInstant) {
+          let hopsToNearest = Infinity;
+          for (const lane of nextGate.open) {
+            const hops = ((lane - state.lane) % params.lanes + params.lanes) % params.lanes;
+            hopsToNearest = Math.min(hopsToNearest, hops);
+          }
+          for (let h = 0; h < hopsToNearest; h++) state = switchLane(params, state, t);
+        }
+        state = stepDodge(params, state, stopAt);
+        t = stopAt;
+      }
+      return state.done ?? stepDodge(params, state, endMs).done!;
+    }
+
+    for (const id of ['p3', 'p6', 'p9'] as const) {
+      const peixe = FISH.find((f) => f.id === id)!;
+      const result = bestReachable(peixe.params as DodgeParams);
+      expect(result.caught).toBe(true);
+      expect(result.quality).toBeCloseTo(1);
+    }
   });
 
   it('bumpsAllowed null nunca perde, mas as batidas custam qualidade', () => {
