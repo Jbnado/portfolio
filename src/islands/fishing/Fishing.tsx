@@ -1,5 +1,6 @@
-import { useCallback, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import { FISH, sizeOf } from './fish';
+import { mountSea, unmountSea } from './sea';
 import type { Fish, TrackParams, HoldParams, DodgeParams, Result } from './types';
 import { TrackView } from './views/TrackView';
 import { HoldView } from './views/HoldView';
@@ -40,6 +41,14 @@ function validLog(c: Log): Log {
 export default function Fishing({ texts }: { texts: Texts }) {
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
   const [log, setLog] = useState<Log>(() => validLog(loadLog()));
+
+  // O <canvas> pertence a pagina Astro, nao a ilha, entao a ilha o alcanca por
+  // seletor. Efeito de montagem unica: nao ha loop de animacao no v1.
+  useEffect(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>('.fishing-sea');
+    if (canvas) mountSea(canvas);
+    return () => unmountSea();
+  }, []);
 
   // Sem mapa no v1, a profundidade e simulada pelo caderno: as faixas abrem
   // conforme se pesca. Sem isto a curva de aprendizado da matriz nao aparece.
