@@ -133,14 +133,19 @@ rounded:
   pill: "20px"
   disc: "50%"
 spacing:
+  base: "4px"
   xs: "0.25rem"
   sm: "0.5rem"
   md: "0.75rem"
   lg: "1rem"
-  xl: "1.5rem"
-  2xl: "2rem"
-  3xl: "3rem"
-  4xl: "4rem"
+  xl: "1.25rem"
+  2xl: "1.5rem"
+  3xl: "2rem"
+  4xl: "2.5rem"
+  5xl: "3rem"
+  6xl: "4rem"
+  7xl: "5rem"
+  8xl: "6rem"
 components:
   button-cta-primary:
     backgroundColor: "{colors.approval-stamp}"
@@ -164,7 +169,7 @@ components:
     textColor: "{colors.midday-light}"
     typography: "{typography.label}"
     rounded: "{rounded.control}"
-    padding: "0.375rem 0.75rem"
+    padding: "0.5rem 0.75rem"
   button-cv-hover:
     backgroundColor: "{colors.approval-stamp-deep}"
     textColor: "{colors.midday-light}"
@@ -185,12 +190,12 @@ components:
     textColor: "{colors.approval-stamp}"
     typography: "{typography.label}"
     rounded: "{rounded.hairline}"
-    padding: "0.2rem 0.6rem"
+    padding: "0.25rem 0.5rem"
   card-sheet:
     backgroundColor: "{colors.service-sheet}"
     textColor: "{colors.graphite}"
     rounded: "{rounded.sheet}"
-    padding: "0.875rem"
+    padding: "1rem"
   panel-instrument:
     backgroundColor: "transparent"
     textColor: "{colors.graphite}"
@@ -201,7 +206,7 @@ components:
     textColor: "{colors.graphite}"
     typography: "{typography.label}"
     rounded: "{rounded.sheet}"
-    padding: "0.625rem 2.25rem 0.625rem 0.75rem"
+    padding: "0.75rem 2.25rem 0.75rem 0.75rem"
     width: "100%"
 ---
 
@@ -361,7 +366,16 @@ A altura do hero é `90svh`, não `100vh` — a barra do navegador móvel não c
 
 **A Regra da Coluna que se Preenche.** Uma coluna de grid é uma promessa do tamanho dela. Se o conteúdo mede 136px dentro de 403px, ou o conteúdo cresce até a largura ou a coluna deixa de existir — flutuar no meio não é opção. O padrão de linha com `space-between` (rótulo à esquerda, valor à direita, filete tracejado entre) é o mecanismo padrão do sistema para isso.
 
-**A Regra do Vão na Escala.** Todo espaçamento vertical sai de `4 / 8 / 12 / 16 / 24 / 32 / 48 / 64`. Um vão que não está na escala quase sempre é acidente e não decisão: meia-entrelinha de `inline-block`, `0.35rem` escrito à mão. Meça o valor renderizado, não o declarado.
+**A Regra da Grade de 4.** Todo `padding`, `margin` e `gap` cai num múltiplo de 4px a 16px de raiz. Os degraus em uso são `4 / 8 / 12 / 16 / 20 / 24 / 32 / 36 / 40 / 48 / 64 / 80 / 96`. Meça o valor renderizado, não o declarado: `0.35rem` é 5,6px, `0.4rem` é 6,4px, `0.9rem` é 14,4px — decimais escritos à mão que caem entre pixels e não pertencem a lugar nenhum.
+
+Esta regra substituiu uma que dizia `4 / 8 / 12 / 16 / 24 / 32 / 48 / 64` e que **nunca foi verdade**: o código usava 20px em treze lugares, mais que os 4px (onze) e mais que os 48px (cinco), além de 40px, 80px e 96px. Treze usos consistentes não são treze acidentes — a régua estava incompleta, não o código. A escada acima é a que o sistema realmente tem.
+
+**Duas exceções, e elas são fechadas.** Ambas são ajuste óptico dentro de uma linha de texto, não vão de layout entre caixas:
+
+1. `padding` **vertical** em caixa `inline` — hoje só o chip de `<code>` no meio da prosa, a 1,6px. Padding vertical de inline não expande a caixa de linha, então ele não participa do ritmo vertical; forçá-lo a 4px levaria o chip a 24px dentro de uma linha de 23,12px e ele passaria a invadir as linhas vizinhas. O padding **horizontal** do mesmo chip está na grade.
+2. `margin-left: 2px` no cursor do terminal (`.terminal-cursor::after`) — 0,167em de kerning entre a palavra e o glifo do bloco, dentro do mesmo fluxo de texto.
+
+Fora dessas duas, um valor fora da grade é acidente. Não crie a terceira sem medir o que quebra sem ela.
 
 ## Elevation & Depth
 
@@ -434,7 +448,7 @@ O carimbo de tinta é rotacionado -6° e o carimbo de tipo de projeto -4° no tu
 
 ### Inputs / Fields
 
-- **Busca do blog** (`{components.input-search}`): fundo de superfície, borda de 1px, canto Folha, texto mono. Rótulo acima em mono 0,625rem caixa alta com `letter-spacing` de 0,12em.
+- **Busca do blog** (`{components.input-search}`): fundo de superfície, borda de 1px, canto Folha, texto mono. Rótulo acima em mono 0,75rem caixa alta com `letter-spacing` de 0,12em.
 - **Focus:** a borda vira acento e o `:focus-visible` acrescenta outline de 2px com offset. No turno noturno o foco também acende: `box-shadow: 0 0 12px rgba(97, 255, 202, 0.2)`.
 - **Botão de limpar:** dentro do campo, à direita, vira acento no hover, com foco próprio.
 
@@ -484,4 +498,5 @@ O carimbo de tinta é rotacionado -6° e o carimbo de tipo de projeto -4° no tu
 - **Don't** usar `color-mix` como fundo de qualquer coisa que tenha texto em cima — o fallback do build é a cor sólida. Ver Regra da Mistura Sólida.
 - **Don't** deixar tema de editor decidir a cor de bloco de código. O realce sai de `--astro-code-*`, que sai do turno.
 - **Don't** pôr `letter-spacing` positivo em texto de frase, mesmo que a classe se chame `-label`.
+- **Don't** escrever espaçamento em decimal solto — `0.35rem`, `0.4rem`, `0.85rem`, `0.9rem`, `1.1rem` caem entre pixels. Ver Regra da Grade de 4.
 - **Don't** deixar texto corrido sem `max-width`, e não confunda `ch` com caractere: `60ch` já é ~76 caracteres.
