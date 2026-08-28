@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Pesca from '../../../islands/pesca/Pesca';
 import { t } from '../../../i18n/utils';
+import es from '../../../i18n/es.json';
 import '../../../styles/pesca.css';
 
 const locale = 'es';
@@ -23,6 +25,7 @@ const alternates = {
     <canvas class="pesca-mar" aria-hidden="true"></canvas>
     <div class="pesca-conteudo">
       <h1>{t('jogo.titulo', locale)}</h1>
+      <Pesca client:load textos={es.jogo} />
     </div>
   </div>
 </BaseLayout>

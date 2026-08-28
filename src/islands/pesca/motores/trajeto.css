@@ -1,0 +1,32 @@
+.tj { display: flex; flex-direction: column; gap: 12px; }
+
+.tj-pista {
+  position: relative;
+  height: 44px;
+  background: var(--pesca-fundo);
+  border: 2px solid var(--pesca-linha);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Cor nao e o unico sinal: a zona tambem tem borda tracejada propria. */
+.tj-zona {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: color-mix(in srgb, var(--pesca-zona) 30%, transparent);
+  border-left: 2px dashed var(--pesca-zona);
+  border-right: 2px dashed var(--pesca-zona);
+}
+
+.tj-zona[data-ativa='false'] { opacity: 0.25; border-style: dotted; }
+
+.tj-marcador {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--pesca-marcador);
+}
+
+.tj-anel { display: block; width: 100%; max-width: 240px; height: auto; margin: 0 auto; }
