@@ -27,8 +27,9 @@ export function HoldView({ params, color, onDone }: Props) {
   onDoneRef.current = onDone;
 
   useEffect(() => {
-    // Preact reusa a instancia entre peixes do mesmo motor, entao o estado
-    // TEM que reiniciar aqui. Sem isto o segundo peixe herda o do primeiro.
+    // Mesma razao do TRAJETO (ver TrackView.tsx): a vista desmonta a cada
+    // peixe, o Preact nao reusa instancia. O reset abaixo e redundancia
+    // barata, nao defesa contra estado herdado.
     const stepped = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let raf = 0;
     let previous = performance.now();
