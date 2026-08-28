@@ -113,20 +113,24 @@ export function DodgeView({ params, texts, onDone }: Props) {
           r={MARKER_R} fill="var(--fishing-marker)"
         />
       </svg>
-      {/* aria-label da o nome acessivel nos dois casos: numero cru nao diz
-          nada pra leitor de tela. No ilimitado o infinito e so visual — o
-          rotulo por extenso e quem carrega o significado pro leitor. */}
-      <p
-        class="dodge-bumps"
-        aria-label={
-          params.bumpsAllowed === null
+      {/* <p> tem role paragraph, e paragraph esta na lista "Name Prohibited"
+          da ARIA (WAI-ARIA 1.2 SS5.2.8.6): aria-label nao e pra ser usado ali,
+          e o computo de nome acessivel deve ignora-lo. Em vez de nomear o
+          paragrafo, escondemos visualmente a frase por extenso (reaproveita
+          o clip de .fishing-live) e escondemos DO LEITOR o glifo/fracao
+          visivel com aria-hidden. O leitor le o texto escondido como
+          conteudo normal do paragrafo; quem ve le o simbolo compacto. */}
+      <p class="dodge-bumps">
+        <span class="fishing-live">
+          {params.bumpsAllowed === null
             ? `${texts.bumps}: ${est.bumps}, ${texts.bumpsUnlimited}`
-            : `${texts.bumps}: ${est.bumps} / ${params.bumpsAllowed + 1}`
-        }
-      >
-        {params.bumpsAllowed === null
-          ? `${est.bumps} ∞`
-          : `${est.bumps} / ${params.bumpsAllowed + 1}`}
+            : `${texts.bumps}: ${est.bumps} / ${params.bumpsAllowed + 1}`}
+        </span>
+        <span aria-hidden="true">
+          {params.bumpsAllowed === null
+            ? `${est.bumps} ∞`
+            : `${est.bumps} / ${params.bumpsAllowed + 1}`}
+        </span>
       </p>
     </div>
   );
