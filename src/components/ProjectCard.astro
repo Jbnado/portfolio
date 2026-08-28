@@ -218,7 +218,7 @@ const year = startDate.slice(0, 4);
   /* Type stamp: PROJETO vs CONTRIB — ink-stamp look */
   .project-type-stamp {
     font-family: var(--font-mono);
-    font-size: 0.625rem;
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -243,7 +243,7 @@ const year = startDate.slice(0, 4);
   }
 
   .project-meta .tech-badge {
-    font-size: 0.625rem;
+    font-size: 0.75rem;
     padding: 0.125rem 0.5rem;
   }
 
@@ -256,9 +256,11 @@ const year = startDate.slice(0, 4);
     font-size: 0.875rem;
     line-height: 1.6;
     color: var(--color-text-secondary);
-    /* Corria os 1072px do grid a 1440px, cerca de 120 caracteres por linha,
-       bem além da faixa confortável de 45–75ch. */
-    max-width: 70ch;
+    /* Corria os 1072px do grid a 1440px, cerca de 120 caracteres por linha.
+       60ch e a medida unica do site: `ch` mede o glifo "0" (0.63em no Inter),
+       nao o caractere medio da prosa (0.50em), entao 60ch entrega ~76 chars —
+       dentro da faixa. A 70ch entregava 88, ainda fora. */
+    max-width: 60ch;
   }
 
   @media (min-width: 768px) {
