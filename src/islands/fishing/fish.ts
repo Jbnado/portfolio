@@ -48,3 +48,29 @@ export function sizeOf(fish: Fish, quality: number): number {
   const q = Math.min(1, Math.max(0, quality));
   return Math.round(fish.sizeMin + (fish.sizeMax - fish.sizeMin) * q);
 }
+
+/** Afinavel: quanto o modo garantido desacelera o minigame. */
+const GUARANTEED_SLOWDOWN = 1.6;
+
+/**
+ * Modo garantido agora desacelera de verdade em vez de so forcar a captura
+ * (achado I3): TRAJETO e DRAGAGEM ganham periodo maior, SUSTENTACAO ganha
+ * peixe mais lento e dreno mais fraco. Id, faixa, cor e tamanho da especie
+ * nao mudam — so o ritmo do minigame muda.
+ */
+export function guaranteedFish(fish: Fish): Fish {
+  if (fish.engine === 'hold') {
+    return {
+      ...fish,
+      params: {
+        ...fish.params,
+        fishSpeed: fish.params.fishSpeed / GUARANTEED_SLOWDOWN,
+        drainRate: fish.params.drainRate / GUARANTEED_SLOWDOWN,
+      },
+    };
+  }
+  return {
+    ...fish,
+    params: { ...fish.params, periodMs: fish.params.periodMs * GUARANTEED_SLOWDOWN },
+  };
+}

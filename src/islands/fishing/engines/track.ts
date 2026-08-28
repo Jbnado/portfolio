@@ -24,6 +24,23 @@ export function distanceToZone(path: PathKind, pos: number, zone: Zone): number 
   return path === 'radial' ? Math.min(d, 1 - d) : d;
 }
 
+/** Zero exato e inatingivel a 60fps (achado I2): no caminho mais rapido da
+    tabela (p7) o quantum de posicao por quadro (~0,022) ja passa da folga que
+    "distancia zero" exige. Qualquer distancia dentro deste limiar conta como
+    acerto perfeito, entao o teto de qualidade fica alcancavel de verdade. */
+const PERFECT_DIST = 0.025;
+
+function accuracyOf(dist: number, half: number): number {
+  const denom = half - PERFECT_DIST;
+  return dist <= PERFECT_DIST || denom <= 0 ? 1 : 1 - (dist - PERFECT_DIST) / denom;
+}
+
+function meanAccuracy(accuracies: number[]): number {
+  return accuracies.length > 0
+    ? accuracies.reduce((s, p) => s + p, 0) / accuracies.length
+    : 0;
+}
+
 export function startTrack(_params: TrackParams): TrackState {
   return { hits: 0, misses: 0, activeZone: 0, accuracies: [], done: null };
 }
@@ -42,14 +59,17 @@ export function pressTrack(
   if (dist > half) {
     const misses = state.misses + 1;
     const lost = params.tolerance !== null && misses > params.tolerance;
+    // Perda preserva a media acumulada em vez de zerar (achado I3): um
+    // peixe resgatado no modo garantido reflete a luta, nao sai sempre do
+    // tamanho minimo.
     return {
       ...state,
       misses,
-      done: lost ? { caught: false, quality: 0 } : null,
+      done: lost ? { caught: false, quality: meanAccuracy(state.accuracies) } : null,
     };
   }
 
-  const accuracy = 1 - dist / half;
+  const accuracy = accuracyOf(dist, half);
   const hits = state.hits + 1;
   const accuracies = [...state.accuracies, accuracy];
   const activeZone = params.alternates
@@ -60,20 +80,8 @@ export function pressTrack(
     return { ...state, hits, accuracies, activeZone, done: null };
   }
 
-  const mean = accuracies.reduce((s, p) => s + p, 0) / accuracies.length;
+  const mean = meanAccuracy(accuracies);
   // Cada erro custa 15% da qualidade. Nao perde o peixe, perde tamanho.
   const quality = Math.max(0, Math.min(1, mean - state.misses * 0.15));
   return { ...state, hits, accuracies, activeZone, done: { caught: true, quality } };
-}
-
-/**
- * O indicador completou uma volta sem aperto. No v1 isso nao penaliza: existe
- * para a casca poder reagir (piscar a zona, por exemplo) sem inventar regra.
- */
-export function lapCompleteTrack(
-  _params: TrackParams,
-  state: TrackState,
-  _tMs: number,
-): TrackState {
-  return state;
 }

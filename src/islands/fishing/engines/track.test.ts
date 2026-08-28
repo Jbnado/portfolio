@@ -114,4 +114,54 @@ describe('pressTrack', () => {
     const e2 = pressTrack(base, e1, 250);
     expect(e2).toBe(e1);
   });
+
+  it('topo da qualidade e alcancavel sem exigir distancia zero exata (achado I2)', () => {
+    // t=250 da distancia exata 0; t=254 da uma distancia pequena (~0,008),
+    // dentro do limiar que absorve o quantum de posicao de um quadro a 60fps
+    // no caminho mais rapido da tabela (p7). As duas contam como perfeitas.
+    const exato = pressTrack(base, startTrack(base), 250);
+    const quaseExato = pressTrack(base, startTrack(base), 254);
+    expect(exato.done).toEqual({ caught: true, quality: 1 });
+    expect(quaseExato.done).toEqual({ caught: true, quality: 1 });
+  });
+
+  it('qualidade cai continuamente para alem do limiar de perfeicao (achado I2)', () => {
+    const maisLonge = pressTrack(base, startTrack(base), 295); // dist 0.09
+    const maisPerto = pressTrack(base, startTrack(base), 290); // dist 0.08
+    expect(maisLonge.done!.quality).toBeGreaterThan(0);
+    expect(maisLonge.done!.quality).toBeLessThan(1);
+    expect(maisPerto.done!.quality).toBeGreaterThan(maisLonge.done!.quality);
+  });
+
+  it('perda preserva a media acumulada em vez de zerar (achado I3)', () => {
+    // Dois acertos medianos antes do terceiro erro estourar a tolerancia:
+    // a qualidade da perda reflete essa media, nao sai zerada.
+    const p: TrackParams = { ...base, hits: 3, tolerance: 0 };
+    let e = startTrack(p);
+    e = pressTrack(p, e, 290); // acerto parcial, fase ascendente
+    expect(e.done).toBeNull();
+    e = pressTrack(p, e, 710); // acerto parcial, fase descendente
+    expect(e.done).toBeNull();
+    e = pressTrack(p, e, 0); // erro: fora da zona, estoura tolerancia 0
+    expect(e.done?.caught).toBe(false);
+    expect(e.done!.quality).toBeGreaterThan(0);
+  });
+
+  it('tempo quantizado (movimento reduzido) produz o mesmo julgamento — achado I1', () => {
+    // TrackView usa 24 degraus por periodo. Um raw fora da zona (dist 0.11)
+    // quantiza para o degrau mais proximo, que cai dentro dela (dist 0.083)
+    // — o motor tem que julgar a posicao quantizada, a mesma que a tela
+    // desenha, nao a posicao cru que o jogador nunca ve.
+    const steps = 24;
+    const stepMs = base.periodMs / steps;
+    const raw = 305;
+    const tq = Math.round(raw / stepMs) * stepMs;
+    expect(positionAt(base, raw)).toBeGreaterThan(0.6);
+    expect(positionAt(base, tq)).toBeLessThan(0.6);
+
+    const julgamentoCru = pressTrack(base, startTrack(base), raw);
+    const julgamentoQuantizado = pressTrack(base, startTrack(base), tq);
+    expect(julgamentoCru.done).toBeNull(); // cru: fora da zona, so registra erro
+    expect(julgamentoQuantizado.done?.caught).toBe(true); // quantizado: fisga
+  });
 });

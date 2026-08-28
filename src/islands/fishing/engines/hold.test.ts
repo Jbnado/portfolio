@@ -138,4 +138,59 @@ describe('stepHold', () => {
     const fim = stepHold(base, inicial, 200, false, rnd);
     expect(stepHold(base, fim, 200, false, rnd)).toBe(fim);
   });
+
+  it('qualidade varia com a fracao de tempo dentro da faixa, e o topo e alcancavel (achado I2)', () => {
+    // Metade do tempo dentro: qualidade parcial, nem topo nem piso.
+    let parcial = { ...startHold(base), bandPos: 0.1, fishPos: 0.9, progress: 0.9 };
+    parcial = stepHold(base, parcial, 20, false, rnd);
+    parcial = { ...parcial, bandPos: 0.5, fishPos: 0.5, progress: 0.995 };
+    parcial = stepHold(base, parcial, 20, false, rnd);
+    expect(parcial.done?.caught).toBe(true);
+    expect(parcial.done!.quality).toBeGreaterThan(0);
+    expect(parcial.done!.quality).toBeLessThan(1);
+
+    // Sempre dentro: o topo (1) e realmente alcancavel, nao so assintotico.
+    let cheio = { ...startHold(base), bandPos: 0.5, fishPos: 0.5, progress: 0.995 };
+    cheio = stepHold(base, cheio, 20, false, rnd);
+    expect(cheio.done?.caught).toBe(true);
+    expect(cheio.done!.quality).toBeCloseTo(1);
+
+    expect(cheio.done!.quality).toBeGreaterThan(parcial.done!.quality);
+  });
+
+  it('carencia com tempo dentro registrado antes preserva qualidade parcial na perda (achado I3)', () => {
+    let e = { ...startHold(base), bandPos: 0.5, fishPos: 0.5, progress: 0.5 };
+    e = stepHold(base, e, 100, false, rnd); // um tempo dentro da faixa antes de tudo desandar
+    expect(e.msInside).toBeGreaterThan(0);
+
+    e = { ...e, bandPos: 0.1, fishPos: 0.9, progress: 0.01, msAtZero: 1900 };
+    e = stepHold(base, e, 200, false, rnd); // estoura a carencia
+    expect(e.done?.caught).toBe(false);
+    // Antes esta perda saia sempre em quality:0. Agora reflete msInside/msTotal,
+    // entao um peixe resgatado no modo garantido nao sai mais sempre no sizeMin.
+    expect(e.done!.quality).toBeGreaterThan(0);
+    expect(e.done!.quality).toBeCloseTo(e.msInside / e.msTotal);
+  });
+
+  it('graceMs null nunca perde por carencia, mesmo com a barra zerada por muito tempo (achado I5)', () => {
+    const p = { ...base, graceMs: null };
+    let e = { ...startHold(p), bandPos: 0.1, fishPos: 0.9, progress: 0, msAtZero: 999999 };
+    e = stepHold(p, e, 200, false, rnd);
+    expect(e.done).toBeNull();
+  });
+
+  it('com quantizacao, o peixe julgado dentro/fora da faixa e o mesmo que a tela desenha (achado I1)', () => {
+    // fishPos cru (0.605) fica 0.005 fora da faixa (half 0.1 em torno de
+    // 0.5). Quantizado a 12 degraus (mesmo numero da HoldView), a posicao
+    // desenhada cai em 7/12 = 0.5833, dentro da faixa — e agora e essa
+    // MESMA posicao que decide "dentro"/"fora", nao uma continua escondida.
+    const inicial = {
+      ...startHold(base), bandPos: 0.5, fishPos: 0.605, fishTarget: 0.605, progress: 0.5,
+    };
+    const semQuantizar = stepHold(base, inicial, 20, false, rnd);
+    const comQuantizar = stepHold(base, inicial, 20, false, rnd, 12);
+    expect(semQuantizar.progress).toBeLessThan(0.5); // cru: fora, drena
+    expect(comQuantizar.progress).toBeGreaterThan(0.5); // quantizado: dentro, enche
+    expect(comQuantizar.fishPos).toBeCloseTo(7 / 12, 5);
+  });
 });

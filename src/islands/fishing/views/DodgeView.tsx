@@ -36,20 +36,25 @@ export function DodgeView({ params, texts, onDone }: Props) {
   onDoneRef.current = onDone;
 
   useEffect(() => {
-    // Preact reusa a instancia entre peixes do mesmo motor, entao o estado
-    // TEM que reiniciar aqui. Sem isto o segundo peixe herda o do primeiro.
+    // Mesma razao do TRAJETO (ver TrackView.tsx): a vista desmonta a cada
+    // peixe, o Preact nao reusa instancia. O reset abaixo e redundancia
+    // barata, nao defesa contra estado herdado.
     const stepped = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Quantum de tempo, nao de angulo (achado I1): motor e tela recebem o
+    // mesmo tq, entao o portao so conta como cruzado quando o anel desenhado
+    // ja mostra o marcador la.
+    const stepMs = params.periodMs / STEPS;
+    const quantize = (raw: number) => (stepped ? Math.round(raw / stepMs) * stepMs : raw);
     let raf = 0;
     const inicio = performance.now();
     stateRef.current = startDodge(params);
 
     const loop = (now: number) => {
-      const t = now - inicio;
+      const t = quantize(now - inicio);
       const next = stepDodge(params, stateRef.current, t);
       stateRef.current = next;
       setEst(next);
-      const p = (t % params.periodMs) / params.periodMs;
-      setAng(stepped ? Math.round(p * STEPS) / STEPS : p);
+      setAng((t % params.periodMs) / params.periodMs);
       if (next.done) { onDoneRef.current(next.done); return; }
       raf = requestAnimationFrame(loop);
     };
@@ -58,7 +63,8 @@ export function DodgeView({ params, texts, onDone }: Props) {
     const onKey = (ev: KeyboardEvent) => {
       if (ev.code !== 'Space' || ev.repeat) return;
       ev.preventDefault();
-      stateRef.current = switchLane(params, stateRef.current);
+      const t = quantize(performance.now() - inicio);
+      stateRef.current = switchLane(params, stateRef.current, t);
       setEst(stateRef.current);
     };
     window.addEventListener('keydown', onKey);

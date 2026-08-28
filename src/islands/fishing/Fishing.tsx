@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
-import { FISH, sizeOf } from './fish';
+import { FISH, sizeOf, guaranteedFish } from './fish';
 import { mountSea, unmountSea } from './sea';
 import type { Fish, TrackParams, HoldParams, DodgeParams, Result } from './types';
 import { TrackView } from './views/TrackView';
@@ -139,9 +139,12 @@ export default function Fishing({ texts }: { texts: Texts }) {
     const pool = FISH.filter((f) => f.tier <= maxTier);
     // Sorteio ponderado: sorteio uniforme faria o peixe raro (HOLD na faixa 1)
     // aparecer um em tres, e ele precisa ser raro pra ensinar por surpresa.
-    const fish = weightedPick(pool, Math.random);
+    const picked = weightedPick(pool, Math.random);
+    // Modo garantido desacelera de verdade agora (achado I3): o peixe entra
+    // na vista com o ritmo ja mais lento, nao so com a perda desligada.
+    const fish = guaranteed ? guaranteedFish(picked) : picked;
     setPhase({ kind: 'playing', fish });
-  }, [log]);
+  }, [log, guaranteed]);
 
   const enter = useCallback(() => {
     setPlaying(true);
