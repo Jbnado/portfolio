@@ -1419,7 +1419,7 @@ const alternates = {
 - [ ] **Step 7: Verifique que as três rotas constroem**
 
 Run: `pnpm build`
-Expected: `39 page(s) built` (eram 37; entram 3 rotas e a contagem sobe conforme o sitemap)
+Expected: `40 page(s) built` (eram 37, entram 3 rotas)
 
 Confirme que os arquivos existem:
 
