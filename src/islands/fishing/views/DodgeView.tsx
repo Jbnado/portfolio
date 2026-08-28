@@ -8,7 +8,11 @@ import {
 } from '../engines/dodge';
 import './DodgeView.css';
 
-type Props = { params: DodgeParams; onDone: (r: Result) => void };
+type Props = {
+  params: DodgeParams;
+  texts: { bumps: string; bumpsUnlimited: string };
+  onDone: (r: Result) => void;
+};
 
 const STEPS = 36;
 const BASE_RADIUS = 20;
@@ -22,7 +26,7 @@ const MARKER_R = 4;
 const GATE_OPEN_R = 2;
 const GATE_CLOSED_HALF = 2.5;
 
-export function DodgeView({ params, onDone }: Props) {
+export function DodgeView({ params, texts, onDone }: Props) {
   const [est, setEst] = useState<DodgeState>(() => startDodge(params));
   const [angle, setAng] = useState(0);
   const stateRef = useRef(startDodge(params));
@@ -109,9 +113,19 @@ export function DodgeView({ params, onDone }: Props) {
           r={MARKER_R} fill="var(--fishing-marker)"
         />
       </svg>
-      <p class="dodge-bumps">
+      {/* aria-label da o nome acessivel nos dois casos: numero cru nao diz
+          nada pra leitor de tela. No ilimitado o infinito e so visual — o
+          rotulo por extenso e quem carrega o significado pro leitor. */}
+      <p
+        class="dodge-bumps"
+        aria-label={
+          params.bumpsAllowed === null
+            ? `${texts.bumps}: ${est.bumps}, ${texts.bumpsUnlimited}`
+            : `${texts.bumps}: ${est.bumps} / ${params.bumpsAllowed + 1}`
+        }
+      >
         {params.bumpsAllowed === null
-          ? est.bumps
+          ? `${est.bumps} ∞`
           : `${est.bumps} / ${params.bumpsAllowed + 1}`}
       </p>
     </div>

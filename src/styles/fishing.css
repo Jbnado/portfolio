@@ -87,3 +87,40 @@
   color: var(--color-text-secondary);
   max-width: 60ch;
 }
+
+/* Anuncio para leitor de tela. Visualmente escondido, nunca display:none,
+   que remove do leitor tambem. */
+.fishing-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.fishing-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+/* <small> herda "font-size: smaller" do UA stylesheet por padrao (0.75rem
+   vira ~9.6px, abaixo do piso de legibilidade de 11px). Sem isto a ajuda do
+   modo garantido fica pequena demais pra ler. */
+.fishing-option small {
+  font-size: inherit;
+  color: var(--color-text-secondary);
+}
+.fishing-option input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

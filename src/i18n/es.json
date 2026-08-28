@@ -185,6 +185,8 @@
     "largest": "mayor",
     "guaranteedMode": "Modo garantizado",
     "guaranteedModeHelp": "Más lento, pero siempre pesca.",
+    "bumps": "Choques",
+    "bumpsUnlimited": "sin límite",
     "fish": {
       "p1": "Lisa", "p2": "Róbalo", "p3": "Corvina",
       "p4": "Sardina", "p5": "Anchoa", "p6": "Bagre",

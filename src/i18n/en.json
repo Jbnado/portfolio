@@ -185,6 +185,8 @@
     "largest": "largest",
     "guaranteedMode": "Guaranteed mode",
     "guaranteedModeHelp": "Slower, but always lands the fish.",
+    "bumps": "Bumps",
+    "bumpsUnlimited": "unlimited",
     "fish": {
       "p1": "Mullet", "p2": "Sea bass", "p3": "Croaker",
       "p4": "Sardine", "p5": "Bluefish", "p6": "Catfish",

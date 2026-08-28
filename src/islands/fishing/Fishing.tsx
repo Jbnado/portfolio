@@ -21,6 +21,10 @@ type Texts = {
   logEmpty: string;
   times: string;
   largest: string;
+  guaranteedMode: string;
+  guaranteedModeHelp: string;
+  bumps: string;
+  bumpsUnlimited: string;
   instruction: Record<string, string>;
   fish: Record<string, string>;
 };
@@ -41,6 +45,7 @@ function validLog(c: Log): Log {
 export default function Fishing({ texts }: { texts: Texts }) {
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
   const [log, setLog] = useState<Log>(() => validLog(loadLog()));
+  const [guaranteed, setGuaranteed] = useState(false);
 
   // O <canvas> pertence a pagina Astro, nao a ilha, entao a ilha o alcanca por
   // seletor. Efeito de montagem unica: nao ha loop de animacao no v1.
@@ -63,7 +68,10 @@ export default function Fishing({ texts }: { texts: Texts }) {
   }, [log]);
 
   const onDone = useCallback(
-    (fish: Fish) => (result: Result) => {
+    (fish: Fish) => (raw: Result) => {
+      // Modo garantido forca a captura mas nao mexe em quality: o tamanho
+      // continua refletindo o desempenho do jogador, so a perda e desligada.
+      const result = guaranteed ? { caught: true, quality: raw.quality } : raw;
       const size = sizeOf(fish, result.quality);
       if (result.caught) {
         const updated = recordCatch(log, fish.id, size);
@@ -72,11 +80,29 @@ export default function Fishing({ texts }: { texts: Texts }) {
       }
       setPhase({ kind: 'result', fish, result, size });
     },
-    [log],
+    [log, guaranteed],
   );
 
   return (
     <div>
+      <p class="fishing-live" role="status" aria-live="polite">
+        {phase.kind === 'result'
+          ? phase.result.caught
+            ? `${texts.caught}: ${texts.fish[phase.fish.id]}, ${phase.size} cm`
+            : `${texts.escaped}: ${texts.fish[phase.fish.id]}`
+          : ''}
+      </p>
+
+      <label class="fishing-option">
+        <input
+          type="checkbox"
+          checked={guaranteed}
+          onChange={(e) => setGuaranteed((e.target as HTMLInputElement).checked)}
+        />
+        <span>{texts.guaranteedMode}</span>
+        <small>{texts.guaranteedModeHelp}</small>
+      </label>
+
       {phase.kind === 'idle' && (
         <button class="fishing-button" onClick={cast}>{texts.cast}</button>
       )}
@@ -100,6 +126,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
           {phase.fish.engine === 'dodge' && (
             <DodgeView
               params={phase.fish.params as DodgeParams}
+              texts={{ bumps: texts.bumps, bumpsUnlimited: texts.bumpsUnlimited }}
               onDone={onDone(phase.fish)}
             />
           )}

@@ -185,6 +185,8 @@
     "largest": "maior",
     "guaranteedMode": "Modo garantido",
     "guaranteedModeHelp": "Mais lento, mas sempre pesca.",
+    "bumps": "Batidas",
+    "bumpsUnlimited": "sem limite",
     "fish": {
       "p1": "Tainha", "p2": "Robalo", "p3": "Corvina",
       "p4": "Sardinha", "p5": "Anchova", "p6": "Bagre",
