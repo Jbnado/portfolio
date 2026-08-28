@@ -13,7 +13,7 @@ type Props = {
   onDone: (r: Result) => void;
 };
 
-/** Movimento reduzido: o fish salta entre degraus. A FAIXA nao muda, porque
+/** Movimento reduzido: o peixe salta entre degraus. A FAIXA nao muda, porque
     ela e a mao do jogador e controle direto nao e animacao automatica. */
 const STEPS = 12;
 
