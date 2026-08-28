@@ -48,23 +48,20 @@ por decisão explícita — a pergunta que essa versão responde não depende de
 **Os três motores entram inteiros no v1.** Testar só um não responde a pergunta, e a DRAGAGEM
 é justamente a que corre mais risco de não ser divertida.
 
-**Nove peixes**, o bastante para exercitar todo o espaço de parâmetros sem trabalho de conteúdo:
+**Nove peixes, matriz de motor × faixa de dificuldade.** Cada faixa tem exatamente um peixe de
+cada motor, do raso que ensina ao abissal sem perdão — a tabela original (nove peixes indexados
+só pela variação do TRAJETO) foi revista a pedido do dono: o raso precisa ensinar as três
+mecânicas, não só a mais fácil (ver "Modelo de falha" para a regra de quem perde em cada faixa):
 
-| # | motor | variação exercitada |
-|---|---|---|
-| 1 | TRAJETO | caminho `reta`, janela larga, 1 acerto |
-| 2 | TRAJETO | caminho `pêndulo`, 2 acertos |
-| 3 | TRAJETO | caminho `pêndulo` com alternância, 3 acertos |
-| 4 | TRAJETO | caminho `radial` |
-| 5 | TRAJETO | caminho `subida` |
-| 6 | SUSTENTAÇÃO | peixe de velocidade média |
-| 7 | SUSTENTAÇÃO | peixe rápido e arisco |
-| 8 | DRAGAGEM | tolerância 2 |
-| 9 | DRAGAGEM | tolerância 0 |
+| faixa | TRAJETO | SUSTENTAÇÃO | DRAGAGEM |
+|---|---|---|---|
+| 1 — raso, ensina | p1: `pêndulo`, 1 acerto, janela larga | p2: peixe calmo, carência longa | p3: 2 pistas, nunca perde |
+| 2 — meio | p4: `radial`, 2 acertos | p5: peixe errático | p6: 2 pistas, tolera 2 batidas |
+| 3 — abissal, sem perdão | p7: `pêndulo` com alternância, 3 acertos | p8: peixe arisco, carência curta | p9: 3 pistas, perde na primeira batida |
 
-**O v1 não tem faixas de profundidade**, então a regra "rasos nunca perdem" ainda não tem
-onde se aplicar. Cada peixe carrega a própria tolerância diretamente na tabela, que é o que o
-modelo de dados já faz. O amarre entre faixa e tolerância entra junto com o mapa.
+Cada peixe carrega os próprios parâmetros diretamente na tabela, que é o que o modelo de dados já
+faz. O amarre entre faixa de profundidade real (o mapa, ainda inexistente no v1) e essa faixa de
+dificuldade entra junto com o mapa.
 
 ## Critério de sucesso
 
@@ -170,7 +167,7 @@ Um indicador percorre um caminho, zonas ficam sobre o caminho, espaço quando so
 
 ```ts
 type Trajeto = {
-  caminho: 'reta' | 'pendulo' | 'radial' | 'subida'
+  caminho: 'pendulo' | 'radial'
   velocidade: number
   zonas: { pos: number; tamanho: number }[]
   acertos: number           // quantos precisa para fisgar
@@ -179,14 +176,18 @@ type Trajeto = {
 }
 ```
 
-Quatro geometrias, **mesmo código**:
+Duas geometrias, **mesmo código** — `reta` e `subida` saíram do v1. Uma varredura linear só tem
+duas formas de fechar o ciclo ao chegar na ponta: inverter ou teleportar de volta ao início, e
+inverter *é* o pêndulo — não existe forma não-teleportante de `reta`. `subida` tinha o mesmo
+problema escondido atrás do nome: era desenhada como uma reta espelhada e nunca subiu de verdade.
+Um indicador que teleporta quebra o requisito de acessibilidade da seção "Controles" (o
+movimento tem que dar pra seguir em `prefers-reduced-motion` como passos discretos, não saltos
+arbitrários), então os dois caminhos saíram e não voltaram.
 
 | caminho | como lê |
 |---|---|
-| `reta` | velocímetro, esquerda para direita, repete |
 | `pendulo` | vai e volta; com `alternancia` é esquerda, direita, esquerda |
 | `radial` | gira o círculo completo — lê como sonar, que é a linguagem do turno noturno |
-| `subida` | as marcas sobem até a linha do topo |
 
 Este é o motor de peixe **de tempo e paciência**.
 
@@ -217,7 +218,7 @@ Parâmetros: velocidade dos anéis, número de pistas, tamanho das brechas, bati
 Verificado, não presumido. O Dredge tem seis minigames de pesca, e todos são o mesmo gesto —
 apertar quando o indicador cruza a zona — variando **a geometria do caminho**: Radial,
 Ball Catcher, Diamond, Pendulum, Spiral. O TRAJETO é essa família inteira reduzida a um motor
-com quatro caminhos.
+com dois caminhos (`pendulo` e `radial` — ver a seção acima para os dois que saíram e por quê).
 
 A DRAGAGEM vem do minigame de **dragagem** do Dredge, que não é de pesca lá e é aproveitado
 aqui como mecânica de pesca por decisão explícita.
@@ -257,27 +258,37 @@ jogo funciona no celular sem redesenho.
 
 ## Modelo de falha
 
-**Perda existe, mas só nos raros.** Quem apenas passeia pelo portfólio nunca perde nada.
+**Perda existe sempre no meio e no abissal.** No raso, dois dos três motores nunca perdem
+(TRAJETO e DRAGAGEM, `tolerancia`/`bumpsAllowed` null) — mas a SUSTENTAÇÃO do raso (p2) pode
+perder, raro de propósito, com carência longa. É uma exceção registrada, não um vazamento: o
+tipo do parâmetro de carência (`graceMs: number | null`) segue a mesma convenção `null = nunca
+perde` dos outros dois motores, então quando o SUSTENTAÇÃO do raso perde é porque alguém decidiu
+isso, não porque o tipo não tinha como dizer o contrário.
 
-| faixa | perde? | o que o erro custa |
-|---|---|---|
-| rasos | não | **tamanho** — pesca menor, vale menos, não bate o recorde |
-| meio e abissal | sim | o peixe |
+| faixa | TRAJETO | SUSTENTAÇÃO | DRAGAGEM |
+|---|---|---|---|
+| 1 — raso | nunca perde | pode perder (raro, de propósito) | nunca perde |
+| 2 — meio | perde | perde | perde |
+| 3 — abissal | perde | perde | perde |
 
-**Por que o custo não é tempo.** No Dredge, errar não perde o peixe, só demora mais — e isso
-funciona lá porque a noite é perigosa e demorar é caro. Este jogo não tem noite nem pressão
-temporal, então "demora mais" não custaria absolutamente nada. O custo nos rasos é tamanho.
+Isto revoga a regra original do v1, "SUSTENTAÇÃO e DRAGAGEM não aparecem nos rasos": a pedido do
+dono, a tabela de peixes virou uma matriz motor × faixa (ver "Escopo do v1") onde **cada faixa
+tem exatamente um peixe de cada motor**, para que o raso ensine as três mecânicas em vez de só a
+mais fácil. A generosidade do raso passou a morar no **parâmetro** (tolerância nula, carência
+longa), não na ausência do motor.
+
+**Por que o custo do erro que não perde o peixe é tamanho, não tempo.** No Dredge, errar não
+perde o peixe, só demora mais — e isso funciona lá porque a noite é perigosa e demorar é caro.
+Este jogo não tem noite nem pressão temporal, então "demora mais" não custaria absolutamente
+nada. O custo é tamanho: pesca menor, vale menos, não bate o recorde.
 
 Esta decisão é registrada explicitamente porque alguém no futuro pode "corrigir" o modelo para
 o do Dredge sem perceber que falta o sistema que o sustenta.
 
 **Motor não é função da profundidade.** O motor é função da personalidade do peixe: TRAJETO
 para o de tempo, SUSTENTAÇÃO para o rápido, DRAGAGEM para o brigão. A faixa controla aposta e
-dificuldade.
-
-**Uma regra rígida, e é de propósito:** SUSTENTAÇÃO e DRAGAGEM **não aparecem nos rasos**,
-porque os dois perdem por construção e os rasos não perdem. O raso é a rampa de entrada e é o
-primeiro peixe de todo mundo.
+dificuldade — e agora, com a matriz completa, também garante que as três personalidades
+apareçam em toda faixa.
 
 **Tolerância se expressa na moeda de cada motor:** voltas extras no TRAJETO, taxa de dreno no
 SUSTENTAÇÃO, batidas até arrebentar na DRAGAGEM.
