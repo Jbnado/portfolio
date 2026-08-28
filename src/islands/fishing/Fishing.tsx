@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { FISH, sizeOf } from './fish';
 import { mountSea, unmountSea } from './sea';
 import type { Fish, TrackParams, HoldParams, DodgeParams, Result } from './types';
@@ -25,6 +25,11 @@ type Texts = {
   guaranteedModeHelp: string;
   bumps: string;
   bumpsUnlimited: string;
+  play: string;
+  exit: string;
+  exitHelp: string;
+  gameArea: string;
+  howToPlay: string;
   instruction: Record<string, string>;
   fish: Record<string, string>;
 };
@@ -46,6 +51,10 @@ export default function Fishing({ texts }: { texts: Texts }) {
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
   const [log, setLog] = useState<Log>(() => validLog(loadLog()));
   const [guaranteed, setGuaranteed] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const playBtnRef = useRef<HTMLButtonElement>(null);
+  const castBtnRef = useRef<HTMLButtonElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   // O <canvas> pertence a pagina Astro, nao a ilha, entao a ilha o alcanca por
   // seletor. Efeito de montagem unica: nao ha loop de animacao no v1.
@@ -54,6 +63,41 @@ export default function Fishing({ texts }: { texts: Texts }) {
     if (canvas) mountSea(canvas);
     return () => unmountSea();
   }, []);
+
+  // A sobreposicao e um dialogo modal: enquanto ela esta aberta o documento
+  // atras nao rola, Esc fecha, o foco entra nela e VOLTA para o botao Jogar ao
+  // sair — sem isso quem navega por teclado e largado no meio da pagina.
+  useEffect(() => {
+    if (!playing) return;
+    document.body.classList.add('fishing-locked');
+    overlayRef.current?.focus();
+
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.key !== 'Escape') return;
+      ev.preventDefault();
+      setPlaying(false);
+    };
+    window.addEventListener('keydown', onKey);
+
+    return () => {
+      document.body.classList.remove('fishing-locked');
+      window.removeEventListener('keydown', onKey);
+      playBtnRef.current?.focus();
+    };
+  }, [playing]);
+
+  // O botao de lancar desmonta a cada troca de fase (idle -> playing ->
+  // result), e sem foco explicito o navegador devolve o foco para <body>,
+  // vazando do dialogo. No playing nao ha controle proprio — os tres motores
+  // ouvem Espaco na window — entao o foco fica no container da sobreposicao.
+  useEffect(() => {
+    if (!playing) return;
+    if (phase.kind === 'playing') {
+      overlayRef.current?.focus();
+    } else {
+      castBtnRef.current?.focus();
+    }
+  }, [playing, phase.kind]);
 
   // Sem mapa no v1, a profundidade e simulada pelo caderno: as faixas abrem
   // conforme se pesca. Sem isto a curva de aprendizado da matriz nao aparece.
@@ -66,6 +110,11 @@ export default function Fishing({ texts }: { texts: Texts }) {
     const fish = weightedPick(pool, Math.random);
     setPhase({ kind: 'playing', fish });
   }, [log]);
+
+  const enter = useCallback(() => {
+    setPlaying(true);
+    setPhase({ kind: 'idle' });
+  }, []);
 
   const onDone = useCallback(
     (fish: Fish) => (raw: Result) => {
@@ -85,64 +134,11 @@ export default function Fishing({ texts }: { texts: Texts }) {
 
   return (
     <div>
-      <p class="fishing-live" role="status" aria-live="polite">
-        {phase.kind === 'result'
-          ? phase.result.caught
-            ? `${texts.caught}: ${texts.fish[phase.fish.id]}, ${phase.size} cm`
-            : `${texts.escaped}: ${texts.fish[phase.fish.id]}`
-          : ''}
-      </p>
+      <p class="fishing-prompt">{texts.howToPlay}</p>
 
-      <label class="fishing-option">
-        <input
-          type="checkbox"
-          checked={guaranteed}
-          onChange={(e) => setGuaranteed((e.target as HTMLInputElement).checked)}
-        />
-        <span>{texts.guaranteedMode}</span>
-        <small>{texts.guaranteedModeHelp}</small>
-      </label>
-
-      {phase.kind === 'idle' && (
-        <button class="fishing-button" onClick={cast}>{texts.cast}</button>
-      )}
-
-      {phase.kind === 'playing' && (
-        <>
-          <p class="fishing-prompt">{texts.instruction[phase.fish.engine]}</p>
-          {phase.fish.engine === 'track' && (
-            <TrackView
-              params={phase.fish.params as TrackParams}
-              onDone={onDone(phase.fish)}
-            />
-          )}
-          {phase.fish.engine === 'hold' && (
-            <HoldView
-              params={phase.fish.params as HoldParams}
-              color={phase.fish.color}
-              onDone={onDone(phase.fish)}
-            />
-          )}
-          {phase.fish.engine === 'dodge' && (
-            <DodgeView
-              params={phase.fish.params as DodgeParams}
-              texts={{ bumps: texts.bumps, bumpsUnlimited: texts.bumpsUnlimited }}
-              onDone={onDone(phase.fish)}
-            />
-          )}
-        </>
-      )}
-
-      {phase.kind === 'result' && (
-        <>
-          <p>
-            {phase.result.caught
-              ? `${texts.caught}: ${texts.fish[phase.fish.id]}, ${phase.size} cm`
-              : `${texts.escaped}: ${texts.fish[phase.fish.id]}`}
-          </p>
-          <button class="fishing-button" onClick={cast}>{texts.cast}</button>
-        </>
-      )}
+      <button class="fishing-button" ref={playBtnRef} onClick={enter}>
+        {texts.play}
+      </button>
 
       <section>
         <h2>{texts.log}</h2>
@@ -158,6 +154,92 @@ export default function Fishing({ texts }: { texts: Texts }) {
           </ul>
         )}
       </section>
+
+      {playing && (
+        <div
+          class="fishing-overlay"
+          ref={overlayRef}
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          aria-label={texts.gameArea}
+        >
+          <div class="fishing-overlay-bar">
+            <button class="fishing-exit" onClick={() => setPlaying(false)}>
+              {texts.exit} <small>{texts.exitHelp}</small>
+            </button>
+          </div>
+
+          {/* role=dialog com aria-modal esconde tudo fora da subarvore para
+              leitores de tela: a live region tem que morar aqui dentro, senao
+              o anuncio de captura nunca chega enquanto a sobreposicao esta
+              aberta. */}
+          <p class="fishing-live" role="status" aria-live="polite">
+            {phase.kind === 'result'
+              ? phase.result.caught
+                ? `${texts.caught}: ${texts.fish[phase.fish.id]}, ${phase.size} cm`
+                : `${texts.escaped}: ${texts.fish[phase.fish.id]}`
+              : ''}
+          </p>
+
+          <div class="fishing-arena">
+            <label class="fishing-option">
+              <input
+                type="checkbox"
+                checked={guaranteed}
+                onChange={(e) => setGuaranteed((e.target as HTMLInputElement).checked)}
+              />
+              <span>{texts.guaranteedMode}</span>
+              <small>{texts.guaranteedModeHelp}</small>
+            </label>
+
+            {phase.kind === 'idle' && (
+              <button class="fishing-button" ref={castBtnRef} onClick={cast}>
+                {texts.cast}
+              </button>
+            )}
+
+            {phase.kind === 'playing' && (
+              <>
+                <p class="fishing-prompt">{texts.instruction[phase.fish.engine]}</p>
+                {phase.fish.engine === 'track' && (
+                  <TrackView
+                    params={phase.fish.params as TrackParams}
+                    onDone={onDone(phase.fish)}
+                  />
+                )}
+                {phase.fish.engine === 'hold' && (
+                  <HoldView
+                    params={phase.fish.params as HoldParams}
+                    color={phase.fish.color}
+                    onDone={onDone(phase.fish)}
+                  />
+                )}
+                {phase.fish.engine === 'dodge' && (
+                  <DodgeView
+                    params={phase.fish.params as DodgeParams}
+                    texts={{ bumps: texts.bumps, bumpsUnlimited: texts.bumpsUnlimited }}
+                    onDone={onDone(phase.fish)}
+                  />
+                )}
+              </>
+            )}
+
+            {phase.kind === 'result' && (
+              <>
+                <p>
+                  {phase.result.caught
+                    ? `${texts.caught}: ${texts.fish[phase.fish.id]}, ${phase.size} cm`
+                    : `${texts.escaped}: ${texts.fish[phase.fish.id]}`}
+                </p>
+                <button class="fishing-button" ref={castBtnRef} onClick={cast}>
+                  {texts.cast}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

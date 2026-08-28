@@ -178,6 +178,11 @@
     "title": "Pesca",
     "description": "Um jogo de pesca dentro do portfólio. Uma tela, três minigames, nove peixes.",
     "cast": "Lançar a linha",
+    "play": "Jogar",
+    "exit": "Sair",
+    "exitHelp": "Esc também sai",
+    "gameArea": "Área de game",
+    "howToPlay": "Espaço faz tudo: lança a linha e resolve o minigame de cada peixe.",
     "instruction": {
       "track": "Espaço quando o marcador cruzar a zona.",
       "hold": "Segure espaço para subir. Mantenha o peixe dentro da faixa.",

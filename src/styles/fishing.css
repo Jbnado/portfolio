@@ -44,9 +44,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  /* 64px e exatamente o pt-16 do <main> do BaseLayout. Com o rodape
-     desligado, 64 + (100svh - 64) = 100svh cravado, e nao ha o que rolar. */
-  min-height: calc(100svh - 64px);
+  min-height: 0;
   padding: 16px;
   overflow: hidden;
 }
@@ -58,7 +56,11 @@
   pointer-events: none;
 }
 
-.fishing-content { position: relative; z-index: 1; }
+/* Sem z-index proprio: fica atras do .fishing-sea so por ordem no DOM (que
+   ja resolve, o canvas vem primeiro), e assim NAO cria stacking context
+   proprio. Um z-index aqui prenderia a sobreposicao em tela cheia dentro
+   dele — e ela perderia do navbar (z-index 40) mesmo com z-index 80. */
+.fishing-content { position: relative; }
 
 .fishing-button {
   font-family: var(--font-mono);
@@ -123,4 +125,80 @@
 .fishing-option input:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+/* Sobreposicao em tela cheia: fixed + inset zera qualquer questao de altura,
+   porque a caixa E a viewport. Nada de calc() competindo com navbar e rodape. */
+.fishing-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--color-bg-primary);
+  overflow: hidden;
+}
+
+/* Enquanto a sobreposicao esta aberta o documento atras nao rola. Sem isto a
+   barra de espaco volta a rolar a pagina de baixo. */
+body.fishing-locked {
+  overflow: hidden;
+}
+
+.fishing-overlay-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.fishing-exit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: 2px solid var(--color-border-strong);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.fishing-exit:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.fishing-exit:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* <small> herda "font-size: smaller" do UA stylesheet por padrao (0.75rem
+   vira ~9.6px, abaixo do piso de legibilidade de 12px). Mesma correcao do
+   .fishing-option small acima. */
+.fishing-exit small {
+  font-size: inherit;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-secondary);
+}
+
+.fishing-arena {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 0;
 }

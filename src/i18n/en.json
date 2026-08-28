@@ -178,6 +178,11 @@
     "title": "Fishing",
     "description": "A fishing game inside the portfolio. One screen, three minigames, nine fish.",
     "cast": "Cast the line",
+    "play": "Play",
+    "exit": "Exit",
+    "exitHelp": "Esc exits too",
+    "gameArea": "Game area",
+    "howToPlay": "Space does everything: it casts the line and plays each fish's minigame.",
     "instruction": {
       "track": "Space when the marker crosses the zone.",
       "hold": "Hold space to rise. Keep the fish inside the band.",
