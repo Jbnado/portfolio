@@ -103,20 +103,31 @@ Três regras fechadas sobre o bonequinho:
 
 ```
 src/pages/jogo/pesca.astro              (+ en/game/fishing, es/juego/pesca)
-src/islands/pesca/
-  Pesca.tsx            ilha Preact, client:load
-  mar.ts               camada Canvas — existe e fica VAZIA no v1
-  motores/
-    trajeto.ts         lógica pura
-    trajeto.tsx        casca visual + trajeto.css
-    sustentacao.ts     lógica pura
-    sustentacao.tsx    casca visual + sustentacao.css
-    dragagem.ts        lógica pura
-    dragagem.tsx       casca visual + dragagem.css
-  peixes.ts            tabela de peixes: id, nome, cor, faixa de tamanho
+src/islands/fishing/
+  Fishing.tsx          ilha Preact, client:load
+  sea.ts               camada Canvas — existe e fica VAZIA no v1
+                       (mountSea, unmountSea, drawSea)
+  types.ts             tipos compartilhados: Result, Fish, params de cada
+                       motor, Zone, Gate
+  engines/
+    track.ts           lógica pura do TRAJETO
+    hold.ts            lógica pura do SUSTENTAÇÃO
+    dodge.ts           lógica pura da DRAGAGEM
+  views/
+    TrackView.tsx + TrackView.css     casca visual do TRAJETO
+    HoldView.tsx + HoldView.css       casca visual do SUSTENTAÇÃO
+    DodgeView.tsx + DodgeView.css     casca visual da DRAGAGEM
+  draw.ts              sorteio ponderado do peixe (weightedPick), extraído
+                       pra poder testar sem simular um lance inteiro
+  fish.ts              tabela de peixes: id, nome, cor, faixa de tamanho
                        (min/max em cm), motor e parâmetros
-  estado.ts            localStorage
+  log.ts               localStorage: caderno de espécimes
 ```
+
+Os nomes em inglês (`fishing`, `track`, `hold`, `dodge`, `Fishing.tsx`) divergem do
+português do resto do texto: convenção de código do projeto, não uma tradução
+esquecida. `TRAJETO`, `SUSTENTAÇÃO` e `DRAGAGEM` continuam sendo os nomes que este
+documento usa pra falar dos três motores.
 
 **A ilha só carrega nessa rota.** Astro não vaza island entre páginas. As outras 37 páginas
 continuam entregando os 33KB de JS que entregam hoje.
@@ -137,8 +148,8 @@ de acessibilidade, não de CSP.
 **Costura DOM/Canvas.** Interface, botões e minigames em DOM e SVG. Uma camada de Canvas
 existe atrás de tudo para o mar e as partículas quando o mundo existir.
 
-No v1, "vazia" quer dizer literalmente: o elemento `<canvas>` e o módulo `mar.ts` existem e
-expõem a interface (`montar`, `desmontar`, `desenhar`), e **o laço de animação não roda**. Não
+No v1, "vazia" quer dizer literalmente: o elemento `<canvas>` e o módulo `sea.ts` existem e
+expõem a interface (`mountSea`, `unmountSea`, `drawSea`), e **o laço de animação não roda**. Não
 é para existir `requestAnimationFrame` sem nada para desenhar — isso queima bateria e aparece
 em profiling como se o jogo fosse pesado.
 
@@ -146,8 +157,8 @@ em profiling como se o jogo fosse pesado.
 regra foi **explicitamente dispensada para o jogo**: cada motor carrega seu `.css` ao lado do
 `.tsx`, o Vite empacota, e o custo fica na rota que usa. Continua sem CSS modules.
 
-**Estado no localStorage**, sem conta e sem servidor. No v1 guarda apenas quais peixes foram
-pegos e o maior de cada.
+**Estado no localStorage**, sem conta e sem servidor. No v1 guarda, por peixe, quantas vezes
+foi pego (`times`) e o maior já pescado (`largest`).
 
 ## Os três motores
 
@@ -168,7 +179,7 @@ Um indicador percorre um caminho, zonas ficam sobre o caminho, espaço quando so
 ```ts
 type Trajeto = {
   caminho: 'pendulo' | 'radial'
-  velocidade: number
+  periodMs: number
   zonas: { pos: number; tamanho: number }[]
   acertos: number           // quantos precisa para fisgar
   alternancia: boolean      // acertou uma, ela esvazia e a outra ativa
@@ -194,10 +205,15 @@ Este é o motor de peixe **de tempo e paciência**.
 ### 2. SUSTENTAÇÃO — controle contínuo
 
 Segura espaço para subir, solta para descer, mantém a faixa sobre o peixe. A barra de progresso
-enche enquanto o peixe está dentro e drena quando está fora. **Barra zerada perde o peixe** —
-o dreno é o mecanismo, e uma barra que não pode zerar não tem tensão nenhuma.
+enche enquanto o peixe está dentro e drena quando está fora. **Barra zerada não perde o peixe
+na hora** — abre uma carência (`graceMs`): o peixe escapa só se a barra ficar zerada por tempo
+demais sem se recuperar. `graceMs: number | null` segue a mesma convenção `null = nunca perde`
+de `tolerancia` (TRAJETO) e `bumpsAllowed` (DRAGAGEM) — o dreno continua sendo o mecanismo, e uma
+barra que não pode zerar não tem tensão nenhuma, mas zerar deixa de ser perda instantânea.
 
-Parâmetros: altura da faixa, padrão do peixe, gravidade, taxa de enchimento, taxa de dreno.
+Parâmetros: altura da faixa (`bandHeight`), padrão do peixe, gravidade e força de subida
+(`gravity`, `lift`), teto de velocidade da faixa (`maxSpeed`), velocidade do peixe (`fishSpeed`),
+taxa de enchimento e de dreno, carência antes de escapar (`graceMs`).
 
 Este é o motor de peixe **rápido e arisco**. A dificuldade mora no comportamento do peixe, não
 em código diferente: um peixe que dá arranco e muda de direção é muito mais difícil que um
@@ -205,13 +221,16 @@ calmo, com a mesma implementação.
 
 ### 3. DRAGAGEM — desvio contínuo
 
-O indicador ocupa uma pista; anéis giram com brechas; espaço troca de pista para passar pela
-brecha em vez de bater no cheio.
+O indicador ocupa uma pista; anéis giram com portões — pontos no anel que só deixam passar quem
+está numa das pistas daquele portão; espaço troca de pista para passar pelo portão em vez de
+bater no fechado.
 
 **Não é acerto no tempo, é posicionamento sob pressão contínua.** É a habilidade genuinamente
 diferente das três, e é o motor de peixe **brigão**.
 
-Parâmetros: velocidade dos anéis, número de pistas, tamanho das brechas, batidas toleradas.
+Parâmetros: período da volta, número de pistas, portões (posição no anel e quais pistas abrem
+ali — não um "tamanho de brecha": o portão é um ponto, a brecha é a pista aberta), voltas até
+fisgar (`lapsToCatch`), batidas toleradas.
 
 ### Origem das mecânicas
 
@@ -311,12 +330,16 @@ melhorias.
 
 ## Testes
 
-**Motor é função pura, casca é burra.** Dado um trajeto, uma velocidade e o instante do aperto,
-o resultado é determinístico:
+**Motor é função pura, casca é burra.** Dado o estado do minigame e o instante do aperto, o
+próximo estado é determinístico. A assinatura real do TRAJETO, por exemplo:
 
 ```ts
-avaliarAcerto(trajeto, tMs) → { acertou: boolean, precisao: number }
+pressTrack(params: TrackParams, state: TrackState, tMs: number) → TrackState
 ```
+
+Os outros dois motores seguem a mesma forma (`stepHold`, `stepDodge`), cada um com o `params` e
+o `state` da própria mecânica. `TrackState.done` (e o equivalente nos outros dois) é que carrega
+o par `{ caught: boolean; quality: number }` quando o lance termina.
 
 Isso roda em `vitest`, que já está no projeto. Cobre janela de acerto, alternância de zonas,
 taxa de dreno, contagem de batidas, sem navegador e sem flake. A casca visual só desenha o que
