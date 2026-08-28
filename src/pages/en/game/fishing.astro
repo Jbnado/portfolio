@@ -3,13 +3,14 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Fishing from '../../../islands/fishing/Fishing';
 import { t } from '../../../i18n/utils';
 import en from '../../../i18n/en.json';
+import { SITE_URL, gameUrl } from '../../../utils/constants';
 import '../../../styles/fishing.css';
 
 const locale = 'en';
 const alternates = {
-  'pt-br': 'https://jbnado.dev/jogo/pesca',
-  en: 'https://jbnado.dev/en/game/fishing',
-  es: 'https://jbnado.dev/es/juego/pesca',
+  'pt-br': `${SITE_URL}${gameUrl('pt-br')}`,
+  en: `${SITE_URL}${gameUrl('en')}`,
+  es: `${SITE_URL}${gameUrl('es')}`,
 };
 ---
 
