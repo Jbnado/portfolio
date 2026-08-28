@@ -9,6 +9,13 @@ export type EstadoSustentacao = {
   /** Tempo restante ate o peixe sortear novo alvo, em ms. */
   peixeEspera: number;
   progresso: number;
+  /** Milissegundos com o peixe DENTRO da faixa, e o total da luta. A razao
+      entre os dois e a pericia: quem segurou o peixe dentro o tempo todo
+      pesca grande. Isto existe porque progresso sozinho nao serve — ele e
+      travado em [0,1] antes do teste de captura, entao na hora de fisgar ele
+      vale exatamente 1 sempre, e a qualidade seria constante. */
+  msDentro: number;
+  msTotal: number;
   terminado: Resultado | null;
 };
 
@@ -22,6 +29,8 @@ export function iniciarSustentacao(params: ParamsSustentacao): EstadoSustentacao
     peixeAlvo: 0.5,
     peixeEspera: ESPERA_POR_PADRAO[params.padrao],
     progresso: 0.5,
+    msDentro: 0,
+    msTotal: 0,
     terminado: null,
   };
 }
@@ -64,9 +73,18 @@ export function avancarSustentacao(
     estado.progresso + (dentro ? params.encher : -params.drenar) * dtMs,
   );
 
-  let terminado: Resultado | null = null;
-  if (progresso >= 1) terminado = { pego: true, qualidade: prender(progresso) };
-  else if (progresso <= 0) terminado = { pego: false, qualidade: 0 };
+  const msTotal = estado.msTotal + dtMs;
+  const msDentro = estado.msDentro + (dentro ? dtMs : 0);
 
-  return { faixaPos, faixaVel, peixePos, peixeAlvo, peixeEspera, progresso, terminado };
+  let terminado: Resultado | null = null;
+  if (progresso >= 1) {
+    terminado = { pego: true, qualidade: msTotal > 0 ? msDentro / msTotal : 0 };
+  } else if (progresso <= 0) {
+    terminado = { pego: false, qualidade: 0 };
+  }
+
+  return {
+    faixaPos, faixaVel, peixePos, peixeAlvo, peixeEspera,
+    progresso, msDentro, msTotal, terminado,
+  };
 }
