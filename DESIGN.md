@@ -6,7 +6,7 @@ colors:
   service-sheet: "#dfdace"
   paper-well: "#cdc7b9"
   graphite: "#22242b"
-  worn-pencil: "#655c50"
+  worn-pencil: "#5e564a"
   approval-stamp: "#8f2d24"
   approval-stamp-deep: "#742019"
   approval-stamp-diluted: "#b58d85"
@@ -106,7 +106,7 @@ typography:
     letterSpacing: "0.08em"
   meta:
     fontFamily: "JetBrains Mono, ui-monospace, Cascadia Code, monospace"
-    fontSize: "0.625rem"
+    fontSize: "0.75rem"
     fontWeight: 400
     lineHeight: 1.4
     letterSpacing: "0.08em"
@@ -251,7 +251,7 @@ Duas paletas inteiras sob os mesmos nomes de token. O turno diurno é papel e ti
 - **Folha de Serviço** (`{colors.service-sheet}`): superfície de card e campo. **Mais escura que a mesa** (1,21:1), porque um cartão perfurado é papel buff apoiado sobre a prancheta, não papel branco. Papel branco sobre bege é site; cartão buff sobre manila é o objeto.
 - **Poço de Papel** (`{colors.paper-well}`): recesso abaixo do cartão — poço de mídia, imagem ainda carregando. Um degrau abaixo da Folha de Serviço, nunca acima.
 - **Grafite** (`{colors.graphite}`): texto primário. Preto azulado — tinta de caneta, e a única coisa fria da paleta de propósito. 13,46:1 sobre a mesa.
-- **Lápis Gasto** (`{colors.worn-pencil}`): texto secundário, rótulos, metadados. Cinza **quente**, da família do papel — lápis é grafite sobre celulose, não ardósia. 5,70:1 sobre a mesa e 4,71:1 sobre o cartão.
+- **Lápis Gasto** (`{colors.worn-pencil}`): texto secundário, rótulos, metadados. Cinza **quente**, da família do papel — lápis é grafite sobre celulose, não ardósia. 6,28:1 sobre a mesa, 5,18:1 sobre o cartão e 4,80:1 sobre a ponta escura do gradiente do cartão envelhecido — que é o fundo mais escuro do turno, e o que define o valor.
 - **Borda de Papel** (`{colors.paper-edge}`): filete de 1px — divisórias, contorno de card, tracejados. 2,28:1, calibrado para igualar o trabalho que a borda faz no turno noturno (2,38:1), já que o dia não tem emissão para compensar.
 - **Borda de Instrumento** (`{colors.instrument-edge}`): filete de 2px — cabeçalho de case, célula de metadado, destaque, botão de case. 4,86:1. É o que torna a Regra da Espessura Falante visível em vez de teórica.
 
@@ -264,11 +264,19 @@ Duas paletas inteiras sob os mesmos nomes de token. O turno diurno é papel e ti
 - **Verde de Conduíte** (`{colors.conduit-green}`): filete de 1px, bordas e divisórias. 2,38:1.
 - **Conduíte Aceso** (`{colors.conduit-green-strong}`): filete de 2px, painel de instrumento. 4,53:1.
 
+**Realce de sintaxe**
+
+O Shiki roda com `theme: 'css-variables'`, então os blocos de código desenham com `var(--astro-code-*)` e a cor vem do turno, não de um tema de editor. O padrão do Astro é `github-dark`, que injeta a própria paleta em `style` inline — violeta, azul-claro e um slab `#24292e` — e aterrissa um retângulo escuro no meio do papel manila. O turno diurno usa o jogo de tintas da prancheta e nada mais: grafite para o texto e a pontuação, Carimbo de Aprovação para palavra-chave e constante, Linha de Desenhista para string e função, Lápis Gasto para comentário. O noturno troca a palavra-chave por Alarme e a pontuação por Fósforo Apagado. Pior par de cada turno: 5,18:1 no dia (comentário), 5,29:1 à noite (palavra-chave).
+
 ### Named Rules
 
 **A Regra do Turno.** Todo par cor/uso é declarado duas vezes — uma em `.light`, outra em `.dark` — e nunca herdado entre os dois. Um tema não é o outro com filtro; é outra paleta inteira sob os mesmos nomes de token. Se você precisou de um `filter:` para fazer um tema virar o outro, o token está faltando.
 
 **A Regra do Carimbo.** O acento marca ação e estado, nunca decora superfície. Se o acento está preenchendo uma área grande e parada, ele virou fundo e perdeu a função. As exceções são as duas superfícies que realmente são ação: o CTA primário e a statusline do terminal. Corolário: coisas que não são ação não usam a cor de ação — a perfuração do cartão é ausência, então ela usa a tinta de instrumento, e o oxblood fica livre para onde alguém decide alguma coisa.
+
+**A Regra da Mistura Sólida.** `color-mix` não é seguro em superfície que carrega texto. O build embrulha a versão moderna num `@supports` e deixa um **fallback sólido** fora dele — `color-mix(in srgb, var(--color-accent) 12%, transparent)` deixa para trás `background: var(--color-accent)`, ou seja, o acento inteiro. Nos dois chips onde isso acontecia, o resultado no caminho de fallback era 1,9:1 no código inline e 1:1 no número de folha, que simplesmente sumia. Superfície com texto usa token real. `color-mix` fica para o que é decorativo — furo de cartão, filete de hover, textura de card.
+
+**A Regra do Fundo Mais Escuro.** Um par de contraste vale contra o fundo **mais escuro** onde o texto pode pousar, não contra o fundo nominal do turno. Isso inclui a parada mais escura de qualquer gradiente. O Lápis Gasto passava com folga contra a mesa e falhava a 4,35:1 na ponta escura do gradiente do cartão envelhecido, que é papel de superfície e não decoração. Ao medir, componha o alpha e leia as paradas do gradiente; ao escolher um valor, escolha pelo pior caso.
 
 **A Regra do Alarme.** Alarme só existe no turno noturno e só em ocorrências únicas. Duas peças em Alarme visíveis ao mesmo tempo na mesma dobra já é uma a mais.
 
@@ -285,12 +293,13 @@ Todas variáveis, self-hosted em `/fonts`, com `font-display: optional` nas trê
 
 ### A rampa
 
-Doze degraus fixos, **todos em pixel inteiro a 16px de raiz**, mais os clamps de display. A progressão é de 2px na faixa de interface e de 4px acima de 20px: onde 1px ainda se distingue, os degraus são finos; onde não se distingue mais, eles abrem.
+Onze degraus fixos, **todos em pixel inteiro a 16px de raiz**, mais os clamps de display. A progressão é de 2px na faixa de interface e de 4px acima de 20px: onde 1px ainda se distingue, os degraus são finos; onde não se distingue mais, eles abrem.
+
+O degrau de baixo é 12px, e o piso é isso mesmo: **não existe degrau de 10px**. Existia — era o degrau "Meta", e ele carregava tech badge, carimbo de tipo e rótulo de célula, ou seja, texto funcional que alguém precisa ler. Estar na rampa não isenta: colocar 10px na tabela documenta o token, não conserta a legibilidade. As vinte declarações subiram para 12px e o papel Meta foi absorvido pelo Rótulo. Reintroduzir 11px para amortecer a subida quebraria a Regra do Degrau Inteiro, então não há amortecimento.
 
 | px | rem | Camada | Onde vive |
 |---|---|---|---|
-| 10 | `0.625rem` | Meta | tech badges, carimbo de tipo, numeração de card, rótulo de célula |
-| 12 | `0.75rem` | Rótulo | o cavalo de batalha — comandos, eyebrows, botões, tags, ano |
+| 12 | `0.75rem` | Rótulo / Meta | o cavalo de batalha — comandos, eyebrows, botões, tags, ano, tech badges, carimbo de tipo |
 | 14 | `0.875rem` | Leitura curta | descrição de projeto, resumo de card, rodapé, texto de case |
 | 16 | `1rem` | Corpo | texto corrido, links de contato, subtítulos |
 | 18 | `1.125rem` | Lead | primeira frase de seção, resumo de post, pullquote |
@@ -311,10 +320,10 @@ Fora da rampa fixa existem só duas coisas, ambas deliberadas: os **clamps de di
 - **Headline** (`{typography.headline}`): títulos de seção — 28px, subindo para 36px a partir de 768px —, acompanhados de uma linha de 1px que ocupa o resto da largura. No escuro, Marker rotacionado -2,5° e a linha vira gradiente de 3px.
 - **Title** (`{typography.title}`): títulos de projeto, de card de blog e de case study. 20px, subindo para 24px a partir de 768px.
 - **Lead** (`{typography.lead}`): a frase que abre uma seção, o resumo do post, o pullquote.
-- **Body** (`{typography.body}`): texto corrido. O corpo do post fica num container de 720px, o que dá cerca de 73 caracteres por linha no desktop — dentro da faixa confortável de 45–75ch.
+- **Body** (`{typography.body}`): texto corrido, sempre limitado pela Regra da Medida.
 - **Body Terminal** (`{typography.body-terminal}`): no turno noturno o `body` inteiro do site vira mono. É a casca — nav, hero, listas, cards.
-- **Label** (`{typography.label}`): rótulos, comandos, badges, botões, tags. Sempre mono, quase sempre caixa alta, `letter-spacing` entre 0,06em e 0,2em conforme o tamanho encolhe.
-- **Meta** (`{typography.meta}`): o degrau menor, para o dado sobre o dado — tech badge, carimbo de tipo, numeração de card. Mono.
+- **Label** (`{typography.label}`): rótulos, comandos, badges, botões, tags. Sempre mono, caixa alta quando leva `letter-spacing` (ver Regra do Tracking de Caixa Alta), com tracking entre 0,06em e 0,2em conforme o tamanho encolhe.
+- **Meta** (`{typography.meta}`): o dado sobre o dado — tech badge, carimbo de tipo, numeração de card. Mono, e **no mesmo degrau do Label**: Meta é um papel semântico, não um tamanho menor.
 
 ### Named Rules
 
@@ -324,7 +333,11 @@ Fora da rampa fixa existem só duas coisas, ambas deliberadas: os **clamps de di
 
 **A Regra do Rótulo Mono.** Se o texto é um dado sobre outro texto — data, contagem, tag, tempo de leitura, número do projeto — ele é mono. Essa é a fronteira entre os dois universos tipográficos, e ela é rígida.
 
-**A Regra do Degrau Inteiro.** Todo tamanho fixo sai da rampa de doze degraus e cai em pixel inteiro a 16px de raiz. Um valor novo entra na rampa ou não entra no sistema; não existe "quase o degrau de cima". O sintoma de que a regra foi quebrada é sempre o mesmo: dois valores a menos de 1px um do outro, que não conseguem carregar papéis diferentes e por isso só existem porque ninguém mediu.
+**A Regra da Medida.** Todo bloco de texto corrido tem `max-width: 60ch`, e o valor é 60 em todo lugar — descrição de projeto, entrada de trajetória, corpo de case, corpo de post, nota de fontes, bio. O número parece baixo porque `ch` não mede um caractere: mede o glifo "0", que no Inter tem 0,63em, enquanto o caractere médio da prosa tem 0,50em. Um `Nch` entrega cerca de 1,26 N caracteres. Foi assim que `70ch` — que parecia estar dentro da faixa — rendia 88 caracteres por linha. 60ch cai em ~76. Corolário: o container não é a medida. Cap no elemento de texto, não no container, senão o bloco de código herda a mesma largura da prosa e perde a razão de ser largo.
+
+**A Regra do Tracking de Caixa Alta.** `letter-spacing` positivo só em texto em caixa alta. Em caixa alta ele compensa a falta de ascendente e descendente, que é o que faz a palavra ter silhueta; em texto de frase ele destrói a silhueta que já existe e o olho passa a soletrar. O sintoma é sempre o mesmo: uma classe chamada `-label` que na verdade carrega uma frase inteira. Se o conteúdo é uma frase, o nome está errado ou o tracking está.
+
+**A Regra do Degrau Inteiro.** Todo tamanho fixo sai da rampa de onze degraus e cai em pixel inteiro a 16px de raiz. Um valor novo entra na rampa ou não entra no sistema; não existe "quase o degrau de cima". O sintoma de que a regra foi quebrada é sempre o mesmo: dois valores a menos de 1px um do outro, que não conseguem carregar papéis diferentes e por isso só existem porque ninguém mediu.
 
 ## Layout
 
@@ -468,3 +481,7 @@ O carimbo de tinta é rotacionado -6° e o carimbo de tipo de projeto -4° no tu
 - **Don't** deixar adesivo ou decoração de personagem aparecer abaixo de 1024px. Eles sobrepõem texto e link no celular.
 - **Don't** aplicar Permanent Marker fora de título, e nunca no turno diurno.
 - **Don't** empilhar duas peças em Alarme na mesma dobra.
+- **Don't** usar `color-mix` como fundo de qualquer coisa que tenha texto em cima — o fallback do build é a cor sólida. Ver Regra da Mistura Sólida.
+- **Don't** deixar tema de editor decidir a cor de bloco de código. O realce sai de `--astro-code-*`, que sai do turno.
+- **Don't** pôr `letter-spacing` positivo em texto de frase, mesmo que a classe se chame `-label`.
+- **Don't** deixar texto corrido sem `max-width`, e não confunda `ch` com caractere: `60ch` já é ~76 caracteres.

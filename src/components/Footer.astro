@@ -121,7 +121,7 @@ const year = new Date().getFullYear();
   }
   .footer-term .term-line { color: var(--color-accent); }
   .footer-paper {
-    font-size: 0.625rem;
+    font-size: 0.75rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
   }
@@ -133,19 +133,22 @@ const year = new Date().getFullYear();
        se a linha quebrar, alvos empilhados não se sobrepõem. */
     min-height: 44px;
     color: var(--color-text-secondary);
-    text-decoration: none;
-    background-image: linear-gradient(currentColor, currentColor);
-    background-position: 0% 100%;
-    background-repeat: no-repeat;
-    background-size: 0% 1px;
+    /* Sublinhado no texto, nao no rodape da caixa: com min-height 44px e
+       align-items center, o background-image antigo desenhava o traco ~13px
+       abaixo do texto — e o detector ainda lia aquele gradiente de
+       currentColor como fundo, acusando 1.0:1 onde o real e 5.70:1. */
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
     transition:
-      background-size 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      text-decoration-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
       color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .footer-link:hover {
     color: var(--color-accent);
-    background-size: 100% 1px;
+    text-decoration-color: currentColor;
   }
 
   .footer-link:focus-visible {

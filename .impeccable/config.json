@@ -1,6 +1,10 @@
 {
   "detector": {
-    "ignoreRules": [],
+    "ignoreRules": [
+      "dark-glow",
+      "cream-palette",
+      "kicker-above-heading"
+    ],
     "ignoreFiles": [],
     "ignoreValues": [
       {
@@ -41,7 +45,53 @@
         "value": "rgba(0, 0, 0, 0.5)",
         "createdAt": "2026-08-27T18:32:17.910Z",
         "reason": "DESIGN.md Do's and Don'ts: excecao fechada para tarja de video, scrim, cortina de tema e bloco de impressao"
+      },
+      {
+        "rule": "dark-glow",
+        "value": "#61ffca",
+        "createdAt": "2026-08-28T02:51:19.909Z",
+        "reason": "DESIGN.md, Regra Sem Elevacao So Emissao: o turno noturno zera --shadow-sm e --shadow-md e separa superficie por emissao, nao por sombra. O halo de fosforo e o unico indicio de profundidade que sobra. Tirar deixa o escuro plano."
+      },
+      {
+        "rule": "dark-glow",
+        "value": "#ff3e3e",
+        "createdAt": "2026-08-28T02:51:19.909Z",
+        "reason": "Mesmo caso do #61ffca, na cor de Alarme. A Regra do Alarme ja limita a uma ocorrencia por dobra."
+      },
+      {
+        "rule": "cream-palette",
+        "value": "rgb(242, 239, 228)",
+        "createdAt": "2026-08-28T02:51:19.909Z",
+        "reason": "DESIGN.md: a mesa de engenharia (manila #f2efe4). A regra acusa creme por reflexo, e o tell dela e cartao branco flutuando sobre creme. Aqui e o inverso: a Folha de Servico (#dfdace) e MAIS ESCURA que o campo, 1.21:1, porque cartao perfurado e papel buff sobre a prancheta. Essa inversao e o que mostra que o valor veio da premissa e nao do reflexo. Revisar se o cartao algum dia ficar mais claro que a mesa."
+      },
+      {
+        "rule": "ai-color-palette",
+        "value": "Cyan gradient background",
+        "createdAt": "2026-08-28T02:51:19.909Z",
+        "reason": "Bloom de CRT no hero do turno noturno: radial de rgba(97,255,202,0.07), o token live-cursor a 7%. Mesma familia do dark-glow e mesma justificativa da Regra Sem Elevacao So Emissao."
+      },
+      {
+        "rule": "kicker-above-heading",
+        "value": "Fullstack Developer",
+        "createdAt": "2026-08-28T02:51:19.909Z",
+        "reason": "Nao e kicker: e a saida de um comando. A linha acima dela e 'jbnado@rp:~$ whoami', e o papel aparece com o cursor do terminal piscando ao lado. O hero e uma transcricao, entao a ordem prompt -> resposta -> nome e a forma correta, nao um rotulo decorativo sobre o titulo."
+      },
+      {
+        "rule": "heading-rhythm",
+        "value": "*",
+        "createdAt": "2026-08-28T02:51:19.909Z",
+        "reason": "Falso positivo medido: a regra le o h2 sozinho e enxerga 14px acima contra 48px abaixo. Mas o irmao de cima e o .section-eyebrow, que e o folio da secao e pertence ao titulo. Medido no navegador: a UNIDADE eyebrow+titulo tem 64px de padding de secao acima e 48px abaixo — mais acima que abaixo, que e a direcao que a regra quer. Reavaliar se o eyebrow deixar de existir."
+      },
+      {
+        "rule": "text-occlusion",
+        "value": "*",
+        "createdAt": "2026-08-28T02:51:19.909Z",
+        "reason": "Falso positivo verificado por hit-test a 390px nas paginas de case: a regra compara caixas e ignora empilhamento. O .lang-dropdown vive dentro da .navbar (position fixed, z-index 40) e o cartao de case esta em .case-container (z-index 1). document.elementFromPoint nos tres pontos de amostra das duas opcoes devolve lang-option, nao o cartao."
       }
-    ]
+    ],
+    "notes": {
+      "ignoreRules": "Rule-wide porque ignoreValues nao e aplicado em varredura por URL e o assunto inteiro de cada uma dessas tres e uma decisao fechada deste sistema (ver as entradas em ignoreValues, que ficam como registro). As razoes por regra estao em DESIGN.md.",
+      "vivasDePROPOSITO": "ai-color-palette, heading-rhythm e text-occlusion seguem LIGADAS mesmo tendo achados adjudicados. ai-color-palette pegou o roxo do tema github-dark do Shiki, que era um problema de verdade; text-occlusion e a regra que se quer ouvindo. O residuo esperado numa varredura limpa e: 1 ai-color-palette (bloom de CRT do hero) e 3 heading-rhythm (o folio de secao) na home; 1 text-occlusion a 390px nas paginas de case. Qualquer achado alem desses e novo e deve ser investigado."
+    }
   }
 }

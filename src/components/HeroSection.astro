@@ -171,6 +171,16 @@ const techString = techStack.join(' · ');
     }
   }
 
+  /* Conteudo acima de decoracao, sempre. Os adesivos vivem em z-index 2;
+     texto e painel sobem para 3. Sem isto o adesivo do canto direito pousa
+     em cima da coluna de valores do painel em toda a faixa de 1024 a ~1500px,
+     que e onde mora a maioria dos notebooks. */
+  .hero-content,
+  .hero-panel {
+    position: relative;
+    z-index: 3;
+  }
+
   /* Hero content (left) */
   .hero-role {
     display: inline-block;
@@ -203,7 +213,7 @@ const techString = techStack.join(' · ');
   }
   .hero-holes { display: flex; gap: 0.4rem; }
   .hero-holes .punch-hole { width: 0.5rem; height: 0.5rem; }
-  .hero-stamp { font-size: 0.625rem; }
+  .hero-stamp { font-size: 0.75rem; }
   .hero-boot {
     font-family: var(--font-mono);
     font-size: 0.75rem;
@@ -240,7 +250,7 @@ const techString = techStack.join(' · ');
     text-transform: uppercase;
     color: var(--color-text-secondary);
   }
-  .hero-materials { font-size: 0.625rem; }
+  .hero-materials { font-size: 0.75rem; }
   .hero-techhead { margin-bottom: 0.25rem; }
   .hero-techhead .term-line {
     font-family: var(--font-mono);
@@ -347,7 +357,7 @@ const techString = techStack.join(' · ');
 
   .hero-panel-label {
     font-family: var(--font-mono);
-    font-size: 0.625rem;
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;

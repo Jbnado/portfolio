@@ -164,17 +164,18 @@ const { locale = 'pt-br' } = Astro.props;
     font-size: 1rem;
     font-weight: 500;
     color: var(--color-accent);
-    text-decoration: none;
     padding: 0.5rem 0;
-    background-image: linear-gradient(currentColor, currentColor);
-    background-position: 0% 100%;
-    background-repeat: no-repeat;
-    background-size: 0% 2px;
-    transition: background-size 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    /* Mesma correcao do .footer-link: com min-height 44px o traco caia no
+       rodape da caixa em vez de sublinhar o texto. */
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: transparent;
+    text-underline-offset: 4px;
+    transition: text-decoration-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .contact-link:hover {
-    background-size: 100% 2px;
+    text-decoration-color: currentColor;
   }
 
   .contact-link:focus-visible {
