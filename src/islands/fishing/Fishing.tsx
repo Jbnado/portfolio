@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'preact/hooks';
 import { FISH, sizeOf } from './fish';
-import type { Fish, TrackParams, HoldParams, Result } from './types';
+import type { Fish, TrackParams, HoldParams, DodgeParams, Result } from './types';
 import { TrackView } from './views/TrackView';
 import { HoldView } from './views/HoldView';
+import { DodgeView } from './views/DodgeView';
+import { weightedPick } from './draw';
 import {
   loadLog,
   saveLog,
@@ -39,23 +41,15 @@ export default function Fishing({ texts }: { texts: Texts }) {
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
   const [log, setLog] = useState<Log>(() => validLog(loadLog()));
 
-  // Agora TRACK e HOLD entram no sorteio. A tarefa 9 libera DODGE ao
-  // adicionar a casca que falta — ate la o filtro de engine continua junto
-  // do filtro de faixa, senao o sorteio pode entregar um peixe sem vista.
-  //
   // Sem mapa no v1, a profundidade e simulada pelo caderno: as faixas abrem
   // conforme se pesca. Sem isto a curva de aprendizado da matriz nao aparece.
   const cast = useCallback(() => {
     const known = Object.keys(log).length;
     const maxTier = known >= 6 ? 3 : known >= 3 ? 2 : 1;
-    const pool = FISH.filter(
-      (f) => f.tier <= maxTier && (f.engine === 'track' || f.engine === 'hold'),
-    );
+    const pool = FISH.filter((f) => f.tier <= maxTier);
     // Sorteio ponderado: sorteio uniforme faria o peixe raro (HOLD na faixa 1)
     // aparecer um em tres, e ele precisa ser raro pra ensinar por surpresa.
-    const total = pool.reduce((sum, f) => sum + f.weight, 0);
-    let roll = Math.random() * total;
-    const fish = pool.find((f) => (roll -= f.weight) < 0) ?? pool[pool.length - 1];
+    const fish = weightedPick(pool, Math.random);
     setPhase({ kind: 'playing', fish });
   }, [log]);
 
@@ -91,6 +85,12 @@ export default function Fishing({ texts }: { texts: Texts }) {
             <HoldView
               params={phase.fish.params as HoldParams}
               color={phase.fish.color}
+              onDone={onDone(phase.fish)}
+            />
+          )}
+          {phase.fish.engine === 'dodge' && (
+            <DodgeView
+              params={phase.fish.params as DodgeParams}
               onDone={onDone(phase.fish)}
             />
           )}

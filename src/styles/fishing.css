@@ -4,7 +4,11 @@
   --fishing-rule: var(--color-border-strong);
   --fishing-zone: var(--color-accent-secondary);
   --fishing-marker: var(--color-accent);
-  --fishing-danger: var(--color-accent);
+  /* --color-revolt tambem cai no mesmo oxblood do accent no claro (por
+     desenho), entao nao resolve a colisao com o marcador. --color-accent-hover
+     e o oxblood escurecido: token existente, ainda le como perigo, 7.67:1
+     contra --fishing-surface — ver relatorio da Task 9. */
+  --fishing-danger: var(--color-accent-hover);
   --fishing-fish-a: #4a7c59;
   --fishing-fish-b: #2f5aa8;
   --fishing-fish-c: #8f2d24;

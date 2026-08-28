@@ -33,6 +33,17 @@ describe('FISH', () => {
       expect(p.sizeMin).toBeGreaterThan(0);
     }
   });
+
+  it('a faixa 1 so perde no peixe raro de hold', () => {
+    const shallow = FISH.filter((f) => f.tier === 1);
+    const track = shallow.find((f) => f.engine === 'track')!;
+    const dodge = shallow.find((f) => f.engine === 'dodge')!;
+    const hold = shallow.find((f) => f.engine === 'hold')!;
+    expect((track.params as { tolerance: number | null }).tolerance).toBeNull();
+    expect((dodge.params as { bumpsAllowed: number | null }).bumpsAllowed).toBeNull();
+    expect((hold.params as { graceMs: number }).graceMs).toBeGreaterThan(0);
+    expect(hold.weight).toBeLessThan(track.weight);
+  });
 });
 
 describe('sizeOf', () => {
