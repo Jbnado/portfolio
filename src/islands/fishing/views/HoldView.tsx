@@ -38,10 +38,12 @@ export function HoldView({ params, color, onDone }: Props) {
     const loop = (now: number) => {
       const dt = Math.min(50, now - previous);
       previous = now;
-      // A posicao quantizada agora vem DE DENTRO do motor (achado I1): o
-      // fishPos no estado devolvido ja e o que a tela desenha, entao o que
-      // conta como "dentro da faixa" e exatamente o que o jogador ve, nao
-      // uma posicao continua escondida atras do arredondamento visual.
+      // A posicao quantizada vem DE DENTRO do motor (achado I1), separada da
+      // posicao continua que integra o proximo passo (achado C1): fishDrawPos
+      // no estado devolvido ja e o que a tela desenha, entao o que conta como
+      // "dentro da faixa" e exatamente o que o jogador ve, nao uma posicao
+      // continua escondida atras do arredondamento visual — e essa posicao
+      // continua (fishPos) segue avancando por baixo, entao o peixe nao trava.
       current = stepHold(params, current, dt, holdingRef.current, Math.random, stepped ? STEPS : null);
       setState(current);
       if (current.done) { onDoneRef.current(current.done); return; }
@@ -82,7 +84,7 @@ export function HoldView({ params, color, onDone }: Props) {
         />
         <div
           class="hold-fish"
-          style={{ bottom: `calc(${state.fishPos * 100}% - 8px)`, background: color }}
+          style={{ bottom: `calc(${state.fishDrawPos * 100}% - 8px)`, background: color }}
         />
       </div>
       <div class="hold-meter">

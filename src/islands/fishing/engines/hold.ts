@@ -4,7 +4,18 @@ export type HoldState = {
   /** Centro da faixa do jogador, 0..1. */
   bandPos: number;
   bandVel: number;
+  /** Posicao continua do peixe, nunca quantizada. E a base da integracao do
+      proximo passo (achado C1 do rereview): quantizar isto travava o peixe,
+      porque o avanco maximo por quadro (fishSpeed * dt) fica bem abaixo de
+      meio degrau, entao Math.round sempre voltava pro mesmo ponto e nada
+      fazia o peixe sair dali — sob movimento reduzido o SUSTENTACAO parava
+      de existir. */
   fishPos: number;
+  /** Posicao que decide "dentro da faixa" e que a vista desenha. Sem
+      quantizacao e igual a fishPos; com quantizacao (movimento reduzido) e o
+      degrau mais proximo — a mesma posicao que o jogador ve decide o teste,
+      nunca uma continua escondida por baixo dela (achado I1, preservado). */
+  fishDrawPos: number;
   fishTarget: number;
   /** Tempo restante ate o peixe sortear novo alvo, em ms. */
   fishWait: number;
@@ -29,6 +40,7 @@ export function startHold(params: HoldParams): HoldState {
     bandPos: 0.5,
     bandVel: 0,
     fishPos: 0.5,
+    fishDrawPos: 0.5,
     fishTarget: 0.5,
     fishWait: WAIT_BY_PATTERN[params.pattern],
     progress: 0.5,
@@ -47,11 +59,10 @@ export function stepHold(
   dtMs: number,
   holding: boolean,
   rnd: () => number,
-  /** Passos de degrau do movimento reduzido (achado I1). Quando definido, a
-      posicao do peixe usada para JULGAR "dentro da faixa" e a mesma que a
-      vista desenha — nao uma versao continua escondida por baixo dela. Sem
-      isto a vista podia arredondar so o desenho e o motor julgar outra
-      posicao, discordando do que a tela mostrava. */
+  /** Passos de degrau do movimento reduzido (achado I1). Quando definido,
+      fishDrawPos (JULGAR "dentro da faixa" e o desenho da vista) arredonda
+      pro degrau mais proximo. A integracao em si (fishPos) nunca quantiza —
+      ver o comentario de fishPos em HoldState para o porque (achado C1). */
   quantizeSteps: number | null = null,
 ): HoldState {
   if (state.done) return state;
@@ -73,16 +84,16 @@ export function stepHold(
   }
   const step = params.fishSpeed * dtMs;
   const delta = fishTarget - state.fishPos;
-  const fishPosRaw = clamp(
+  const fishPos = clamp(
     Math.abs(delta) <= step ? fishTarget : state.fishPos + Math.sign(delta) * step,
   );
-  const fishPos = quantizeSteps
-    ? Math.round(fishPosRaw * quantizeSteps) / quantizeSteps
-    : fishPosRaw;
+  const fishDrawPos = quantizeSteps
+    ? Math.round(fishPos * quantizeSteps) / quantizeSteps
+    : fishPos;
 
   // Progresso.
   const half = params.bandHeight / 2;
-  const inside = Math.abs(fishPos - bandPos) <= half;
+  const inside = Math.abs(fishDrawPos - bandPos) <= half;
   const progress = clamp(
     state.progress + (inside ? params.fillRate : -params.drainRate) * dtMs,
   );
@@ -99,7 +110,7 @@ export function stepHold(
   }
 
   return {
-    bandPos, bandVel, fishPos, fishTarget, fishWait,
+    bandPos, bandVel, fishPos, fishDrawPos, fishTarget, fishWait,
     progress, msInside, msTotal, msAtZero, done,
   };
 }

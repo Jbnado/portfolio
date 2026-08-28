@@ -1,6 +1,40 @@
 import { describe, it, expect } from 'vitest';
 import type { HoldParams } from '../types';
 import { startHold, stepHold } from './hold';
+import { FISH, guaranteedFish } from '../fish';
+
+/** Mesmo numero de degraus da HoldView, pra simular exatamente o que o
+    jogador ve sob movimento reduzido. */
+const REDUCED_STEPS = 12;
+
+/** PRNG determinista (LCG) so pra este teste: nao precisa ser bom, precisa
+    ser reproduzivel e nao ficar preso num ciclo curto. */
+function lcg(seed: number): () => number {
+  let s = seed;
+  return () => {
+    s = (s * 1103515245 + 12345) & 0x7fffffff;
+    return s / 0x7fffffff;
+  };
+}
+
+/** Roda o motor real por `frames` quadros de dt aleatorio (o intervalo do
+    requestAnimationFrame nunca e fixo, ate o teto de 50ms que HoldView
+    aplica) e devolve quantos fishDrawPos distintos apareceram. Reinicia o
+    motor se um lance terminar no meio, pra nao encurtar a amostra. */
+function simulateDrawPositions(params: HoldParams, seed: number, frames: number): number {
+  const dtRnd = lcg(seed);
+  const targetRnd = lcg(seed + 1);
+  let e = startHold(params);
+  const distinct = new Set<number>([e.fishDrawPos]);
+  for (let i = 0; i < frames; i++) {
+    const dt = 1 + dtRnd() * 49;
+    const holding = dtRnd() > 0.3;
+    e = stepHold(params, e, dt, holding, targetRnd, REDUCED_STEPS);
+    distinct.add(e.fishDrawPos);
+    if (e.done) e = startHold(params);
+  }
+  return distinct.size;
+}
 
 const base: HoldParams = {
   bandHeight: 0.2,
@@ -181,9 +215,10 @@ describe('stepHold', () => {
 
   it('com quantizacao, o peixe julgado dentro/fora da faixa e o mesmo que a tela desenha (achado I1)', () => {
     // fishPos cru (0.605) fica 0.005 fora da faixa (half 0.1 em torno de
-    // 0.5). Quantizado a 12 degraus (mesmo numero da HoldView), a posicao
-    // desenhada cai em 7/12 = 0.5833, dentro da faixa — e agora e essa
-    // MESMA posicao que decide "dentro"/"fora", nao uma continua escondida.
+    // 0.5). Quantizado a 12 degraus (mesmo numero da HoldView), fishDrawPos
+    // cai em 7/12 = 0.5833, dentro da faixa — e essa MESMA posicao decide
+    // "dentro"/"fora", nao uma continua escondida. fishPos (a base da
+    // integracao) fica intocado pela quantizacao.
     const inicial = {
       ...startHold(base), bandPos: 0.5, fishPos: 0.605, fishTarget: 0.605, progress: 0.5,
     };
@@ -191,6 +226,25 @@ describe('stepHold', () => {
     const comQuantizar = stepHold(base, inicial, 20, false, rnd, 12);
     expect(semQuantizar.progress).toBeLessThan(0.5); // cru: fora, drena
     expect(comQuantizar.progress).toBeGreaterThan(0.5); // quantizado: dentro, enche
-    expect(comQuantizar.fishPos).toBeCloseTo(7 / 12, 5);
+    expect(comQuantizar.fishDrawPos).toBeCloseTo(7 / 12, 5);
+    expect(comQuantizar.fishPos).toBeCloseTo(0.605, 5);
+  });
+
+  it('sob movimento reduzido, fishDrawPos nao trava num unico degrau nos tres peixes de sustentacao (achado C1)', () => {
+    // Simulacao do modulo real, nao leitura de codigo: 4000 quadros de dt
+    // aleatorio por combinacao, pros tres peixes de SUSTENTACAO da tabela
+    // (p2, p5, p8) e nos dois modos (normal e garantido). Antes do fix,
+    // Math.round arredondava a integracao em si — o avanco maximo por
+    // quadro (fishSpeed * 50ms) fica bem abaixo de meio degrau em todos os
+    // tres, entao o peixe ficava preso no mesmo ponto: 1 valor distinto em
+    // 4000 quadros, nas seis combinacoes. Este teste falha se isso voltar.
+    const alvos = ['p2', 'p5', 'p8'] as const;
+    for (const id of alvos) {
+      const peixe = FISH.find((f) => f.id === id)!;
+      for (const params of [peixe.params as HoldParams, guaranteedFish(peixe).params as HoldParams]) {
+        const distintos = simulateDrawPositions(params, id.charCodeAt(1), 4000);
+        expect(distintos).toBeGreaterThan(1);
+      }
+    }
   });
 });
