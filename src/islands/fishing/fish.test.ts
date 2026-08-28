@@ -8,11 +8,11 @@ describe('FISH', () => {
 
   it('cobre os tres motores', () => {
     const motores = new Set(FISH.map((p) => p.engine));
-    expect(motores).toEqual(new Set(['trajeto', 'sustentacao', 'dragagem']));
+    expect(motores).toEqual(new Set(['track', 'hold', 'dodge']));
   });
 
   it('cobre os quatro caminhos do trajeto', () => {
-    const caminhos = FISH.filter((p) => p.engine === 'trajeto').map(
+    const caminhos = FISH.filter((p) => p.engine === 'track').map(
       (p) => (p.params as { path: string }).path,
     );
     expect(new Set(caminhos)).toEqual(new Set(['reta', 'pendulo', 'radial', 'subida']));

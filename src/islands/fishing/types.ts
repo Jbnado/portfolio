@@ -55,7 +55,7 @@ type Base = {
 
 export type Fish = Base &
   (
-    | { engine: 'trajeto'; params: TrackParams }
-    | { engine: 'sustentacao'; params: HoldParams }
-    | { engine: 'dragagem'; params: DodgeParams }
+    | { engine: 'track'; params: TrackParams }
+    | { engine: 'hold'; params: HoldParams }
+    | { engine: 'dodge'; params: DodgeParams }
   );
