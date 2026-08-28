@@ -2570,6 +2570,289 @@ git commit -m "feat(pesca): as palavras que afirmam o jogo viram o link para ele
 
 ---
 
+---
+
+### Task 13: LP do jogo, saída por Esc e sobreposição em tela cheia
+
+**Files:**
+- Modify: `src/islands/pesca/Pesca.tsx`
+- Modify: `src/styles/pesca.css`
+- Modify: `src/i18n/pt-br.json`, `en.json`, `es.json`
+- Modify: `src/pages/jogo/pesca.astro`, `src/pages/en/game/fishing.astro`, `src/pages/es/juego/pesca.astro`
+- Modify: `src/layouts/BaseLayout.astro`
+
+**Interfaces:**
+- Consumes: o componente `Pesca` e as três `*View` já existentes.
+- Produces: nada novo exportado.
+
+A rota deixa de ser "o jogo" e passa a ser a **página do jogo**: título, como se joga, o caderno e um botão Jogar. O jogo roda numa **sobreposição em tela cheia** por cima de tudo, e Esc ou o botão Sair voltam para a página.
+
+Isso substitui o `showFooter` da Task 6. A sobreposição é `position: fixed; inset: 0`, do tamanho da viewport por construção, então não depende de aritmética de `calc()` nem de esconder o rodapé. A página volta a ter rodapé, que é o certo para quem chegou pelo link do hero e quer navegar para outro lugar.
+
+- [ ] **Step 1: Novas strings nos três idiomas**
+
+Em `src/i18n/pt-br.json`, dentro de `jogo`:
+
+```json
+"jogar": "Jogar",
+"sair": "Sair",
+"sairAjuda": "Esc também sai",
+"regiaoJogo": "Área de jogo",
+"comoJoga": "Espaço faz tudo: lança a linha e resolve o minigame de cada peixe."
+```
+
+Em `en.json`, dentro de `jogo`:
+
+```json
+"jogar": "Play",
+"sair": "Exit",
+"sairAjuda": "Esc exits too",
+"regiaoJogo": "Game area",
+"comoJoga": "Space does everything: it casts the line and plays each fish's minigame."
+```
+
+Em `es.json`, dentro de `jogo`:
+
+```json
+"jogar": "Jugar",
+"sair": "Salir",
+"sairAjuda": "Esc también sale",
+"regiaoJogo": "Área de juego",
+"comoJoga": "Espacio hace todo: lanza la línea y resuelve el minijuego de cada pez."
+```
+
+- [ ] **Step 2: Rode o teste de paridade**
+
+Run: `pnpm vitest run src/i18n/paridade.test.ts`
+Expected: PASS — as cinco chaves novas existem nos três dicionários
+
+- [ ] **Step 3: Desfaça o `showFooter`**
+
+Ele deixou de ter uso: a sobreposição cobre o rodapé, e a página do jogo deve mostrá-lo.
+
+Em `src/layouts/BaseLayout.astro`, remova a prop `showFooter` do `interface Props`, remova `showFooter = true` do destructuring, e volte a linha do rodapé para:
+
+```astro
+    <Footer locale={locale} />
+```
+
+Nas três rotas, remova a linha `showFooter={false}`.
+
+Em `src/styles/pesca.css`, o `.pesca-palco` deixa de precisar travar altura. Troque `min-height: calc(100svh - 64px);` por `min-height: 0;` e apague o comentário sobre o `pt-16`, que deixou de valer.
+
+- [ ] **Step 4: CSS da sobreposição**
+
+Acrescente ao fim de `src/styles/pesca.css`:
+
+```css
+/* Sobreposicao em tela cheia: fixed + inset zera qualquer questao de altura,
+   porque a caixa E a viewport. Nada de calc() competindo com navbar e rodape. */
+.pesca-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--color-bg-primary);
+  overflow: hidden;
+}
+
+/* Enquanto a sobreposicao esta aberta o documento atras nao rola. Sem isto a
+   barra de espaco volta a rolar a pagina de baixo. */
+body.pesca-travado {
+  overflow: hidden;
+}
+
+.pesca-overlay-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pesca-sair {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: 2px solid var(--color-border-strong);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pesca-sair:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.pesca-sair:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.pesca-sair small {
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-secondary);
+}
+
+.pesca-arena {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 0;
+}
+```
+
+- [ ] **Step 5: A ilha ganha o estado de tela**
+
+Em `src/islands/pesca/Pesca.tsx`:
+
+1. Some ao tipo `Textos`: `jogar: string; sair: string; sairAjuda: string; regiaoJogo: string; comoJoga: string;`
+
+2. Acrescente `useRef` ao import que já existe de `preact/hooks` — não crie um segundo import do mesmo módulo.
+
+3. Adicione o estado e as duas referências, junto dos outros `useState`:
+
+```tsx
+const [jogando, setJogando] = useState(false);
+const btnJogarRef = useRef<HTMLButtonElement>(null);
+const overlayRef = useRef<HTMLDivElement>(null);
+```
+
+4. Adicione o efeito que trava o corpo, escuta Esc e move o foco:
+
+```tsx
+// A sobreposicao e um dialogo modal: enquanto ela esta aberta o documento
+// atras nao rola, Esc fecha, o foco entra nela e VOLTA para o botao Jogar ao
+// sair — sem isso quem navega por teclado e largado no meio da pagina.
+useEffect(() => {
+  if (!jogando) return;
+  document.body.classList.add('pesca-travado');
+  overlayRef.current?.focus();
+
+  const aoTeclar = (ev: KeyboardEvent) => {
+    if (ev.key !== 'Escape') return;
+    ev.preventDefault();
+    setJogando(false);
+  };
+  window.addEventListener('keydown', aoTeclar);
+
+  return () => {
+    document.body.classList.remove('pesca-travado');
+    window.removeEventListener('keydown', aoTeclar);
+    btnJogarRef.current?.focus();
+  };
+}, [jogando]);
+```
+
+5. Crie a função que entra no jogo, junto de `sortear`:
+
+```tsx
+const entrar = useCallback(() => {
+  setJogando(true);
+  setFase({ tipo: 'parado' });
+}, []);
+```
+
+6. Reestruture o `return` para as duas telas. A página (LP) fica assim, e a sobreposição só existe quando `jogando`:
+
+```tsx
+return (
+  <div>
+    <p class="pesca-vivo" role="status" aria-live="polite">
+      {/* a live region existente continua exatamente como esta */}
+    </p>
+
+    <p class="pesca-prompt">{textos.comoJoga}</p>
+
+    <button class="pesca-botao" ref={btnJogarRef} onClick={entrar}>
+      {textos.jogar}
+    </button>
+
+    <section>
+      <h2>{textos.caderno}</h2>
+      {Object.keys(caderno).length === 0 ? (
+        <p>{textos.cadernoVazio}</p>
+      ) : (
+        <ul>
+          {Object.entries(caderno).map(([id, r]) => (
+            <li key={id}>
+              {textos.peixes[id]} — {r.vezes} {textos.vezes}, {textos.maior} {r.maior} cm
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+
+    {jogando && (
+      <div
+        class="pesca-overlay"
+        ref={overlayRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-label={textos.regiaoJogo}
+      >
+        <div class="pesca-overlay-topo">
+          <button class="pesca-sair" onClick={() => setJogando(false)}>
+            {textos.sair} <small>{textos.sairAjuda}</small>
+          </button>
+        </div>
+
+        <div class="pesca-arena">
+          {/* aqui entram, sem alteracao nenhuma na logica: o bloco 'parado',
+              o bloco 'pescando' com os tres ramos de motor, o bloco
+              'resultado', e o controle de modo garantido */}
+        </div>
+      </div>
+    )}
+  </div>
+);
+```
+
+**Preserve o que já existe.** A live region, o controle de modo garantido e os três ramos de motor continuam exatamente como estão — este passo move a árvore, não reescreve a lógica. Se algum bloco sumir do diff, é regressão.
+
+- [ ] **Step 6: Verifique na mão**
+
+```bash
+pnpm build && npx --yes serve@14 dist -l 4330 --no-clipboard
+```
+
+Em `http://localhost:4330/jogo/pesca`, confirme:
+
+1. A página mostra título, como se joga, o caderno, o botão Jogar **e o rodapé**.
+2. Jogar abre a sobreposição cobrindo a tela inteira.
+3. Com a sobreposição aberta, `document.body` tem a classe `pesca-travado` e a página de trás não rola. Meça: `document.documentElement.scrollHeight` contra `window.innerHeight`.
+4. **Esc** volta para a página. O botão **Sair** também.
+5. Ao sair, `document.activeElement` é o botão Jogar.
+6. Esc no meio de um minigame abandona e volta, sem deixar laço de animação rodando — confirme no Performance do DevTools que não há frames após a saída.
+7. Só com Tab e Espaço dá para chegar ao jogo, jogar e sair.
+8. As outras páginas seguem com rodapé — confira `/` e `/blog/`.
+9. Repita em `/en/game/fishing` e `/es/juego/pesca`.
+
+- [ ] **Step 7: Rode tudo e commite**
+
+```bash
+pnpm test && pnpm build
+git add src/islands/pesca src/styles/pesca.css src/i18n src/pages src/layouts/BaseLayout.astro
+git commit -m "feat(pesca): pagina do jogo, sobreposicao em tela cheia e saida por Esc"
+```
+
 ## Verificação final
 
 - [ ] `pnpm test` verde
@@ -2579,4 +2862,7 @@ git commit -m "feat(pesca): as palavras que afirmam o jogo viram o link para ele
 - [ ] Jogável só com Tab e espaço
 - [ ] `prefers-reduced-motion` respeitado nos três motores
 - [ ] Detector sem achados novos
+- [ ] Esc e o botao Sair voltam para a pagina, e o foco volta para o botao Jogar
+- [ ] Com a sobreposicao aberta, a pagina de tras nao rola
+- [ ] A pagina do jogo TEM rodape; as outras 37 tambem
 - [ ] **Dez lances seguidos sem querer parar** — se falhar, o próximo trabalho é afinar parâmetros em `peixes.ts`, nunca construir o mundo
