@@ -85,8 +85,8 @@ export function stepHold(
   let done: Result | null = null;
   if (progress >= 1) {
     done = { caught: true, quality: msTotal > 0 ? msInside / msTotal : 0 };
-  } else if (msAtZero >= params.graceMs) {
-    done = { caught: false, quality: 0 };
+  } else if (params.graceMs !== null && msAtZero >= params.graceMs) {
+    done = { caught: false, quality: msTotal > 0 ? msInside / msTotal : 0 };
   }
 
   return {

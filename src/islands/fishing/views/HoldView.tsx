@@ -88,7 +88,9 @@ export function HoldView({ params, color, onDone }: Props) {
       <div class="hold-meter">
         <div class="hold-meter-fill" style={{ height: `${state.progress * 100}%` }} />
       </div>
-      {state.msAtZero > 0 && (
+      {/* graceMs null (achado I5): este peixe nunca escapa por carencia, entao
+          nao ha contagem regressiva para mostrar mesmo que msAtZero suba. */}
+      {params.graceMs !== null && state.msAtZero > 0 && (
         <div class="hold-escape" role="presentation">
           <div
             class="hold-escape-fill"

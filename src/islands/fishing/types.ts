@@ -36,8 +36,11 @@ export type HoldParams = {
   /** Progresso perdido por ms fora da faixa. */
   drainRate: number;
   /** Carencia: quanto tempo a barra pode ficar zerada antes de o peixe ir
-      embora. Zerar deixa de ser perda imediata e vira "esta escapando". */
-  graceMs: number;
+      embora. Zerar deixa de ser perda imediata e vira "esta escapando".
+      null = nunca perde por carencia estourada, mesma convencao de
+      `tolerance` (TRAJETO) e `bumpsAllowed` (DRAGAGEM) — sem isto o
+      SUSTENTACAO nao tinha como declarar "este peixe nunca escapa". */
+  graceMs: number | null;
 };
 
 /** Portao no anel: em `pos` (0..1 da volta), so estas pistas estao abertas. */
