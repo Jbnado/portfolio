@@ -17,11 +17,12 @@ const alternates = {
   description={t('jogo.descricao', locale)}
   canonical={alternates.en}
   alternates={alternates}
+  showFooter={false}
 >
-  <main class="pesca-palco">
+  <div class="pesca-palco">
     <canvas class="pesca-mar" aria-hidden="true"></canvas>
     <div class="pesca-conteudo">
       <h1>{t('jogo.titulo', locale)}</h1>
     </div>
-  </main>
+  </div>
 </BaseLayout>

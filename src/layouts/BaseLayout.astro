@@ -20,6 +20,9 @@ interface Props {
   ogImage?: string;
   jsonLd?: unknown;
   showScrollSpy?: boolean;
+  /** Paginas de tela cheia (o jogo) desligam o rodape: com ele o documento
+      passa de 100svh e a barra de espaco volta a rolar a pagina. */
+  showFooter?: boolean;
 }
 
 const {
@@ -33,6 +36,7 @@ const {
   ogImage,
   jsonLd,
   showScrollSpy = true,
+  showFooter = true,
 } = Astro.props;
 
 const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
@@ -102,7 +106,7 @@ const htmlLang = locale === 'pt-br' ? 'pt-BR' : locale;
     <main id="main" class="pt-16">
       <slot />
     </main>
-    <Footer locale={locale} />
+    {showFooter && <Footer locale={locale} />}
     <TermStatusline client:idle />
     <SpeedInsights />
   </body>

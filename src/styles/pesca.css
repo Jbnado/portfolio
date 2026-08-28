@@ -40,7 +40,9 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-height: calc(100svh - 80px);
+  /* 64px e exatamente o pt-16 do <main> do BaseLayout. Com o rodape
+     desligado, 64 + (100svh - 64) = 100svh cravado, e nao ha o que rolar. */
+  min-height: calc(100svh - 64px);
   padding: 16px;
   overflow: hidden;
 }
