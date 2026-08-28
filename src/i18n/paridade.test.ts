@@ -23,10 +23,10 @@ describe('paridade trilingue', () => {
 
   it('o jogo tem as chaves que a rota precisa', () => {
     for (const dic of [ptBr, en, es] as Record<string, any>[]) {
-      expect(dic.jogo).toBeDefined();
-      expect(typeof dic.jogo.titulo).toBe('string');
-      expect(typeof dic.jogo.lancar).toBe('string');
-      expect(Object.keys(dic.jogo.peixes)).toHaveLength(9);
+      expect(dic.game).toBeDefined();
+      expect(typeof dic.game.title).toBe('string');
+      expect(typeof dic.game.cast).toBe('string');
+      expect(Object.keys(dic.game.fish)).toHaveLength(9);
     }
   });
 });

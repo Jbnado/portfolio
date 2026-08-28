@@ -1,41 +1,41 @@
 /* Regra do Turno: todo par cor/uso declarado duas vezes, nunca herdado. */
 .light {
-  --pesca-fundo: var(--color-bg-secondary);
-  --pesca-linha: var(--color-border-strong);
-  --pesca-zona: var(--color-accent-secondary);
-  --pesca-marcador: var(--color-accent);
-  --pesca-perigo: var(--color-accent);
-  --pesca-peixe-a: #4a7c59;
-  --pesca-peixe-b: #2f5aa8;
-  --pesca-peixe-c: #8f2d24;
-  --pesca-peixe-d: #6f6757;
-  --pesca-peixe-e: #a8763e;
-  --pesca-peixe-f: #3d6b7d;
-  --pesca-peixe-g: #7a4b8f;
-  --pesca-peixe-h: #22242b;
-  --pesca-peixe-i: #5e564a;
+  --fishing-surface: var(--color-bg-secondary);
+  --fishing-rule: var(--color-border-strong);
+  --fishing-zone: var(--color-accent-secondary);
+  --fishing-marker: var(--color-accent);
+  --fishing-danger: var(--color-accent);
+  --fishing-fish-a: #4a7c59;
+  --fishing-fish-b: #2f5aa8;
+  --fishing-fish-c: #8f2d24;
+  --fishing-fish-d: #6f6757;
+  --fishing-fish-e: #a8763e;
+  --fishing-fish-f: #3d6b7d;
+  --fishing-fish-g: #7a4b8f;
+  --fishing-fish-h: #22242b;
+  --fishing-fish-i: #5e564a;
 }
 
 .dark {
-  --pesca-fundo: var(--color-bg-secondary);
-  --pesca-linha: var(--color-border-strong);
-  --pesca-zona: var(--color-accent);
-  --pesca-marcador: var(--color-accent-secondary);
-  --pesca-perigo: var(--color-revolt);
-  --pesca-peixe-a: #42f59b;
-  --pesca-peixe-b: #61ffca;
-  --pesca-peixe-c: #ff3e3e;
-  --pesca-peixe-d: #54c59f;
-  --pesca-peixe-e: #7dffb0;
-  --pesca-peixe-f: #4fbf85;
-  --pesca-peixe-g: #7cf5ad;
-  --pesca-peixe-h: #2f8a5e;
-  --pesca-peixe-i: #1f5a3d;
+  --fishing-surface: var(--color-bg-secondary);
+  --fishing-rule: var(--color-border-strong);
+  --fishing-zone: var(--color-accent);
+  --fishing-marker: var(--color-accent-secondary);
+  --fishing-danger: var(--color-revolt);
+  --fishing-fish-a: #42f59b;
+  --fishing-fish-b: #61ffca;
+  --fishing-fish-c: #ff3e3e;
+  --fishing-fish-d: #54c59f;
+  --fishing-fish-e: #7dffb0;
+  --fishing-fish-f: #4fbf85;
+  --fishing-fish-g: #7cf5ad;
+  --fishing-fish-h: #2f8a5e;
+  --fishing-fish-i: #1f5a3d;
 }
 
 /* A area do jogo ocupa a tela sem transbordar: e isto que resolve a rolagem
    por espaco, e nao um preventDefault. */
-.pesca-palco {
+.fishing-stage {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -47,16 +47,16 @@
   overflow: hidden;
 }
 
-.pesca-mar {
+.fishing-sea {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
 }
 
-.pesca-conteudo { position: relative; z-index: 1; }
+.fishing-content { position: relative; z-index: 1; }
 
-.pesca-botao {
+.fishing-button {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 700;
@@ -71,13 +71,13 @@
   cursor: pointer;
 }
 
-.pesca-botao:focus-visible {
+.fishing-button:focus-visible {
   outline: 2px solid var(--color-accent-secondary);
   outline-offset: 2px;
 }
 
 /* Prompt do botao contextual: espaco so e obvio se a tela disser o que faz. */
-.pesca-prompt {
+.fishing-prompt {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--color-text-secondary);

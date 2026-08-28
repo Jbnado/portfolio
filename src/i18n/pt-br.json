@@ -168,24 +168,24 @@
     "externalLink": "Abre em nova janela",
     "mobileNav": "Menu de navegação"
   },
-  "jogo": {
-    "titulo": "Pesca",
-    "descricao": "Um jogo de pesca dentro do portfólio. Uma tela, três minigames, nove peixes.",
-    "lancar": "Lançar a linha",
-    "instrucao": {
-      "trajeto": "Espaço quando o marcador cruzar a zona.",
-      "sustentacao": "Segure espaço para subir. Mantenha o peixe dentro da faixa.",
-      "dragagem": "Espaço troca de pista. Passe pelas brechas."
+  "game": {
+    "title": "Pesca",
+    "description": "Um jogo de pesca dentro do portfólio. Uma tela, três minigames, nove peixes.",
+    "cast": "Lançar a linha",
+    "instruction": {
+      "track": "Espaço quando o marcador cruzar a zona.",
+      "hold": "Segure espaço para subir. Mantenha o peixe dentro da faixa.",
+      "dodge": "Espaço troca de pista. Passe pelas brechas."
     },
-    "fisgou": "Fisgou",
-    "escapou": "Escapou",
-    "caderno": "Caderno de espécimes",
-    "cadernoVazio": "Nenhum peixe registrado ainda.",
-    "vezes": "vezes",
-    "maior": "maior",
-    "modoGarantido": "Modo garantido",
-    "modoGarantidoAjuda": "Mais lento, mas sempre pesca.",
-    "peixes": {
+    "caught": "Fisgou",
+    "escaped": "Escapou",
+    "log": "Caderno de espécimes",
+    "logEmpty": "Nenhum peixe registrado ainda.",
+    "times": "vezes",
+    "largest": "maior",
+    "guaranteedMode": "Modo garantido",
+    "guaranteedModeHelp": "Mais lento, mas sempre pesca.",
+    "fish": {
       "p1": "Tainha", "p2": "Robalo", "p3": "Corvina",
       "p4": "Sardinha", "p5": "Anchova", "p6": "Bagre",
       "p7": "Cavala", "p8": "Arraia", "p9": "Sombra"
