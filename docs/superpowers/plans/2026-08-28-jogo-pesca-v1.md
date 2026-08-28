@@ -1275,7 +1275,9 @@ Crie `src/styles/pesca.css`:
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-height: calc(100svh - 80px);
+  /* 64px e exatamente o pt-16 do <main> do BaseLayout. Com o rodape
+     desligado, 64 + (100svh - 64) = 100svh cravado, e nao ha o que rolar. */
+  min-height: calc(100svh - 64px);
   padding: 16px;
   overflow: hidden;
 }
@@ -1318,7 +1320,33 @@ Crie `src/styles/pesca.css`:
 }
 ```
 
-- [ ] **Step 6: Crie as três rotas**
+- [ ] **Step 6: Dê ao BaseLayout um modo sem rodapé**
+
+Em `src/layouts/BaseLayout.astro`, acrescente a prop ao `interface Props` (linha ~22),
+logo depois de `showScrollSpy`:
+
+```ts
+  /** Paginas de tela cheia (o jogo) desligam o rodape: com ele o documento
+      passa de 100svh e a barra de espaco volta a rolar a pagina. */
+  showFooter?: boolean;
+```
+
+No destructuring do frontmatter, some `showFooter = true` — o padrao preserva as 37
+paginas existentes sem tocar em nenhuma delas.
+
+E troque a linha 105 de:
+
+```astro
+    <Footer locale={locale} />
+```
+
+por:
+
+```astro
+    {showFooter && <Footer locale={locale} />}
+```
+
+- [ ] **Step 7: Crie as três rotas**
 
 Crie `src/pages/jogo/pesca.astro`:
 
@@ -1342,13 +1370,14 @@ const alternates = {
   description={t('jogo.descricao', locale)}
   canonical={alternates['pt-br']}
   alternates={alternates}
+  showFooter={false}
 >
-  <main class="pesca-palco">
+  <div class="pesca-palco">
     <canvas class="pesca-mar" aria-hidden="true"></canvas>
     <div class="pesca-conteudo">
       <h1>{t('jogo.titulo', locale)}</h1>
     </div>
-  </main>
+  </div>
 </BaseLayout>
 ```
 
@@ -1374,13 +1403,14 @@ const alternates = {
   description={t('jogo.descricao', locale)}
   canonical={alternates.en}
   alternates={alternates}
+  showFooter={false}
 >
-  <main class="pesca-palco">
+  <div class="pesca-palco">
     <canvas class="pesca-mar" aria-hidden="true"></canvas>
     <div class="pesca-conteudo">
       <h1>{t('jogo.titulo', locale)}</h1>
     </div>
-  </main>
+  </div>
 </BaseLayout>
 ```
 
@@ -1406,17 +1436,18 @@ const alternates = {
   description={t('jogo.descricao', locale)}
   canonical={alternates.es}
   alternates={alternates}
+  showFooter={false}
 >
-  <main class="pesca-palco">
+  <div class="pesca-palco">
     <canvas class="pesca-mar" aria-hidden="true"></canvas>
     <div class="pesca-conteudo">
       <h1>{t('jogo.titulo', locale)}</h1>
     </div>
-  </main>
+  </div>
 </BaseLayout>
 ```
 
-- [ ] **Step 7: Verifique que as três rotas constroem**
+- [ ] **Step 8: Verifique que as três rotas constroem**
 
 Run: `pnpm build`
 Expected: `40 page(s) built` (eram 37, entram 3 rotas)
@@ -1427,10 +1458,10 @@ Confirme que os arquivos existem:
 ls dist/jogo/pesca/index.html dist/en/game/fishing/index.html dist/es/juego/pesca/index.html
 ```
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
-git add src/pages/jogo src/pages/en/game src/pages/es/juego src/styles/pesca.css src/i18n src/i18n/paridade.test.ts
+git add src/layouts/BaseLayout.astro src/pages/jogo src/pages/en/game src/pages/es/juego src/styles/pesca.css src/i18n src/i18n/paridade.test.ts
 git commit -m "feat(pesca): rota trilingue, tokens dos dois turnos e teste de paridade de i18n"
 ```
 
@@ -1735,14 +1766,15 @@ const alternates = {
   description={t('jogo.descricao', locale)}
   canonical={alternates['pt-br']}
   alternates={alternates}
+  showFooter={false}
 >
-  <main class="pesca-palco">
+  <div class="pesca-palco">
     <canvas class="pesca-mar" aria-hidden="true"></canvas>
     <div class="pesca-conteudo">
       <h1>{t('jogo.titulo', locale)}</h1>
       <Pesca client:load textos={ptBr.jogo} />
     </div>
-  </main>
+  </div>
 </BaseLayout>
 ```
 
