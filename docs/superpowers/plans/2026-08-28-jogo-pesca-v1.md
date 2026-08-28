@@ -2853,6 +2853,294 @@ git add src/islands/fishing src/styles/fishing.css src/i18n src/pages src/layout
 git commit -m "feat(pesca): pagina do game, sobreposicao em tela cheia e saida por Esc"
 ```
 
+---
+
+### Task 14: Ajustes depois do primeiro teste de jogo
+
+**Files:**
+- Modify: `src/islands/fishing/types.ts`
+- Modify: `src/islands/fishing/engines/track.ts` + `track.test.ts`
+- Modify: `src/islands/fishing/engines/hold.ts` + `hold.test.ts`
+- Modify: `src/islands/fishing/fish.ts` + `fish.test.ts`
+- Modify: `src/islands/fishing/views/TrackView.tsx`
+- Modify: `src/islands/fishing/views/HoldView.tsx` + `HoldView.css`
+- Modify: `src/islands/fishing/Fishing.tsx`
+
+Tudo aqui saiu de o dono do projeto jogar a build. Cinco achados, quatro deles defeito do plano.
+
+- [ ] **Step 1: Os dois caminhos que teleportam saem**
+
+O caminho `reta` faz o marcador ir até a ponta e reaparecer instantaneamente na esquerda. Uma varredura linear que se repete só tem duas saídas — inverter ou teleportar — e inverter *é* o pêndulo. Não existe forma não-teleportante do `reta`.
+
+E `subida` nunca subiu: era desenhado como `left: (1 - pos)`, uma varredura horizontal espelhada. Teleporta igual, e o nome descreve o que não acontece.
+
+Em `types.ts`:
+
+```ts
+export type PathKind = 'pendulo' | 'radial';
+```
+
+Em `engines/track.ts`, `positionAt` fica com dois casos, ambos contínuos — o pêndulo inverte, o radial fecha a volta porque num círculo o fim *é* o começo:
+
+```ts
+export function positionAt(params: TrackParams, tMs: number): number {
+  const phase = (tMs % params.periodMs) / params.periodMs;
+  // Pendulo inverte no meio do periodo: 0 -> 1 -> 0, sem descontinuidade.
+  if (params.path === 'pendulo') return phase < 0.5 ? phase * 2 : 2 - phase * 2;
+  // Radial da a volta: 0.99 e 0.01 sao vizinhos no circulo, entao a fase pode
+  // reiniciar sem que o olho veja um salto.
+  return phase;
+}
+```
+
+Em `views/TrackView.tsx`, apague a constante `vertical` e use `pos` direto no `left` do marcador.
+
+Em `engines/track.test.ts`, o teste `'radial e subida andam como a reta'` perde sentido: troque por
+
+```ts
+  it('radial percorre a volta inteira e reinicia', () => {
+    const p = { ...base, path: 'radial' as const };
+    expect(positionAt(p, 250)).toBeCloseTo(0.25);
+    expect(positionAt(p, 1000)).toBeCloseTo(0);
+  });
+```
+
+e no `base` do arquivo troque `path: 'reta'` por `path: 'pendulo'`, ajustando as posições esperadas de `positionAt` conforme a fórmula do pêndulo (em `periodMs: 1000`: t=0 → 0, t=250 → 0.5, t=500 → 1, t=750 → 0.5).
+
+- [ ] **Step 2: Rode os testes do TRACK**
+
+Run: `pnpm vitest run src/islands/fishing/engines/track.test.ts`
+Expected: PASS. Se algum caso falhar, recalcule a expectativa pela fórmula do pêndulo antes de mexer no motor.
+
+- [ ] **Step 3: HOLD ganha teto de velocidade**
+
+A física é aceleração pura, sem amortecimento e sem teto: segurando, a velocidade cresce sem limite. Medido — 336ms do meio ao topo, chegando a 3 barras por segundo. A única forma de manter controle é tocar de leve, que é o oposto de segurar. Diminuir os números só adia o descontrole; o que resolve é o teto.
+
+Em `types.ts`, `HoldParams` ganha dois campos:
+
+```ts
+  /** Teto de velocidade da faixa, em fracao de barra por ms. Sem ele a
+      aceleracao acumula sem limite e so da para tocar, nunca segurar. */
+  maxSpeed: number;
+  /** Carencia: quanto tempo a barra pode ficar zerada antes de o peixe ir
+      embora. Zerar deixa de ser perda imediata e vira "esta escapando". */
+  graceMs: number;
+```
+
+Em `engines/hold.ts`, `HoldState` ganha o contador:
+
+```ts
+  /** Milissegundos acumulados com a barra em zero. Volta a zero assim que o
+      progresso sobe: recuperou, recuperou de verdade. */
+  msAtZero: number;
+```
+
+`startHold` inicializa `msAtZero: 0`.
+
+Em `stepHold`, prenda a velocidade logo depois de integrá-la:
+
+```ts
+  const accel = holding ? params.lift : -params.gravity;
+  let bandVel = state.bandVel + accel * dtMs;
+  bandVel = Math.min(params.maxSpeed, Math.max(-params.maxSpeed, bandVel));
+  let bandPos = state.bandPos + bandVel * dtMs;
+```
+
+E troque o desfecho por:
+
+```ts
+  const msTotal = state.msTotal + dtMs;
+  const msInside = state.msInside + (inside ? dtMs : 0);
+  const msAtZero = progress <= 0 ? state.msAtZero + dtMs : 0;
+
+  let done: Result | null = null;
+  if (progress >= 1) {
+    done = { caught: true, quality: msTotal > 0 ? msInside / msTotal : 0 };
+  } else if (msAtZero >= params.graceMs) {
+    done = { caught: false, quality: 0 };
+  }
+
+  return {
+    bandPos, bandVel, fishPos, fishTarget, fishWait,
+    progress, msInside, msTotal, msAtZero, done,
+  };
+```
+
+- [ ] **Step 4: Testes do teto e da carência**
+
+Acrescente a `engines/hold.test.ts` (e some `maxSpeed: 0.0009, graceMs: 2000` ao `base` do arquivo):
+
+```ts
+  it('a velocidade da faixa nao passa do teto', () => {
+    let e = startHold(base);
+    for (let i = 0; i < 200; i++) e = stepHold(base, e, 16, true, rnd);
+    expect(Math.abs(e.bandVel)).toBeLessThanOrEqual(base.maxSpeed);
+  });
+
+  it('barra zerada nao perde na hora: comeca a carencia', () => {
+    let e = { ...startHold(base), bandPos: 0.1, fishPos: 0.9, progress: 0.01 };
+    e = stepHold(base, e, 200, false, rnd);
+    expect(e.progress).toBe(0);
+    expect(e.done).toBeNull();
+    expect(e.msAtZero).toBeGreaterThan(0);
+  });
+
+  it('carencia estourada perde o peixe', () => {
+    let e = { ...startHold(base), bandPos: 0.1, fishPos: 0.9, progress: 0.01, msAtZero: 1900 };
+    e = stepHold(base, e, 200, false, rnd);
+    expect(e.done).toEqual({ caught: false, quality: 0 });
+  });
+
+  it('recuperar zera a carencia', () => {
+    let e = { ...startHold(base), bandPos: 0.5, fishPos: 0.5, progress: 0, msAtZero: 1500 };
+    e = stepHold(base, e, 20, false, rnd);
+    expect(e.progress).toBeGreaterThan(0);
+    expect(e.msAtZero).toBe(0);
+  });
+```
+
+Run: `pnpm vitest run src/islands/fishing/engines/hold.test.ts`
+Expected: PASS.
+
+- [ ] **Step 5: A tela mostra a carência**
+
+Carência invisível não serve de nada: a pessoa precisa saber que ainda dá tempo. Em `views/HoldView.css`:
+
+```css
+/* Barra de fuga: so aparece quando o progresso zerou. Cor de perigo E forma
+   propria (borda grossa), porque cor sozinha nao pode carregar o aviso. */
+.hold-escape {
+  position: relative;
+  width: 12px;
+  border: 2px solid var(--fishing-danger);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.hold-escape-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--fishing-danger);
+}
+```
+
+Em `views/HoldView.tsx`, junto do medidor:
+
+```tsx
+{state.msAtZero > 0 && (
+  <div class="hold-escape" role="presentation">
+    <div
+      class="hold-escape-fill"
+      style={{ height: `${Math.max(0, 1 - state.msAtZero / params.graceMs) * 100}%` }}
+    />
+  </div>
+)}
+```
+
+Esta barra **não** é congelada em `prefers-reduced-motion`: ela carrega tempo restante, que é informação essencial, não enfeite.
+
+- [ ] **Step 6: A tabela vira matriz de motor × dificuldade**
+
+Hoje cada peixe tem parâmetros escolhidos a esmo. A regra do dono é que o raso ensine: **cada motor aparece em cada faixa**, do fácil ao difícil. Três motores × três faixas = nove peixes, encaixe exato.
+
+`types.ts`: `Fish` ganha `tier: 1 | 2 | 3`.
+
+Reescreva `fish.ts` mantendo os ids `p1`…`p9` (as traduções já existem e não mudam):
+
+```ts
+export const FISH: Fish[] = [
+  // ---- Faixa 1, o raso que ensina. Margem generosa nos tres motores.
+  { id: 'p1', tier: 1, color: 'var(--fishing-fish-a)', sizeMin: 12, sizeMax: 34,
+    engine: 'track',
+    params: { path: 'pendulo', periodMs: 2600, zones: [{ pos: 0.5, size: 0.30 }], hits: 1, alternates: false, tolerance: null } },
+  { id: 'p2', tier: 1, color: 'var(--fishing-fish-b)', sizeMin: 18, sizeMax: 46,
+    engine: 'hold',
+    params: { bandHeight: 0.30, gravity: 0.000003, lift: 0.000008, maxSpeed: 0.0007, pattern: 'calmo', fishSpeed: 0.00020, fillRate: 0.0006, drainRate: 0.0003, graceMs: 2500 } },
+  { id: 'p3', tier: 1, color: 'var(--fishing-fish-c)', sizeMin: 22, sizeMax: 58,
+    engine: 'dodge',
+    params: { lanes: 2, periodMs: 4000, lapsToCatch: 1, bumpsAllowed: 3,
+      gates: [{ pos: 0.3, open: [0] }, { pos: 0.8, open: [1] }] } },
+
+  // ---- Faixa 2, o meio. Janela menor, mais velocidade, menos perdao.
+  { id: 'p4', tier: 2, color: 'var(--fishing-fish-d)', sizeMin: 15, sizeMax: 40,
+    engine: 'track',
+    params: { path: 'radial', periodMs: 2000, zones: [{ pos: 0.35, size: 0.18 }], hits: 2, alternates: false, tolerance: null } },
+  { id: 'p5', tier: 2, color: 'var(--fishing-fish-e)', sizeMin: 10, sizeMax: 28,
+    engine: 'hold',
+    params: { bandHeight: 0.22, gravity: 0.0000035, lift: 0.000009, maxSpeed: 0.0009, pattern: 'erratico', fishSpeed: 0.00035, fillRate: 0.00055, drainRate: 0.0004, graceMs: 1800 } },
+  { id: 'p6', tier: 2, color: 'var(--fishing-fish-f)', sizeMin: 30, sizeMax: 72,
+    engine: 'dodge',
+    params: { lanes: 2, periodMs: 3200, lapsToCatch: 2, bumpsAllowed: 2,
+      gates: [{ pos: 0.15, open: [0] }, { pos: 0.4, open: [1] }, { pos: 0.65, open: [0] }, { pos: 0.9, open: [1] }] } },
+
+  // ---- Faixa 3, o abissal. Sem perdao.
+  { id: 'p7', tier: 3, color: 'var(--fishing-fish-g)', sizeMin: 26, sizeMax: 65,
+    engine: 'track',
+    params: { path: 'pendulo', periodMs: 1500, zones: [{ pos: 0.2, size: 0.12 }, { pos: 0.8, size: 0.12 }], hits: 3, alternates: true, tolerance: 2 } },
+  { id: 'p8', tier: 3, color: 'var(--fishing-fish-h)', sizeMin: 40, sizeMax: 95,
+    engine: 'hold',
+    params: { bandHeight: 0.16, gravity: 0.0000045, lift: 0.000011, maxSpeed: 0.0012, pattern: 'arisco', fishSpeed: 0.0006, fillRate: 0.0005, drainRate: 0.00055, graceMs: 1200 } },
+  { id: 'p9', tier: 3, color: 'var(--fishing-fish-i)', sizeMin: 55, sizeMax: 130,
+    engine: 'dodge',
+    params: { lanes: 3, periodMs: 2600, lapsToCatch: 2, bumpsAllowed: 0,
+      gates: [{ pos: 0.12, open: [1] }, { pos: 0.3, open: [0, 2] }, { pos: 0.5, open: [2] }, { pos: 0.7, open: [0] }, { pos: 0.88, open: [1, 2] }] } },
+];
+```
+
+Em `fish.test.ts`, troque o teste dos quatro caminhos por dois que travam a matriz:
+
+```ts
+  it('cada faixa tem exatamente um peixe de cada engine', () => {
+    for (const tier of [1, 2, 3]) {
+      const engines = FISH.filter((f) => f.tier === tier).map((f) => f.engine).sort();
+      expect(engines).toEqual(['dodge', 'hold', 'track']);
+    }
+  });
+
+  it('so existem os dois caminhos continuos', () => {
+    const paths = FISH.filter((f) => f.engine === 'track').map((f) => (f.params as { path: string }).path);
+    expect(new Set(paths)).toEqual(new Set(['pendulo', 'radial']));
+  });
+```
+
+- [ ] **Step 7: O sorteio começa pelos fáceis**
+
+O v1 não tem mapa, então não existe "raso". Sem isso o sorteio aleatório entrega um abissal no terceiro lance e a curva que a matriz desenha não existe para ser testada.
+
+Em `Fishing.tsx`, dentro de `cast`:
+
+```tsx
+// Sem mapa no v1, a profundidade e simulada pelo caderno: as faixas abrem
+// conforme se pesca. Sem isto a curva de aprendizado da matriz nao aparece.
+const known = Object.keys(log).length;
+const maxTier = known >= 6 ? 3 : known >= 3 ? 2 : 1;
+const pool = FISH.filter((f) => f.tier <= maxTier);
+const fish = pool[Math.floor(Math.random() * pool.length)];
+```
+
+- [ ] **Step 8: Verifique na mão**
+
+```bash
+pnpm test && pnpm build && npx --yes serve@14 dist -l 4330 --no-clipboard
+```
+
+Em `http://localhost:4330/jogo/pesca`:
+
+1. **Nenhum marcador teleporta.** Jogue vários TRACK e confirme que o movimento é contínuo em ambos os caminhos.
+2. **Segurar funciona.** No HOLD, segure espaço: a faixa sobe em velocidade constante e leva mais de um segundo para cruzar a barra. Não deve dar vontade de tocar repetidamente.
+3. **A carência aparece.** Deixe a barra zerar: o peixe **não** some na hora, a barrinha de fuga aparece drenando, e trazer a faixa de volta ao peixe zera a carência e salva.
+4. **Os três primeiros lances são da faixa 1.** Depois de três peixes distintos no caderno, a faixa 2 aparece; depois de seis, a 3.
+5. Repita em `/en/game/fishing`.
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add src/islands/fishing src/styles
+git commit -m "feat(fishing): ajustes do primeiro teste de jogo"
+```
+
 ## Verificação final
 
 - [ ] `pnpm test` verde
@@ -2865,4 +3153,8 @@ git commit -m "feat(pesca): pagina do game, sobreposicao em tela cheia e saida p
 - [ ] Esc e o botao Sair voltam para a pagina, e o foco volta para o botao Jogar
 - [ ] Com a sobreposicao aberta, a pagina de tras nao rola
 - [ ] A pagina do game TEM rodape; as outras 37 tambem
+- [ ] Nenhum marcador teleporta
+- [ ] No HOLD da para SEGURAR o espaco, nao so tocar
+- [ ] Barra zerada entra em carencia e da para recuperar
+- [ ] Os primeiros lances sao da faixa 1
 - [ ] **Dez lances seguidos sem querer parar** — se falhar, o próximo trabalho é afinar parâmetros em `fish.ts`, nunca construir o mundo
