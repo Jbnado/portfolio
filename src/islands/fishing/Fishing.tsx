@@ -84,12 +84,14 @@ export default function Fishing({ texts }: { texts: Texts }) {
       const dialog = overlayRef.current;
       if (!dialog) return;
       // Consultado a cada Tab, nunca cacheado na abertura: o conjunto de
-      // focaveis muda entre fases (o botao de lancar existe em idle/result,
-      // nenhum em playing), entao uma lista presa na abertura prenderia o
-      // foco num elemento que ja nao existe mais. Inclui input: o checkbox
-      // do modo garantido fica de fora de 'a[href], button, [tabindex]' e
-      // sem ele o playing tem um unico match (Sair), o que faz o trap se
-      // fechar em si mesmo antes de alcancar o checkbox.
+      // focaveis muda entre fases (o botao de lancar e o checkbox do modo
+      // garantido existem em idle/result, nenhum em playing — achado I7:
+      // o checkbox some do playing porque o Space que o motor intercepta
+      // globalmente quebrava o toggle por teclado dele), entao uma lista
+      // presa na abertura prenderia o foco num elemento que ja nao existe
+      // mais. Inclui input: o checkbox fica de fora de
+      // 'a[href], button, [tabindex]', e sem esse seletor o trap nao o
+      // alcancaria nas fases em que ele existe.
       const focusable = dialog.querySelectorAll<HTMLElement>(
         'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), [tabindex]:not([tabindex="-1"])',
       );
@@ -218,15 +220,22 @@ export default function Fishing({ texts }: { texts: Texts }) {
           </p>
 
           <div class="fishing-arena">
-            <label class="fishing-option">
-              <input
-                type="checkbox"
-                checked={guaranteed}
-                onChange={(e) => setGuaranteed((e.target as HTMLInputElement).checked)}
-              />
-              <span>{texts.guaranteedMode}</span>
-              <small>{texts.guaranteedModeHelp}</small>
-            </label>
+            {/* So fora do playing (achado I7): os tres motores fazem
+                preventDefault() no keydown de Space na window pra barrar a
+                rolagem da pagina, e isso cancela o keyup que o navegador usa
+                pra ativar um checkbox por teclado. Alcancavel mas inerte
+                dentro da partida, entao ele so aparece onde funciona. */}
+            {phase.kind !== 'playing' && (
+              <label class="fishing-option">
+                <input
+                  type="checkbox"
+                  checked={guaranteed}
+                  onChange={(e) => setGuaranteed((e.target as HTMLInputElement).checked)}
+                />
+                <span>{texts.guaranteedMode}</span>
+                <small>{texts.guaranteedModeHelp}</small>
+              </label>
+            )}
 
             {phase.kind === 'idle' && (
               <button class="fishing-button" ref={castBtnRef} onClick={cast}>
