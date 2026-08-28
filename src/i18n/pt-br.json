@@ -167,5 +167,28 @@
   "a11y": {
     "externalLink": "Abre em nova janela",
     "mobileNav": "Menu de navegação"
+  },
+  "jogo": {
+    "titulo": "Pesca",
+    "descricao": "Um jogo de pesca dentro do portfólio. Uma tela, três minigames, nove peixes.",
+    "lancar": "Lançar a linha",
+    "instrucao": {
+      "trajeto": "Espaço quando o marcador cruzar a zona.",
+      "sustentacao": "Segure espaço para subir. Mantenha o peixe dentro da faixa.",
+      "dragagem": "Espaço troca de pista. Passe pelas brechas."
+    },
+    "fisgou": "Fisgou",
+    "escapou": "Escapou",
+    "caderno": "Caderno de espécimes",
+    "cadernoVazio": "Nenhum peixe registrado ainda.",
+    "vezes": "vezes",
+    "maior": "maior",
+    "modoGarantido": "Modo garantido",
+    "modoGarantidoAjuda": "Mais lento, mas sempre pesca.",
+    "peixes": {
+      "p1": "Tainha", "p2": "Robalo", "p3": "Corvina",
+      "p4": "Sardinha", "p5": "Anchova", "p6": "Bagre",
+      "p7": "Cavala", "p8": "Arraia", "p9": "Sombra"
+    }
   }
 }

@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { t } from '../../../i18n/utils';
+import '../../../styles/pesca.css';
+
+const locale = 'en';
+const alternates = {
+  'pt-br': 'https://jbnado.dev/jogo/pesca',
+  en: 'https://jbnado.dev/en/game/fishing',
+  es: 'https://jbnado.dev/es/juego/pesca',
+};
+---
+
+<BaseLayout
+  locale={locale}
+  title={t('jogo.titulo', locale)}
+  description={t('jogo.descricao', locale)}
+  canonical={alternates.en}
+  alternates={alternates}
+>
+  <main class="pesca-palco">
+    <canvas class="pesca-mar" aria-hidden="true"></canvas>
+    <div class="pesca-conteudo">
+      <h1>{t('jogo.titulo', locale)}</h1>
+    </div>
+  </main>
+</BaseLayout>

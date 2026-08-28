@@ -167,5 +167,28 @@
   "a11y": {
     "externalLink": "Abre en nueva ventana",
     "mobileNav": "Menú de navegación"
+  },
+  "jogo": {
+    "titulo": "Pesca",
+    "descricao": "Un juego de pesca dentro del portfolio. Una pantalla, tres minijuegos, nueve peces.",
+    "lancar": "Lanzar la línea",
+    "instrucao": {
+      "trajeto": "Espacio cuando el marcador cruce la zona.",
+      "sustentacao": "Mantén espacio para subir. Conserva el pez dentro de la franja.",
+      "dragagem": "Espacio cambia de carril. Pasa por los huecos."
+    },
+    "fisgou": "Picó",
+    "escapou": "Se escapó",
+    "caderno": "Cuaderno de especímenes",
+    "cadernoVazio": "Aún no hay peces registrados.",
+    "vezes": "veces",
+    "maior": "mayor",
+    "modoGarantido": "Modo garantizado",
+    "modoGarantidoAjuda": "Más lento, pero siempre pesca.",
+    "peixes": {
+      "p1": "Lisa", "p2": "Róbalo", "p3": "Corvina",
+      "p4": "Sardina", "p5": "Anchoa", "p6": "Bagre",
+      "p7": "Caballa", "p8": "Raya", "p9": "Sombra"
+    }
   }
 }
