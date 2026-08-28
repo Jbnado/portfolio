@@ -1,0 +1,42 @@
+.hold { display: flex; gap: 12px; align-items: stretch; height: 240px; }
+
+.hold-bar {
+  position: relative;
+  width: 44px;
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.hold-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: color-mix(in srgb, var(--fishing-zone) 30%, transparent);
+  border-top: 2px dashed var(--fishing-zone);
+  border-bottom: 2px dashed var(--fishing-zone);
+}
+
+.hold-fish {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+.hold-meter {
+  position: relative;
+  width: 12px;
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.hold-meter-fill {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: var(--fishing-zone);
+}

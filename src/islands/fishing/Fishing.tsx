@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'preact/hooks';
 import { FISH, sizeOf } from './fish';
-import type { Fish, TrackParams, Result } from './types';
+import type { Fish, TrackParams, HoldParams, Result } from './types';
 import { TrackView } from './views/TrackView';
+import { HoldView } from './views/HoldView';
 import {
   loadLog,
   saveLog,
@@ -38,10 +39,12 @@ export default function Fishing({ texts }: { texts: Texts }) {
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
   const [log, setLog] = useState<Log>(() => validLog(loadLog()));
 
-  // No v1 so os cinco peixes de TRAJETO entram no sorteio. As tarefas 8 e 9
-  // liberam os outros quatro ao adicionarem as cascas que faltam.
+  // Agora TRACK e HOLD entram no sorteio. A tarefa 9 libera DODGE ao
+  // adicionar a casca que falta.
   const cast = useCallback(() => {
-    const pool = FISH.filter((p) => p.engine === 'track');
+    const pool = FISH.filter(
+      (p) => p.engine === 'track' || p.engine === 'hold',
+    );
     const fish = pool[Math.floor(Math.random() * pool.length)];
     setPhase({ kind: 'playing', fish });
   }, []);
@@ -68,10 +71,19 @@ export default function Fishing({ texts }: { texts: Texts }) {
       {phase.kind === 'playing' && (
         <>
           <p class="fishing-prompt">{texts.instruction[phase.fish.engine]}</p>
-          <TrackView
-            params={phase.fish.params as TrackParams}
-            onDone={onDone(phase.fish)}
-          />
+          {phase.fish.engine === 'track' && (
+            <TrackView
+              params={phase.fish.params as TrackParams}
+              onDone={onDone(phase.fish)}
+            />
+          )}
+          {phase.fish.engine === 'hold' && (
+            <HoldView
+              params={phase.fish.params as HoldParams}
+              color={phase.fish.color}
+              onDone={onDone(phase.fish)}
+            />
+          )}
         </>
       )}
 
