@@ -1411,3 +1411,19 @@ button,
 }
 
 .dark .post-author-avatar { box-shadow: 0 0 12px rgba(97, 255, 202, 0.25); }
+
+/* A evidencia senta ao lado da alegacao: a palavra que afirma o game e o link
+   para ele. Sublinhado ancorado no texto, nunca no rodape da caixa. Fica em
+   global.css (nao em fishing.css) porque o link mora na home, e a home nao
+   carrega a folha do jogo. */
+.fishing-bait {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.fishing-bait:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

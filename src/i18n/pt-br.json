@@ -17,6 +17,9 @@
     "role": "Fullstack Developer",
     "name": "João Bernardo",
     "description": "Fullstack developer em Ribeirão Preto. Construo APIs, interfaces e às vezes jogos.",
+    "descricaoAntes": "Fullstack developer em Ribeirão Preto. Construo APIs, interfaces e às vezes ",
+    "descricaoLink": "jogos",
+    "descricaoDepois": ".",
     "ctaProjects": "Ver projetos",
     "ctaContact": "Fala comigo",
     "panelLabel": "TRAJETÓRIA",
@@ -31,6 +34,9 @@
   "about": {
     "title": "Sobre Mim",
     "intro": "Sou um developer fullstack com 5 anos de experiência construindo aplicações web que fazem a diferença. Já passei por empresas de marketing (Authorify, EUA), e-commerce B2B (Take) e fintech (Verzel). Tudo começou pelos games. Eu amava jogar e sempre quis entender como eram feitos, então fui parar em Análise e Desenvolvimento de Sistemas e me apaixonei pela programação e por esse mundo da tecnologia. Aquela curiosidade de desmontar as coisas pra ver como funcionam virou paixão por criar soluções completas, do backend ao pixel final.",
+    "introAntes": "Sou um developer fullstack com 5 anos de experiência construindo aplicações web que fazem a diferença. Já passei por empresas de marketing (Authorify, EUA), e-commerce B2B (Take) e fintech (Verzel). Tudo começou pelos ",
+    "introLink": "games",
+    "introDepois": ". Eu amava jogar e sempre quis entender como eram feitos, então fui parar em Análise e Desenvolvimento de Sistemas e me apaixonei pela programação e por esse mundo da tecnologia. Aquela curiosidade de desmontar as coisas pra ver como funcionam virou paixão por criar soluções completas, do backend ao pixel final.",
     "philosophy": "Acredito que bom software é invisível: carrega rápido, é intuitivo e acessível a todos. Cada linha de código que escrevo tem um propósito — resolver um problema real, não impressionar com complexidade desnecessária.",
     "approach": "A minha abordagem combina visão fullstack com atenção ao detalhe. Trabalho com React no frontend e Java/Python/NestJS no backend, deploy em cloud com AWS e Docker. Fora do código, co-fundei a RP.js — comunidade JavaScript de Ribeirão Preto — e desenvolvi o Ribeirão Noir, um jogo investigativo lançado na Feira do Livro e validado por 3 doutores."
   },
