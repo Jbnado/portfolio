@@ -26,20 +26,28 @@ export function TrackView({ params, onDone }: Props) {
   onDoneRef.current = onDone;
 
   useEffect(() => {
-    // Preact reusa a instancia entre peixes do mesmo motor, entao o estado
-    // TEM que reiniciar aqui. Sem isto o segundo peixe herda o do primeiro e
-    // aparece ja fisgado.
+    // A maquina de fases desmonta esta vista a cada peixe: nao e o Preact
+    // reusando instancia, e o proprio JSX condicional trocando a subarvore
+    // inteira (Fishing.tsx so renderiza a vista dentro de phase.kind ===
+    // 'playing'). O useRef acima ja nasce com o estado certo a cada
+    // montagem; este reset e so redundancia barata, contra o dia em que
+    // essa garantia deixar de valer.
     stateRef.current = startTrack(params);
     setActiveZone(0);
 
     const stepped = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Quantum de tempo do movimento reduzido, nao de posicao (achado I1): o
+    // motor e a tela agora recebem o MESMO tq, entao o que se ve e o que se
+    // julga. Antes so a posicao exibida era arredondada e pressTrack recebia
+    // o tempo cru, e os dois podiam discordar sobre o que era acerto.
+    const stepMs = params.periodMs / STEPS;
+    const quantize = (raw: number) => (stepped ? Math.round(raw / stepMs) * stepMs : raw);
     let raf = 0;
     startRef.current = performance.now();
 
     const loop = (now: number) => {
-      const t = now - startRef.current;
-      const p = positionAt(params, t);
-      setPos(stepped ? Math.round(p * STEPS) / STEPS : p);
+      const t = quantize(now - startRef.current);
+      setPos(positionAt(params, t));
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -47,7 +55,7 @@ export function TrackView({ params, onDone }: Props) {
     const onKey = (ev: KeyboardEvent) => {
       if (ev.code !== 'Space' || ev.repeat) return;
       ev.preventDefault();
-      const t = performance.now() - startRef.current;
+      const t = quantize(performance.now() - startRef.current);
       const next = pressTrack(params, stateRef.current, t);
       stateRef.current = next;
       setActiveZone(next.activeZone);

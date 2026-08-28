@@ -47,6 +47,12 @@ export function stepHold(
   dtMs: number,
   holding: boolean,
   rnd: () => number,
+  /** Passos de degrau do movimento reduzido (achado I1). Quando definido, a
+      posicao do peixe usada para JULGAR "dentro da faixa" e a mesma que a
+      vista desenha — nao uma versao continua escondida por baixo dela. Sem
+      isto a vista podia arredondar so o desenho e o motor julgar outra
+      posicao, discordando do que a tela mostrava. */
+  quantizeSteps: number | null = null,
 ): HoldState {
   if (state.done) return state;
 
@@ -67,9 +73,12 @@ export function stepHold(
   }
   const step = params.fishSpeed * dtMs;
   const delta = fishTarget - state.fishPos;
-  const fishPos = clamp(
+  const fishPosRaw = clamp(
     Math.abs(delta) <= step ? fishTarget : state.fishPos + Math.sign(delta) * step,
   );
+  const fishPos = quantizeSteps
+    ? Math.round(fishPosRaw * quantizeSteps) / quantizeSteps
+    : fishPosRaw;
 
   // Progresso.
   const half = params.bandHeight / 2;

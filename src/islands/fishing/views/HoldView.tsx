@@ -38,12 +38,12 @@ export function HoldView({ params, color, onDone }: Props) {
     const loop = (now: number) => {
       const dt = Math.min(50, now - previous);
       previous = now;
-      current = stepHold(params, current, dt, holdingRef.current, Math.random);
-      setState(
-        stepped
-          ? { ...current, fishPos: Math.round(current.fishPos * STEPS) / STEPS }
-          : current,
-      );
+      // A posicao quantizada agora vem DE DENTRO do motor (achado I1): o
+      // fishPos no estado devolvido ja e o que a tela desenha, entao o que
+      // conta como "dentro da faixa" e exatamente o que o jogador ve, nao
+      // uma posicao continua escondida atras do arredondamento visual.
+      current = stepHold(params, current, dt, holdingRef.current, Math.random, stepped ? STEPS : null);
+      setState(current);
       if (current.done) { onDoneRef.current(current.done); return; }
       raf = requestAnimationFrame(loop);
     };
