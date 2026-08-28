@@ -584,8 +584,10 @@ describe('avancarSustentacao', () => {
   });
 
   it('progresso cheio fisga com qualidade igual ao progresso final', () => {
-    let e = { ...iniciarSustentacao(base), faixaPos: 0.5, peixePos: 0.5, progresso: 0.99 };
-    e = avancarSustentacao(base, e, 200, false, rnd);
+    // dt curto de proposito: em 200ms a gravidade derruba a faixa 0.16 e o
+    // peixe sai dela, entao o passo drenaria em vez de encher.
+    let e = { ...iniciarSustentacao(base), faixaPos: 0.5, peixePos: 0.5, progresso: 0.995 };
+    e = avancarSustentacao(base, e, 20, false, rnd);
     expect(e.terminado?.pego).toBe(true);
     expect(e.terminado!.qualidade).toBeGreaterThan(0);
   });
@@ -793,11 +795,17 @@ describe('avancarDragagem', () => {
   });
 
   it('qualidade cai com as batidas', () => {
-    const limpo = avancarDragagem(base, iniciarDragagem(base), 1100);
-    let sujo = trocarPistaDragagem(base, iniciarDragagem(base));
-    sujo = avancarDragagem(base, sujo, 300);
-    sujo = trocarPistaDragagem(base, sujo); // volta pra pista 0
-    sujo = avancarDragagem(base, sujo, 1100);
+    // Limpo: pista 0 no portao 0.25 (abre [0]), troca, pista 1 no 0.75 (abre [1]).
+    let limpo = iniciarDragagem(base);
+    limpo = avancarDragagem(base, limpo, 300);
+    limpo = trocarPistaDragagem(base, limpo);
+    limpo = avancarDragagem(base, limpo, 1100);
+    expect(limpo.batidas).toBe(0);
+    expect(limpo.terminado?.pego).toBe(true);
+
+    // Sujo: fica na pista 0 a volta toda, entao bate no portao 0.75.
+    const sujo = avancarDragagem(base, iniciarDragagem(base), 1100);
+    expect(sujo.batidas).toBe(1);
     expect(sujo.terminado?.pego).toBe(true);
     expect(sujo.terminado!.qualidade).toBeLessThan(limpo.terminado!.qualidade);
   });
@@ -1465,6 +1473,12 @@ export function TrajetoView({ params, aoTerminar }: Props) {
   fimRef.current = aoTerminar;
 
   useEffect(() => {
+    // Preact reusa a instancia entre peixes do mesmo motor, entao o estado
+    // TEM que reiniciar aqui. Sem isto o segundo peixe herda o do primeiro e
+    // aparece ja fisgado.
+    estadoRef.current = iniciarTrajeto(params);
+    setZonaAtiva(0);
+
     const passos = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let raf = 0;
     inicioRef.current = performance.now();
@@ -1650,21 +1664,48 @@ export default function Pesca({ textos }: { textos: Textos }) {
 
 - [ ] **Step 3: Monte a ilha nas três rotas**
 
-Em `src/pages/jogo/pesca.astro`, substitua o bloco `<div class="pesca-conteudo">` por:
+Reescreva `src/pages/jogo/pesca.astro` **inteiro** — não cole um segundo bloco `---`:
 
 ```astro
 ---
-// adicione ao frontmatter:
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import Pesca from '../../islands/pesca/Pesca';
+import { t } from '../../i18n/utils';
 import ptBr from '../../i18n/pt-br.json';
+import '../../styles/pesca.css';
+
+const locale = 'pt-br';
+const alternates = {
+  'pt-br': 'https://jbnado.dev/jogo/pesca',
+  en: 'https://jbnado.dev/en/game/fishing',
+  es: 'https://jbnado.dev/es/juego/pesca',
+};
 ---
+
+<BaseLayout
+  locale={locale}
+  title={t('jogo.titulo', locale)}
+  description={t('jogo.descricao', locale)}
+  canonical={alternates['pt-br']}
+  alternates={alternates}
+>
+  <main class="pesca-palco">
+    <canvas class="pesca-mar" aria-hidden="true"></canvas>
     <div class="pesca-conteudo">
       <h1>{t('jogo.titulo', locale)}</h1>
       <Pesca client:load textos={ptBr.jogo} />
     </div>
+  </main>
+</BaseLayout>
 ```
 
-Faça o equivalente em `en/game/fishing.astro` (importando `en.json`) e `es/juego/pesca.astro` (importando `es.json`), ajustando os caminhos relativos para `../../../`.
+Em `src/pages/en/game/fishing.astro`, faça a mesma reescrita com `../../../` nos
+cinco imports, `import en from '../../../i18n/en.json';`, `const locale = 'en';`,
+`canonical={alternates.en}` e `textos={en.jogo}`.
+
+Em `src/pages/es/juego/pesca.astro`, idem com `../../../`,
+`import es from '../../../i18n/es.json';`, `const locale = 'es';`,
+`canonical={alternates.es}` e `textos={es.jogo}`.
 
 - [ ] **Step 4: Verifique na mão**
 
@@ -2129,13 +2170,25 @@ export function desmontarMar(): void {
 
 - [ ] **Step 2: Ligue na ilha**
 
-Em `src/islands/pesca/Pesca.tsx`, adicione o import e o efeito:
+Em `src/islands/pesca/Pesca.tsx`:
+
+1. **Não crie um segundo import de `preact/hooks`.** Acrescente `useEffect` ao import que já existe, deixando a linha assim:
 
 ```tsx
-import { useEffect } from 'preact/hooks';
-import { montarMar, desmontarMar } from './mar';
+import { useCallback, useEffect, useState } from 'preact/hooks';
+```
 
-// dentro do componente Pesca:
+2. Adicione o import do módulo do mar junto dos outros:
+
+```tsx
+import { montarMar, desmontarMar } from './mar';
+```
+
+3. Dentro do componente `Pesca`, logo depois dos `useState`, adicione:
+
+```tsx
+// O <canvas> pertence a pagina Astro, nao a ilha, entao a ilha o alcanca por
+// seletor. Efeito de montagem unica: nao ha laco de animacao no v1.
 useEffect(() => {
   const canvas = document.querySelector<HTMLCanvasElement>('.pesca-mar');
   if (canvas) montarMar(canvas);
