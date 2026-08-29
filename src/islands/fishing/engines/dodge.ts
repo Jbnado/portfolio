@@ -112,6 +112,7 @@ export function stepDodge(
   if (state.done) return state;
 
   const dt = Math.max(0, tMs - state.tMs);
+  const ph = (((tMs % params.periodMs) / params.periodMs) + 1) % 1;
   const g = gateAt(params, state.gates, tMs);
   let { visitGate, visitFell, bumps, streakFalls, zeroed, peak, cleanMs } = state;
 
@@ -123,8 +124,13 @@ export function stepDodge(
     visitFell = false;
   }
 
-  const caiu =
-    visitGate !== null && !visitFell && state.gates[visitGate].open !== state.lane;
+  // Cai no MEIO do buraco, nao na borda. Julgar na borda tira do jogador os
+  // 60 a 95ms que ele enxerga como seus — visualmente ele ainda esta na
+  // beirada — e produz o "eu troquei a tempo e cai". A distancia angular pra
+  // FRENTE a partir do centro fica pequena so na segunda metade do vao.
+  const vao = visitGate !== null ? state.gates[visitGate] : null;
+  const passouOMeio = vao ? ((ph - vao.pos + 1) % 1) < vao.width / 2 : false;
+  const caiu = vao !== null && !visitFell && passouOMeio && vao.open !== state.lane;
 
   if (caiu) {
     visitFell = true;

@@ -40,7 +40,7 @@ export const FISH: Fish[] = [
   { id: 'p9', tier: 3, weight: 45, color: 'var(--fishing-fish-i)', sizeMin: 55, sizeMax: 130,
     engine: 'dodge',
     params: { periodMs: 1900, gatesMin: 4, gatesMax: 6, gapMin: 0.06, gapMax: 0.10,
-      holdMs: 8000, penaltyMs: 2500, fallsToLose: 3, zeroesToLose: 2 } },
+      holdMs: 6000, penaltyMs: 2500, fallsToLose: 3, zeroesToLose: 2 } },
 ];
 
 /** Qualidade 0..1 vira tamanho dentro da faixa da especie. */

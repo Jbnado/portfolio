@@ -45,6 +45,12 @@ function laneArcs(gates: Gate[], lane: number, r: number): string[] {
 export function DodgeView({ params, texts, onDone, onMiss }: Props) {
   const [state, setState] = useState<DodgeState>(() => startDodge(params, Math.random));
   const [angle, setAngle] = useState(0);
+  /** Raio DESENHADO do marcador. Ele persegue o raio da pista logica em vez
+      de saltar: trocar de pista mudava o raio inteiro num quadro so, e isso
+      lia como piscada, nao como movimento. A pista logica (state.lane) e que
+      decide o julgamento; esta e so a viagem ate la, curta o bastante para
+      nao virar uma discordancia entre o que se ve e o que se julga. */
+  const [drawR, setDrawR] = useState(BASE_RADIUS);
   const stateRef = useRef(state);
 
   const onDoneRef = useRef(onDone);
@@ -59,14 +65,22 @@ export function DodgeView({ params, texts, onDone, onMiss }: Props) {
 
     let raf = 0;
     const start = performance.now();
+    let previous = start;
+    setDrawR(BASE_RADIUS);
 
     const loop = (now: number) => {
       const t = now - start;
+      const dt = Math.min(50, now - previous);
+      previous = now;
       const next = stepDodge(params, stateRef.current, t);
       if (next.bumps > stateRef.current.bumps) onMissRef.current();
       stateRef.current = next;
       setState(next);
       setAngle((t % params.periodMs) / params.periodMs);
+      const alvo = BASE_RADIUS + next.lane * RADIUS_STEP;
+      // dt ja vem limitado a 50ms, entao dt/90 nunca passa de 0.56: nao precisa
+      // de teto. Perseguicao exponencial, independente da taxa de quadros.
+      setDrawR((r) => r + (alvo - r) * (dt / 90));
       if (next.done) { onDoneRef.current(next.done); return; }
       raf = requestAnimationFrame(loop);
     };
@@ -87,7 +101,7 @@ export function DodgeView({ params, texts, onDone, onMiss }: Props) {
   }, [params]);
 
   const rad = angle * 2 * Math.PI - Math.PI / 2;
-  const radius = BASE_RADIUS + state.lane * RADIUS_STEP;
+  const radius = drawR;
   const pct = Math.min(100, (state.cleanMs / params.holdMs) * 100);
   const segundos = Math.floor(state.cleanMs / 1000);
 
