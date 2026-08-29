@@ -137,6 +137,18 @@ export default function Fishing({ texts }: { texts: Texts }) {
   // Sem mapa no v1, a profundidade e simulada pelo caderno: as faixas abrem
   // conforme se pesca. Sem isto a curva de aprendizado da matriz nao aparece.
   const cast = useCallback(() => {
+    // Atalho de teste, SO em desenvolvimento: ?peixe=p7 forca o sorteio, para
+    // dar pra provar cada dificuldade sem depender do acaso (o p7 tem peso 1
+    // em 106 na faixa 3, ~1% por lance). Em producao o Vite substitui
+    // import.meta.env.DEV por false e o ramo inteiro sai do bundle.
+    if (import.meta.env.DEV) {
+      const id = new URLSearchParams(location.search).get('peixe');
+      const forced = id ? FISH.find((f) => f.id === id) : undefined;
+      if (forced) {
+        setPhase({ kind: 'playing', fish: guaranteed ? guaranteedFish(forced) : forced });
+        return;
+      }
+    }
     const known = Object.keys(log).length;
     const maxTier = known >= 6 ? 3 : known >= 3 ? 2 : 1;
     const pool = FISH.filter((f) => f.tier <= maxTier);
