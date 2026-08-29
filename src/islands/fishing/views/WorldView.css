@@ -1,115 +1,202 @@
 /* Blockout do lago. Tudo quadrado de proposito: o que se julga aqui e o
-   ARRANJO — onde fica a loja, quanto se anda, como o minigame cobre a cena —
-   e nao a arte, que ainda nao existe. */
+   ARRANJO e a INTERACAO, nao a arte, que ainda nao existe. */
 
-/* No desktop o lago pode ser grande: estamos num monitor, nao num selo. O
-   teto por altura (133vh) existe porque a proporcao e 16/7 — sem ele, telas
-   baixas e largas cortariam a cena. */
 .world {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  max-width: min(96vw, 1080px, 133vh);
+  /* No desktop o lago pode ser grande: estamos num monitor, nao num selo. O
+     teto por altura existe porque a proporcao e 16/7 — sem ele, telas baixas
+     e largas cortariam a cena. */
+  max-width: min(96vw, 1080px, 128vh);
 }
 
+/* A caixa do tutorial ancora aqui dentro. */
 .world-view {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 7;
   overflow: hidden;
   border: 2px solid var(--fishing-rule);
-  border-radius: 4px;
+  border-radius: 6px;
   background: var(--fishing-surface);
 }
 
-/* Ceu e agua precisam se separar do fundo da PAGINA, senao a moldura fica
-   boiando no nada. */
 .world-sky {
   position: absolute;
   inset: 0 0 62% 0;
   background: color-mix(in srgb, var(--fishing-rule) 12%, transparent);
 }
 
-/* Fundo mais escuro para a direita. Nao da pra ver o fundo do lago: a cor e
-   o unico aviso de profundidade, e por isso ela vem acompanhada do rotulo no
-   HUD — cor sozinha nao pode carregar informacao. */
 .world-water { position: absolute; top: 38%; bottom: 0; }
 .world-water[data-depth='raso'] { background: color-mix(in srgb, var(--fishing-zone) 26%, transparent); }
 .world-water[data-depth='medio'] { background: color-mix(in srgb, var(--fishing-zone) 48%, transparent); }
 .world-water[data-depth='abissal'] { background: color-mix(in srgb, var(--fishing-zone) 72%, transparent); }
 
-/* Terra, nao agua translucida: a margem sobe acima da linha d'agua e e
-   solida, senao ela se le como mais uma faixa de profundidade. */
-.world-shore {
+/* Agua fora do alcance da linha: hachurada e apagada. A trava tem que se VER
+   na cena — se so o aviso dissesse, andar ate la e nao achar nada pareceria
+   defeito. */
+.world-water[data-locked='true'] {
+  opacity: 0.3;
+  background-image: repeating-linear-gradient(
+    45deg, transparent 0 6px, var(--fishing-rule) 6px 8px
+  );
+}
+
+/* Terra, nao agua translucida: a margem sobe acima da linha d'agua. */
+.world-shore { position: absolute; top: 30%; bottom: 0; background: var(--fishing-rule); }
+
+/* ---- Alvos clicaveis.
+
+   Loja e marcas sao <button> de verdade: mouse, toque e teclado chegam nos
+   mesmos alvos. `cursor: pointer` e o anel pulsante sao a pista de que ali se
+   clica — sem eles a cena parece um desenho, nao um controle. */
+.world-hot {
   position: absolute;
-  top: 30%;
-  bottom: 0;
-  background: var(--fishing-rule);
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.world-hot:focus-visible {
+  outline: 3px solid var(--fishing-marker);
+  outline-offset: 3px;
 }
 
 .world-shop {
-  position: absolute;
   top: 12%;
   height: 20%;
   transform: translateX(-50%);
   background: var(--fishing-marker);
   border: 2px solid var(--fishing-rule);
+  border-radius: 3px;
 }
-.world-shop[data-near='true'] { outline: 3px solid var(--fishing-marker); outline-offset: 3px; }
 
-/* A marca fina sobre a agua. Fica na linha do casco, entao "estar em cima"
-   se le pela sobreposicao, nao por um numero. */
-.world-spot {
+.world-shop[data-near='true'] { outline: 3px solid var(--fishing-marker); outline-offset: 3px; }
+.world-shop:hover { filter: brightness(1.15); }
+
+/* Rotulo da loja: o unico texto dentro da cena, porque um quadrado colorido
+   sozinho nao diz que ali se compra. */
+.world-tag {
   position: absolute;
-  top: 36%;
-  height: 5%;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--color-text-primary);
+}
+
+.world-spot {
+  top: 33%;
+  height: 10%;
   transform: translateX(-50%);
   background: var(--fishing-rule);
+  border-radius: 2px;
 }
-.world-spot[data-here='true'] { background: var(--fishing-marker); height: 7%; top: 35%; }
+
+.world-spot[data-here='true'] { background: var(--fishing-marker); }
+.world-spot:hover { background: var(--fishing-marker); }
+
+/* Anel pulsante sobre cada marca: e ele que ensina, sem texto, que dali se
+   pode clicar. Some com movimento reduzido — o aviso vira estatico. */
+.world-ping {
+  position: absolute;
+  inset: -8px -6px;
+  border: 2px solid var(--fishing-marker);
+  border-radius: 6px;
+  animation: world-ping 2s ease-out infinite;
+  pointer-events: none;
+}
+
+/* O anel NUNCA some de todo. A versao anterior ia a opacidade zero em 75%
+   do ciclo, entao a pista de "da pra clicar" ficava invisivel a maior parte
+   do tempo — uma dica que so aparece as vezes nao ensina ninguem. */
+@keyframes world-ping {
+  0%, 100% { transform: scale(0.92); opacity: 0.55; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+
+/* Passar o ponteiro por cima trava o anel e o acende: o alvo confirma que
+   entendeu o mouse antes mesmo do clique. */
+.world-hot:hover .world-ping { animation: none; opacity: 1; transform: scale(1.1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .world-ping { animation: none; opacity: 0.9; }
+}
 
 .world-boat {
   position: absolute;
-  top: 24%;
+  top: 20%;
   height: 15%;
   transform: translateX(-50%);
   background: var(--fishing-marker);
   border: 2px solid var(--fishing-rule);
+  border-radius: 3px;
+  /* Some do caminho do clique: quem clica quer a marca, nao o barco. */
+  pointer-events: none;
 }
 
 .world-hud {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   align-items: baseline;
+  flex-wrap: wrap;
+  margin: 0;
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 .world-depth { font-weight: 700; }
 .world-hint { opacity: 0.85; }
 
-/* ---- Controles de toque.
+/* Retrato e o formato pedido. Em paisagem baixa a cena nao cabe junto dos
+   controles, entao em vez de espremer, pedimos para girar. */
+.world-turn {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+  font-family: var(--font-mono);
+  background: var(--color-bg-primary);
+}
 
-   Ficam sempre no DOM e somem onde ha ponteiro fino E tela larga — ou seja,
-   no desktop. Em celular, tablet ou janela estreita eles aparecem, porque sem
-   eles o jogo nao tem entrada nenhuma: tudo dependia de tecla. */
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 520px) {
+  .world-turn { display: flex; }
+}
+
+/* ---- Barra de acao.
+
+   NAO e "controle de toque": e a interface de mouse tambem, e por isso fica
+   sempre visivel. Quem chega com ponteiro precisa VER onde clicar; esconder
+   os botoes no desktop deixava o jogo com cara de nao ter controles. */
 .world-pad {
   display: flex;
   align-items: stretch;
   gap: 10px;
   width: 100%;
+  max-width: min(96vw, 1080px, 128vh);
 }
 
-.world-pad-move { display: flex; gap: 10px; }
+.world-pad-move { display: flex; gap: 8px; }
 
 .world-pad-btn,
 .world-pad-act {
   /* 48px e o alvo de toque confortavel; abaixo disso erra-se o botao. */
   min-height: 48px;
   min-width: 48px;
-  padding: 0 14px;
+  padding: 0 16px;
   font-family: var(--font-mono);
   font-size: 0.8rem;
   letter-spacing: 0.06em;
@@ -123,41 +210,35 @@
   user-select: none;
 }
 
-.world-pad-act { flex: 1; font-weight: 700; }
+.world-pad-act {
+  flex: 1;
+  font-weight: 700;
+  background: var(--fishing-marker);
+  color: var(--color-bg-primary);
+  border-color: var(--fishing-marker);
+}
+
+/* Desabilitado se le pela FORMA, nao so pela cor: fica vazado, como os outros
+   botoes, em vez de preenchido. */
+.world-pad-act:disabled {
+  background: var(--fishing-surface);
+  color: var(--color-text-primary);
+  border-color: var(--fishing-rule);
+  opacity: 0.55;
+  cursor: default;
+}
+
+.world-pad-log { white-space: nowrap; }
+
+.world-pad-btn:not(:disabled):hover,
+.world-pad-act:not(:disabled):hover { filter: brightness(1.12); }
 
 .world-pad-btn:active,
-.world-pad-act:active { background: var(--fishing-zone); }
+.world-pad-act:not(:disabled):active { transform: translateY(1px); }
 
-@media (pointer: fine) and (min-width: 721px) {
-  .world-pad { display: none; }
-}
+.world-pad-btn:focus-visible,
+.world-pad-act:focus-visible { outline: 3px solid var(--fishing-marker); outline-offset: 2px; }
 
-/* Retrato e o formato pedido. Em paisagem estreita a cena nao cabe junto dos
-   controles, entao em vez de espremer, pedimos para girar. */
-.world-turn {
-  display: none;
-  position: absolute;
-  inset: 0;
-  z-index: 9;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  text-align: center;
-  font-family: var(--font-mono);
-  background: var(--color-bg-primary);
-}
-
-@media (pointer: coarse) and (orientation: landscape) and (max-height: 520px) {
-  .world-turn { display: flex; }
-}
-
-/* Agua fora do alcance da linha: hachurada e apagada. A trava tem que se VER
-   na cena — se so o aviso dissesse, apertar sem poder pareceria defeito. */
-.world-water[data-locked='true'] {
-  opacity: 0.35;
-  background-image: repeating-linear-gradient(
-    45deg,
-    transparent 0 6px,
-    var(--fishing-rule) 6px 8px
-  );
+@media (max-width: 520px) {
+  .world-pad-btn, .world-pad-act { padding: 0 10px; font-size: 0.72rem; }
 }

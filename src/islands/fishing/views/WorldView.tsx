@@ -1,3 +1,4 @@
+import type preact from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import {
   SPOTS, SHOP_X, SHORE_TO, BOAT_START, REACH, WORLD_MAX, TIER_BY_DEPTH,
@@ -10,8 +11,6 @@ import './WorldView.css';
     mapa que, de proposito, e pequeno. */
 const VIEW_W = 44;
 
-/** Blocos de fundo, em unidades de mundo. Espelham world.ts de proposito:
-    aqui e so desenho, la e a regra. */
 const BANDS: { depth: Depth; from: number; to: number }[] = [
   { depth: 'raso', from: SHORE_TO, to: 44 },
   { depth: 'medio', from: 44, to: 72 },
@@ -20,24 +19,30 @@ const BANDS: { depth: Depth; from: number; to: number }[] = [
 
 type Props = {
   boat: number;
-  /** Ate que faixa a linha equipada alcanca. O que passa disso e desenhado
-      como fechado: a regra tem que se ver na cena, nao so no aviso. */
   reach: 1 | 2 | 3;
+  /** Clicar no mundo navega ate la. E o que torna o jogo jogavel so com o
+      mouse — antes o ponteiro nao fazia nada dentro da cena. */
+  onSailTo: (x: number) => void;
   texts: {
     shop: string; cast: string; noSpot: string; needLine: string;
-    turnPhone: string; depth: Record<string, string>;
+    clickHint: string; turnPhone: string; depth: Record<string, string>;
   };
+  /** A caixa de fala do tutorial entra AQUI DENTRO, sobre a cena — e a
+      convencao de novel, e faz a fala pertencer ao lago em vez de ficar
+      solta no rodape da pagina. */
+  children?: preact.ComponentChildren;
 };
 
-export function WorldView({ boat, reach, texts }: Props) {
+export function WorldView({ boat, reach, onSailTo, texts, children }: Props) {
   const cam = cameraAt(boat, VIEW_W);
-  /** Unidade de mundo -> porcentagem da tela. */
   const sx = (x: number) => ((x - cam) / VIEW_W) * 100;
 
   const spot = spotUnder(boat);
   const naLoja = atShop(boat);
   const fundo = depthAt(boat);
   const podePescar = TIER_BY_DEPTH[fundo] <= reach;
+
+  const visiveis = SPOTS.filter((s) => TIER_BY_DEPTH[depthAt(s.x)] <= reach);
 
   return (
     <div class="world">
@@ -54,24 +59,36 @@ export function WorldView({ boat, reach, texts }: Props) {
           />
         ))}
 
-        {/* A margem esquerda, com a loja. Quadrado mesmo. */}
         <div class="world-shore" style={{ left: `${sx(0)}%`, width: `${(SHORE_TO / VIEW_W) * 100}%` }} />
-        <div
-          class="world-shop"
+
+        {/* Loja e marcas sao BOTOES de verdade: clicaveis com mouse, focaveis
+            por teclado, e com o mesmo destino do teclado. Um alvo que so o
+            teclado alcanca nao existe para metade das pessoas. */}
+        <button
+          type="button"
+          class="world-hot world-shop"
           data-near={String(naLoja)}
           style={{ left: `${sx(SHOP_X)}%`, width: `${(5 / VIEW_W) * 100}%` }}
-        />
+          onClick={() => onSailTo(SHOP_X)}
+          aria-label={texts.shop}
+        >
+          <span class="world-tag" aria-hidden="true">{texts.shop}</span>
+        </button>
 
-        {/* Pontos de pesca: a marca fina sobre a agua. Marca fora do alcance
-            da linha NAO e desenhada — mostrar um ponto que nao da pra usar so
-            convida a tentar. A agua hachurada ja diz que ali tem mais lago. */}
-        {SPOTS.filter((s) => TIER_BY_DEPTH[depthAt(s.x)] <= reach).map((s) => (
-          <div
+        {visiveis.map((s) => (
+          <button
+            type="button"
             key={s.id}
-            class="world-spot"
+            class="world-hot world-spot"
             data-here={String(spot?.id === s.id)}
             style={{ left: `${sx(s.x)}%`, width: `${((REACH * 2) / VIEW_W) * 100}%` }}
-          />
+            onClick={() => onSailTo(s.x)}
+            aria-label={texts.cast}
+          >
+            {/* Anel pulsante: a pista de que da para clicar. Sem ele nada na
+                cena se anuncia como interativo. */}
+            <span class="world-ping" aria-hidden="true" />
+          </button>
         ))}
 
         <div
@@ -79,84 +96,38 @@ export function WorldView({ boat, reach, texts }: Props) {
           style={{ left: `${sx(boat)}%`, width: `${((REACH * 1.7) / VIEW_W) * 100}%` }}
         />
 
-        {/* Retrato e o formato pedido. Em paisagem baixa a cena nao cabe junto
-            dos controles, entao em vez de espremer, pedimos para girar. Quem
-            decide se isto aparece e o CSS, nao o JS: e questao de viewport. */}
         <p class="world-turn">{texts.turnPhone}</p>
+
+        {children}
       </div>
 
       <p class="world-hud">
         <span class="world-depth" data-depth={fundo}>{texts.depth[fundo]}</span>
         <span class="world-hint">
-          {naLoja ? texts.shop : !podePescar ? texts.needLine : spot ? texts.cast : texts.noSpot}
+          {naLoja ? texts.shop : !podePescar ? texts.needLine : spot ? texts.cast : texts.clickHint}
         </span>
       </p>
     </div>
   );
 }
 
-/** Andar e um estado continuo, nao um evento por tecla: segurar a seta move.
-    Fica aqui e nao na casca porque e a unica coisa da navegacao que precisa
-    de laco de quadro.
+/** Controles sempre visiveis. Nao sao "controles de toque": sao a interface
+    de MOUSE tambem. Quem chega com ponteiro precisa ver onde clicar, e uma
+    fileira de botoes e a resposta mais direta.
 
-    Devolve a posicao do barco E o comando de direcao, porque no celular nao
-    ha tecla nenhuma: o mesmo laco precisa aceitar dedo tambem. */
-export function useBoat(active: boolean): { boat: number; setDir: (d: number) => void } {
-  const [boat, setBoat] = useState(BOAT_START);
-  const dirRef = useRef(0);
-
-  useEffect(() => {
-    if (!active) { dirRef.current = 0; return; }
-
-    const dirOf = (code: string) =>
-      code === 'ArrowRight' || code === 'KeyD' ? 1 : code === 'ArrowLeft' || code === 'KeyA' ? -1 : 0;
-
-    const down = (ev: KeyboardEvent) => {
-      const d = dirOf(ev.code);
-      if (d) { ev.preventDefault(); dirRef.current = d; }
-    };
-    const up = (ev: KeyboardEvent) => {
-      // So zera se a tecla solta e a que esta mandando: soltar a esquerda
-      // enquanto a direita esta pressionada nao pode parar o barco.
-      if (dirOf(ev.code) === dirRef.current) dirRef.current = 0;
-    };
-    window.addEventListener('keydown', down);
-    window.addEventListener('keyup', up);
-
-    let raf = 0;
-    let previous = performance.now();
-    const loop = (now: number) => {
-      const dt = Math.min(50, now - previous);
-      previous = now;
-      if (dirRef.current) setBoat((x) => moveBoat(x, dirRef.current, dt));
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener('keydown', down);
-      window.removeEventListener('keyup', up);
-    };
-  }, [active]);
-
-  const setDir = useCallback((d: number) => { dirRef.current = d; }, []);
-  return { boat, setDir };
-}
-
-/** Controles de toque. No celular nao existe tecla, entao sem isto o jogo e
-    simplesmente injogavel — nao da nem para mover o barco. Ficam sempre no
-    DOM e o CSS os esconde onde ha ponteiro fino e tela larga. */
-export function WorldPad({ setDir, onAct, onLog, actLabel, logLabel }: {
+    A pokedex mora aqui, com contador, porque colecao escondida atras de uma
+    tecla nao existe para quem nao adivinha a tecla. */
+export function WorldPad({ setDir, onAct, onLog, actLabel, actEnabled, logLabel }: {
   setDir: (d: number) => void;
   onAct: () => void;
   onLog: () => void;
   actLabel: string;
+  actEnabled: boolean;
   logLabel: string;
 }) {
   // Segurar move; soltar para. `onPointerUp` no proprio botao nao basta: se o
-  // dedo escorregar para fora antes de soltar, o botao nunca ve o evento e o
-  // barco fica andando sozinho. Por isso a soltura tambem escuta na janela.
+  // ponteiro escorregar para fora antes de soltar, o botao nunca ve o evento
+  // e o barco fica andando sozinho. Por isso a soltura escuta na janela.
   const segura = (d: number) => (ev: PointerEvent) => {
     ev.preventDefault();
     setDir(d);
@@ -175,8 +146,73 @@ export function WorldPad({ setDir, onAct, onLog, actLabel, logLabel }: {
         <button type="button" class="world-pad-btn" aria-label="←" onPointerDown={segura(-1)}>&#9664;</button>
         <button type="button" class="world-pad-btn" aria-label="→" onPointerDown={segura(1)}>&#9654;</button>
       </div>
-      <button type="button" class="world-pad-act" onClick={onAct}>{actLabel}</button>
-      <button type="button" class="world-pad-btn" onClick={onLog}>{logLabel}</button>
+      <button type="button" class="world-pad-act" onClick={onAct} disabled={!actEnabled}>
+        {actLabel}
+      </button>
+      <button type="button" class="world-pad-btn world-pad-log" onClick={onLog}>{logLabel}</button>
     </div>
   );
+}
+
+/** Andar e um estado continuo: segurar a seta move. Devolve tambem `sailTo`,
+    para o clique no mundo navegar sozinho ate o destino — e `setDir`, para o
+    dedo e a tecla. Tres entradas, um laco so. */
+export function useBoat(active: boolean): {
+  boat: number;
+  setDir: (d: number) => void;
+  sailTo: (x: number) => void;
+} {
+  const [boat, setBoat] = useState(BOAT_START);
+  const dirRef = useRef(0);
+  const alvoRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!active) { dirRef.current = 0; alvoRef.current = null; return; }
+
+    const dirOf = (code: string) =>
+      code === 'ArrowRight' || code === 'KeyD' ? 1 : code === 'ArrowLeft' || code === 'KeyA' ? -1 : 0;
+
+    const down = (ev: KeyboardEvent) => {
+      const d = dirOf(ev.code);
+      // Mexer na mao CANCELA o destino: quem pegou o leme quer o leme.
+      if (d) { ev.preventDefault(); dirRef.current = d; alvoRef.current = null; }
+    };
+    const up = (ev: KeyboardEvent) => {
+      if (dirOf(ev.code) === dirRef.current) dirRef.current = 0;
+    };
+    window.addEventListener('keydown', down);
+    window.addEventListener('keyup', up);
+
+    let raf = 0;
+    let previous = performance.now();
+    const loop = (now: number) => {
+      const dt = Math.min(50, now - previous);
+      previous = now;
+      setBoat((x) => {
+        if (dirRef.current) return moveBoat(x, dirRef.current, dt);
+        const alvo = alvoRef.current;
+        if (alvo === null) return x;
+        const falta = alvo - x;
+        // Chegou: para no ponto exato em vez de oscilar em volta dele.
+        if (Math.abs(falta) < 0.6) { alvoRef.current = null; return alvo; }
+        return moveBoat(x, Math.sign(falta), dt);
+      });
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+    };
+  }, [active]);
+
+  const setDir = useCallback((d: number) => {
+    dirRef.current = d;
+    if (d) alvoRef.current = null;
+  }, []);
+  const sailTo = useCallback((x: number) => { alvoRef.current = x; }, []);
+
+  return { boat, setDir, sailTo };
 }

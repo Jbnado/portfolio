@@ -183,6 +183,18 @@
     "exitHelp": "Esc exits too",
     "gameArea": "Game area",
     "howToPlay": "Space does everything: it casts the line and plays each fish's minigame.",
+    "tuto": {
+          "title": "Replay the tutorial",
+          "skip": "Skip",
+          "next": "Continue",
+          "steps": [
+                "This lake has a quirk: freshwater and saltwater fish turn up here out of nowhere. Nobody knows why. That is why we fish here.",
+                "Click a mark on the water and the boat sails to it. Arrow keys work too, if you prefer.",
+                "With the boat over the mark, click CAST. That starts the fight — and from there only the space bar counts.",
+                "Sell the catch at the shore shop. With the coins, buy a better line: it is the line that opens mid water and the abyss.",
+                "The log keeps every species you land. The '???' are the ones still missing. Tight lines."
+          ]
+    },
     "keys": "Arrows move · Space acts · Tab opens the log · Esc closes",
     "close": "Close",
     "depth3": {
@@ -191,6 +203,7 @@
           "3": "Abyss"
     },
     "shop": {
+      "baitLabel": "Bait",
           "title": "Shore shop",
           "coins": "Coins",
           "sell": "Sell the catch",
@@ -207,13 +220,14 @@
           }
     },
     "world": {
+      "clickHint": "Click a mark to sail there",
           "shop": "Shop here",
           "cast": "You can fish here",
           "noSpot": "Sail to a mark on the water",
           "menu": "Tab opens the log",
           "shopShort": "Shop",
           "castShort": "Cast",
-          "noSpotShort": "—",
+          "noSpotShort": "Pick a mark",
           "logShort": "Log",
           "needLine": "Your line is too short for this depth",
           "needLineShort": "No line",

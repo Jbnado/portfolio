@@ -9,6 +9,7 @@ import { weightedPick } from './draw';
 import { WorldView, WorldPad, useBoat } from './views/WorldView';
 import { TIER_BY_DEPTH, DEPTH_BY_TIER, depthAt, spotUnder, atShop } from './world';
 import { ShopView } from './views/ShopView';
+import { TutorialView } from './views/TutorialView';
 import {
   loadProgress, saveProgress, lineReaches, canFish, reachTier, luckOf, addCatch,
   rareWeight, luckyQuality, type Progress,
@@ -42,17 +43,19 @@ type Texts = {
   howToPlay: string;
   keys: string;
   close: string;
+  tuto: { title: string; skip: string; next: string; steps: string[] };
   depth3: Record<string, string>;
   world: {
     shop: string; cast: string; noSpot: string; menu: string;
     shopShort: string; castShort: string; noSpotShort: string; logShort: string;
+    clickHint: string;
     needLine: string; needLineShort: string;
     turnPhone: string;
     depth: Record<string, string>;
   };
   shop: {
     title: string; coins: string; sell: string; nothingToSell: string;
-    line: string; equip: string; equipped: string;
+    line: string; baitLabel: string; equip: string; equipped: string;
     close: string; help: string;
     baitName: Record<string, string>;
   };
@@ -91,11 +94,34 @@ export default function Fishing({ texts }: { texts: Texts }) {
       um `menu` velho. A ref carrega o valor atual sem religar o efeito. */
   const menuRef = useRef(false);
   menuRef.current = menu;
+
+  /** Tutorial: aparece na primeira visita e pode ser rechamado pelo "?" da
+      barra. Guardado a parte do progresso: ja ter visto e sobre a PESSOA,
+      nao sobre a partida. */
+  const [tuto, setTuto] = useState<number | null>(null);
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem('fishing:tuto')) setTuto(0);
+    } catch { /* modo privado */ }
+  }, []);
+  const fecharTuto = useCallback(() => {
+    setTuto(null);
+    try { localStorage.setItem('fishing:tuto', '1'); } catch { /* modo privado */ }
+  }, []);
+  const passoTuto = useCallback(() => {
+    setTuto((i) => {
+      if (i === null) return null;
+      const proximo = i + 1;
+      if (proximo < texts.tuto.steps.length) return proximo;
+      try { localStorage.setItem('fishing:tuto', '1'); } catch { /* modo privado */ }
+      return null;
+    });
+  }, [texts.tuto.steps.length]);
   const [progress, setProgress] = useState<Progress>(() => loadProgress());
 
   const saveAnd = useCallback((p: Progress) => { setProgress(p); saveProgress(p); }, []);
   const onMiss = useCallback(() => setMiss((n) => n + 1), []);
-  const { boat, setDir } = useBoat(playing && phase.kind !== 'playing' && !menu && !shop);
+  const { boat, setDir, sailTo } = useBoat(playing && phase.kind !== 'playing' && !menu && !shop);
   /** A linha equipada decide ate onde da para pescar. Sem ela, o meio e o
       abissal ficam fechados. */
   const podePescar = canFish(progress, depthAt(boat));
@@ -242,12 +268,13 @@ export default function Fishing({ texts }: { texts: Texts }) {
       mesma funcao. Duplicar a regra faria teclado e dedo divergirem na
       primeira mudanca. */
   const act = useCallback(() => {
+    if (tuto !== null) { passoTuto(); return; }
     if (menu) { setMenu(false); return; }
     if (phase.kind === 'result') { setPhase({ kind: 'idle' }); return; }
     if (phase.kind !== 'idle') return;
     if (atShop(boat)) { setShop(true); return; }
     if (spot && podePescar) cast();
-  }, [menu, phase.kind, boat, spot, podePescar, cast]);
+  }, [tuto, passoTuto, menu, phase.kind, boat, spot, podePescar, cast]);
 
   useEffect(() => {
     if (!playing) return;
@@ -328,6 +355,23 @@ export default function Fishing({ texts }: { texts: Texts }) {
               {texts.exit} <small>{texts.exitHelp}</small>
             </button>
 
+            {/* Estado sempre a vista. Moeda escondida faz a economia parecer
+                arbitraria; linha e isca escondidas fazem a trava de
+                profundidade parecer defeito. */}
+            <span class="fishing-stat">{texts.shop.coins}: <strong>{progress.coins}</strong></span>
+            <span class="fishing-stat">
+              {texts.shop.line}: <strong>{progress.line ? texts.world.depth[progress.line] : '—'}</strong>
+            </span>
+            <span class="fishing-stat">
+              {texts.shop.baitLabel}: <strong>{progress.bait ? texts.shop.baitName[progress.bait] : '—'}</strong>
+            </span>
+
+            {/* Rever o tutorial e um botao, nao um segredo: quem chegou
+                depois da primeira visita tambem precisa aprender. */}
+            <button class="fishing-help" onClick={() => setTuto(0)} aria-label={texts.tuto.title}>
+              ?
+            </button>
+
             {/* So fora do playing (achado I7): os tres motores fazem
                 preventDefault() no keydown de Space na window, e isso cancela
                 o keyup que o navegador usa pra ativar um checkbox por
@@ -361,37 +405,41 @@ export default function Fishing({ texts }: { texts: Texts }) {
             {/* O mundo fica SEMPRE desenhado. O minigame cobre a cena em vez de
                 substitui-la: e assim que da pra julgar como a partida aparece
                 por cima do lago, que e o ponto deste blockout. */}
-            <WorldView boat={boat} reach={reachTier(progress)} texts={texts.world} />
+            <WorldView boat={boat} reach={reachTier(progress)} onSailTo={sailTo} texts={texts.world}>
+              {tuto !== null && (
+                <TutorialView
+                  step={tuto}
+                  total={texts.tuto.steps.length}
+                  text={texts.tuto.steps[tuto]}
+                  onNext={passoTuto}
+                  onSkip={fecharTuto}
+                  texts={{ skip: texts.tuto.skip, next: texts.tuto.next }}
+                />
+              )}
+            </WorldView>
 
             {/* Altura reservada. O botao de lancar entra e sai conforme o
                 barco chega numa marca, e sem a reserva ele empurrava o lago
                 inteiro pra cima e pra baixo a cada passo — a outra metade do
                 "UI pulando". */}
+            {/* Altura reservada e conteudo estavel: nada entra ou sai do
+                fluxo, entao o lago nao se mexe. */}
             <div class="fishing-actions">
-              {/* Sem isto o jogo e injogavel no celular: nao ha tecla nenhuma
-                  para mover o barco, lancar, abrir a loja ou o caderno. */}
               {phase.kind !== 'playing' && (
                 <WorldPad
                   setDir={setDir}
                   onAct={act}
                   onLog={() => setMenu((m) => !m)}
+                  actEnabled={atShop(boat) || (!!spot && podePescar)}
                   actLabel={
                     atShop(boat) ? texts.world.shopShort
                       : !podePescar ? texts.world.needLineShort
                         : spot ? texts.world.castShort : texts.world.noSpotShort
                   }
-                  logLabel={texts.world.logShort}
+                  logLabel={`${texts.world.logShort} ${Object.keys(log).length}/${FISH.length}`}
                 />
               )}
 
-              {phase.kind === 'idle' && spot && (
-                <button class="fishing-button" ref={castBtnRef} onClick={cast}>
-                  {texts.cast}
-                </button>
-              )}
-
-              {/* Como se abre e como se fecha, dito na tela: antes so quem
-                  adivinhasse Tab e Esc descobria. */}
               <p class="fishing-keys">{texts.keys}</p>
             </div>
 

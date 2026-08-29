@@ -391,16 +391,48 @@ body.fishing-locked {
 
 /* O checkbox mora na barra de cima: e ajuste, nao cena. Dentro da arena ele
    entrava e saia do fluxo e empurrava o lago a cada troca de fase. */
-.fishing-overlay-bar { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+/* Barra de status. Moeda, linha e isca sempre a vista: escondidas, a
+   economia parece arbitraria e a trava de profundidade parece defeito. */
+.fishing-overlay-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px 20px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: min(96vw, 1080px, 128vh);
+  margin: 0 auto;
+}
+
+.fishing-stat {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  opacity: 0.9;
+}
+
+.fishing-stat strong { opacity: 1; }
+
+/* Empurra o checkbox para a direita, separando ajuste de status. */
+.fishing-overlay-bar .fishing-option { margin-left: auto; }
 
 @media (max-width: 640px) {
   .fishing-dex { grid-template-columns: repeat(2, 1fr); }
   .fishing-keys { display: none; }
 }
 
-/* Onde o pad de toque aparece, ele e o unico controle de acao: o botao solto
-   de lancar viraria um segundo botao para a mesma coisa, gastando altura de
-   tela justamente onde ela e escassa. */
-@media (pointer: coarse), (max-width: 720px) {
-  .fishing-arena > .fishing-button { display: none; }
+/* Botao de rever o tutorial. Redondo e discreto, mas presente: aprender nao
+   pode depender de ter visto na primeira visita. */
+.fishing-help {
+  width: 30px;
+  height: 30px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 50%;
+  cursor: pointer;
 }
+
+.fishing-help:hover { filter: brightness(1.15); }
+.fishing-help:focus-visible { outline: 3px solid var(--fishing-marker); outline-offset: 2px; }

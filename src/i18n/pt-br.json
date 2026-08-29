@@ -183,6 +183,18 @@
     "exitHelp": "Esc também sai",
     "gameArea": "Área de jogo",
     "howToPlay": "Espaço faz tudo: lança a linha e resolve o minigame de cada peixe.",
+    "tuto": {
+          "title": "Rever o tutorial",
+          "skip": "Pular",
+          "next": "Continuar",
+          "steps": [
+                "Este lago tem uma esquisitice: peixe de água doce e de água salgada aparecem aqui do nada. Ninguém sabe por quê. É por isso que a gente pesca aqui.",
+                "Clique numa marca na água e o barco navega até ela. As setas do teclado também servem, se você preferir.",
+                "Com o barco em cima da marca, clique em LANÇAR. Aí começa a briga com o peixe — e aí só vale a barra de espaço.",
+                "Venda o pescado na loja da margem. Com o dinheiro, compre uma linha melhor: é ela que abre o meio e o abissal.",
+                "O caderno guarda cada espécie que você fisgar. Os '???' são os que ainda faltam. Bom lance."
+          ]
+    },
     "keys": "Setas andam · Espaço age · Tab abre o caderno · Esc fecha",
     "close": "Fechar",
     "depth3": {
@@ -191,6 +203,7 @@
           "3": "Abissal"
     },
     "shop": {
+      "baitLabel": "Isca",
           "title": "Loja da margem",
           "coins": "Moedas",
           "sell": "Vender o pescado",
@@ -207,13 +220,14 @@
           }
     },
     "world": {
+      "clickHint": "Clique numa marca para navegar até ela",
           "shop": "Loja aqui",
           "cast": "Dá para pescar aqui",
           "noSpot": "Ande até uma marca na água",
           "menu": "Tab abre o caderno",
           "shopShort": "Loja",
           "castShort": "Lançar",
-          "noSpotShort": "—",
+          "noSpotShort": "Escolha uma marca",
           "logShort": "Caderno",
           "needLine": "Linha curta demais para este fundo",
           "needLineShort": "Sem linha",
