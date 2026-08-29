@@ -178,6 +178,16 @@ describe('zerar a barrinha', () => {
     expect(s.zeroed).toBe(0);
   });
 
+  it('zerada so conta se a barra tinha subido de verdade', () => {
+    let s = startDodge(base2, lcg(9));
+    const vao = s.gates.find((g) => g.open !== 0)!;
+    const t = vao.pos * base2.periodMs;
+    // pico baixo: a barra mal saiu do lugar, a zerada nao conta
+    s = stepDodge(base2, { ...s, cleanMs: 500, peak: 500, tMs: t - 30 }, t);
+    expect(s.cleanMs).toBe(0);
+    expect(s.zeroed).toBe(0);
+  });
+
   it('zerar duas vezes perde o peixe', () => {
     const emOrdem = [...startDodge(base2, lcg(9)).gates].sort((a, b) => a.pos - b.pos);
     let s = startDodge(base2, lcg(9));
@@ -186,7 +196,8 @@ describe('zerar a barrinha', () => {
       if (s.done) break;
       if (s.lane === g.open) s = switchLane(s);
       // chega no vao com pouco tempo acumulado: a queda zera
-      s = stepDodge(base2, { ...s, cleanMs: 500, tMs: g.pos * base2.periodMs - 30 }, g.pos * base2.periodMs);
+      // pico alto: a barra tinha chegado a mais de 35% antes de cair
+      s = stepDodge(base2, { ...s, cleanMs: 500, peak: 6000, tMs: g.pos * base2.periodMs - 30 }, g.pos * base2.periodMs);
       if (s.zeroed > zeradas) zeradas = s.zeroed;
     }
     expect(zeradas).toBeGreaterThanOrEqual(2);

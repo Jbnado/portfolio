@@ -9,14 +9,26 @@ export const LANES = 2;
     milissegundos — isso nao e dificuldade, e sorte. */
 const MIN_SEP = 0.05;
 
+/** Quanto da barra precisa ter subido para uma zerada CONTAR como progresso
+    perdido. Sem isto a regra punia o comeco: a barra nasce em zero, entao as
+    primeiras tropecadas zeravam de graca e duas delas acabavam com o lance
+    antes de o jogador ter chegado a lugar nenhum. */
+const ZERO_MIN = 0.35;
+
 export type DodgeState = {
   lane: number;
   /** Quedas no total, so para a qualidade. */
   bumps: number;
   /** Quedas SEGUIDAS. Passar limpo por um vao zera. Perde o peixe. */
   streakFalls: number;
-  /** Quantas vezes a barrinha ja voltou a zero depois de ter subido. */
+  /** Quantas vezes a barrinha ja voltou a zero DEPOIS de ter chegado a
+      algum lugar. Zerar uma barra que nunca subiu nao conta: nao e perder
+      progresso, e so o comeco da luta. */
   zeroed: number;
+  /** Maior cleanMs desde a ultima zerada. E ele que decide se a zerada
+      conta — nao o valor no instante da queda, que e sempre pequeno por
+      construcao (a barra so chega a zero quando ja estava abaixo do recuo). */
+  peak: number;
   /** Os vaos deste lance: sorteados na largada, nao fixos no peixe. */
   gates: Gate[];
   /** Milissegundos limpos SEGUIDOS. Cair zera. Chegar em holdMs fisga. */
@@ -73,7 +85,7 @@ export function startDodge(
   rnd: () => number = Math.random,
 ): DodgeState {
   return {
-    lane: 0, bumps: 0, streakFalls: 0, zeroed: 0, gates: makeGates(params, rnd), cleanMs: 0, tMs: 0,
+    lane: 0, bumps: 0, streakFalls: 0, zeroed: 0, peak: 0, gates: makeGates(params, rnd), cleanMs: 0, tMs: 0,
     visitGate: null, visitFell: false, done: null,
   };
 }
@@ -101,7 +113,7 @@ export function stepDodge(
 
   const dt = Math.max(0, tMs - state.tMs);
   const g = gateAt(params, state.gates, tMs);
-  let { visitGate, visitFell, bumps, streakFalls, zeroed, cleanMs } = state;
+  let { visitGate, visitFell, bumps, streakFalls, zeroed, peak, cleanMs } = state;
 
   if (g !== visitGate) {
     // Saiu de um vao sem cair: a sequencia de quedas zera. E isso que faz
@@ -120,14 +132,17 @@ export function stepDodge(
     streakFalls += 1;
     // Errou: a barrinha RECUA. O peixe puxou de volta um pedaco.
     const recuado = Math.max(0, cleanMs - params.penaltyMs);
-    // Zerou de novo depois de ter subido: conta como um recomeco.
-    if (recuado === 0 && cleanMs > 0) zeroed += 1;
+    if (recuado === 0) {
+      if (peak >= params.holdMs * ZERO_MIN) zeroed += 1;
+      peak = 0;
+    }
     cleanMs = recuado;
   } else {
     cleanMs += dt;
+    if (cleanMs > peak) peak = cleanMs;
   }
 
-  const next = { ...state, tMs, visitGate, visitFell, bumps, streakFalls, zeroed, cleanMs };
+  const next = { ...state, tMs, visitGate, visitFell, bumps, streakFalls, zeroed, peak, cleanMs };
 
   // Duas portas de saida: cair varias vezes em fila, ou a barrinha zerar
   // vezes demais. A primeira pega quem se perdeu no ritmo; a segunda pega
