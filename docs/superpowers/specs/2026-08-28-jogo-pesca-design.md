@@ -450,16 +450,32 @@ caderno tem formato já publicado, e misturar obrigaria a migrar um dado que nã
 
 ### A revelação da fisgada
 
-**Uma vista para as três raridades**; o `data-rarity` é que muda o degrau. Comum sobe e assenta.
-Raro entra com raios atrás. Lendário ganha aura, raios que giram e mais tempo — **o tempo também
-é o prémio**. Três componentes separados divergiriam na primeira mudança de layout.
+**Uma vista para as três raridades**; o `data-rarity` é que muda o degrau. Três componentes
+separados divergiriam na primeira mudança de layout.
+
+**Todos os degraus têm luz.** O clarão sai de trás do cartão e abre para fora, uma vez; o que
+escala é o tamanho dele — 260px no comum, 380 no raro, 520 no lendário — e o que vem depois:
+raios no raro, aura e giro no lendário, com mais tempo, porque **o tempo também é o prémio**.
+
+A primeira versão dava luz só ao raro e ao lendário, e o comum era um cartão a subir 18px. O dono
+jogou e disse que não tinha visto animação nenhuma. Estava certo: **subir não lê como comemorar**.
+O cartão ficou também com um halo que **não depende de animação** — sem ele, volta a ser uma caixa
+qualquer assim que a animação acaba, que era a outra metade do problema.
 
 A raridade sai da **mesma função** que a economia usa (`rarityOf`). Com duas contas separadas, um
 peixe podia pagar como raro e comemorar como comum.
 
-**Nada pisca.** Os raios entram uma vez e ficam; a aura do lendário faz dois ciclos de 0,9 s
+**Nada pisca.** O clarão acontece **uma** vez, então não é flash no sentido do critério por mais
+brilhante que seja; os raios entram uma vez e ficam; e a aura do lendário faz dois ciclos de 0,9 s
 (~1,1 Hz), bem abaixo dos três flashes por segundo de WCAG 2.3.1 (nível A, e portanto piso deste
-projeto), e sem cobrir a tela toda.
+projeto).
+
+**O tutorial tapava a comemoração.** A captura dispara o capítulo `catch`, e o véu do tutorial
+(z-index 6) cobre `.fishing-over` (z-index 3): as duas camadas vivem na mesma pilha, a do overlay,
+porque `.fishing-arena` é `position: relative` sem `z-index` e portanto não abre contexto próprio.
+Resultado: a **única** vez em que o capítulo aparece era também a única em que a revelação ficava
+escondida. O capítulo passa a esperar a tela esvaziar — a mesma regra que já valia para a loja,
+agora estendida à fase de resultado.
 
 **Com movimento reduzido a comemoração encolhe, não desaparece.** O dono pediu a animação; apagá-la
 sob a preferência deixaria justamente quem a pediu sem prémio. Fica o que informa — o cartão
