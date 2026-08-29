@@ -183,6 +183,17 @@
     "exitHelp": "Esc exits too",
     "gameArea": "Game area",
     "howToPlay": "Space does everything: it casts the line and plays each fish's minigame.",
+    "world": {
+          "shop": "Shop",
+          "cast": "Space casts the line",
+          "noSpot": "Sail to a mark on the water",
+          "menu": "Tab opens the log",
+          "depth": {
+                "raso": "Shallows",
+                "medio": "Mid water",
+                "abissal": "Abyss"
+          }
+    },
     "instruction": {
       "track": "Space when the marker crosses the zone.",
       "hold": "Hold space to rise. Keep the fish inside the band.",

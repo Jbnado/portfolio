@@ -274,3 +274,51 @@ body.fishing-locked {
   .fishing-overlay[data-miss='1'] .fishing-arena { animation: fishing-shake-a 320ms ease-out !important; }
   .fishing-overlay[data-miss='2'] .fishing-arena { animation: fishing-shake-b 320ms ease-out !important; }
 }
+
+/* ---- O mundo e a camada por cima dele.
+
+   O minigame COBRE a cena em vez de substitui-la: e assim que se julga como a
+   partida aparece por cima do lago. O vidro atras escurece o mundo o
+   suficiente para o minigame ler, sem apaga-lo. */
+
+.fishing-arena { position: relative; }
+
+.fishing-over {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  background: color-mix(in srgb, var(--color-bg-primary) 82%, transparent);
+}
+
+.fishing-menu {
+  position: absolute;
+  inset: 8% 12%;
+  z-index: 4;
+  overflow: auto;
+  padding: 16px 20px;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.fishing-menu h3 { margin: 0 0 12px; letter-spacing: 0.08em; }
+.fishing-menu ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.fishing-menu li { display: flex; align-items: center; gap: 12px; }
+.fishing-menu small { opacity: 0.75; }
+
+/* Quadrado vazio no lugar da foto do peixe: o espaco ja fica reservado. */
+.fishing-menu-pic {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+}

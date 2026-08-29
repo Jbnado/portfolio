@@ -6,6 +6,8 @@ import { TrackView } from './views/TrackView';
 import { HoldView } from './views/HoldView';
 import { DodgeView } from './views/DodgeView';
 import { weightedPick } from './draw';
+import { WorldView, useBoat } from './views/WorldView';
+import { TIER_BY_DEPTH, depthAt, spotUnder } from './world';
 import {
   loadLog,
   saveLog,
@@ -32,6 +34,10 @@ type Texts = {
   exitHelp: string;
   gameArea: string;
   howToPlay: string;
+  world: {
+    shop: string; cast: string; noSpot: string; menu: string;
+    depth: Record<string, string>;
+  };
   instruction: Record<string, string>;
   fish: Record<string, string>;
 };
@@ -58,7 +64,10 @@ export default function Fishing({ texts }: { texts: Texts }) {
   // de keyframe (data-miss 1 e 2) porque trocar de classe pro MESMO nome nao
   // reinicia a animacao — nomes diferentes reiniciam, sem timer nenhum.
   const [miss, setMiss] = useState(0);
+  const [menu, setMenu] = useState(false);
   const onMiss = useCallback(() => setMiss((n) => n + 1), []);
+  const boat = useBoat(playing && phase.kind !== 'playing' && !menu);
+  const spot = spotUnder(boat);
   const playBtnRef = useRef<HTMLButtonElement>(null);
   const castBtnRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -155,8 +164,10 @@ export default function Fishing({ texts }: { texts: Texts }) {
         return;
       }
     }
-    const known = Object.keys(log).length;
-    const maxTier = known >= 6 ? 3 : known >= 3 ? 2 : 1;
+    // A profundidade onde o barco esta e que abre a faixa. Isto substitui o
+    // "quantos peixes voce ja conhece" do v1, que era progressao de mentira
+    // por nao existir mapa: agora andar para a direita E a progressao.
+    const maxTier = TIER_BY_DEPTH[depthAt(boat)];
     const pool = FISH.filter((f) => f.tier <= maxTier);
     // Sorteio ponderado: sorteio uniforme faria o peixe raro (HOLD na faixa 1)
     // aparecer um em tres, e ele precisa ser raro pra ensinar por surpresa.
@@ -165,12 +176,28 @@ export default function Fishing({ texts }: { texts: Texts }) {
     // na vista com o ritmo ja mais lento, nao so com a perda desligada.
     const fish = guaranteed ? guaranteedFish(picked) : picked;
     setPhase({ kind: 'playing', fish });
-  }, [log, guaranteed]);
+  }, [boat, guaranteed]);
 
   const enter = useCallback(() => {
     setPlaying(true);
     setPhase({ kind: 'idle' });
   }, []);
+
+  useEffect(() => {
+    if (!playing) return;
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.code === 'Tab') { ev.preventDefault(); setMenu((m) => !m); return; }
+      if (ev.code !== 'Space' || ev.repeat || menu) return;
+      // Se o foco esta num controle, o proprio navegador vai ativa-lo com
+      // Espaco: agir aqui tambem lancaria duas vezes.
+      const alvo = document.activeElement;
+      if (alvo instanceof HTMLButtonElement || alvo instanceof HTMLInputElement) return;
+      if (phase.kind === 'result') { ev.preventDefault(); setPhase({ kind: 'idle' }); return; }
+      if (phase.kind === 'idle' && spot) { ev.preventDefault(); cast(); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [playing, phase.kind, spot, menu, cast]);
 
   const onDone = useCallback(
     (fish: Fish) => (raw: Result) => {
@@ -263,12 +290,19 @@ export default function Fishing({ texts }: { texts: Texts }) {
               </label>
             )}
 
-            {phase.kind === 'idle' && (
+            {/* O mundo fica SEMPRE desenhado. O minigame cobre a cena em vez de
+                substitui-la: e assim que da pra julgar como a partida aparece
+                por cima do lago, que e o ponto deste blockout. */}
+            <WorldView boat={boat} texts={texts.world} />
+
+            {phase.kind === 'idle' && spot && (
               <button class="fishing-button" ref={castBtnRef} onClick={cast}>
                 {texts.cast}
               </button>
             )}
 
+            {phase.kind !== 'idle' && (
+              <div class="fishing-over">
             {phase.kind === 'playing' && (
               <>
                 <p class="fishing-prompt">{texts.instruction[phase.fish.engine]}</p>
@@ -304,10 +338,33 @@ export default function Fishing({ texts }: { texts: Texts }) {
                     ? `${texts.caught}: ${texts.fish[phase.fish.id]}, ${phase.size} cm`
                     : `${texts.escaped}: ${texts.fish[phase.fish.id]}`}
                 </p>
-                <button class="fishing-button" ref={castBtnRef} onClick={cast}>
-                  {texts.cast}
+                <button class="fishing-button" ref={castBtnRef} onClick={() => setPhase({ kind: 'idle' })}>
+                  {texts.exit}
                 </button>
               </>
+            )}
+              </div>
+            )}
+
+            {/* Caderno por cima da cena. Por enquanto so o nome e um quadrado
+                vazio no lugar da foto — o espaco ja fica reservado para ela. */}
+            {menu && (
+              <div class="fishing-menu">
+                <h3>{texts.log}</h3>
+                {Object.keys(log).length === 0 ? (
+                  <p>{texts.logEmpty}</p>
+                ) : (
+                  <ul>
+                    {Object.entries(log).map(([id, r]) => (
+                      <li key={id}>
+                        <span class="fishing-menu-pic" aria-hidden="true" />
+                        <span>{texts.fish[id]}</span>
+                        <small>{r.times} {texts.times}, {texts.largest} {r.largest} cm</small>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
           </div>
         </div>

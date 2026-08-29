@@ -183,6 +183,17 @@
     "exitHelp": "Esc também sai",
     "gameArea": "Área de jogo",
     "howToPlay": "Espaço faz tudo: lança a linha e resolve o minigame de cada peixe.",
+    "world": {
+          "shop": "Loja",
+          "cast": "Espaço lança a linha",
+          "noSpot": "Ande até uma marca na água",
+          "menu": "Tab abre o caderno",
+          "depth": {
+                "raso": "Raso",
+                "medio": "Meio",
+                "abissal": "Abissal"
+          }
+    },
     "instruction": {
       "track": "Espaço quando o marcador cruzar a zona.",
       "hold": "Segure espaço para subir. Mantenha o peixe dentro da faixa.",

@@ -1,0 +1,82 @@
+/* Blockout do lago. Tudo quadrado de proposito: o que se julga aqui e o
+   ARRANJO — onde fica a loja, quanto se anda, como o minigame cobre a cena —
+   e nao a arte, que ainda nao existe. */
+
+.world { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 720px; }
+
+.world-view {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  background: var(--fishing-surface);
+}
+
+/* Ceu e agua precisam se separar do fundo da PAGINA, senao a moldura fica
+   boiando no nada. */
+.world-sky {
+  position: absolute;
+  inset: 0 0 62% 0;
+  background: color-mix(in srgb, var(--fishing-rule) 12%, transparent);
+}
+
+/* Fundo mais escuro para a direita. Nao da pra ver o fundo do lago: a cor e
+   o unico aviso de profundidade, e por isso ela vem acompanhada do rotulo no
+   HUD — cor sozinha nao pode carregar informacao. */
+.world-water { position: absolute; top: 38%; bottom: 0; }
+.world-water[data-depth='raso'] { background: color-mix(in srgb, var(--fishing-zone) 26%, transparent); }
+.world-water[data-depth='medio'] { background: color-mix(in srgb, var(--fishing-zone) 48%, transparent); }
+.world-water[data-depth='abissal'] { background: color-mix(in srgb, var(--fishing-zone) 72%, transparent); }
+
+/* Terra, nao agua translucida: a margem sobe acima da linha d'agua e e
+   solida, senao ela se le como mais uma faixa de profundidade. */
+.world-shore {
+  position: absolute;
+  top: 30%;
+  bottom: 0;
+  background: var(--fishing-rule);
+}
+
+.world-shop {
+  position: absolute;
+  top: 12%;
+  height: 20%;
+  transform: translateX(-50%);
+  background: var(--fishing-marker);
+  border: 2px solid var(--fishing-rule);
+}
+.world-shop[data-near='true'] { outline: 3px solid var(--fishing-marker); outline-offset: 3px; }
+
+/* A marca fina sobre a agua. Fica na linha do casco, entao "estar em cima"
+   se le pela sobreposicao, nao por um numero. */
+.world-spot {
+  position: absolute;
+  top: 36%;
+  height: 5%;
+  transform: translateX(-50%);
+  background: var(--fishing-rule);
+}
+.world-spot[data-here='true'] { background: var(--fishing-marker); height: 7%; top: 35%; }
+
+.world-boat {
+  position: absolute;
+  top: 24%;
+  height: 15%;
+  transform: translateX(-50%);
+  background: var(--fishing-marker);
+  border: 2px solid var(--fishing-rule);
+}
+
+.world-hud {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.world-depth { font-weight: 700; }
+.world-hint { opacity: 0.85; }

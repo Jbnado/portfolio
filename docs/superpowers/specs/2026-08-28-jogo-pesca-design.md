@@ -262,6 +262,37 @@ volta significa mais trocas obrigatórias; a volta mais curta encurta a janela d
 Parâmetros: `periodMs`, `gatesMin`/`gatesMax`, `gapMin`/`gapMax`, `holdMs`, `penaltyMs`,
 `fallsToLose`, `zeroesToLose`.
 
+## O mundo (v2, em construção)
+
+**O cenário é um lago pequeno, visto de lado.** A premissa, do dono: peixes de água doce e
+salgada aparecem ali **do nada** — é justamente por isso que se pesca nesse lago, e é o que
+autoriza a matriz de espécies a misturar o que na natureza não se encontra junto. Só peixes
+**endêmicos brasileiros**.
+
+**Blockout primeiro, arte depois.** Tudo quadrado de propósito: o que se julga nesta fase é o
+arranjo — onde fica a loja, quanto se anda, como o minigame cobre a cena — e não o desenho, que
+ainda não existe. Os peixes já têm lugar reservado para a foto no caderno.
+
+- **Margem à esquerda com a loja.** O barco nasce na água, à direita dela.
+- **Anda com A/D ou setas**, segurando. O lago inteiro se atravessa em pouco mais de quatro
+  segundos: o mapa é pequeno de propósito.
+- **Marcas finas sobre a água** são os pontos de pesca. Só dá para lançar em cima de uma.
+- **A profundidade abre a faixa de peixes** — raso, meio, abissal, da esquerda para a direita.
+  Isto substitui o "quantos peixes você já conhece" do v1, que era progressão de mentira por não
+  existir mapa. **Andar para a direita passa a ser a progressão.**
+- **O minigame cobre a cena, não a substitui.** O lago fica desenhado atrás.
+- **Tab abre o caderno** por cima da cena.
+
+### A loja, ainda por construir
+
+Decisões do dono já tomadas, aguardando implementação:
+
+- **Três melhorias de linha**, uma por profundidade. A do raso libera **o peixe mais raro do
+  raso**, e assim por diante. Isso encaixa com uma decisão anterior: o SUSTENTAÇÃO já é o peixe
+  raro de toda faixa, então é ele que cada linha destrava.
+- **Iscas** aumentam a sorte: peixes maiores com mais frequência, e a sorte **soma** na chance de
+  o peixe muito raro aparecer.
+
 ### Origem das mecânicas
 
 Verificado, não presumido. O Dredge tem seis minigames de pesca, e todos são o mesmo gesto —

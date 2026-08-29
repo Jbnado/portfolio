@@ -183,6 +183,17 @@
     "exitHelp": "Esc también sale",
     "gameArea": "Área de juego",
     "howToPlay": "Espacio hace todo: lanza la línea y resuelve el minijuego de cada pez.",
+    "world": {
+          "shop": "Tienda",
+          "cast": "Espacio lanza la línea",
+          "noSpot": "Navega hasta una marca en el agua",
+          "menu": "Tab abre el cuaderno",
+          "depth": {
+                "raso": "Bajío",
+                "medio": "Media agua",
+                "abissal": "Abismo"
+          }
+    },
     "instruction": {
       "track": "Espacio cuando el marcador cruce la zona.",
       "hold": "Mantén espacio para subir. Conserva el pez dentro de la franja.",
