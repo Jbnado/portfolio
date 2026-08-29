@@ -320,17 +320,29 @@ soltar o barco dela.
 
 ### A loja
 
-Abre com espaço quando o barco está na margem. Setas escolhem, espaço age — a mesma gramática do
-resto do jogo, uma tecla faz tudo.
+Abre com espaço quando o barco está na margem. W e S escolhem, espaço age, Esc fecha — a mesma
+gramática do resto do jogo, uma tecla faz tudo, e cada tecla num crachá dentro do painel.
 
 **Linha é permissão, isca é probabilidade.** A separação importa e veio das palavras do dono.
 
-- **Três linhas** (50, 110, 900 — ver Economia). A linha decide **até onde dá para pescar**, não só qual peixe
-  morde: sem a linha do meio, o meio inteiro está fechado. Cada uma alcança a sua profundidade e
-  todas as mais rasas — por isso **a abissal é a melhor: com ela se pesca em qualquer lugar**.
+- **Duas linhas** (110 e 900 — ver Economia). A linha decide **até onde dá para pescar**: sem a
+  linha do meio, o meio inteiro está fechado. Cada uma alcança a sua profundidade e todas as mais
+  rasas — por isso **a abissal é a melhor: com ela se pesca em qualquer lugar**.
 
   Sem linha nenhuma dá para pescar no raso, senão o jogo começa travado (moeda só vem de vender
-  peixe). O que a linha do raso compra não é o acesso ao raso: é o **peixe raro** dele.
+  peixe).
+
+- **Não há linha do raso.** Houve, a 50, e o papel dela era abrir o peixe raro do raso. Era um mau
+  primeiro alvo, e o dono disse-o depois de a comprar: cinquenta moedas que não levavam a lado
+  nenhum, e o fundo ficava ainda mais longe. **Esse papel passou para a isca**: no raso quem abre
+  o raro é a isca equipada, e a primeira compra do jogo passa a ser a minhoca a 30 — oito peixes
+  comuns, uma sessão curta.
+
+  Mais fundo a permissão já é a própria linha: quem está a pescar no meio tem a linha do meio,
+  senão não estaria ali. Uma regra só, `rareBites`, cobre as três profundidades.
+
+  Quem tinha comprado a linha do raso **recebe as 50 moedas de volta** ao carregar o save. Deixar
+  a moeda presa num item que sumiu do jogo seria roubo de save.
 
   **Marca fora do alcance não é desenhada.** Mostrar um ponto que não dá para usar só convida a
   tentar; a água hachurada já diz que ali tem mais lago. E `spotUnder` passa a devolver `null`
@@ -436,6 +448,37 @@ onde a fala faz sentido: acabou de vender, agora olha.
 O progresso mora numa chave própria (`fishing:progress`), separada do caderno de espécimes — o
 caderno tem formato já publicado, e misturar obrigaria a migrar um dado que não precisa mudar.
 
+### A revelação da fisgada
+
+**Uma vista para as três raridades**; o `data-rarity` é que muda o degrau. Comum sobe e assenta.
+Raro entra com raios atrás. Lendário ganha aura, raios que giram e mais tempo — **o tempo também
+é o prémio**. Três componentes separados divergiriam na primeira mudança de layout.
+
+A raridade sai da **mesma função** que a economia usa (`rarityOf`). Com duas contas separadas, um
+peixe podia pagar como raro e comemorar como comum.
+
+**Nada pisca.** Os raios entram uma vez e ficam; a aura do lendário faz dois ciclos de 0,9 s
+(~1,1 Hz), bem abaixo dos três flashes por segundo de WCAG 2.3.1 (nível A, e portanto piso deste
+projeto), e sem cobrir a tela toda.
+
+**Com movimento reduzido a comemoração encolhe, não desaparece.** O dono pediu a animação; apagá-la
+sob a preferência deixaria justamente quem a pediu sem prémio. Fica o que informa — o cartão
+assenta, a etiqueta aparece — e sai o que costuma incomodar: a rotação contínua e o pulso.
+
+Isso exige furar o `*{animation-duration:0.01ms!important}` de `global.css:202`, o mesmo caminho já
+andado pela vinheta de erro. **Verificado**, e não deduzido: reproduzindo o empate do cascade com
+as duas regras fora das suas media queries (a media query não participa da especificidade), as do
+jogo ganham — 0,3 s no cartão, 0,3 s nos raios — enquanto um elemento de controlo fica nos
+0,01 ms do global.
+
+**Os raios nasceram invisíveis.** A faixa visível ia de 12% a 68% do raio e o cartão, que ocupa até
+uns 38%, tapava quase toda ela; o que sobrava estava a 26% de alpha. A faixa agora começa depois
+do cartão e a cor tem peso.
+
+`?fisga=<id>` **em DEV** pula o minigame e vai direto à revelação, no tamanho máximo da espécie.
+Sem isso não há como ver a comemoração do lendário sem sortear um peixe de peso 1 que só morde no
+ponto dele com a isca dele.
+
 ### Origem das mecânicas
 
 Verificado, não presumido. O Dredge tem seis minigames de pesca, e todos são o mesmo gesto —
@@ -460,9 +503,19 @@ Fontes: [DREDGE Wiki — Minigames](https://dredge.wiki.gg/wiki/Minigames),
 | mapa | ← → ou A D | andar o barco |
 | mapa, no mar | espaço | lançar a linha |
 | mapa, na loja | espaço | entrar na loja |
-| loja | setas ou WASD | andar nos itens |
+| loja | setas ou W S | andar nos itens |
 | loja | espaço | comprar, vender |
+| loja, caderno | esc | fechar |
+| caderno | W S ou setas | rolar as fichas |
 | **os três motores** | **espaço** | tudo |
+
+**Cada tecla vai num crachá, dentro do controlo a que pertence.** Legenda solta no rodapé
+ninguém lê — foi dito assim, e vale para os dois lados do erro: o crachá do movimento era
+"A D" num botão só, então a seta da esquerda anunciava as duas teclas e a da direita nenhuma.
+Uma tecla por botão.
+
+**A cabeça do caderno é fixa.** Rolando o grid ela saía do painel e levava consigo o botão de
+fechar: a saída desaparecia justamente para quem estava a explorar as 24 fichas.
 
 Espaço significa sempre "a ação óbvia daqui", e isso traz uma obrigação: **botão contextual
 exige que a tela sempre diga o que ele faz agora.** Sem prompt visível, contextual vira
