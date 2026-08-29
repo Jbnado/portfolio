@@ -260,4 +260,20 @@ body.fishing-locked {
    nao pode desaparecer junto com a animacao. */
 @media (prefers-reduced-motion: reduce) {
   .fishing-overlay[data-miss] .fishing-arena { animation: none; }
+
+  /* O reset global (global.css:202) zera a duracao de TODA animacao sob a
+     preferencia, com * e !important. A vinheta precisa furar esse reset: ela
+     nao se move e carrega informacao — e o unico aviso de erro que sobra
+     quando a tremida sai. Sem estas duas linhas o aviso ficava invisivel
+     para quem tem a preferencia ligada, que e justamente quem perde a
+     tremida. !important aqui e para vencer o !important de la; a
+     especificidade maior faz o resto. */
+  .fishing-overlay[data-miss='1'] .fishing-flash { animation: fishing-flash-a 320ms ease-out !important; }
+  .fishing-overlay[data-miss='2'] .fishing-flash { animation: fishing-flash-b 320ms ease-out !important; }
+
+  /* Andaime de decisao: ?tremer=1 em dev fura a preferencia so para o dono
+     conseguir VER a tremida antes de decidir se ela fica. Sai junto com o
+     ramo em Fishing.tsx assim que a decisao for tomada. */
+  .fishing-overlay[data-shake='1'][data-miss='1'] .fishing-arena { animation: fishing-shake-a 320ms ease-out !important; }
+  .fishing-overlay[data-shake='1'][data-miss='2'] .fishing-arena { animation: fishing-shake-b 320ms ease-out !important; }
 }
