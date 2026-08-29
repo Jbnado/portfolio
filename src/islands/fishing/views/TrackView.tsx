@@ -3,10 +3,10 @@ import type { TrackParams, Result } from '../types';
 import { startTrack, pressTrack, positionAt, type TrackState } from '../engines/track';
 import './TrackView.css';
 
-type Props = { params: TrackParams; onDone: (r: Result) => void };
+type Props = { params: TrackParams; onDone: (r: Result) => void; onMiss: () => void };
 
 
-export function TrackView({ params, onDone }: Props) {
+export function TrackView({ params, onDone, onMiss }: Props) {
   const [pos, setPos] = useState(0);
   const stateRef = useRef<TrackState>(startTrack(params, Math.random));
   const [zonePos, setZonePos] = useState(stateRef.current.zonePos);
@@ -16,6 +16,8 @@ export function TrackView({ params, onDone }: Props) {
   // efeito, o efeito reinicia a cada render e o minigame se reinicia sozinho.
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
+  const onMissRef = useRef(onMiss);
+  onMissRef.current = onMiss;
 
   useEffect(() => {
     const fresh = startTrack(params, Math.random);
@@ -36,6 +38,7 @@ export function TrackView({ params, onDone }: Props) {
       ev.preventDefault();
       const t = performance.now() - startRef.current;
       const next = pressTrack(params, stateRef.current, t, Math.random);
+      if (next.misses > stateRef.current.misses) onMissRef.current();
       stateRef.current = next;
       setZonePos(next.zonePos);
       if (next.done) onDoneRef.current(next.done);

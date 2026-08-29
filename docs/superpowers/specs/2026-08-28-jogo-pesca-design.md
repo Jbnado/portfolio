@@ -393,6 +393,13 @@ melhorias.
   `stepHold`, o campo `fishDrawPos` do estado e as constantes `STEPS` das três vistas. As
   animações **decorativas** do site seguem respeitando a preferência, como sempre — o que muda
   é só o movimento que carrega a jogabilidade.
+- **Aviso de erro.** Errar sacode a arena e acende uma vinheta vermelha nas bordas. Duas
+  decisões deliberadas aqui. A vinheta é **de borda, não de tela cheia**: o critério de três
+  flashes por segundo (WCAG 2.3.1, **nível A** — dentro do piso do projeto) mede área, e uma
+  piscada que ocupasse mais de 25% do campo visual viraria estrobo se alguém martelasse o espaço.
+  E a **tremida respeita `prefers-reduced-motion`**, ao contrário do movimento do marcador: essa
+  é decorativa, e sacudir a tela é o exemplo canônico de gatilho vestibular. A vinheta fica nos
+  dois casos, porque o aviso não pode sumir junto com a animação.
 - **Modo garantido.** Uma opção que garante a captura, mais lenta. O próprio Dredge tem isso.
 - **Cor não pode ser o único sinal.** "Zona verde" é informação só por cor e falha o critério
   AA de uso de cor. A zona ativa muda também de **forma e espessura**.

@@ -53,6 +53,11 @@ export default function Fishing({ texts }: { texts: Texts }) {
   const [log, setLog] = useState<Log>(() => validLog(loadLog()));
   const [guaranteed, setGuaranteed] = useState(false);
   const [playing, setPlaying] = useState(false);
+  // Contador de erros so pra disparar a animacao. Alterna entre dois nomes
+  // de keyframe (data-miss 1 e 2) porque trocar de classe pro MESMO nome nao
+  // reinicia a animacao — nomes diferentes reiniciam, sem timer nenhum.
+  const [miss, setMiss] = useState(0);
+  const onMiss = useCallback(() => setMiss((n) => n + 1), []);
   const playBtnRef = useRef<HTMLButtonElement>(null);
   const castBtnRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -208,12 +213,19 @@ export default function Fishing({ texts }: { texts: Texts }) {
       {playing && (
         <div
           class="fishing-overlay"
+          data-miss={miss ? (miss % 2 ? '1' : '2') : undefined}
           ref={overlayRef}
           tabIndex={-1}
           role="dialog"
           aria-modal="true"
           aria-label={texts.gameArea}
         >
+          {/* Vinheta vermelha do erro. E de borda, nao de tela cheia, de
+              proposito: piscar area grande esbarra no criterio de tres
+              flashes por segundo (WCAG 2.3.1, nivel A) se alguem martelar o
+              espaco. aria-hidden porque o erro ja e dito pela contagem. */}
+          <span class="fishing-flash" aria-hidden="true" />
+
           <div class="fishing-overlay-bar">
             <button class="fishing-exit" onClick={() => setPlaying(false)}>
               {texts.exit} <small>{texts.exitHelp}</small>
@@ -263,6 +275,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
                   <TrackView
                     params={phase.fish.params as TrackParams}
                     onDone={onDone(phase.fish)}
+                    onMiss={onMiss}
                   />
                 )}
                 {phase.fish.engine === 'hold' && (
@@ -277,6 +290,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
                     params={phase.fish.params as DodgeParams}
                     texts={{ clean: texts.clean, falls: texts.falls, fallsUnlimited: texts.fallsUnlimited }}
                     onDone={onDone(phase.fish)}
+                    onMiss={onMiss}
                   />
                 )}
               </>

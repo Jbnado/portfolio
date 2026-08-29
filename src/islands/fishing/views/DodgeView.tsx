@@ -7,6 +7,7 @@ type Props = {
   params: DodgeParams;
   texts: { clean: string; falls: string; fallsUnlimited: string };
   onDone: (r: Result) => void;
+  onMiss: () => void;
 };
 
 const BASE_RADIUS = 20;
@@ -49,13 +50,15 @@ function laneArcs(params: DodgeParams, lane: number, r: number): string[] {
   });
 }
 
-export function DodgeView({ params, texts, onDone }: Props) {
+export function DodgeView({ params, texts, onDone, onMiss }: Props) {
   const [state, setState] = useState<DodgeState>(() => startDodge(params));
   const [angle, setAngle] = useState(0);
   const stateRef = useRef(startDodge(params));
 
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
+  const onMissRef = useRef(onMiss);
+  onMissRef.current = onMiss;
 
   useEffect(() => {
     let raf = 0;
@@ -65,6 +68,7 @@ export function DodgeView({ params, texts, onDone }: Props) {
     const loop = (now: number) => {
       const t = now - start;
       const next = stepDodge(params, stateRef.current, t);
+      if (next.bumps > stateRef.current.bumps) onMissRef.current();
       stateRef.current = next;
       setState(next);
       setAngle((t % params.periodMs) / params.periodMs);

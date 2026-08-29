@@ -208,3 +208,56 @@ body.fishing-locked {
   gap: 16px;
   min-height: 0;
 }
+
+/* ---- Aviso de erro: a arena treme e uma vinheta vermelha pulsa nas bordas.
+
+   Dois nomes de keyframe identicos (sufixo -a e -b) porque a ilha alterna
+   data-miss entre 1 e 2 a cada erro: trocar de classe para o MESMO nome de
+   animacao nao a reinicia, trocar o NOME reinicia. Isso evita timer em JS.
+
+   A vinheta e de BORDA e nao de tela cheia de proposito. O criterio de tres
+   flashes por segundo (WCAG 2.3.1, nivel A) mede area: uma piscada que ocupe
+   mais de 25% do campo visual e martelada no espaco viraria estrobo. Uma
+   vinheta nas bordas fica bem abaixo desse limite e ainda assim se ve. */
+
+.fishing-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: inset 0 0 90px 12px var(--fishing-danger);
+}
+
+.fishing-overlay[data-miss='1'] .fishing-flash { animation: fishing-flash-a 320ms ease-out; }
+.fishing-overlay[data-miss='2'] .fishing-flash { animation: fishing-flash-b 320ms ease-out; }
+.fishing-overlay[data-miss='1'] .fishing-arena { animation: fishing-shake-a 320ms ease-out; }
+.fishing-overlay[data-miss='2'] .fishing-arena { animation: fishing-shake-b 320ms ease-out; }
+
+@keyframes fishing-flash-a { 0% { opacity: 0 } 12% { opacity: 1 } 100% { opacity: 0 } }
+@keyframes fishing-flash-b { 0% { opacity: 0 } 12% { opacity: 1 } 100% { opacity: 0 } }
+
+@keyframes fishing-shake-a {
+  0%, 100% { transform: translateX(0) }
+  12% { transform: translateX(-9px) }
+  28% { transform: translateX(8px) }
+  44% { transform: translateX(-6px) }
+  60% { transform: translateX(4px) }
+  78% { transform: translateX(-2px) }
+}
+
+@keyframes fishing-shake-b {
+  0%, 100% { transform: translateX(0) }
+  12% { transform: translateX(-9px) }
+  28% { transform: translateX(8px) }
+  44% { transform: translateX(-6px) }
+  60% { transform: translateX(4px) }
+  78% { transform: translateX(-2px) }
+}
+
+/* A tremida E decorativa, ao contrario do movimento do marcador, entao esta
+   respeita a preferencia. A vinheta fica: ela nao se move, e o aviso de erro
+   nao pode desaparecer junto com a animacao. */
+@media (prefers-reduced-motion: reduce) {
+  .fishing-overlay[data-miss] .fishing-arena { animation: none; }
+}
