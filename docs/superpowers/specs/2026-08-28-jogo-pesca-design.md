@@ -330,6 +330,40 @@ apareçam em toda faixa.
 **Tolerância se expressa na moeda de cada motor:** voltas extras no TRAJETO, taxa de dreno no
 SUSTENTAÇÃO, quedas até arrebentar na DRAGAGEM.
 
+### Calibragem das faixas
+
+Medida por simulação, não por opinião: três jogadores sintéticos (tempo de reação e tremor
+diferentes) × 400 tentativas por peixe. Taxa de captura:
+
+| faixa | iniciante | mediano | bom |
+|---|---|---|---|
+| 1 — ensina | 100% | 100% | 100% |
+| 2 — meio | ~50% | ~90% | 100% |
+| 3 — abissal | 3–22% | 41–62% | ~100% |
+
+**O p4 nunca perdia o peixe.** Ele tinha `tolerance: null`, o que contradizia a tabela do modelo
+de falha logo acima — a faixa 2 perde. Nenhum teste comparava os parâmetros com aquela tabela,
+então a contradição sobreviveu. Corrigido para `tolerance: 2`.
+
+**Cada motor tem um botão dominante, e não é o óbvio.**
+
+- **SUSTENTAÇÃO:** a razão `fillRate`/`drainRate`. Com `fillRate < drainRate` é preciso ficar
+  dentro da faixa mais da metade do tempo só para empatar, e a taxa de captura despenca de 64%
+  para 6% com o jogador mediano. Mantenha o enchimento acima do dreno e use a largura da faixa
+  e a velocidade do peixe para dosar. Regra prática: `fishSpeed ≈ bandHeight / 340` põe o
+  jogador de reação média no fio da navalha, porque em 170ms o peixe anda meia faixa.
+- **DRAGAGEM:** o espaçamento entre portões (`periodMs / nº de portões`) contra o tempo de
+  reação. É quase uma função degrau — acima da reação, quase 100%; abaixo, quase 0% — e só o
+  tremor humano suaviza a borda. Por isso a dificuldade é a velocidade, como pedido pelo dono.
+- **TRAJETO:** o tamanho da zona contra o quanto o marcador anda no erro de tempo típico.
+  É o mais gradual dos três, e por isso o melhor para a faixa 3.
+
+**Lacuna conhecida:** para um jogador competente, o tamanho do p2 e do p3 é sempre o máximo
+(46cm e 58cm). A qualidade satura quando não se erra, e no raso isso é generosidade de propósito;
+mas o recorde do caderno nesses dois nasce cravado. Resolver exige um termo contínuo de precisão
+na qualidade, que não cabe no teto de 48KB de JS — decisão a tomar junto com o escopo do jogo
+completo.
+
 ## Acessibilidade
 
 WCAG AA é piso vinculante no projeto (PRODUCT.md), e aqui são requisitos de aceite, não
