@@ -58,16 +58,6 @@ export default function Fishing({ texts }: { texts: Texts }) {
   // reinicia a animacao — nomes diferentes reiniciam, sem timer nenhum.
   const [miss, setMiss] = useState(0);
   const onMiss = useCallback(() => setMiss((n) => n + 1), []);
-  // Andaime de decisao, SO em desenvolvimento: ?tremer=1 mostra a tremida
-  // mesmo com "reduzir movimento" ligado, para dar pra AVALIAR o efeito antes
-  // de decidir se ele fica. Em producao o ramo sai do bundle. Sai daqui assim
-  // que a decisao for tomada.
-  const [forceShake, setForceShake] = useState(false);
-  useEffect(() => {
-    if (import.meta.env.DEV) {
-      setForceShake(new URLSearchParams(location.search).get('tremer') === '1');
-    }
-  }, []);
   const playBtnRef = useRef<HTMLButtonElement>(null);
   const castBtnRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -224,7 +214,6 @@ export default function Fishing({ texts }: { texts: Texts }) {
         <div
           class="fishing-overlay"
           data-miss={miss ? (miss % 2 ? '1' : '2') : undefined}
-          data-shake={forceShake ? '1' : undefined}
           ref={overlayRef}
           tabIndex={-1}
           role="dialog"

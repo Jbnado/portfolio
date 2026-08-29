@@ -255,25 +255,22 @@ body.fishing-locked {
   78% { transform: translateX(-2px) }
 }
 
-/* A tremida E decorativa, ao contrario do movimento do marcador, entao esta
-   respeita a preferencia. A vinheta fica: ela nao se move, e o aviso de erro
-   nao pode desaparecer junto com a animacao. */
-@media (prefers-reduced-motion: reduce) {
-  .fishing-overlay[data-miss] .fishing-arena { animation: none; }
+/* O aviso de erro fura o reset de movimento reduzido, tremida inclusive.
 
-  /* O reset global (global.css:202) zera a duracao de TODA animacao sob a
-     preferencia, com * e !important. A vinheta precisa furar esse reset: ela
-     nao se move e carrega informacao — e o unico aviso de erro que sobra
-     quando a tremida sai. Sem estas duas linhas o aviso ficava invisivel
-     para quem tem a preferencia ligada, que e justamente quem perde a
-     tremida. !important aqui e para vencer o !important de la; a
-     especificidade maior faz o resto. */
+   Decisao explicita do dono: a tremida vale para TODO MUNDO. Foi tomada
+   depois de ver os dois lados lado a lado, com o custo dito — sacudir a tela
+   e o exemplo canonico de gatilho vestibular, e quem liga "reduzir movimento"
+   normalmente liga por isso. Nao fere o piso AA do projeto: o criterio que
+   trata disso (2.3.3 Animation from Interactions) e AAA. Se um dia doer,
+   o botao e a amplitude nos keyframes, nao esta media query.
+
+   O !important existe porque global.css:202 zera a duracao de TODA animacao
+   sob a preferencia, com seletor * e !important. Sem furar aquilo, tanto a
+   vinheta quanto a tremida rodariam por 0.01ms — ou seja, nao rodariam. A
+   especificidade maior daqui resolve o empate entre os dois !important. */
+@media (prefers-reduced-motion: reduce) {
   .fishing-overlay[data-miss='1'] .fishing-flash { animation: fishing-flash-a 320ms ease-out !important; }
   .fishing-overlay[data-miss='2'] .fishing-flash { animation: fishing-flash-b 320ms ease-out !important; }
-
-  /* Andaime de decisao: ?tremer=1 em dev fura a preferencia so para o dono
-     conseguir VER a tremida antes de decidir se ela fica. Sai junto com o
-     ramo em Fishing.tsx assim que a decisao for tomada. */
-  .fishing-overlay[data-shake='1'][data-miss='1'] .fishing-arena { animation: fishing-shake-a 320ms ease-out !important; }
-  .fishing-overlay[data-shake='1'][data-miss='2'] .fishing-arena { animation: fishing-shake-b 320ms ease-out !important; }
+  .fishing-overlay[data-miss='1'] .fishing-arena { animation: fishing-shake-a 320ms ease-out !important; }
+  .fishing-overlay[data-miss='2'] .fishing-arena { animation: fishing-shake-b 320ms ease-out !important; }
 }

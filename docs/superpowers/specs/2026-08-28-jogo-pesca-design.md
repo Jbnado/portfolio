@@ -397,9 +397,16 @@ melhorias.
   decisões deliberadas aqui. A vinheta é **de borda, não de tela cheia**: o critério de três
   flashes por segundo (WCAG 2.3.1, **nível A** — dentro do piso do projeto) mede área, e uma
   piscada que ocupasse mais de 25% do campo visual viraria estrobo se alguém martelasse o espaço.
-  E a **tremida respeita `prefers-reduced-motion`**, ao contrário do movimento do marcador: essa
-  é decorativa, e sacudir a tela é o exemplo canônico de gatilho vestibular. A vinheta fica nos
-  dois casos, porque o aviso não pode sumir junto com a animação.
+  E a **tremida vale para todo mundo, inclusive sob `prefers-reduced-motion`** — decisão explícita
+  do dono, tomada depois de ver os dois lados lado a lado e com o custo dito: sacudir a tela é o
+  exemplo canônico de gatilho vestibular, e quem liga a preferência costuma ligar por isso. Não
+  fere o piso AA do projeto, porque o critério que trata de animação por interação (2.3.3) é AAA.
+  Se um dia doer, o botão é a amplitude nos keyframes, não a media query.
+
+  Detalhe que quase passou: `global.css:202` zera a duração de **toda** animação sob a
+  preferência (seletor `*`, `!important`). Sem furar aquele reset, tanto a vinheta quanto a
+  tremida rodariam por 0,01ms — e o aviso de erro ficava **invisível** justamente para quem tem
+  a preferência ligada. Verificar o nome da animação não pega isso; só a duração pega.
 - **Modo garantido.** Uma opção que garante a captura, mais lenta. O próprio Dredge tem isso.
 - **Cor não pode ser o único sinal.** "Zona verde" é informação só por cor e falha o critério
   AA de uso de cor. A zona ativa muda também de **forma e espessura**.
