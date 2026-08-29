@@ -5,8 +5,6 @@ import './TrackView.css';
 
 type Props = { params: TrackParams; onDone: (r: Result) => void };
 
-/** Movimento reduzido: o marcador anda em degraus em vez de deslizar. */
-const STEPS = 24;
 
 export function TrackView({ params, onDone }: Props) {
   const [pos, setPos] = useState(0);
@@ -24,16 +22,11 @@ export function TrackView({ params, onDone }: Props) {
     stateRef.current = fresh;
     setZonePos(fresh.zonePos);
 
-    const stepped = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // Quantum de TEMPO, nao de posicao: o motor e a tela recebem o mesmo tq,
-    // entao o que se ve e o que se julga.
-    const stepMs = params.periodMs / STEPS;
-    const quantize = (raw: number) => (stepped ? Math.round(raw / stepMs) * stepMs : raw);
     let raf = 0;
     startRef.current = performance.now();
 
     const loop = (now: number) => {
-      setPos(positionAt(params, quantize(now - startRef.current)));
+      setPos(positionAt(params, now - startRef.current));
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -41,7 +34,7 @@ export function TrackView({ params, onDone }: Props) {
     const onKey = (ev: KeyboardEvent) => {
       if (ev.code !== 'Space' || ev.repeat) return;
       ev.preventDefault();
-      const t = quantize(performance.now() - startRef.current);
+      const t = performance.now() - startRef.current;
       const next = pressTrack(params, stateRef.current, t, Math.random);
       stateRef.current = next;
       setZonePos(next.zonePos);

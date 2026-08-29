@@ -9,7 +9,6 @@ type Props = {
   onDone: (r: Result) => void;
 };
 
-const STEPS = 36;
 const BASE_RADIUS = 20;
 const RADIUS_STEP = 12;
 const MARKER_R = 4;
@@ -59,18 +58,12 @@ export function DodgeView({ params, texts, onDone }: Props) {
   onDoneRef.current = onDone;
 
   useEffect(() => {
-    const stepped = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // Quantum de tempo, nao de angulo (achado I1): motor e tela recebem o
-    // mesmo t, entao o buraco so engole o marcador quando a tela ja o mostra
-    // por cima do buraco.
-    const stepMs = params.periodMs / STEPS;
-    const quantize = (raw: number) => (stepped ? Math.round(raw / stepMs) * stepMs : raw);
     let raf = 0;
     const start = performance.now();
     stateRef.current = startDodge(params);
 
     const loop = (now: number) => {
-      const t = quantize(now - start);
+      const t = now - start;
       const next = stepDodge(params, stateRef.current, t);
       stateRef.current = next;
       setState(next);

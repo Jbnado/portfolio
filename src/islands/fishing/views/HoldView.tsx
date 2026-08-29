@@ -15,7 +15,6 @@ type Props = {
 
 /** Movimento reduzido: o peixe salta entre degraus. A FAIXA nao muda, porque
     ela e a mao do jogador e controle direto nao e animacao automatica. */
-const STEPS = 12;
 
 export function HoldView({ params, color, onDone }: Props) {
   const [state, setState] = useState<HoldState>(() => startHold(params));
@@ -30,7 +29,6 @@ export function HoldView({ params, color, onDone }: Props) {
     // Mesma razao do TRAJETO (ver TrackView.tsx): a vista desmonta a cada
     // peixe, o Preact nao reusa instancia. O reset abaixo e redundancia
     // barata, nao defesa contra estado herdado.
-    const stepped = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let raf = 0;
     let previous = performance.now();
     let current = startHold(params);
@@ -38,13 +36,7 @@ export function HoldView({ params, color, onDone }: Props) {
     const loop = (now: number) => {
       const dt = Math.min(50, now - previous);
       previous = now;
-      // A posicao quantizada vem DE DENTRO do motor (achado I1), separada da
-      // posicao continua que integra o proximo passo (achado C1): fishDrawPos
-      // no estado devolvido ja e o que a tela desenha, entao o que conta como
-      // "dentro da faixa" e exatamente o que o jogador ve, nao uma posicao
-      // continua escondida atras do arredondamento visual — e essa posicao
-      // continua (fishPos) segue avancando por baixo, entao o peixe nao trava.
-      current = stepHold(params, current, dt, holdingRef.current, Math.random, stepped ? STEPS : null);
+      current = stepHold(params, current, dt, holdingRef.current, Math.random);
       setState(current);
       if (current.done) { onDoneRef.current(current.done); return; }
       raf = requestAnimationFrame(loop);
@@ -84,7 +76,7 @@ export function HoldView({ params, color, onDone }: Props) {
         />
         <div
           class="hold-fish"
-          style={{ bottom: `calc(${state.fishDrawPos * 100}% - 8px)`, background: color }}
+          style={{ bottom: `calc(${state.fishPos * 100}% - 8px)`, background: color }}
         />
       </div>
       <div class="hold-meter">

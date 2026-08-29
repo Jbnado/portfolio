@@ -375,9 +375,24 @@ WCAG AA é piso vinculante no projeto (PRODUCT.md), e aqui são requisitos de ac
 melhorias.
 
 - **Um botão** já resolve metade. Switch access funciona por definição.
-- **`prefers-reduced-motion`:** TRAJETO e DRAGAGEM avançam em **passos discretos** em vez de
-  deslizar, mesma cadência e mesma decisão. No SUSTENTAÇÃO o peixe salta entre posições e **a
-  faixa não muda** — ela é a mão do jogador, e controle direto não é animação automática.
+- **`prefers-reduced-motion`: revogado, e a revogação é a correção de um erro meu.** A regra
+  original mandava TRAJETO e DRAGAGEM avançarem em **passos discretos** em vez de deslizar.
+  Na prática isso atualizava o marcador **9 a 11 vezes por segundo**, e o dono do projeto — que
+  tem a preferência ligada no Windows — relatou o jogo como travando. Não era percepção: era o
+  comportamento especificado.
+
+  A regra estava errada por dois motivos. O primeiro é que `prefers-reduced-motion` existe contra
+  movimento que causa desconforto vestibular — parallax, giro, zoom, movimento de área grande —
+  e um marcador de 4px numa barra de 420px não é nada disso. O segundo é que esse movimento é
+  **essencial à tarefa**: ele *é* o minigame. O próprio WCAG isenta movimento essencial
+  (2.3.3 Animation from Interactions, que além disso é AAA, acima do piso AA deste projeto).
+  Discretizar não protegia ninguém — deixava o jogo pior e mais difícil exatamente para quem
+  tinha a preferência ligada.
+
+  Os três motores passam a se mover continuamente para todo mundo. Saíram `quantizeSteps` do
+  `stepHold`, o campo `fishDrawPos` do estado e as constantes `STEPS` das três vistas. As
+  animações **decorativas** do site seguem respeitando a preferência, como sempre — o que muda
+  é só o movimento que carrega a jogabilidade.
 - **Modo garantido.** Uma opção que garante a captura, mais lenta. O próprio Dredge tem isso.
 - **Cor não pode ser o único sinal.** "Zona verde" é informação só por cor e falha o critério
   AA de uso de cor. A zona ativa muda também de **forma e espessura**.
