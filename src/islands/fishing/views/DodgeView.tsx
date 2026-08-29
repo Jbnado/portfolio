@@ -1,60 +1,80 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { DodgeParams, Result } from '../types';
-import {
-  startDodge,
-  switchLane,
-  stepDodge,
-  type DodgeState,
-} from '../engines/dodge';
+import { startDodge, switchLane, stepDodge, type DodgeState } from '../engines/dodge';
 import './DodgeView.css';
 
 type Props = {
   params: DodgeParams;
-  texts: { bumps: string; bumpsUnlimited: string };
+  texts: { clean: string; falls: string; fallsUnlimited: string };
   onDone: (r: Result) => void;
 };
 
 const STEPS = 36;
 const BASE_RADIUS = 20;
 const RADIUS_STEP = 12;
-
-// Portao fechado e o marcador nunca podem depender so da cor pra se
-// diferenciar: o marcador e um disco redondo (MARKER_R), o portao fechado
-// e um quadrado menor (GATE_CLOSED_HALF) e o portao aberto e um aro oco
-// (GATE_OPEN_R). Tres formas, tres tamanhos.
 const MARKER_R = 4;
-const GATE_OPEN_R = 2;
-const GATE_CLOSED_HALF = 2.5;
+
+/** Ponto do anel na fase `ph` (0..1 da volta), no raio `r`. */
+function point(ph: number, r: number): [number, number] {
+  const a = ph * 2 * Math.PI - Math.PI / 2;
+  return [50 + r * Math.cos(a), 50 + r * Math.sin(a)];
+}
+
+/** Arco de `from` ate `to` (em fracao da volta, `to` pode passar de 1). */
+function arc(r: number, from: number, to: number): string {
+  const [x0, y0] = point(from, r);
+  const [x1, y1] = point(to, r);
+  const large = to - from > 0.5 ? 1 : 0;
+  return `M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`;
+}
+
+/** Os pedacos de pista que SOBRAM na pista `lane`: o anel e desenhado
+    quebrado, com um buraco de gapWidth em cada portao que fecha esta pista.
+    O caminho acaba mesmo — nao ha obstaculo pintado por cima dele, e por isso
+    o sinal nao depende de cor nenhuma, so da presenca ou ausencia de trilho. */
+function laneArcs(params: DodgeParams, lane: number, r: number): string[] {
+  const closed = params.gates
+    .filter((g) => !g.open.includes(lane))
+    .map((g) => g.pos)
+    .sort((a, b) => a - b);
+  // Pista sem nenhum portao fechado vira um anel praticamente inteiro (o
+  // vao de 0.001 nao se ve). Fica aqui, e nao num ramo do JSX, porque o
+  // desenho nao pode depender de a tabela nunca ter uma pista assim.
+  if (closed.length === 0) return [arc(r, 0, 0.999)];
+  const half = params.gapWidth / 2;
+  return closed.map((pos, i) => {
+    const last = i + 1 === closed.length;
+    const from = pos + half;
+    const to = (last ? closed[0] + 1 : closed[i + 1]) - half;
+    return arc(r, from, to);
+  });
+}
 
 export function DodgeView({ params, texts, onDone }: Props) {
-  const [est, setEst] = useState<DodgeState>(() => startDodge(params));
-  const [angle, setAng] = useState(0);
+  const [state, setState] = useState<DodgeState>(() => startDodge(params));
+  const [angle, setAngle] = useState(0);
   const stateRef = useRef(startDodge(params));
 
-  // Mesma razao do TRAJETO e do SUSTENTACAO.
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
 
   useEffect(() => {
-    // Mesma razao do TRAJETO (ver TrackView.tsx): a vista desmonta a cada
-    // peixe, o Preact nao reusa instancia. O reset abaixo e redundancia
-    // barata, nao defesa contra estado herdado.
     const stepped = matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Quantum de tempo, nao de angulo (achado I1): motor e tela recebem o
-    // mesmo tq, entao o portao so conta como cruzado quando o anel desenhado
-    // ja mostra o marcador la.
+    // mesmo t, entao o buraco so engole o marcador quando a tela ja o mostra
+    // por cima do buraco.
     const stepMs = params.periodMs / STEPS;
     const quantize = (raw: number) => (stepped ? Math.round(raw / stepMs) * stepMs : raw);
     let raf = 0;
-    const inicio = performance.now();
+    const start = performance.now();
     stateRef.current = startDodge(params);
 
     const loop = (now: number) => {
-      const t = quantize(now - inicio);
+      const t = quantize(now - start);
       const next = stepDodge(params, stateRef.current, t);
       stateRef.current = next;
-      setEst(next);
-      setAng((t % params.periodMs) / params.periodMs);
+      setState(next);
+      setAngle((t % params.periodMs) / params.periodMs);
       if (next.done) { onDoneRef.current(next.done); return; }
       raf = requestAnimationFrame(loop);
     };
@@ -63,9 +83,8 @@ export function DodgeView({ params, texts, onDone }: Props) {
     const onKey = (ev: KeyboardEvent) => {
       if (ev.code !== 'Space' || ev.repeat) return;
       ev.preventDefault();
-      const t = quantize(performance.now() - inicio);
-      stateRef.current = switchLane(params, stateRef.current, t);
-      setEst(stateRef.current);
+      stateRef.current = switchLane(params, stateRef.current);
+      setState(stateRef.current);
     };
     window.addEventListener('keydown', onKey);
 
@@ -76,66 +95,41 @@ export function DodgeView({ params, texts, onDone }: Props) {
   }, [params]);
 
   const rad = angle * 2 * Math.PI - Math.PI / 2;
-  const raio = BASE_RADIUS + est.lane * RADIUS_STEP;
+  const radius = BASE_RADIUS + state.lane * RADIUS_STEP;
 
   return (
     <div class="dodge">
       <svg class="dodge-ring" viewBox="0 0 100 100" role="presentation">
-        {Array.from({ length: params.lanes }, (_, i) => (
-          <circle
-            key={i}
-            cx="50" cy="50" r={BASE_RADIUS + i * RADIUS_STEP}
-            fill="none" stroke="var(--fishing-rule)" stroke-width="2"
-          />
-        ))}
-        {params.gates.map((portao, i) =>
-          Array.from({ length: params.lanes }, (_, lane) => {
-            const aberto = portao.open.includes(lane);
-            const r = BASE_RADIUS + lane * RADIUS_STEP;
-            const a = portao.pos * 2 * Math.PI - Math.PI / 2;
-            const cx = 50 + r * Math.cos(a);
-            const cy = 50 + r * Math.sin(a);
-            // Aberto: aro oco, pequeno. Fechado: quadrado solido, forma
-            // diferente do marcador redondo, nao so cor diferente.
-            return aberto ? (
-              <circle
-                key={`${i}-${lane}`}
-                cx={cx} cy={cy} r={GATE_OPEN_R}
-                fill="none" stroke="var(--fishing-zone)" stroke-width="1.5"
-              />
-            ) : (
-              <rect
-                key={`${i}-${lane}`}
-                x={cx - GATE_CLOSED_HALF} y={cy - GATE_CLOSED_HALF}
-                width={GATE_CLOSED_HALF * 2} height={GATE_CLOSED_HALF * 2}
-                fill="var(--fishing-danger)"
-              />
-            );
-          }),
-        )}
+        {Array.from({ length: params.lanes }, (_, lane) => {
+          const r = BASE_RADIUS + lane * RADIUS_STEP;
+          const width = lane === state.lane ? 3 : 2;
+          return laneArcs(params, lane, r).map((d, i) => (
+            <path key={`${lane}-${i}`} d={d} fill="none"
+              stroke="var(--fishing-rule)" stroke-width={width} stroke-linecap="round" />
+          ));
+        })}
         <circle
-          cx={50 + raio * Math.cos(rad)}
-          cy={50 + raio * Math.sin(rad)}
+          cx={50 + radius * Math.cos(rad)}
+          cy={50 + radius * Math.sin(rad)}
           r={MARKER_R} fill="var(--fishing-marker)"
         />
       </svg>
-      {/* <p> tem role paragraph, e paragraph esta na lista "Name Prohibited"
-          da ARIA (WAI-ARIA 1.2 SS5.2.8.6): aria-label nao e pra ser usado ali,
-          e o computo de nome acessivel deve ignora-lo. Em vez de nomear o
-          paragrafo, escondemos visualmente a frase por extenso (reaproveita
-          o clip de .fishing-live) e escondemos DO LEITOR o glifo/fracao
-          visivel com aria-hidden. O leitor le o texto escondido como
-          conteudo normal do paragrafo; quem ve le o simbolo compacto. */}
-      <p class="dodge-bumps">
+      {/* <p> tem role paragraph, que esta na lista "Name Prohibited" da ARIA:
+          aria-label ali e pra ser ignorado. Entao a frase por extenso vai
+          escondida VISUALMENTE (o leitor le como conteudo normal) e o glifo
+          compacto vai escondido DO LEITOR. */}
+      <p class="dodge-count">
         <span class="fishing-live">
+          {`${texts.clean}: ${state.streak} de ${params.cleanToCatch}`}
           {params.bumpsAllowed === null
-            ? `${texts.bumps}: ${est.bumps}, ${texts.bumpsUnlimited}`
-            : `${texts.bumps}: ${est.bumps} / ${params.bumpsAllowed + 1}`}
+            ? `. ${texts.fallsUnlimited}`
+            : `. ${texts.falls}: ${state.bumps} de ${params.bumpsAllowed + 1}`}
         </span>
         <span aria-hidden="true">
-          {params.bumpsAllowed === null
-            ? `${est.bumps} ∞`
-            : `${est.bumps} / ${params.bumpsAllowed + 1}`}
+          {`${state.streak}/${params.cleanToCatch}`}
+          <span class="dodge-falls">
+            {params.bumpsAllowed === null ? ' \u221e' : ` \u2715${state.bumps}/${params.bumpsAllowed + 1}`}
+          </span>
         </span>
       </p>
     </div>

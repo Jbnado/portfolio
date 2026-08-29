@@ -23,8 +23,9 @@ type Texts = {
   largest: string;
   guaranteedMode: string;
   guaranteedModeHelp: string;
-  bumps: string;
-  bumpsUnlimited: string;
+  clean: string;
+  falls: string;
+  fallsUnlimited: string;
   play: string;
   exit: string;
   exitHelp: string;
@@ -262,7 +263,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
                 {phase.fish.engine === 'dodge' && (
                   <DodgeView
                     params={phase.fish.params as DodgeParams}
-                    texts={{ bumps: texts.bumps, bumpsUnlimited: texts.bumpsUnlimited }}
+                    texts={{ clean: texts.clean, falls: texts.falls, fallsUnlimited: texts.fallsUnlimited }}
                     onDone={onDone(phase.fish)}
                   />
                 )}

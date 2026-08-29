@@ -55,7 +55,7 @@ mecânicas, não só a mais fácil (ver "Modelo de falha" para a regra de quem p
 
 | faixa | TRAJETO | SUSTENTAÇÃO | DRAGAGEM |
 |---|---|---|---|
-| 1 — raso, ensina | p1: `pêndulo`, 1 acerto, janela larga | p2: peixe calmo, carência longa | p3: 2 pistas, nunca perde |
+| 1 — raso, ensina | p1: `pêndulo`, 1 acerto, janela larga | p2: peixe calmo, carência longa | p3: 2 pistas, nunca perde, 3 limpas seguidas |
 | 2 — meio | p4: `radial`, 2 acertos | p5: peixe errático | p6: 2 pistas, tolera 2 batidas |
 | 3 — abissal, sem perdão | p7: `pêndulo` com alternância, 3 acertos | p8: peixe arisco, carência curta | p9: 3 pistas, perde na primeira batida |
 
@@ -221,16 +221,34 @@ calmo, com a mesma implementação.
 
 ### 3. DRAGAGEM — desvio contínuo
 
-O indicador ocupa uma pista; anéis giram com portões — pontos no anel que só deixam passar quem
-está numa das pistas daquele portão; espaço troca de pista para passar pelo portão em vez de
-bater no fechado.
+O indicador ocupa uma pista; os anéis giram e **cada anel é desenhado quebrado**: onde um portão
+fecha aquela pista, o trilho simplesmente acaba. Espaço troca de pista antes do vão. Cair no vão
+é o dano.
 
 **Não é acerto no tempo, é posicionamento sob pressão contínua.** É a habilidade genuinamente
 diferente das três, e é o motor de peixe **brigão**.
 
-Parâmetros: período da volta, número de pistas, portões (posição no anel e quais pistas abrem
-ali — não um "tamanho de brecha": o portão é um ponto, a brecha é a pista aberta), voltas até
-fisgar (`lapsToCatch`), batidas toleradas.
+**O vão tem largura, e é a mesma que a tela desenha.** Isto revoga o texto original desta seção,
+que dizia "não um tamanho de brecha: o portão é um ponto, a brecha é a pista aberta". O portão
+virou intervalo (`gapWidth`, fração da volta) por dois motivos: um buraco no anel só se desenha
+se tiver largura, e julgar por ponto enquanto se desenha um buraco recria a discordância entre o
+que se vê e o que se julga que esta spec proíbe em todo o resto. Trocar de pista **dentro** do
+vão cai, e isso é a regra, não um efeito colateral.
+
+**Fisga com passagens limpas seguidas, não com voltas sobrevividas.** `cleanToCatch` (3) passagens
+limpas em sequência fisgam; cair **zera** a sequência. Isto substitui `lapsToCatch`, e existe por
+um defeito medido: com a regra de voltas, ficar **parado sem tocar em nada** pescava o p3 com
+47cm de um máximo de 58 — o peixe que existe para ensinar premiava não aprender. Como toda pista
+quebra em algum portão, nenhuma sequência de três limpas sai sem trocar de rota: trocar virou
+obrigatório em vez de opcional.
+
+**A dificuldade da DRAGAGEM é a velocidade da volta.** `periodMs` encurta por faixa (4200 / 3000 /
+2200), o que encolhe a janela para decidir e agir. Contagem de pistas e tolerância acompanham,
+mas o botão principal é a velocidade.
+
+Parâmetros: período da volta (`periodMs`), número de pistas, portões (posição no anel e quais
+pistas abrem ali), largura do vão (`gapWidth`), limpas seguidas para fisgar (`cleanToCatch`),
+quedas toleradas (`bumpsAllowed`).
 
 ### Origem das mecânicas
 
@@ -310,7 +328,7 @@ dificuldade — e agora, com a matriz completa, também garante que as três per
 apareçam em toda faixa.
 
 **Tolerância se expressa na moeda de cada motor:** voltas extras no TRAJETO, taxa de dreno no
-SUSTENTAÇÃO, batidas até arrebentar na DRAGAGEM.
+SUSTENTAÇÃO, quedas até arrebentar na DRAGAGEM.
 
 ## Acessibilidade
 

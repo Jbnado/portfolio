@@ -50,8 +50,13 @@ export type DodgeParams = {
   lanes: number;
   periodMs: number;
   gates: Gate[];
-  lapsToCatch: number;
-  /** null = nunca perde o peixe; as batidas custam so tamanho. */
+  /** Largura angular do vao, em fracao da volta. E a MESMA largura que a
+      vista desenha como buraco no anel: o que se ve e o que se julga. */
+  gapWidth: number;
+  /** Passagens limpas SEGUIDAS para fisgar. Cair zera a contagem, entao
+      ficar parado nunca pesca: toda pista quebra em algum portao. */
+  cleanToCatch: number;
+  /** null = nunca perde o peixe; cair custa so tamanho e zera a sequencia. */
   bumpsAllowed: number | null;
 };
 

@@ -1,8 +1,11 @@
 .dodge { display: flex; flex-direction: column; gap: 12px; align-items: center; }
 .dodge-ring { display: block; width: 100%; max-width: 280px; height: auto; }
-.dodge-bumps {
+/* A contagem principal e progresso (limpas seguidas), entao herda a cor de
+   texto normal. So a parte das quedas usa a cor de perigo. */
+.dodge-count {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.08em;
-  color: var(--fishing-danger);
 }
+
+.dodge-falls { color: var(--fishing-danger); }
