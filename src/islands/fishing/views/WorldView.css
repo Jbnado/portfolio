@@ -2,7 +2,16 @@
    ARRANJO — onde fica a loja, quanto se anda, como o minigame cobre a cena —
    e nao a arte, que ainda nao existe. */
 
-.world { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 720px; }
+/* No desktop o lago pode ser grande: estamos num monitor, nao num selo. O
+   teto por altura (133vh) existe porque a proporcao e 16/7 — sem ele, telas
+   baixas e largas cortariam a cena. */
+.world {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: min(96vw, 1080px, 133vh);
+}
 
 .world-view {
   position: relative;
@@ -140,4 +149,15 @@
 
 @media (pointer: coarse) and (orientation: landscape) and (max-height: 520px) {
   .world-turn { display: flex; }
+}
+
+/* Agua fora do alcance da linha: hachurada e apagada. A trava tem que se VER
+   na cena — se so o aviso dissesse, apertar sem poder pareceria defeito. */
+.world-water[data-locked='true'] {
+  opacity: 0.35;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0 6px,
+    var(--fishing-rule) 6px 8px
+  );
 }

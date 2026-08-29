@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import {
-  SPOTS, SHOP_X, SHORE_TO, BOAT_START, REACH, WORLD_MAX,
+  SPOTS, SHOP_X, SHORE_TO, BOAT_START, REACH, WORLD_MAX, TIER_BY_DEPTH,
   cameraAt, depthAt, moveBoat, spotUnder, atShop, type Depth,
 } from '../world';
 import './WorldView.css';
@@ -20,10 +20,16 @@ const BANDS: { depth: Depth; from: number; to: number }[] = [
 
 type Props = {
   boat: number;
-  texts: { shop: string; cast: string; noSpot: string; turnPhone: string; depth: Record<string, string> };
+  /** Ate que faixa a linha equipada alcanca. O que passa disso e desenhado
+      como fechado: a regra tem que se ver na cena, nao so no aviso. */
+  reach: 1 | 2 | 3;
+  texts: {
+    shop: string; cast: string; noSpot: string; needLine: string;
+    turnPhone: string; depth: Record<string, string>;
+  };
 };
 
-export function WorldView({ boat, texts }: Props) {
+export function WorldView({ boat, reach, texts }: Props) {
   const cam = cameraAt(boat, VIEW_W);
   /** Unidade de mundo -> porcentagem da tela. */
   const sx = (x: number) => ((x - cam) / VIEW_W) * 100;
@@ -31,6 +37,7 @@ export function WorldView({ boat, texts }: Props) {
   const spot = spotUnder(boat);
   const naLoja = atShop(boat);
   const fundo = depthAt(boat);
+  const podePescar = TIER_BY_DEPTH[fundo] <= reach;
 
   return (
     <div class="world">
@@ -42,6 +49,7 @@ export function WorldView({ boat, texts }: Props) {
             key={b.depth}
             class="world-water"
             data-depth={b.depth}
+            data-locked={String(TIER_BY_DEPTH[b.depth] > reach)}
             style={{ left: `${sx(b.from)}%`, width: `${((b.to - b.from) / VIEW_W) * 100}%` }}
           />
         ))}
@@ -54,8 +62,10 @@ export function WorldView({ boat, texts }: Props) {
           style={{ left: `${sx(SHOP_X)}%`, width: `${(5 / VIEW_W) * 100}%` }}
         />
 
-        {/* Pontos de pesca: a marca fina sobre a agua. */}
-        {SPOTS.map((s) => (
+        {/* Pontos de pesca: a marca fina sobre a agua. Marca fora do alcance
+            da linha NAO e desenhada — mostrar um ponto que nao da pra usar so
+            convida a tentar. A agua hachurada ja diz que ali tem mais lago. */}
+        {SPOTS.filter((s) => TIER_BY_DEPTH[depthAt(s.x)] <= reach).map((s) => (
           <div
             key={s.id}
             class="world-spot"
@@ -78,7 +88,7 @@ export function WorldView({ boat, texts }: Props) {
       <p class="world-hud">
         <span class="world-depth" data-depth={fundo}>{texts.depth[fundo]}</span>
         <span class="world-hint">
-          {naLoja ? texts.shop : spot ? texts.cast : texts.noSpot}
+          {naLoja ? texts.shop : !podePescar ? texts.needLine : spot ? texts.cast : texts.noSpot}
         </span>
       </p>
     </div>

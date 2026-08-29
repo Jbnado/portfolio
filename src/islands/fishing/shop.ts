@@ -1,3 +1,4 @@
+import { FISH } from './fish';
 import { TIER_BY_DEPTH, type Depth } from './world';
 
 /** Iscas sao PERMANENTES: compra uma vez e a sorte dela vale para sempre.
@@ -12,7 +13,16 @@ export const BAITS: { id: BaitId; price: number; luck: number }[] = [
 ];
 
 export const LINES: Depth[] = ['raso', 'medio', 'abissal'];
-export const LINE_PRICE: Record<Depth, number> = { raso: 40, medio: 120, abissal: 300 };
+export const LINE_PRICE: Record<Depth, number> = { raso: 50, medio: 150, abissal: 500 };
+
+/** Teto de moedas por peixe, por faixa. O raro de cada faixa vale bem mais
+    que o comum dela — e o que faz caca-lo compensar, e o que faz a linha (que
+    e o que libera o raro) se pagar. Os numeros sao do dono. */
+const VALUE_CAP: Record<1 | 2 | 3, { comum: number; raro: number }> = {
+  1: { comum: 5, raro: 10 },
+  2: { comum: 10, raro: 25 },
+  3: { comum: 50, raro: 100 },
+};
 
 export type Progress = {
   coins: number;
@@ -22,26 +32,47 @@ export type Progress = {
   /** Iscas compradas, e qual esta no anzol. */
   baits: BaitId[];
   bait: BaitId | null;
-  /** Pescado ainda nao vendido, em cm. */
-  hold: number[];
+  /** Pescado ainda nao vendido. Guarda a especie junto do tamanho: o valor
+      depende da faixa e de ser raro ou nao, entao so o cm nao basta. */
+  hold: { id: string; cm: number }[];
 };
 
 export const EMPTY_PROGRESS: Progress = {
   coins: 0, lines: [], line: null, baits: [], bait: null, hold: [],
 };
 
-/** Um peixe vale metade do tamanho em moedas, com piso de 1. */
-export function fishValue(cm: number): number {
-  return Math.max(1, Math.round(cm / 2));
+/** Quanto vale um peixe. O teto e da FAIXA, e o raro de cada faixa tem teto
+    proprio, mais alto. Dentro disso o tamanho manda: um peixe no minimo da
+    especie vale 40% do teto, um no maximo vale o teto inteiro. */
+export function fishValue(id: string, cm: number): number {
+  const fish = FISH.find((f) => f.id === id);
+  if (!fish) return 1;
+  const cap = VALUE_CAP[fish.tier][fish.engine === 'hold' ? 'raro' : 'comum'];
+  const span = fish.sizeMax - fish.sizeMin;
+  const fracao = span > 0 ? Math.min(1, Math.max(0, (cm - fish.sizeMin) / span)) : 1;
+  return Math.max(1, Math.round(cap * (0.4 + 0.6 * fracao)));
 }
 
-export function holdValue(hold: number[]): number {
-  return hold.reduce((total, cm) => total + fishValue(cm), 0);
+export function holdValue(hold: { id: string; cm: number }[]): number {
+  return hold.reduce((total, f) => total + fishValue(f.id, f.cm), 0);
 }
 
-/** A linha equipada ALCANCA esta profundidade? Uma linha mais funda cobre
-    tudo que e mais raso: por isso a abissal e a melhor — com ela se pesca o
-    raro em qualquer lugar. Sem linha nenhuma, nenhum raro morde. */
+/** Ate que faixa a linha equipada deixa PESCAR. Sem linha nenhuma da para
+    pescar no raso — senao o jogo comeca travado, porque moeda so vem de
+    vender peixe. O que a linha do raso compra nao e o acesso ao raso, e o
+    peixe RARO dele. */
+export function reachTier(p: Progress): 1 | 2 | 3 {
+  return p.line ? TIER_BY_DEPTH[p.line] : 1;
+}
+
+/** Da para lancar nesta profundidade? A linha e que decide: sem a linha
+    certa, o meio e o abissal ficam fechados. */
+export function canFish(p: Progress, d: Depth): boolean {
+  return TIER_BY_DEPTH[d] <= reachTier(p);
+}
+
+/** A linha equipada alcanca o PEIXE RARO desta profundidade? Aqui nao ha
+    cortesia: sem linha, nenhum raro morde, nem no raso. */
 export function lineReaches(p: Progress, d: Depth): boolean {
   return p.line !== null && TIER_BY_DEPTH[p.line] >= TIER_BY_DEPTH[d];
 }
@@ -75,8 +106,8 @@ export function equipBait(p: Progress, id: BaitId): Progress {
   return p.baits.includes(id) ? { ...p, bait: id } : p;
 }
 
-export function addCatch(p: Progress, cm: number): Progress {
-  return { ...p, hold: [...p.hold, cm] };
+export function addCatch(p: Progress, id: string, cm: number): Progress {
+  return { ...p, hold: [...p.hold, { id, cm }] };
 }
 
 /** Peso do peixe raro no sorteio. A sorte da isca SOMA: com ela o raro
@@ -107,7 +138,13 @@ export function loadProgress(): Progress {
       line: lines.includes(raw.line) ? raw.line : (lines[lines.length - 1] ?? null),
       baits,
       bait: baits.includes(raw.bait) ? raw.bait : (baits[baits.length - 1] ?? null),
-      hold: Array.isArray(raw.hold) ? raw.hold.filter((n: unknown) => typeof n === 'number') : [],
+      // O porao mudou de formato (era so cm). Entrada fora do formato novo
+      // e descartada em vez de adivinhada: peixe sem especie nao tem preco.
+      hold: Array.isArray(raw.hold)
+        ? raw.hold.filter((f: unknown): f is { id: string; cm: number } =>
+            !!f && typeof f === 'object' && typeof (f as { id?: unknown }).id === 'string'
+            && typeof (f as { cm?: unknown }).cm === 'number')
+        : [],
     };
   } catch {
     return EMPTY_PROGRESS;

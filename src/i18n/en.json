@@ -183,6 +183,13 @@
     "exitHelp": "Esc exits too",
     "gameArea": "Game area",
     "howToPlay": "Space does everything: it casts the line and plays each fish's minigame.",
+    "keys": "Arrows move · Space acts · Tab opens the log · Esc closes",
+    "close": "Close",
+    "depth3": {
+          "1": "Shallows",
+          "2": "Mid water",
+          "3": "Abyss"
+    },
     "shop": {
           "title": "Shore shop",
           "coins": "Coins",
@@ -208,6 +215,8 @@
           "castShort": "Cast",
           "noSpotShort": "—",
           "logShort": "Log",
+          "needLine": "Your line is too short for this depth",
+          "needLineShort": "No line",
           "turnPhone": "Turn your phone upright.",
           "depth": {
                 "raso": "Shallows",

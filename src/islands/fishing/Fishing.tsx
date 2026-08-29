@@ -10,8 +10,8 @@ import { WorldView, WorldPad, useBoat } from './views/WorldView';
 import { TIER_BY_DEPTH, DEPTH_BY_TIER, depthAt, spotUnder, atShop } from './world';
 import { ShopView } from './views/ShopView';
 import {
-  loadProgress, saveProgress, lineReaches, luckOf, addCatch, rareWeight, luckyQuality,
-  type Progress,
+  loadProgress, saveProgress, lineReaches, canFish, reachTier, luckOf, addCatch,
+  rareWeight, luckyQuality, type Progress,
 } from './shop';
 import {
   loadLog,
@@ -40,9 +40,13 @@ type Texts = {
   exitHelp: string;
   gameArea: string;
   howToPlay: string;
+  keys: string;
+  close: string;
+  depth3: Record<string, string>;
   world: {
     shop: string; cast: string; noSpot: string; menu: string;
     shopShort: string; castShort: string; noSpotShort: string; logShort: string;
+    needLine: string; needLineShort: string;
     turnPhone: string;
     depth: Record<string, string>;
   };
@@ -83,12 +87,22 @@ export default function Fishing({ texts }: { texts: Texts }) {
   const [miss, setMiss] = useState(0);
   const [menu, setMenu] = useState(false);
   const [shop, setShop] = useState(false);
+  /** O efeito da sobreposicao so depende de `playing`, entao ele enxergaria
+      um `menu` velho. A ref carrega o valor atual sem religar o efeito. */
+  const menuRef = useRef(false);
+  menuRef.current = menu;
   const [progress, setProgress] = useState<Progress>(() => loadProgress());
 
   const saveAnd = useCallback((p: Progress) => { setProgress(p); saveProgress(p); }, []);
   const onMiss = useCallback(() => setMiss((n) => n + 1), []);
   const { boat, setDir } = useBoat(playing && phase.kind !== 'playing' && !menu && !shop);
-  const spot = spotUnder(boat);
+  /** A linha equipada decide ate onde da para pescar. Sem ela, o meio e o
+      abissal ficam fechados. */
+  const podePescar = canFish(progress, depthAt(boat));
+  /** Marca fora do alcance da linha NAO conta como marca: ela nem e
+      desenhada, e sem esta trava o barco continuava "em cima" de um ponto
+      invisivel e o botao de lancar aparecia do nada. */
+  const spot = podePescar ? spotUnder(boat) : null;
   const playBtnRef = useRef<HTMLButtonElement>(null);
   const castBtnRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -114,6 +128,10 @@ export default function Fishing({ texts }: { texts: Texts }) {
     const onKey = (ev: KeyboardEvent) => {
       if (ev.key === 'Escape') {
         ev.preventDefault();
+        // Esc fecha o que esta POR CIMA primeiro. Sem isto, fechar o caderno
+        // derrubava o jogo inteiro junto — e "Esc fecha" deixava de ser
+        // verdade justamente onde o jogador mais usa a tecla.
+        if (menuRef.current) { setMenu(false); return; }
         setPlaying(false);
         return;
       }
@@ -188,7 +206,11 @@ export default function Fishing({ texts }: { texts: Texts }) {
     // A profundidade onde o barco esta e que abre a faixa. Isto substitui o
     // "quantos peixes voce ja conhece" do v1, que era progressao de mentira
     // por nao existir mapa: agora andar para a direita E a progressao.
-    const maxTier = TIER_BY_DEPTH[depthAt(boat)];
+    const aqui = depthAt(boat);
+    // Guarda dupla: `act` ja nao chama sem alcance, mas o sorteio nao pode
+    // depender de quem o chamou para respeitar a regra.
+    if (!canFish(progress, aqui)) return;
+    const maxTier = TIER_BY_DEPTH[aqui];
     const luck = luckOf(progress);
     // O peixe raro de cada profundidade so morde se a LINHA equipada
     // ALCANCA aquela profundidade. Uma linha mais funda cobre o que e mais
@@ -224,8 +246,8 @@ export default function Fishing({ texts }: { texts: Texts }) {
     if (phase.kind === 'result') { setPhase({ kind: 'idle' }); return; }
     if (phase.kind !== 'idle') return;
     if (atShop(boat)) { setShop(true); return; }
-    if (spot) cast();
-  }, [menu, phase.kind, boat, spot, cast]);
+    if (spot && podePescar) cast();
+  }, [menu, phase.kind, boat, spot, podePescar, cast]);
 
   useEffect(() => {
     if (!playing) return;
@@ -255,7 +277,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
         setLog(updated);
         saveLog(updated);
         // O peixe vai pro porao; vender na loja e o que vira moeda.
-        saveAnd(addCatch(progress, size));
+        saveAnd(addCatch(progress, fish.id, size));
       }
       setPhase({ kind: 'result', fish, result, size });
     },
@@ -305,6 +327,22 @@ export default function Fishing({ texts }: { texts: Texts }) {
             <button class="fishing-exit" onClick={() => setPlaying(false)}>
               {texts.exit} <small>{texts.exitHelp}</small>
             </button>
+
+            {/* So fora do playing (achado I7): os tres motores fazem
+                preventDefault() no keydown de Space na window, e isso cancela
+                o keyup que o navegador usa pra ativar um checkbox por
+                teclado. Alcancavel mas inerte dentro da partida. */}
+            {phase.kind !== 'playing' && (
+              <label class="fishing-option">
+                <input
+                  type="checkbox"
+                  checked={guaranteed}
+                  onChange={(e) => setGuaranteed((e.target as HTMLInputElement).checked)}
+                />
+                <span>{texts.guaranteedMode}</span>
+                <small>{texts.guaranteedModeHelp}</small>
+              </label>
+            )}
           </div>
 
           {/* role=dialog com aria-modal esconde tudo fora da subarvore para
@@ -320,45 +358,42 @@ export default function Fishing({ texts }: { texts: Texts }) {
           </p>
 
           <div class="fishing-arena">
-            {/* So fora do playing (achado I7): os tres motores fazem
-                preventDefault() no keydown de Space na window pra barrar a
-                rolagem da pagina, e isso cancela o keyup que o navegador usa
-                pra ativar um checkbox por teclado. Alcancavel mas inerte
-                dentro da partida, entao ele so aparece onde funciona. */}
-            {phase.kind !== 'playing' && (
-              <label class="fishing-option">
-                <input
-                  type="checkbox"
-                  checked={guaranteed}
-                  onChange={(e) => setGuaranteed((e.target as HTMLInputElement).checked)}
-                />
-                <span>{texts.guaranteedMode}</span>
-                <small>{texts.guaranteedModeHelp}</small>
-              </label>
-            )}
-
             {/* O mundo fica SEMPRE desenhado. O minigame cobre a cena em vez de
                 substitui-la: e assim que da pra julgar como a partida aparece
                 por cima do lago, que e o ponto deste blockout. */}
-            <WorldView boat={boat} texts={texts.world} />
+            <WorldView boat={boat} reach={reachTier(progress)} texts={texts.world} />
 
-            {/* Sem isto o jogo e injogavel no celular: nao ha tecla nenhuma
-                para mover o barco, lancar, abrir a loja ou o caderno. */}
-            {phase.kind !== 'playing' && (
-              <WorldPad
-                setDir={setDir}
-                onAct={act}
-                onLog={() => setMenu((m) => !m)}
-                actLabel={atShop(boat) ? texts.world.shopShort : spot ? texts.world.castShort : texts.world.noSpotShort}
-                logLabel={texts.world.logShort}
-              />
-            )}
+            {/* Altura reservada. O botao de lancar entra e sai conforme o
+                barco chega numa marca, e sem a reserva ele empurrava o lago
+                inteiro pra cima e pra baixo a cada passo — a outra metade do
+                "UI pulando". */}
+            <div class="fishing-actions">
+              {/* Sem isto o jogo e injogavel no celular: nao ha tecla nenhuma
+                  para mover o barco, lancar, abrir a loja ou o caderno. */}
+              {phase.kind !== 'playing' && (
+                <WorldPad
+                  setDir={setDir}
+                  onAct={act}
+                  onLog={() => setMenu((m) => !m)}
+                  actLabel={
+                    atShop(boat) ? texts.world.shopShort
+                      : !podePescar ? texts.world.needLineShort
+                        : spot ? texts.world.castShort : texts.world.noSpotShort
+                  }
+                  logLabel={texts.world.logShort}
+                />
+              )}
 
-            {phase.kind === 'idle' && spot && (
-              <button class="fishing-button" ref={castBtnRef} onClick={cast}>
-                {texts.cast}
-              </button>
-            )}
+              {phase.kind === 'idle' && spot && (
+                <button class="fishing-button" ref={castBtnRef} onClick={cast}>
+                  {texts.cast}
+                </button>
+              )}
+
+              {/* Como se abre e como se fecha, dito na tela: antes so quem
+                  adivinhasse Tab e Esc descobria. */}
+              <p class="fishing-keys">{texts.keys}</p>
+            </div>
 
             {phase.kind !== 'idle' && (
               <div class="fishing-over">
@@ -418,24 +453,36 @@ export default function Fishing({ texts }: { texts: Texts }) {
 
             {menu && (
               <div class="fishing-menu">
-                <h3>{texts.log}</h3>
-                {Object.keys(log).length === 0 ? (
-                  <p>{texts.logEmpty}</p>
-                ) : (
-                  <ul>
-                    {Object.entries(log).map(([id, r]) => (
-                      <li key={id}>
-                        <span class="fishing-menu-pic" aria-hidden="true" />
-                        <span>{texts.fish[id]}</span>
-                        <small>
-                          {texts.water[FISH.find((f) => f.id === id)?.water ?? 'doce']}
-                          {' · '}{r.times} {r.times === 1 ? texts.time : texts.times}
-                          {', '}{texts.largest} {r.largest} cm
-                        </small>
+                <header class="fishing-menu-head">
+                  <h3>{texts.log}</h3>
+                  <button class="fishing-menu-close" onClick={() => setMenu(false)}>
+                    {texts.close}
+                  </button>
+                </header>
+
+                {/* Todas as especies aparecem sempre, as que faltam como
+                    "???": o caderno serve para mostrar o que ainda ha por
+                    pescar, nao so o que ja se pescou. */}
+                <ul class="fishing-dex">
+                  {FISH.map((f) => {
+                    const r = log[f.id];
+                    return (
+                      <li key={f.id} class="fishing-dex-item" data-found={String(!!r)}>
+                        <span class="fishing-menu-pic" aria-hidden="true">{r ? '' : '???'}</span>
+                        <strong>{r ? texts.fish[f.id] : '???'}</strong>
+                        {r ? (
+                          <small>
+                            {texts.water[f.water]}
+                            {' · '}{r.times} {r.times === 1 ? texts.time : texts.times}
+                            <br />{texts.largest} {r.largest} cm
+                          </small>
+                        ) : (
+                          <small>{texts.depth3[f.tier]}</small>
+                        )}
                       </li>
-                    ))}
-                  </ul>
-                )}
+                    );
+                  })}
+                </ul>
               </div>
             )}
           </div>

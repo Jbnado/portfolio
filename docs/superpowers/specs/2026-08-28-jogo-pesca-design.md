@@ -311,10 +311,32 @@ resto do jogo, uma tecla faz tudo.
 
 **Linha é permissão, isca é probabilidade.** A separação importa e veio das palavras do dono.
 
-- **Três linhas**, uma por profundidade (40, 120, 300). Cada uma **alcança** a sua profundidade
-  e todas as mais rasas — por isso **a abissal é a melhor: com ela se pesca o raro em qualquer
-  lugar**. O que a linha libera é o peixe raro daquela faixa, que já é o SUSTENTAÇÃO por decisão
-  anterior do dono. Sem linha equipada, nenhum raro morde.
+- **Três linhas** (50, 150, 500). A linha decide **até onde dá para pescar**, não só qual peixe
+  morde: sem a linha do meio, o meio inteiro está fechado. Cada uma alcança a sua profundidade e
+  todas as mais rasas — por isso **a abissal é a melhor: com ela se pesca em qualquer lugar**.
+
+  Sem linha nenhuma dá para pescar no raso, senão o jogo começa travado (moeda só vem de vender
+  peixe). O que a linha do raso compra não é o acesso ao raso: é o **peixe raro** dele.
+
+  **Marca fora do alcance não é desenhada.** Mostrar um ponto que não dá para usar só convida a
+  tentar; a água hachurada já diz que ali tem mais lago. E `spotUnder` passa a devolver `null`
+  fora do alcance — sem isso o barco continuava "em cima" de um ponto invisível e o botão de
+  lançar aparecia do nada.
+
+### Economia
+
+Tetos por faixa, e o raro de cada faixa tem teto próprio. Dentro do teto, o tamanho manda: um
+peixe no mínimo da espécie vale 40% do teto, um no máximo vale o teto inteiro.
+
+| faixa | peixe comum | peixe raro | linha |
+|---|---|---|---|
+| raso | 5 | 10 | 50 |
+| meio | 10 | 25 | 150 |
+| abissal | 50 | 100 | 500 |
+
+A linha do raso custa **dez peixes do raso**, de propósito: a primeira compra tem que ser
+conquistada. E é o raro que paga a conta — o que faz caçá-lo compensar, e faz a linha (que é o
+que o libera) se pagar.
 - **Três iscas** (30, 90, 220), com sorte crescente. São **permanentes**: compra uma vez e a
   sorte vale para sempre. A sorte soma em dois lugares — multiplica o peso do raro no sorteio e
   puxa o tamanho para cima, travado no máximo da espécie.

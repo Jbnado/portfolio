@@ -183,6 +183,13 @@
     "exitHelp": "Esc também sai",
     "gameArea": "Área de jogo",
     "howToPlay": "Espaço faz tudo: lança a linha e resolve o minigame de cada peixe.",
+    "keys": "Setas andam · Espaço age · Tab abre o caderno · Esc fecha",
+    "close": "Fechar",
+    "depth3": {
+          "1": "Raso",
+          "2": "Meio",
+          "3": "Abissal"
+    },
     "shop": {
           "title": "Loja da margem",
           "coins": "Moedas",
@@ -208,6 +215,8 @@
           "castShort": "Lançar",
           "noSpotShort": "—",
           "logShort": "Caderno",
+          "needLine": "Linha curta demais para este fundo",
+          "needLineShort": "Sem linha",
           "turnPhone": "Gire o celular para a vertical.",
           "depth": {
                 "raso": "Raso",

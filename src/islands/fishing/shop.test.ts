@@ -2,19 +2,53 @@ import { describe, it, expect } from 'vitest';
 import {
   EMPTY_PROGRESS, LINE_PRICE, BAITS,
   buyLine, equipLine, buyBait, equipBait, sellAll, addCatch,
-  lineReaches, luckOf, fishValue, holdValue, rareWeight, luckyQuality,
+  lineReaches, canFish, reachTier, luckOf, fishValue, holdValue, rareWeight, luckyQuality,
 } from './shop';
+import { FISH } from './fish';
 
 const rico = { ...EMPTY_PROGRESS, coins: 1000 };
 
 describe('valor do pescado', () => {
-  it('peixe grande paga mais, e nenhum lance da em nada', () => {
-    expect(fishValue(60)).toBeGreaterThan(fishValue(20));
-    expect(fishValue(1)).toBeGreaterThanOrEqual(1);
+  const raro = (t: 1 | 2 | 3) => FISH.find((f) => f.tier === t && f.engine === 'hold')!;
+  const comum = (t: 1 | 2 | 3) => FISH.find((f) => f.tier === t && f.engine !== 'hold')!;
+  const noMaximo = (f: { id: string; sizeMax: number }) => fishValue(f.id, f.sizeMax);
+
+  it('o teto de cada faixa e o que o dono pediu', () => {
+    expect(noMaximo(comum(1))).toBe(5);
+    expect(noMaximo(comum(2))).toBe(10);
+    expect(noMaximo(comum(3))).toBe(50);
+  });
+
+  it('so o raro de cada faixa passa do teto comum', () => {
+    expect(noMaximo(raro(1))).toBe(10);
+    expect(noMaximo(raro(2))).toBe(25);
+    expect(noMaximo(raro(3))).toBe(100);
+    for (const t of [1, 2, 3] as const) {
+      expect(noMaximo(raro(t))).toBeGreaterThan(noMaximo(comum(t)));
+    }
+  });
+
+  it('dentro da especie, peixe maior paga mais', () => {
+    const f = comum(3);
+    expect(fishValue(f.id, f.sizeMax)).toBeGreaterThan(fishValue(f.id, f.sizeMin));
+  });
+
+  it('nenhum peixe vale zero', () => {
+    for (const f of FISH) expect(fishValue(f.id, f.sizeMin)).toBeGreaterThanOrEqual(1);
+  });
+
+  it('peixe de especie desconhecida nao quebra a conta', () => {
+    expect(fishValue('nao-existe', 50)).toBe(1);
+  });
+
+  it('a linha do raso exige varios peixes do raso', () => {
+    const porPeixe = noMaximo(comum(1));
+    expect(LINE_PRICE.raso / porPeixe).toBeGreaterThanOrEqual(10);
   });
 
   it('vender esvazia o porao e credita', () => {
-    let p = addCatch(addCatch(EMPTY_PROGRESS, 40), 60);
+    const f = comum(1);
+    let p = addCatch(addCatch(EMPTY_PROGRESS, f.id, f.sizeMax), f.id, f.sizeMin);
     const esperado = holdValue(p.hold);
     p = sellAll(p);
     expect(p.hold).toEqual([]);
@@ -73,6 +107,37 @@ describe('linhas', () => {
   });
 });
 
+describe('onde da pra pescar', () => {
+  it('sem linha, so o raso — senao o jogo comeca travado', () => {
+    expect(canFish(EMPTY_PROGRESS, 'raso')).toBe(true);
+    expect(canFish(EMPTY_PROGRESS, 'medio')).toBe(false);
+    expect(canFish(EMPTY_PROGRESS, 'abissal')).toBe(false);
+  });
+
+  it('a linha do raso NAO abre o meio', () => {
+    const p = buyLine(rico, 'raso');
+    expect(canFish(p, 'raso')).toBe(true);
+    expect(canFish(p, 'medio')).toBe(false);
+    expect(canFish(p, 'abissal')).toBe(false);
+  });
+
+  it('a linha do meio abre raso e meio, e nao o abissal', () => {
+    const p = buyLine(rico, 'medio');
+    expect(canFish(p, 'medio')).toBe(true);
+    expect(canFish(p, 'abissal')).toBe(false);
+  });
+
+  it('a abissal abre tudo', () => {
+    const p = buyLine(rico, 'abissal');
+    for (const d of ['raso', 'medio', 'abissal'] as const) expect(canFish(p, d)).toBe(true);
+  });
+
+  it('sem linha nenhum raro morde, nem no raso', () => {
+    expect(canFish(EMPTY_PROGRESS, 'raso')).toBe(true);
+    expect(lineReaches(EMPTY_PROGRESS, 'raso')).toBe(false);
+  });
+});
+
 describe('iscas', () => {
   it('sao permanentes: comprar uma vez basta e a sorte fica', () => {
     const p = buyBait(rico, 'minhoca');
@@ -112,10 +177,10 @@ describe('iscas', () => {
 
 describe('pureza', () => {
   it('nenhuma operacao muda o estado recebido', () => {
-    const p = { ...rico, hold: [30] };
+    const p = { ...rico, hold: [{ id: 'p1', cm: 30 }] };
     const copia = JSON.parse(JSON.stringify(p));
     buyLine(p, 'raso'); equipLine(p, 'raso'); buyBait(p, 'minhoca');
-    equipBait(p, 'minhoca'); sellAll(p); addCatch(p, 10);
+    equipBait(p, 'minhoca'); sellAll(p); addCatch(p, 'p1', 10);
     expect(JSON.parse(JSON.stringify(p))).toEqual(copia);
   });
 });

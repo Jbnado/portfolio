@@ -313,18 +313,89 @@ body.fishing-locked {
   font-size: 0.8rem;
 }
 
-.fishing-menu h3 { margin: 0 0 12px; letter-spacing: 0.08em; }
-.fishing-menu ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.fishing-menu li { display: flex; align-items: center; gap: 12px; }
-.fishing-menu small { opacity: 0.75; }
+/* Caderno em grade, como uma pokedex: as nove especies sempre a vista, as
+   que faltam como "???". Serve para mostrar o que ainda ha por pescar, e nao
+   so o que ja se pescou. */
+.fishing-menu-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.fishing-menu-head h3 { margin: 0; letter-spacing: 0.08em; }
 
-/* Quadrado vazio no lugar da foto do peixe: o espaco ja fica reservado. */
-.fishing-menu-pic {
-  flex: none;
-  width: 34px;
-  height: 34px;
+.fishing-menu-close {
+  min-height: 40px;
+  padding: 0 14px;
+  font: inherit;
+  color: var(--color-text-primary);
   background: var(--fishing-surface);
   border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.fishing-dex {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.fishing-dex-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+}
+
+.fishing-dex-item[data-found='false'] { opacity: 0.55; }
+.fishing-dex-item strong { font-size: 0.85rem; }
+.fishing-dex-item small { opacity: 0.8; line-height: 1.5; }
+
+/* Espaco reservado para a foto do peixe, que ainda nao existe. Quadrado
+   grande de proposito: e ele que vai carregar a identidade da especie. */
+.fishing-menu-pic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  width: 100%;
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  font-size: 1.1rem;
+  opacity: 0.7;
+}
+
+/* Linha de acao com altura reservada: o botao de lancar entra e sai conforme
+   o barco chega numa marca, e sem a reserva ele empurrava o lago pra cima e
+   pra baixo a cada passo. */
+.fishing-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: min(96vw, 1080px);
+  min-height: 108px;
+}
+
+.fishing-keys {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+  text-align: center;
+}
+
+/* O checkbox mora na barra de cima: e ajuste, nao cena. Dentro da arena ele
+   entrava e saia do fluxo e empurrava o lago a cada troca de fase. */
+.fishing-overlay-bar { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  .fishing-dex { grid-template-columns: repeat(2, 1fr); }
+  .fishing-keys { display: none; }
 }
 
 /* Onde o pad de toque aparece, ele e o unico controle de acao: o botao solto
