@@ -1,4 +1,16 @@
-.track { display: flex; flex-direction: column; gap: 12px; }
+/* Largura explicita, como toda vista do jogo (.hold-bar tem width fixa,
+   .dodge-ring e .track-ring tem width+max-width). Sem isto o trilho fica com
+   4px: todos os seus filhos sao position:absolute, entao ele nao tem largura
+   intrinseca nenhuma, e .fishing-arena e um flex column com align-items:center,
+   que encolhe o item em vez de estica-lo. O minigame inteiro virava uma lasca
+   de 4px, sem zona visivel para mirar. */
+.track {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 420px;
+}
 
 .track-rail {
   position: relative;
