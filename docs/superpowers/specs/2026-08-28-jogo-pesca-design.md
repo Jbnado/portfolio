@@ -55,9 +55,9 @@ mecânicas, não só a mais fácil (ver "Modelo de falha" para a regra de quem p
 
 | faixa | TRAJETO | SUSTENTAÇÃO | DRAGAGEM |
 |---|---|---|---|
-| 1 — raso, ensina | p1: zona de 36%, 3 acertos | p2: peixe calmo, carência longa | p3: 2 pistas, nunca perde, 3 limpas seguidas |
-| 2 — meio | p4: zona de 30%, 3 acertos | p5: peixe errático | p6: 2 pistas, tolera 2 quedas |
-| 3 — abissal, sem perdão | p7: zona de 25%, 3 acertos (ainda o mais fácil dos três motores) | p8: peixe arisco, carência curta | p9: 3 pistas, tolera 1 queda |
+| 1 — raso, ensina | p1: zona de 30%, 3 acertos | p2: peixe calmo, carência longa | p3: 2 pistas, nunca perde, 3 limpas seguidas |
+| 2 — meio | p4: zona de 25%, 3 acertos | p5: peixe errático | p6: 2 pistas, tolera 2 quedas |
+| 3 — abissal, sem perdão | p7: zona de 20%, 3 acertos (ainda o mais fácil dos três motores) | p8: peixe arisco, carência curta | p9: 3 pistas, tolera 1 queda |
 
 Cada peixe carrega os próprios parâmetros diretamente na tabela, que é o que o modelo de dados já
 faz. O amarre entre faixa de profundidade real (o mapa, ainda inexistente no v1) e essa faixa de
@@ -201,7 +201,7 @@ o tamanho do peixe.
 
 **Este é o minigame de boa.** Por decisão do dono, o TRAJETO é simples e fácil **inclusive no
 abissal** — é o descanso entre os outros dois. A dificuldade sobe só encolhendo a zona
-(36% / 30% / 25% da barra), com a velocidade quase parada.
+(30% / 25% / 20% da barra), com a velocidade quase parada.
 
 **Perde no terceiro erro em todas as faixas, inclusive no raso.** Isto revoga, só para o TRAJETO,
 a regra "o raso nunca perde" da seção de modelo de falha: a pedido do dono, `tolerance: 2` vale

@@ -9,7 +9,7 @@ export const FISH: Fish[] = [
   // ---- Faixa 1, o raso que ensina. Margem generosa nos tres motores.
   { id: 'p1', tier: 1, weight: 45, color: 'var(--fishing-fish-a)', sizeMin: 12, sizeMax: 34,
     engine: 'track',
-    params: { periodMs: 2600, zoneSize: 0.36, hits: 3, tolerance: 2 } },
+    params: { periodMs: 2600, zoneSize: 0.30, hits: 3, tolerance: 2 } },
   { id: 'p2', tier: 1, weight: 10, color: 'var(--fishing-fish-b)', sizeMin: 18, sizeMax: 46,
     engine: 'hold',
     params: { bandHeight: 0.30, gravity: 0.000003, lift: 0.000008, maxSpeed: 0.0007, pattern: 'calmo', fishSpeed: 0.00020, fillRate: 0.0006, drainRate: 0.0003, graceMs: 2500 } },
@@ -22,7 +22,7 @@ export const FISH: Fish[] = [
   // ---- Faixa 2, o meio. Janela menor, mais velocidade, menos perdao.
   { id: 'p4', tier: 2, weight: 1, color: 'var(--fishing-fish-d)', sizeMin: 15, sizeMax: 40,
     engine: 'track',
-    params: { periodMs: 2400, zoneSize: 0.30, hits: 3, tolerance: 2 } },
+    params: { periodMs: 2400, zoneSize: 0.25, hits: 3, tolerance: 2 } },
   { id: 'p5', tier: 2, weight: 1, color: 'var(--fishing-fish-e)', sizeMin: 10, sizeMax: 28,
     engine: 'hold',
     params: { bandHeight: 0.17, gravity: 0.0000035, lift: 0.000009, maxSpeed: 0.0009, pattern: 'erratico', fishSpeed: 0.00054, fillRate: 0.00048, drainRate: 0.00054, graceMs: 1300 } },
@@ -35,7 +35,7 @@ export const FISH: Fish[] = [
   // ---- Faixa 3, o abissal. Sem perdao.
   { id: 'p7', tier: 3, weight: 1, color: 'var(--fishing-fish-g)', sizeMin: 26, sizeMax: 65,
     engine: 'track',
-    params: { periodMs: 2200, zoneSize: 0.25, hits: 3, tolerance: 2 } },
+    params: { periodMs: 2200, zoneSize: 0.20, hits: 3, tolerance: 2 } },
   { id: 'p8', tier: 3, weight: 1, color: 'var(--fishing-fish-h)', sizeMin: 40, sizeMax: 95,
     engine: 'hold',
     params: { bandHeight: 0.17, gravity: 0.0000045, lift: 0.000011, maxSpeed: 0.0012, pattern: 'arisco', fishSpeed: 0.00048, fillRate: 0.00053, drainRate: 0.0005, graceMs: 1500 } },
