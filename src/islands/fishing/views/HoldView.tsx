@@ -17,7 +17,7 @@ type Props = {
     ela e a mao do jogador e controle direto nao e animacao automatica. */
 
 export function HoldView({ params, color, onDone }: Props) {
-  const [state, setState] = useState<HoldState>(() => startHold(params));
+  const [state, setState] = useState<HoldState>(() => startHold(params, Math.random));
   const holdingRef = useRef(false);
 
   // Mesma razao do TRACK: `onDone` fora das dependencias, senao o efeito
@@ -31,7 +31,7 @@ export function HoldView({ params, color, onDone }: Props) {
     // barata, nao defesa contra estado herdado.
     let raf = 0;
     let previous = performance.now();
-    let current = startHold(params);
+    let current = startHold(params, Math.random);
 
     const loop = (now: number) => {
       const dt = Math.min(50, now - previous);

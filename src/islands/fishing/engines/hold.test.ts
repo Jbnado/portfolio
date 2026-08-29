@@ -151,11 +151,36 @@ describe('stepHold', () => {
     expect(e.done!.quality).toBeCloseTo(1);
   });
 
-  it('o peixe mira um alvo novo quando a espera acaba', () => {
-    let e = startHold(base);
-    expect(e.fishTarget).toBeCloseTo(0.5);
+  it('o peixe sorteia direcao nova quando a espera acaba', () => {
+    // rnd 0.9 sobre as tres opcoes [-1, 0, 1] cai na ultima: sobe.
+    let e = startHold(base, () => 0.1);
+    expect(e.fishDir).toBe(-1);
     e = stepHold(base, e, 1500, false, () => 0.9);
-    expect(e.fishTarget).toBeCloseTo(0.9);
+    expect(e.fishDir).toBe(1);
+  });
+
+  it('o peixe NUNCA fica imovel: parado e tremor, nao congelamento', () => {
+    // Era o defeito do modelo de alvo: o peixe alcancava o alvo e travava ate
+    // o proximo sorteio, e como nascia em cima do alvo, todo lance comecava
+    // parado. Medido la: imovel em 45% dos quadros no p2, 51% no p5.
+    let seed = 3;
+    const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+    let e = startHold(base, rnd);
+    let imovel = 0;
+    for (let i = 0; i < 600; i++) {
+      const antes = e.fishPos;
+      e = stepHold(base, e, 16, i % 5 < 2, rnd);
+      if (e.fishPos === antes) imovel++;
+      if (e.done) e = startHold(base, rnd);
+    }
+    expect(imovel).toBe(0);
+  });
+
+  it('perto do topo o peixe nao sorteia subir, senao fica preso na borda', () => {
+    const alto = { ...startHold(base, () => 0.5), fishPos: 0.99 };
+    // rnd alto escolheria "subir" se subir estivesse no sorteio.
+    const depois = stepHold(base, alto, 1500, false, () => 0.99);
+    expect(depois.fishDir).toBeLessThanOrEqual(0);
   });
 
   it('nao avanca depois de terminado', () => {

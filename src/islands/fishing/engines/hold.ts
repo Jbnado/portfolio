@@ -7,8 +7,14 @@ export type HoldState = {
   /** Posicao do peixe, 0..1. E a mesma que a vista desenha e a mesma que
       decide "dentro da faixa": o que se ve e o que se julga. */
   fishPos: number;
-  fishTarget: number;
-  /** Tempo restante ate o peixe sortear novo alvo, em ms. */
+  /** Para onde o peixe esta indo AGORA: 1 sobe, -1 desce, 0 fica parado
+      tremendo. Velocidade e constante — o que o sorteio decide e a direcao,
+      nunca o quanto. Isto substituiu um modelo de "alvo sorteado": la o peixe
+      alcancava o alvo e ficava IMOVEL ate o proximo sorteio, e como ele
+      nascia em cima do proprio alvo, todo lance comecava com o peixe parado.
+      Medido no modelo antigo: imovel em 45% dos quadros no p2 e 51% no p5. */
+  fishDir: number;
+  /** Tempo restante ate o peixe sortear nova direcao, em ms. */
   fishWait: number;
   progress: number;
   /** Milissegundos com o peixe DENTRO da faixa, e o total da luta. A razao
@@ -26,12 +32,21 @@ export type HoldState = {
 
 const WAIT_BY_PATTERN = { calmo: 1400, erratico: 700, arisco: 320 } as const;
 
-export function startHold(params: HoldParams): HoldState {
+/** Sorteia a proxima direcao entre descer, ficar parado e subir. Perto das
+    bordas a direcao que empurraria pra fora sai do sorteio: sem isso o peixe
+    encosta no topo e fica preso ate a troca seguinte, que e exatamente a
+    queixa de "peixe parado" que este modelo veio consertar. */
+function pickDir(pos: number, rnd: () => number): number {
+  const options = pos > 0.97 ? [0, -1] : pos < 0.03 ? [0, 1] : [-1, 0, 1];
+  return options[Math.min(options.length - 1, Math.floor(rnd() * options.length))];
+}
+
+export function startHold(params: HoldParams, rnd: () => number = Math.random): HoldState {
   return {
     bandPos: 0.5,
     bandVel: 0,
     fishPos: 0.5,
-    fishTarget: 0.5,
+    fishDir: pickDir(0.5, rnd),
     fishWait: WAIT_BY_PATTERN[params.pattern],
     progress: 0.5,
     msInside: 0,
@@ -60,18 +75,24 @@ export function stepHold(
   if (bandPos <= 0 || bandPos >= 1) bandVel = 0;
   bandPos = clamp(bandPos);
 
-  // Peixe: mira um alvo, sorteia outro quando a espera acaba.
-  let { fishTarget, fishWait } = state;
+  // Peixe: anda na direcao sorteada e so troca quando a espera acaba. Nunca
+  // fica realmente imovel — "parado" e um tremor em torno do lugar, para ler
+  // como peixe vivo e nao como jogo travado.
+  let { fishDir, fishWait } = state;
   fishWait -= dtMs;
   if (fishWait <= 0) {
-    fishTarget = rnd();
+    fishDir = pickDir(state.fishPos, rnd);
     fishWait = WAIT_BY_PATTERN[params.pattern];
   }
   const step = params.fishSpeed * dtMs;
-  const delta = fishTarget - state.fishPos;
-  const fishPos = clamp(
-    Math.abs(delta) <= step ? fishTarget : state.fishPos + Math.sign(delta) * step,
-  );
+  const drift = fishDir === 0 ? (rnd() - 0.5) * step : fishDir * step;
+  let fishPos = state.fishPos + drift;
+  // Quica na borda em vez de encostar e esperar. pickDir so roda no fim da
+  // espera, entao sem o quique o peixe que chega no topo no meio de uma
+  // espera fica preso ali ate a proxima troca — 77 quadros imoveis em 600,
+  // medido. Quicar devolve o movimento no quadro seguinte.
+  if (fishPos <= 0 || fishPos >= 1) fishDir = -fishDir;
+  fishPos = clamp(fishPos);
   // Progresso.
   const half = params.bandHeight / 2;
   const inside = Math.abs(fishPos - bandPos) <= half;
@@ -91,7 +112,7 @@ export function stepHold(
   }
 
   return {
-    bandPos, bandVel, fishPos, fishTarget, fishWait,
+    bandPos, bandVel, fishPos, fishDir, fishWait,
     progress, msInside, msTotal, msAtZero, done,
   };
 }
