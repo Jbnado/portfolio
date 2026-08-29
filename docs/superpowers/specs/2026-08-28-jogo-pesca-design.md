@@ -242,7 +242,7 @@ nasce dentro da sua fatia da volta com folga mínima para o vizinho: sem isso do
 colar e exigir uma troca em poucos milissegundos, o que não é dificuldade, é sorte.
 
 **Fisga enchendo uma barrinha, não contando passagens.** A barra sobe enquanto você não cai e
-representa o peixe sendo puxado. Encher exige `holdMs` de tempo limpo — 6s, 10s e 15s. Isto
+representa o peixe sendo puxado. Encher exige `holdMs` de tempo limpo — 3s, 6s e 9s. Isto
 substituiu um modelo de "três passagens limpas seguidas", a pedido do dono.
 
 **Cair recua, não zera.** Cada queda desconta `penaltyMs` da barra. A regra anterior zerava tudo,

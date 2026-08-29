@@ -16,7 +16,7 @@ export const FISH: Fish[] = [
   { id: 'p3', tier: 1, weight: 45, color: 'var(--fishing-fish-c)', sizeMin: 22, sizeMax: 58,
     engine: 'dodge',
     params: { periodMs: 4200, gatesMin: 2, gatesMax: 4, gapMin: 0.08, gapMax: 0.12,
-      holdMs: 6000, penaltyMs: 1500, fallsToLose: null, zeroesToLose: null } },
+      holdMs: 3000, penaltyMs: 1500, fallsToLose: null, zeroesToLose: null } },
 
   // ---- Faixa 2, o meio. Janela menor, mais velocidade, menos perdao.
   { id: 'p4', tier: 2, weight: 45, color: 'var(--fishing-fish-d)', sizeMin: 15, sizeMax: 40,
@@ -28,7 +28,7 @@ export const FISH: Fish[] = [
   { id: 'p6', tier: 2, weight: 45, color: 'var(--fishing-fish-f)', sizeMin: 30, sizeMax: 72,
     engine: 'dodge',
     params: { periodMs: 2600, gatesMin: 4, gatesMax: 6, gapMin: 0.07, gapMax: 0.11,
-      holdMs: 7000, penaltyMs: 2000, fallsToLose: 3, zeroesToLose: 2 } },
+      holdMs: 6000, penaltyMs: 2000, fallsToLose: 3, zeroesToLose: 2 } },
 
   // ---- Faixa 3, o abissal. Sem perdao.
   { id: 'p7', tier: 3, weight: 45, color: 'var(--fishing-fish-g)', sizeMin: 26, sizeMax: 65,
