@@ -1,18 +1,14 @@
 /** Todo motor devolve o mesmo par. A camada de mundo nunca sabe qual rodou. */
 export type Result = { caught: boolean; quality: number };
 
-export type PathKind = 'pendulo' | 'radial';
-
-/** Zona alvo sobre o caminho. `pos` e `tamanho` em fracao de 0..1 do caminho. */
-export type Zone = { pos: number; size: number };
-
 export type TrackParams = {
-  path: PathKind;
   periodMs: number;
-  zones: Zone[];
+  /** Tamanho da zona verde, fracao de 0..1 da barra. E o botao de
+      dificuldade do TRAJETO: a zona encolhe conforme o peixe fica dificil.
+      A POSICAO nao mora aqui — ela e sorteada a cada acerto e vive no
+      estado, entao nao da pra decorar onde mirar. */
+  zoneSize: number;
   hits: number;
-  /** Acertou uma zona, ela esvazia e a proxima vira a ativa. */
-  alternates: boolean;
   /** null = nunca perde; o erro custa qualidade. */
   tolerance: number | null;
 };

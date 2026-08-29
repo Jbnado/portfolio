@@ -55,9 +55,9 @@ mecânicas, não só a mais fácil (ver "Modelo de falha" para a regra de quem p
 
 | faixa | TRAJETO | SUSTENTAÇÃO | DRAGAGEM |
 |---|---|---|---|
-| 1 — raso, ensina | p1: `pêndulo`, 1 acerto, janela larga | p2: peixe calmo, carência longa | p3: 2 pistas, nunca perde, 3 limpas seguidas |
-| 2 — meio | p4: `radial`, 2 acertos | p5: peixe errático | p6: 2 pistas, tolera 2 batidas |
-| 3 — abissal, sem perdão | p7: `pêndulo` com alternância, 3 acertos | p8: peixe arisco, carência curta | p9: 3 pistas, perde na primeira batida |
+| 1 — raso, ensina | p1: zona de 36%, 3 acertos | p2: peixe calmo, carência longa | p3: 2 pistas, nunca perde, 3 limpas seguidas |
+| 2 — meio | p4: zona de 30%, 3 acertos | p5: peixe errático | p6: 2 pistas, tolera 2 quedas |
+| 3 — abissal, sem perdão | p7: zona de 25%, 3 acertos (ainda o mais fácil dos três motores) | p8: peixe arisco, carência curta | p9: 3 pistas, tolera 1 queda |
 
 Cada peixe carrega os próprios parâmetros diretamente na tabela, que é o que o modelo de dados já
 faz. O amarre entre faixa de profundidade real (o mapa, ainda inexistente no v1) e essa faixa de
@@ -174,33 +174,38 @@ recompensa visível, e é o que dá sentido ao caderno.
 
 ### 1. TRAJETO — acerto no tempo
 
-Um indicador percorre um caminho, zonas ficam sobre o caminho, espaço quando sobrepõe.
+Uma barra vai e volta; uma zona verde fica sobre ela; espaço quando o marcador a cruza.
+**A cada acerto a zona pula para outro lugar sorteado da barra**, então não dá para decorar o
+ritmo: tem que reencontrar o alvo três vezes.
 
 ```ts
-type Trajeto = {
-  caminho: 'pendulo' | 'radial'
+type TrackParams = {
   periodMs: number
-  zonas: { pos: number; tamanho: number }[]
-  acertos: number           // quantos precisa para fisgar
-  alternancia: boolean      // acertou uma, ela esvazia e a outra ativa
-  tolerancia: number | null // null = nunca perde
+  zoneSize: number          // botao de dificuldade: a zona encolhe
+  hits: number              // sempre 3
+  tolerance: number | null  // sempre 2: perde no terceiro erro
 }
 ```
 
-Duas geometrias, **mesmo código** — `reta` e `subida` saíram do v1. Uma varredura linear só tem
-duas formas de fechar o ciclo ao chegar na ponta: inverter ou teleportar de volta ao início, e
-inverter *é* o pêndulo — não existe forma não-teleportante de `reta`. `subida` tinha o mesmo
-problema escondido atrás do nome: era desenhada como uma reta espelhada e nunca subiu de verdade.
-Um indicador que teleporta quebra o requisito de acessibilidade da seção "Controles" (o
-movimento tem que dar pra seguir em `prefers-reduced-motion` como passos discretos, não saltos
-arbitrários), então os dois caminhos saíram e não voltaram.
+**O anel saiu daqui.** O `radial` era a segunda geometria do TRAJETO e foi removido a pedido do
+dono, com a razão explícita de que o anel é a linguagem da DRAGAGEM e **cada minigame precisa ser
+um tipo por si só** — emprestar a forma do vizinho apaga a diferença entre os dois. Junto saíram
+o campo `path`, o tipo `PathKind`, o array `zones`, o campo `alternates` e o SVG do anel na vista.
+`reta` e `subida` já tinham saído antes, por teleportarem o indicador (ver Controles).
 
-| caminho | como lê |
-|---|---|
-| `pendulo` | vai e volta; com `alternancia` é esquerda, direita, esquerda |
-| `radial` | gira o círculo completo — lê como sonar, que é a linguagem do turno noturno |
+**A posição da zona não é parâmetro, é estado.** Ela é sorteada em `startTrack` e resorteada a
+cada acerto, sempre de modo que a zona caiba inteira na barra — senão uma zona sorteada na ponta
+sairia pela borda e valeria menos que as outras, e a dificuldade deixaria de ser só o tamanho.
+Isso também resolve de graça a saturação de qualidade: com alvo móvel, mesmo quem joga bem varia
+o tamanho do peixe.
 
-Este é o motor de peixe **de tempo e paciência**.
+**Este é o minigame de boa.** Por decisão do dono, o TRAJETO é simples e fácil **inclusive no
+abissal** — é o descanso entre os outros dois. A dificuldade sobe só encolhendo a zona
+(36% / 30% / 25% da barra), com a velocidade quase parada.
+
+**Perde no terceiro erro em todas as faixas, inclusive no raso.** Isto revoga, só para o TRAJETO,
+a regra "o raso nunca perde" da seção de modelo de falha: a pedido do dono, `tolerance: 2` vale
+para os três. A DRAGAGEM do raso continua sem perder.
 
 ### 2. SUSTENTAÇÃO — controle contínuo
 
@@ -304,7 +309,7 @@ isso, não porque o tipo não tinha como dizer o contrário.
 
 | faixa | TRAJETO | SUSTENTAÇÃO | DRAGAGEM |
 |---|---|---|---|
-| 1 — raso | nunca perde | pode perder (raro, de propósito) | nunca perde |
+| 1 — raso | **perde no 3º erro** | pode perder (raro, de propósito) | nunca perde |
 | 2 — meio | perde | perde | perde |
 | 3 — abissal | perde | perde | perde |
 
@@ -327,7 +332,7 @@ para o de tempo, SUSTENTAÇÃO para o rápido, DRAGAGEM para o brigão. A faixa 
 dificuldade — e agora, com a matriz completa, também garante que as três personalidades
 apareçam em toda faixa.
 
-**Tolerância se expressa na moeda de cada motor:** voltas extras no TRAJETO, taxa de dreno no
+**Tolerância se expressa na moeda de cada motor:** tamanho da zona no TRAJETO, taxa de dreno no
 SUSTENTAÇÃO, quedas até arrebentar na DRAGAGEM.
 
 ### Calibragem das faixas

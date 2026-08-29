@@ -1,9 +1,7 @@
-/* Largura explicita, como toda vista do jogo (.hold-bar tem width fixa,
-   .dodge-ring e .track-ring tem width+max-width). Sem isto o trilho fica com
-   4px: todos os seus filhos sao position:absolute, entao ele nao tem largura
+/* Largura explicita, como toda vista do jogo. Sem isto o trilho fica com 4px:
+   todos os seus filhos sao position:absolute, entao ele nao tem largura
    intrinseca nenhuma, e .fishing-arena e um flex column com align-items:center,
-   que encolhe o item em vez de estica-lo. O minigame inteiro virava uma lasca
-   de 4px, sem zona visivel para mirar. */
+   que encolhe o item em vez de estica-lo. */
 .track {
   display: flex;
   flex-direction: column;
@@ -31,8 +29,6 @@
   border-right: 2px dashed var(--fishing-zone);
 }
 
-.track-zone[data-active='false'] { opacity: 0.25; border-style: dotted; }
-
 .track-marker {
   position: absolute;
   top: 0;
@@ -40,5 +36,3 @@
   width: 4px;
   background: var(--fishing-marker);
 }
-
-.track-ring { display: block; width: 100%; max-width: 240px; height: auto; margin: 0 auto; }

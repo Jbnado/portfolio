@@ -1,33 +1,35 @@
-import type { PathKind, TrackParams, Result, Zone } from '../types';
+import type { TrackParams, Result } from '../types';
 
 export type TrackState = {
   hits: number;
   misses: number;
-  activeZone: number;
+  /** Centro da zona verde AGORA. Pula de lugar a cada acerto: nao da pra
+      decorar o ritmo da barra, tem que reencontrar o alvo toda vez. */
+  zonePos: number;
   accuracies: number[];
   done: Result | null;
 };
 
-/** Posicao do indicador no caminho, em 0..1, no instante tMs. */
+/** Posicao do marcador na barra, 0..1, no instante tMs. Vai e volta sem
+    descontinuidade: 0 -> 1 -> 0. E o unico caminho do TRAJETO — o anel
+    pertence a DRAGAGEM, e minigame nao empresta a forma do outro. */
 export function positionAt(params: TrackParams, tMs: number): number {
   const phase = (tMs % params.periodMs) / params.periodMs;
-  // Pendulo inverte no meio do periodo: 0 -> 1 -> 0, sem descontinuidade.
-  if (params.path === 'pendulo') return phase < 0.5 ? phase * 2 : 2 - phase * 2;
-  // Radial da a volta: 0.99 e 0.01 sao vizinhos no circulo, entao a fase pode
-  // reiniciar sem que o olho veja um salto.
-  return phase;
+  return phase < 0.5 ? phase * 2 : 2 - phase * 2;
 }
 
-/** No radial a volta fecha, entao 0.05 e 0.95 distam 0.1 e nao 0.9. */
-export function distanceToZone(path: PathKind, pos: number, zone: Zone): number {
-  const d = Math.abs(pos - zone.pos);
-  return path === 'radial' ? Math.min(d, 1 - d) : d;
+/** Sorteia o centro da zona de modo que ela caiba INTEIRA na barra: sem isto
+    uma zona sorteada na ponta sairia pela borda e valeria menos que as
+    outras, e a dificuldade deixaria de ser so o tamanho. */
+export function pickZone(params: TrackParams, rnd: () => number): number {
+  const half = params.zoneSize / 2;
+  return half + rnd() * (1 - params.zoneSize);
 }
 
-/** Zero exato e inatingivel a 60fps (achado I2): no caminho mais rapido da
-    tabela (p7) o quantum de posicao por quadro (~0,022) ja passa da folga que
-    "distancia zero" exige. Qualquer distancia dentro deste limiar conta como
-    acerto perfeito, entao o teto de qualidade fica alcancavel de verdade. */
+/** Zero exato e inatingivel a 60fps: no peixe mais rapido o quantum de
+    posicao por quadro ja passa da folga que "distancia zero" exigiria.
+    Qualquer distancia abaixo deste limiar conta como acerto perfeito, entao
+    o teto de qualidade fica alcancavel de verdade. */
 const PERFECT_DIST = 0.025;
 
 function accuracyOf(dist: number, half: number): number {
@@ -35,57 +37,41 @@ function accuracyOf(dist: number, half: number): number {
   return dist <= PERFECT_DIST || denom <= 0 ? 1 : 1 - (dist - PERFECT_DIST) / denom;
 }
 
-function meanAccuracy(accuracies: number[]): number {
-  return accuracies.length > 0
-    ? accuracies.reduce((s, p) => s + p, 0) / accuracies.length
-    : 0;
+function meanAccuracy(a: number[]): number {
+  return a.length > 0 ? a.reduce((s, p) => s + p, 0) / a.length : 0;
 }
 
-export function startTrack(_params: TrackParams): TrackState {
-  return { hits: 0, misses: 0, activeZone: 0, accuracies: [], done: null };
+export function startTrack(params: TrackParams, rnd: () => number): TrackState {
+  return { hits: 0, misses: 0, zonePos: pickZone(params, rnd), accuracies: [], done: null };
 }
 
 export function pressTrack(
   params: TrackParams,
   state: TrackState,
   tMs: number,
+  rnd: () => number,
 ): TrackState {
   if (state.done) return state;
 
-  const zone = params.zones[state.activeZone];
-  const half = zone.size / 2;
-  const dist = distanceToZone(params.path, positionAt(params, tMs), zone);
+  const half = params.zoneSize / 2;
+  const dist = Math.abs(positionAt(params, tMs) - state.zonePos);
 
   if (dist > half) {
     const misses = state.misses + 1;
     const lost = params.tolerance !== null && misses > params.tolerance;
-    // Perda preserva a media acumulada em vez de zerar (achado I3): um
-    // peixe resgatado no modo garantido reflete a luta, nao sai sempre do
-    // tamanho minimo. E aplica o MESMO desconto por erro do caminho de
-    // vitoria (achado C4 do rereview): sem isto, no modo garantido, perder
-    // depois de acertos precisos podia pescar peixe MAIOR que vencer com a
-    // mesma precisao mais erros — perder nunca pode valer mais que vencer.
+    // Perda preserva a media acumulada e aplica o MESMO desconto por erro do
+    // caminho de vitoria: perder nunca pode render peixe maior que vencer.
     const quality = Math.max(0, Math.min(1, meanAccuracy(state.accuracies) - misses * 0.15));
-    return {
-      ...state,
-      misses,
-      done: lost ? { caught: false, quality } : null,
-    };
+    return { ...state, misses, done: lost ? { caught: false, quality } : null };
   }
 
-  const accuracy = accuracyOf(dist, half);
   const hits = state.hits + 1;
-  const accuracies = [...state.accuracies, accuracy];
-  const activeZone = params.alternates
-    ? (state.activeZone + 1) % params.zones.length
-    : state.activeZone;
+  const accuracies = [...state.accuracies, accuracyOf(dist, half)];
+  const zonePos = pickZone(params, rnd);
 
-  if (hits < params.hits) {
-    return { ...state, hits, accuracies, activeZone, done: null };
-  }
+  if (hits < params.hits) return { ...state, hits, accuracies, zonePos, done: null };
 
-  const mean = meanAccuracy(accuracies);
   // Cada erro custa 15% da qualidade. Nao perde o peixe, perde tamanho.
-  const quality = Math.max(0, Math.min(1, mean - state.misses * 0.15));
-  return { ...state, hits, accuracies, activeZone, done: { caught: true, quality } };
+  const quality = Math.max(0, Math.min(1, meanAccuracy(accuracies) - state.misses * 0.15));
+  return { ...state, hits, accuracies, zonePos, done: { caught: true, quality } };
 }
