@@ -35,7 +35,7 @@ export const FISH: Fish[] = [
   // ---- Faixa 3, o abissal. Sem perdao.
   { id: 'p7', tier: 3, weight: 1, color: 'var(--fishing-fish-g)', sizeMin: 26, sizeMax: 65,
     engine: 'track',
-    params: { periodMs: 2200, zoneSize: 0.20, hits: 3, tolerance: 2 } },
+    params: { periodMs: 2200, zoneSize: 0.15, hits: 3, tolerance: 2 } },
   { id: 'p8', tier: 3, weight: 1, color: 'var(--fishing-fish-h)', sizeMin: 40, sizeMax: 95,
     engine: 'hold',
     params: { bandHeight: 0.17, gravity: 0.0000045, lift: 0.000011, maxSpeed: 0.0012, pattern: 'arisco', fishSpeed: 0.00048, fillRate: 0.00053, drainRate: 0.0005, graceMs: 1500 } },
