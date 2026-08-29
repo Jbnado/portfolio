@@ -305,7 +305,9 @@ body.fishing-locked {
   max-height: 84%;
   z-index: 4;
   overflow: auto;
-  padding: 16px 20px;
+  /* Sem padding em cima: a cabeca fixa e que o carrega. Com ele aqui, a tira
+     de padding rolava e deixava passar ficha por cima da cabeca. */
+  padding: 0 20px 16px;
   background: var(--color-bg-primary);
   border: 2px solid var(--fishing-rule);
   border-radius: 4px;
@@ -316,8 +318,37 @@ body.fishing-locked {
 /* Caderno em grade, como uma pokedex: as nove especies sempre a vista, as
    que faltam como "???". Serve para mostrar o que ainda ha por pescar, e nao
    so o que ja se pescou. */
-.fishing-menu-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+/* A cabeca FICA. Rolando o grid ela saia do painel e levava consigo o botao
+   de fechar e o cracha da tecla — a saida desaparecia justamente para quem
+   estava a explorar as 24 fichas. As margens negativas cobrem o padding do
+   painel, senao passa conteudo pelos lados por baixo dela. */
+.fishing-menu-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0 -20px 0;
+  padding: 16px 20px 10px;
+  background: var(--color-bg-primary);
+  border-bottom: 2px solid var(--fishing-rule);
+}
 .fishing-menu-head h3 { margin: 0; letter-spacing: 0.08em; }
+
+/* O cracha de rolar. Fica ao lado do titulo porque e ali que se olha ao abrir
+   o painel — e num grid de 24 especies quase tudo esta abaixo da dobra. */
+.fishing-menu-keys {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
 
 .fishing-menu-close {
   min-height: 40px;
@@ -494,4 +525,15 @@ body.fishing-locked {
 /* No celular nao ha teclado: a etiqueta so ocuparia espaco mentindo. */
 @media (pointer: coarse) {
   .key { display: none; }
+}
+
+/* "Fisgou" e a manchete da revelacao: o cartao por baixo traz o nome, o
+   tamanho e a raridade. */
+.fishing-caught {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.7;
 }

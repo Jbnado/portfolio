@@ -149,9 +149,10 @@ export function WorldPad({ setDir, onAct, onLog, actLabel, actEnabled, logLabel,
   actLabel: string;
   actEnabled: boolean;
   logLabel: string;
-  /** A tecla de cada botao vai NO botao. Legenda solta no rodape ninguem le:
-      a dica precisa estar onde a acao esta. */
-  keys: { move: string; act: string; log: string };
+  /** A tecla de cada botao vai NO botao — UMA tecla por botao. O cracha era
+      "A D" e ia so na seta da esquerda, entao a esquerda anunciava as duas
+      teclas e a direita nenhuma. */
+  keys: { left: string; right: string; act: string; log: string };
 }) {
   // Segurar move; soltar para. `onPointerUp` no proprio botao nao basta: se o
   // ponteiro escorregar para fora antes de soltar, o botao nunca ve o evento
@@ -172,10 +173,10 @@ export function WorldPad({ setDir, onAct, onLog, actLabel, actEnabled, logLabel,
     <div class="world-pad">
       <div class="world-pad-move">
         <button type="button" class="world-pad-btn" aria-label="←" onPointerDown={segura(-1)}>
-          &#9664;<kbd class="key">{keys.move}</kbd>
+          &#9664;<kbd class="key">{keys.left}</kbd>
         </button>
         <button type="button" class="world-pad-btn" aria-label="→" onPointerDown={segura(1)}>
-          &#9654;
+          &#9654;<kbd class="key">{keys.right}</kbd>
         </button>
       </div>
       <button type="button" class="world-pad-act" onClick={onAct} disabled={!actEnabled}>

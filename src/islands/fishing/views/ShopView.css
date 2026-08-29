@@ -52,4 +52,23 @@
 .shop-name { flex: 1; }
 .shop-price { font-weight: 700; }
 
-.shop-foot { display: flex; justify-content: space-between; gap: 16px; margin: 0; opacity: 0.8; }
+.shop-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin: 0;
+}
+
+/* As teclas em cracha, uma por acao, como no resto do jogo. A frase corrida
+   que estava aqui nao dizia que Esc fecha e lia-se como nota de rodape. */
+.shop-keys {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.8;
+}
+
+.shop-keys .key { margin-left: 4px; }
+.shop-keys .key:first-child { margin-left: 0; }

@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
-  EMPTY_PROGRESS, LINE_PRICE, BAITS,
+  EMPTY_PROGRESS, LINES, LINE_PRICE, BAITS,
   buyLine, equipLine, buyBait, equipBait, sellAll, addCatch,
-  lineReaches, canFish, reachTier, luckOf, fishValue, coinPerCm, holdValue, rareWeight, luckyQuality,
+  rareBites, canFish, reachTier, luckOf, fishValue, coinPerCm, holdValue, rareWeight, luckyQuality,
+  rarityOf,
 } from './shop';
 import { FISH } from './fish';
 
@@ -49,17 +50,17 @@ describe('valor do pescado', () => {
   it('o esforco de cada linha e o que o dono pediu: 15 no meio, 20 no abissal', () => {
     expect(LINE_PRICE.medio / peixeMedio(2)).toBeCloseTo(15, 0);
     expect(LINE_PRICE.abissal / peixeMedio(3)).toBeCloseTo(20, 0);
-    // O raso continua nos 50 que ele deu, sem esforco alvo.
-    expect(LINE_PRICE.raso).toBe(50);
   });
 
-  it('a linha custa mais esforco a cada faixa: o abissal e o compromisso grande', () => {
-    const e = ([1, 2, 3] as const).map((t) => {
-      const preco = t === 1 ? LINE_PRICE.raso : t === 2 ? LINE_PRICE.medio : LINE_PRICE.abissal;
-      return preco / peixeMedio(t);
-    });
-    expect(e[1]).toBeGreaterThan(e[0]);
-    expect(e[2]).toBeGreaterThan(e[1]);
+  it('a linha do abissal custa mais esforco que a do meio', () => {
+    expect(LINE_PRICE.abissal / peixeMedio(3)).toBeGreaterThan(LINE_PRICE.medio / peixeMedio(2));
+  });
+
+  // A primeira compra do jogo passou a ser a isca de minhoca. Ela tem de caber
+  // numa sessao curta, senao o comeco arrasta — foi o que aconteceu com a
+  // linha do raso a 50, que ainda por cima nao levava a lado nenhum.
+  it('a primeira compra cabe numa sessao curta: a isca barata em poucos peixes', () => {
+    expect(BAITS[0].price / peixeMedio(1)).toBeLessThan(10);
   });
 
   // A isca braba deixou de ser o item mais caro do jogo quando a linha abissal
@@ -121,9 +122,15 @@ describe('valor do pescado', () => {
     expect(fishValue('nao-existe', 50)).toBe(1);
   });
 
-  it('a linha do raso exige varios peixes do raso', () => {
-    const melhor = maiorDo(1, false);
-    expect(LINE_PRICE.raso / fishValue(melhor.id, melhor.sizeMax)).toBeGreaterThanOrEqual(10);
+  // A economia e a vista da fisgada leem a raridade da MESMA funcao. Se as
+  // duas a calculassem por conta propria, um peixe podia pagar como raro e
+  // comemorar como comum.
+  it('a raridade sai de um lugar so: lendario, SUSTENTACAO raro, resto comum', () => {
+    for (const f of FISH) {
+      const esperado = f.legend ? 'lenda' : f.engine === 'hold' ? 'raro' : 'comum';
+      expect(rarityOf(f)).toBe(esperado);
+    }
+    expect(new Set(FISH.map(rarityOf))).toEqual(new Set(['comum', 'raro', 'lenda']));
   });
 
   it('vender esvazia o porao e credita', () => {
@@ -137,38 +144,25 @@ describe('valor do pescado', () => {
 });
 
 describe('linhas', () => {
+  // So ha linha onde ela e PERMISSAO. O raso pesca-se sem nada, entao nao ha
+  // linha do raso para vender — comprava-se um item que nao levava a lado
+  // nenhum e ainda adiava o fundo.
+  it('nao ha linha do raso para comprar', () => {
+    expect(LINES).toEqual(['medio', 'abissal']);
+  });
+
   it('comprar ja equipa: ninguem compra pra deixar na gaveta', () => {
-    const p = buyLine(rico, 'raso');
-    expect(p.lines).toContain('raso');
-    expect(p.line).toBe('raso');
-  });
-
-  it('a linha abissal pesca em TODO lugar', () => {
-    const p = buyLine(rico, 'abissal');
-    expect(lineReaches(p, 'raso')).toBe(true);
-    expect(lineReaches(p, 'medio')).toBe(true);
-    expect(lineReaches(p, 'abissal')).toBe(true);
-  });
-
-  it('a linha do raso nao alcanca o fundo', () => {
-    const p = buyLine(rico, 'raso');
-    expect(lineReaches(p, 'raso')).toBe(true);
-    expect(lineReaches(p, 'medio')).toBe(false);
-    expect(lineReaches(p, 'abissal')).toBe(false);
-  });
-
-  it('sem linha equipada nenhum raro morde', () => {
-    for (const d of ['raso', 'medio', 'abissal'] as const) {
-      expect(lineReaches(EMPTY_PROGRESS, d)).toBe(false);
-    }
+    const p = buyLine(rico, 'medio');
+    expect(p.lines).toContain('medio');
+    expect(p.line).toBe('medio');
   });
 
   it('so uma fica equipada por vez', () => {
-    let p = buyLine(rico, 'raso');
+    let p = buyLine({ ...rico, coins: 2000 }, 'medio');
     p = buyLine(p, 'abissal');
     expect(p.line).toBe('abissal');
-    p = equipLine(p, 'raso');
-    expect(p.line).toBe('raso');
+    p = equipLine(p, 'medio');
+    expect(p.line).toBe('medio');
     expect(p.lines).toHaveLength(2);
   });
 
@@ -182,8 +176,25 @@ describe('linhas', () => {
   });
 
   it('nao compra a mesma linha duas vezes', () => {
-    const p = buyLine(rico, 'raso');
-    expect(buyLine(p, 'raso').coins).toBe(rico.coins - LINE_PRICE.raso);
+    const p = buyLine(rico, 'medio');
+    expect(buyLine(p, 'medio').coins).toBe(rico.coins - LINE_PRICE.medio);
+  });
+});
+
+describe('quem abre o peixe raro', () => {
+  // No raso quem abre e a ISCA. Mais fundo a permissao ja e a propria linha:
+  // quem esta a pescar no meio tem a linha do meio, senao nao estaria ali.
+  it('no raso e a isca, nao a linha', () => {
+    expect(rareBites(EMPTY_PROGRESS, 'raso')).toBe(false);
+    expect(rareBites(buyBait(rico, 'minhoca'), 'raso')).toBe(true);
+    expect(rareBites(buyLine(rico, 'abissal'), 'raso')).toBe(false);
+  });
+
+  it('mais fundo, quem abre e a linha que ja e precisa para pescar ali', () => {
+    const meio = buyLine(rico, 'medio');
+    expect(rareBites(meio, 'medio')).toBe(true);
+    expect(rareBites(meio, 'abissal')).toBe(false);
+    expect(rareBites(buyLine({ ...rico, coins: 2000 }, 'abissal'), 'abissal')).toBe(true);
   });
 });
 
@@ -192,13 +203,6 @@ describe('onde da pra pescar', () => {
     expect(canFish(EMPTY_PROGRESS, 'raso')).toBe(true);
     expect(canFish(EMPTY_PROGRESS, 'medio')).toBe(false);
     expect(canFish(EMPTY_PROGRESS, 'abissal')).toBe(false);
-  });
-
-  it('a linha do raso NAO abre o meio', () => {
-    const p = buyLine(rico, 'raso');
-    expect(canFish(p, 'raso')).toBe(true);
-    expect(canFish(p, 'medio')).toBe(false);
-    expect(canFish(p, 'abissal')).toBe(false);
   });
 
   it('a linha do meio abre raso e meio, e nao o abissal', () => {
@@ -212,9 +216,10 @@ describe('onde da pra pescar', () => {
     for (const d of ['raso', 'medio', 'abissal'] as const) expect(canFish(p, d)).toBe(true);
   });
 
-  it('sem linha nenhum raro morde, nem no raso', () => {
+  // Pescar no raso e de graca; o raro do raso e que nao e.
+  it('o raso pesca-se sem nada, mas o raro do raso pede a isca', () => {
     expect(canFish(EMPTY_PROGRESS, 'raso')).toBe(true);
-    expect(lineReaches(EMPTY_PROGRESS, 'raso')).toBe(false);
+    expect(rareBites(EMPTY_PROGRESS, 'raso')).toBe(false);
   });
 });
 
@@ -259,7 +264,7 @@ describe('pureza', () => {
   it('nenhuma operacao muda o estado recebido', () => {
     const p = { ...rico, hold: [{ id: 'p1', cm: 30 }] };
     const copia = JSON.parse(JSON.stringify(p));
-    buyLine(p, 'raso'); equipLine(p, 'raso'); buyBait(p, 'minhoca');
+    buyLine(p, 'medio'); equipLine(p, 'medio'); buyBait(p, 'minhoca');
     equipBait(p, 'minhoca'); sellAll(p); addCatch(p, 'p1', 10);
     expect(JSON.parse(JSON.stringify(p))).toEqual(copia);
   });

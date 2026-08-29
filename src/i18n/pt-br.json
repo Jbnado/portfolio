@@ -218,12 +218,13 @@
       "equip": "equipar",
       "equipped": "na vara",
       "close": "Fechar",
-      "help": "setas escolhem, espaço age",
       "baitName": {
         "minhoca": "Isca de minhoca",
         "camarao": "Isca de camarão",
         "sardinha": "Isca de sardinha"
-      }
+      },
+      "choose": "escolher",
+      "act": "agir"
     },
     "world": {
       "clickHint": "Clique numa marca para navegar até ela",
@@ -293,10 +294,18 @@
       "p24": "Mero"
     },
     "fight": "SEGURAR / TOCAR",
-    "keyMove": "A D",
     "keyAct": "Espaço",
     "keyLog": "Tab",
     "keyClose": "Esc",
-    "back": "Continuar"
+    "back": "Continuar",
+    "keyLeft": "A",
+    "keyRight": "D",
+    "keyPick": "W S",
+    "scroll": "rolar",
+    "rarity": {
+      "comum": "Comum",
+      "raro": "Raro",
+      "lenda": "Lendário"
+    }
   }
 }

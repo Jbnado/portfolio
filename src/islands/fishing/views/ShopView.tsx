@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
-import type { Depth } from '../world';
 import {
   LINES, LINE_PRICE, BAITS, buyBait, buyLine, equipBait, equipLine, sellAll, holdValue,
-  type BaitId, type Progress,
+  type BaitId, type LineId, type Progress,
 } from '../shop';
 import './ShopView.css';
 
@@ -13,7 +12,12 @@ type Props = {
   texts: {
     title: string; coins: string; sell: string; nothingToSell: string;
     line: string; equip: string; equipped: string;
-    close: string; help: string;
+    close: string; choose: string; act: string;
+    /** As teclas vao em cracha DENTRO do painel, uma por acao. A versao
+        anterior tinha uma frase solta no rodape ("setas escolhem, espaco
+        age") — o formato que o dono ja tinha recusado no mundo, e que aqui
+        ainda por cima nao dizia que Esc fecha. */
+    keyClose: string; keyPick: string; keyAct: string;
     depth: Record<string, string>; baitName: Record<string, string>;
   };
 };
@@ -43,7 +47,7 @@ export function ShopView({ progress, onChange, onClose, texts }: Props) {
       podeAgir: valor > 0,
       agir: () => onChange(sellAll(progress)),
     },
-    ...LINES.map((d: Depth) =>
+    ...LINES.map((d: LineId) =>
       doDono(
         `${texts.line} — ${texts.depth[d]}`, LINE_PRICE[d],
         progress.lines.includes(d), progress.line === d,
@@ -102,8 +106,13 @@ export function ShopView({ progress, onChange, onClose, texts }: Props) {
       </ul>
 
       <p class="shop-foot">
-        <button class="shop-close" onClick={onClose}>{texts.close}</button>
-        <span>{texts.help}</span>
+        <button class="shop-close" onClick={onClose}>
+          {texts.close}<kbd class="key">{texts.keyClose}</kbd>
+        </button>
+        <span class="shop-keys">
+          <kbd class="key">{texts.keyPick}</kbd>{texts.choose}
+          <kbd class="key">{texts.keyAct}</kbd>{texts.act}
+        </span>
       </p>
     </div>
   );

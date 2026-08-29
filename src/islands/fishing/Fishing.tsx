@@ -9,9 +9,10 @@ import { weightedPick } from './draw';
 import { WorldView, WorldPad, useBoat } from './views/WorldView';
 import { TIER_BY_DEPTH, DEPTH_BY_TIER, depthAt, spotUnder, atShop } from './world';
 import { ShopView } from './views/ShopView';
+import { CatchView } from './views/CatchView';
 import { TutorialView } from './views/TutorialView';
 import {
-  loadProgress, saveProgress, lineReaches, canFish, reachTier, luckOf, addCatch,
+  loadProgress, saveProgress, rareBites, canFish, reachTier, luckOf, addCatch,
   rareWeight, luckyQuality, type Progress,
 } from './shop';
 import {
@@ -41,10 +42,13 @@ type Texts = {
   exitHelp: string;
   gameArea: string;
   howToPlay: string;
-  keyMove: string;
+  keyLeft: string;
+  keyRight: string;
   keyAct: string;
   keyLog: string;
   keyClose: string;
+  keyPick: string;
+  scroll: string;
   back: string;
   close: string;
   fight: string;
@@ -61,9 +65,10 @@ type Texts = {
   shop: {
     title: string; coins: string; sell: string; nothingToSell: string;
     line: string; baitLabel: string; equip: string; equipped: string;
-    close: string; help: string;
+    close: string; choose: string; act: string;
     baitName: Record<string, string>;
   };
+  rarity: Record<'comum' | 'raro' | 'lenda', string>;
   instruction: Record<string, string>;
   fish: Record<string, string>;
   water: Record<string, string>;
@@ -104,6 +109,8 @@ export default function Fishing({ texts }: { texts: Texts }) {
       um `menu` velho. A ref carrega o valor atual sem religar o efeito. */
   const menuRef = useRef(false);
   menuRef.current = menu;
+  /** O painel do caderno, para o teclado o poder rolar. */
+  const dexRef = useRef<HTMLDivElement>(null);
 
   /** Tutorial em CAPITULOS, disparados por acontecimento: despejar tudo na
       abertura e o jeito errado — ninguem le um manual antes de jogar. Quem
@@ -276,7 +283,18 @@ export default function Fishing({ texts }: { texts: Texts }) {
     // em 106 na faixa 3, ~1% por lance). Em producao o Vite substitui
     // import.meta.env.DEV por false e o ramo inteiro sai do bundle.
     if (import.meta.env.DEV) {
-      const id = new URLSearchParams(location.search).get('peixe');
+      const q = new URLSearchParams(location.search);
+      // ?fisga=p23 pula o minigame e vai direto a REVELACAO, no tamanho
+      // maximo da especie. E a unica forma de ver as tres comemoracoes sem
+      // depender de sortear um lendario, que tem peso 1 e so morde no ponto
+      // dele com a isca dele.
+      const fisga = q.get('fisga');
+      const premio = fisga ? FISH.find((f) => f.id === fisga) : undefined;
+      if (premio) {
+        setPhase({ kind: 'result', fish: premio, result: { caught: true, quality: 1 }, size: premio.sizeMax });
+        return;
+      }
+      const id = q.get('peixe');
       const forced = id ? FISH.find((f) => f.id === id) : undefined;
       if (forced) {
         setPhase({ kind: 'playing', fish: guaranteed ? guaranteedFish(forced) : forced, luck: 0 });
@@ -292,16 +310,15 @@ export default function Fishing({ texts }: { texts: Texts }) {
     if (!canFish(progress, aqui)) return;
     const maxTier = TIER_BY_DEPTH[aqui];
     const luck = luckOf(progress);
-    // O peixe raro de cada profundidade so morde se a LINHA equipada
-    // ALCANCA aquela profundidade. Uma linha mais funda cobre o que e mais
-    // raso, entao a abissal pesca o raro em qualquer lugar. A linha e
-    // permissao; sem ela o raro nem entra no sorteio.
+    // O peixe raro de cada profundidade tem dono: no raso e a ISCA, mais
+    // fundo e a propria linha (ver `rareBites`). Sem o equipamento, o raro
+    // nem entra no sorteio.
     const pool = FISH.filter((f) => {
       if (f.tier > maxTier) return false;
       // Lendario so morde no ponto dele e so com a isca dele. Fora disso nem
       // entra no sorteio — e o que faz "raríssimo" significar algo.
       if (f.legend) return f.legend.spot === spot?.id && progress.bait === f.legend.bait;
-      if (f.engine === 'hold') return lineReaches(progress, DEPTH_BY_TIER[f.tier]);
+      if (f.engine === 'hold') return rareBites(progress, DEPTH_BY_TIER[f.tier]);
       return true;
     }).map((f) => {
       // A profundidade em que o barco ESTA manda no sorteio. Sem isto, com 24
@@ -338,6 +355,26 @@ export default function Fishing({ texts }: { texts: Texts }) {
     if (atShop(boat)) { setShop(true); return; }
     if (spot && podePescar) cast();
   }, [tuto, passoTuto, menu, phase.kind, boat, spot, podePescar, cast]);
+
+  /** O painel do caderno rola; o teclado tem de o rolar tambem. Sem isto o
+      grid de 24 especies so se via com a roda do rato — e quem abriu com Tab
+      nao tem por que largar o teclado a meio. */
+  useEffect(() => {
+    if (!menu) return;
+    const onKey = (ev: KeyboardEvent) => {
+      const passo = ev.code === 'KeyW' || ev.code === 'ArrowUp' ? -1
+        : ev.code === 'KeyS' || ev.code === 'ArrowDown' ? 1 : 0;
+      if (!passo) return;
+      ev.preventDefault();
+      // Rolagem por FRACAO da altura visivel, nao por pixels fixos: no
+      // telefone o painel e baixo e um passo de 120px saltaria uma fila
+      // inteira do grid.
+      const alvo = dexRef.current;
+      if (alvo) alvo.scrollBy({ top: passo * alvo.clientHeight * 0.45, behavior: 'smooth' });
+    };
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+  }, [menu]);
 
   useEffect(() => {
     if (!playing) return;
@@ -533,7 +570,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
                         : spot ? texts.world.castShort : texts.world.noSpotShort
                   }
                   logLabel={`${texts.world.logShort} ${Object.keys(log).length}/${FISH.length}`}
-                  keys={{ move: texts.keyMove, act: texts.keyAct, log: texts.keyLog }}
+                  keys={{ left: texts.keyLeft, right: texts.keyRight, act: texts.keyAct, log: texts.keyLog }}
                 />
               )}
 
@@ -571,11 +608,21 @@ export default function Fishing({ texts }: { texts: Texts }) {
 
             {phase.kind === 'result' && (
               <>
-                <p>
-                  {phase.result.caught
-                    ? `${texts.caught}: ${texts.fish[phase.fish.id]}, ${phase.size} cm`
-                    : `${texts.escaped}: ${texts.fish[phase.fish.id]}`}
-                </p>
+                {/* Fisgar tem premio; escapar tem so a noticia. Dar a mesma
+                    vista aos dois roubaria o peso da fisgada, que e a unica
+                    coisa que o jogo tem para comemorar. */}
+                {phase.result.caught ? (
+                  <>
+                    <p class="fishing-caught">{texts.caught}</p>
+                    <CatchView
+                      fish={phase.fish}
+                      cm={phase.size}
+                      texts={{ name: texts.fish[phase.fish.id], rarity: texts.rarity }}
+                    />
+                  </>
+                ) : (
+                  <p>{`${texts.escaped}: ${texts.fish[phase.fish.id]}`}</p>
+                )}
                 {/* Dispensar o resultado NAO e sair do jogo. O rotulo era
                     "Sair" e mentia: quem lesse achava que ia perder a partida. */}
                 <button class="fishing-button" ref={castBtnRef} onClick={() => setPhase({ kind: 'idle' })}>
@@ -593,14 +640,24 @@ export default function Fishing({ texts }: { texts: Texts }) {
                 progress={progress}
                 onChange={saveAnd}
                 onClose={() => setShop(false)}
-                texts={{ ...texts.shop, depth: texts.world.depth }}
+                texts={{
+                  ...texts.shop,
+                  depth: texts.world.depth,
+                  keyClose: texts.keyClose, keyPick: texts.keyPick, keyAct: texts.keyAct,
+                }}
               />
             )}
 
             {menu && (
-              <div class="fishing-menu">
+              <div class="fishing-menu" ref={dexRef}>
                 <header class="fishing-menu-head">
                   <h3>{texts.log}</h3>
+                  {/* O cracha de rolar fica na cabeca do caderno: sem ele, W e
+                      S rolavam mas ninguem sabia — e num grid de 24 especies
+                      quase tudo esta abaixo da dobra. */}
+                  <span class="fishing-menu-keys">
+                    <kbd class="key">{texts.keyPick}</kbd>{texts.scroll}
+                  </span>
                   <button class="fishing-menu-close" onClick={() => setMenu(false)}>
                     {texts.close}<kbd class="key">{texts.keyClose}</kbd>
                   </button>

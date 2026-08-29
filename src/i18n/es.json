@@ -218,12 +218,13 @@
       "equip": "equipar",
       "equipped": "en uso",
       "close": "Cerrar",
-      "help": "flechas eligen, espacio actúa",
       "baitName": {
         "minhoca": "Cebo de lombriz",
         "camarao": "Cebo de camarón",
         "sardinha": "Cebo de sardina"
-      }
+      },
+      "choose": "elegir",
+      "act": "actuar"
     },
     "world": {
       "clickHint": "Haz clic en una marca para navegar",
@@ -293,10 +294,18 @@
       "p24": "Mero guasa"
     },
     "fight": "MANTENER / TOCAR",
-    "keyMove": "A D",
     "keyAct": "Espacio",
     "keyLog": "Tab",
     "keyClose": "Esc",
-    "back": "Continuar"
+    "back": "Continuar",
+    "keyLeft": "A",
+    "keyRight": "D",
+    "keyPick": "W S",
+    "scroll": "desplazar",
+    "rarity": {
+      "comum": "Común",
+      "raro": "Raro",
+      "lenda": "Legendario"
+    }
   }
 }

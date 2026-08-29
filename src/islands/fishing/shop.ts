@@ -9,30 +9,39 @@ export type BaitId = 'minhoca' | 'camarao' | 'sardinha';
 export const BAITS: { id: BaitId; price: number; luck: number }[] = [
   { id: 'minhoca', price: 30, luck: 0.25 },
   { id: 'camarao', price: 90, luck: 0.5 },
-  // A braba: e ela que libera os dois lendarios do abissal, entao ela custa
-  // como um item de fim de jogo — mais que a propria linha abissal.
+  // A braba: e ela que libera os dois lendarios do abissal, entao custa como
+  // item de fim de jogo — uma temporada inteira de pescaria no abissal.
   { id: 'sardinha', price: 800, luck: 0.85 },
 ];
 
-export const LINES: Depth[] = ['raso', 'medio', 'abissal'];
-/* Os precos das linhas sao derivados do ESFORCO que o dono pediu, nao
-   escolhidos a mao: quantos peixes medios da faixa e preciso vender para
-   comprar a linha seguinte. Ele fixou 15 para o meio e 20 para o abissal.
+/** So ha linha para comprar onde ela e PERMISSAO: o raso pesca-se sem linha
+    nenhuma. A linha do raso existia para abrir o peixe raro do raso, e era um
+    mau primeiro alvo — 50 moedas gastas sem sair do sitio, e o fundo ficava
+    ainda mais longe. Esse papel passou para a isca. */
+export type LineId = 'medio' | 'abissal';
+export const LINES: LineId[] = ['medio', 'abissal'];
+
+/** Preco antigo da linha do raso. Fica aqui so para devolver o dinheiro a
+    quem a comprou antes de ela deixar de existir — ver `loadProgress`. */
+const PRECO_LINHA_RASO = 50;
+
+/* Os precos sao derivados do ESFORCO que o dono pediu, nao escolhidos a mao:
+   quantos peixes medios da faixa e preciso vender para comprar a linha
+   seguinte. Ele fixou 15 para o meio e 20 para o abissal.
 
    Peixe medio por faixa (tamanho no meio da escala, sem os lendarios):
    3.67 / 7.50 / 44.33. Logo 15 x 7.50 = 112.5 e 20 x 44.33 = 886.7, que
-   arredondam para 110 e 900 — 14.7 e 20.3 de esforco medido. O raso fica nos
-   50 do dono, 13.6.
+   arredondam para 110 e 900 — 14.7 e 20.3 de esforco medido.
 
    Mexer no tamanho ou no valor de um peixe MOVE estes numeros: quem mexer
    volta aqui e recalcula, senao a progressao sai do que foi pedido. */
-export const LINE_PRICE: Record<Depth, number> = { raso: 50, medio: 110, abissal: 900 };
+export const LINE_PRICE: Record<LineId, number> = { medio: 110, abissal: 900 };
 
 export type Progress = {
   coins: number;
   /** Linhas compradas, e qual esta na vara. */
-  lines: Depth[];
-  line: Depth | null;
+  lines: LineId[];
+  line: LineId | null;
   /** Iscas compradas, e qual esta no anzol. */
   baits: BaitId[];
   bait: BaitId | null;
@@ -61,14 +70,17 @@ const RATE: Record<Kind, Record<1 | 2 | 3, number>> = {
   lenda: { 1: 1, 2: 1, 3: 1 },
 };
 
-type Kind = 'comum' | 'raro' | 'lenda';
+export type Kind = 'comum' | 'raro' | 'lenda';
 
-function kindOf(f: { legend?: unknown; engine: string }): Kind {
+/** Comum, raro ou lendario. A economia usa isto para a taxa por cm, e a
+    vista da fisgada usa para escolher o tamanho da comemoracao — uma
+    definicao so, para as duas nao poderem discordar. */
+export function rarityOf(f: { legend?: unknown; engine: string }): Kind {
   return f.legend ? 'lenda' : f.engine === 'hold' ? 'raro' : 'comum';
 }
 
 export function coinPerCm(f: { legend?: unknown; engine: string; tier: 1 | 2 | 3 }): number {
-  return RATE[kindOf(f)][f.tier];
+  return RATE[rarityOf(f)][f.tier];
 }
 
 /** Quanto vale um peixe: a taxa do grupo vezes os centimetros que ele deu. */
@@ -84,8 +96,7 @@ export function holdValue(hold: { id: string; cm: number }[]): number {
 
 /** Ate que faixa a linha equipada deixa PESCAR. Sem linha nenhuma da para
     pescar no raso — senao o jogo comeca travado, porque moeda so vem de
-    vender peixe. O que a linha do raso compra nao e o acesso ao raso, e o
-    peixe RARO dele. */
+    vender peixe. */
 export function reachTier(p: Progress): 1 | 2 | 3 {
   return p.line ? TIER_BY_DEPTH[p.line] : 1;
 }
@@ -96,10 +107,18 @@ export function canFish(p: Progress, d: Depth): boolean {
   return TIER_BY_DEPTH[d] <= reachTier(p);
 }
 
-/** A linha equipada alcanca o PEIXE RARO desta profundidade? Aqui nao ha
-    cortesia: sem linha, nenhum raro morde, nem no raso. */
-export function lineReaches(p: Progress, d: Depth): boolean {
-  return p.line !== null && TIER_BY_DEPTH[p.line] >= TIER_BY_DEPTH[d];
+/** O peixe RARO desta profundidade morde?
+
+    No raso quem abre e a ISCA. Nao ha linha do raso para comprar, e o
+    primeiro alvo do jogo passa a ser a isca de minhoca, a 30: oito peixes
+    comuns, e o raso ja fica mais rico enquanto se junta para o meio. Antes o
+    primeiro alvo eram 50 moedas numa linha que nao levava a lado nenhum.
+
+    Mais fundo, a permissao ja e a propria linha: quem chega ao meio tem a
+    linha do meio, senao nao estaria a pescar ali. */
+export function rareBites(p: Progress, d: Depth): boolean {
+  if (d === 'raso') return p.bait !== null;
+  return canFish(p, d);
 }
 
 /** Sorte da isca equipada. Zero sem isca. */
@@ -111,13 +130,13 @@ export function sellAll(p: Progress): Progress {
   return { ...p, coins: p.coins + holdValue(p.hold), hold: [] };
 }
 
-export function buyLine(p: Progress, d: Depth): Progress {
+export function buyLine(p: Progress, d: LineId): Progress {
   if (p.lines.includes(d) || p.coins < LINE_PRICE[d]) return p;
   // Comprar ja equipa: ninguem compra uma linha para deixar na gaveta.
   return { ...p, coins: p.coins - LINE_PRICE[d], lines: [...p.lines, d], line: d };
 }
 
-export function equipLine(p: Progress, d: Depth): Progress {
+export function equipLine(p: Progress, d: LineId): Progress {
   return p.lines.includes(d) ? { ...p, line: d } : p;
 }
 
@@ -153,10 +172,14 @@ export function loadProgress(): Progress {
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? 'null');
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return EMPTY_PROGRESS;
-    const lines: Depth[] = Array.isArray(raw.lines) ? raw.lines.filter((d: Depth) => LINES.includes(d)) : [];
+    const guardadas: unknown[] = Array.isArray(raw.lines) ? raw.lines : [];
+    const lines: LineId[] = guardadas.filter((d): d is LineId => LINES.includes(d as LineId));
+    // A linha do raso deixou de existir. Quem a comprou recebe as moedas de
+    // volta: perder 50 num item que sumiu do jogo seria roubo de save.
+    const devolvido = guardadas.includes('raso') ? PRECO_LINHA_RASO : 0;
     const baits: BaitId[] = Array.isArray(raw.baits) ? raw.baits.filter((b: BaitId) => BAITS.some((x) => x.id === b)) : [];
     return {
-      coins: typeof raw.coins === 'number' ? raw.coins : 0,
+      coins: (typeof raw.coins === 'number' ? raw.coins : 0) + devolvido,
       lines,
       // Equipado tem que estar entre os possuidos: um valor gravado por fora
       // (ou de uma versao antiga) nao pode deixar a vara com linha fantasma.

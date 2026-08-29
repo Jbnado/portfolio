@@ -218,12 +218,13 @@
       "equip": "equip",
       "equipped": "in use",
       "close": "Close",
-      "help": "arrows choose, space acts",
       "baitName": {
         "minhoca": "Worm bait",
         "camarao": "Shrimp bait",
         "sardinha": "Sardine bait"
-      }
+      },
+      "choose": "choose",
+      "act": "act"
     },
     "world": {
       "clickHint": "Click a mark to sail there",
@@ -293,10 +294,18 @@
       "p24": "Goliath grouper"
     },
     "fight": "HOLD / TAP",
-    "keyMove": "A D",
     "keyAct": "Space",
     "keyLog": "Tab",
     "keyClose": "Esc",
-    "back": "Continue"
+    "back": "Continue",
+    "keyLeft": "A",
+    "keyRight": "D",
+    "keyPick": "W S",
+    "scroll": "scroll",
+    "rarity": {
+      "comum": "Common",
+      "raro": "Rare",
+      "lenda": "Legendary"
+    }
   }
 }
