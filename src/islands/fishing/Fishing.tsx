@@ -7,7 +7,12 @@ import { HoldView } from './views/HoldView';
 import { DodgeView } from './views/DodgeView';
 import { weightedPick } from './draw';
 import { WorldView, useBoat } from './views/WorldView';
-import { TIER_BY_DEPTH, depthAt, spotUnder } from './world';
+import { TIER_BY_DEPTH, DEPTH_BY_TIER, depthAt, spotUnder, atShop } from './world';
+import { ShopView } from './views/ShopView';
+import {
+  loadProgress, saveProgress, hasLine, useBait, addCatch, rareWeight, luckyQuality,
+  type Progress,
+} from './shop';
 import {
   loadLog,
   saveLog,
@@ -38,13 +43,20 @@ type Texts = {
     shop: string; cast: string; noSpot: string; menu: string;
     depth: Record<string, string>;
   };
+  shop: {
+    title: string; coins: string; sell: string; nothingToSell: string;
+    line: string; owned: string; bait: string; inStock: string;
+    close: string; help: string;
+  };
   instruction: Record<string, string>;
   fish: Record<string, string>;
 };
 
 type Phase =
   | { kind: 'idle' }
-  | { kind: 'playing'; fish: Fish }
+  // `bait` viaja com a fase: a isca e gasta no lance e a sorte dela precisa
+  // valer no resultado, mesmo que o estoque ja tenha mudado no meio tempo.
+  | { kind: 'playing'; fish: Fish; bait: boolean }
   | { kind: 'result'; fish: Fish; result: Result; size: number };
 
 // `loadLog` faz `JSON.parse` sem validar o formato: um valor gravado
@@ -65,8 +77,12 @@ export default function Fishing({ texts }: { texts: Texts }) {
   // reinicia a animacao — nomes diferentes reiniciam, sem timer nenhum.
   const [miss, setMiss] = useState(0);
   const [menu, setMenu] = useState(false);
+  const [shop, setShop] = useState(false);
+  const [progress, setProgress] = useState<Progress>(() => loadProgress());
+
+  const saveAnd = useCallback((p: Progress) => { setProgress(p); saveProgress(p); }, []);
   const onMiss = useCallback(() => setMiss((n) => n + 1), []);
-  const boat = useBoat(playing && phase.kind !== 'playing' && !menu);
+  const boat = useBoat(playing && phase.kind !== 'playing' && !menu && !shop);
   const spot = spotUnder(boat);
   const playBtnRef = useRef<HTMLButtonElement>(null);
   const castBtnRef = useRef<HTMLButtonElement>(null);
@@ -160,7 +176,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
       const id = new URLSearchParams(location.search).get('peixe');
       const forced = id ? FISH.find((f) => f.id === id) : undefined;
       if (forced) {
-        setPhase({ kind: 'playing', fish: guaranteed ? guaranteedFish(forced) : forced });
+        setPhase({ kind: 'playing', fish: guaranteed ? guaranteedFish(forced) : forced, bait: false });
         return;
       }
     }
@@ -168,15 +184,26 @@ export default function Fishing({ texts }: { texts: Texts }) {
     // "quantos peixes voce ja conhece" do v1, que era progressao de mentira
     // por nao existir mapa: agora andar para a direita E a progressao.
     const maxTier = TIER_BY_DEPTH[depthAt(boat)];
-    const pool = FISH.filter((f) => f.tier <= maxTier);
+    const comIsca = progress.bait > 0;
+    // O peixe raro de cada profundidade so morde com a LINHA daquela
+    // profundidade. Sem ela ele nem entra no sorteio: a linha e permissao.
+    const pool = FISH.filter((f) => {
+      if (f.tier > maxTier) return false;
+      if (f.engine === 'hold') return hasLine(progress, DEPTH_BY_TIER[f.tier]);
+      return true;
+    }).map((f) =>
+      // A isca e probabilidade, nao permissao: ela SOMA sorte no peso do raro.
+      f.engine === 'hold' ? { ...f, weight: rareWeight(f.weight, comIsca) } : f,
+    );
+    if (comIsca) saveAnd(useBait(progress));
     // Sorteio ponderado: sorteio uniforme faria o peixe raro (HOLD na faixa 1)
     // aparecer um em tres, e ele precisa ser raro pra ensinar por surpresa.
     const picked = weightedPick(pool, Math.random);
     // Modo garantido desacelera de verdade agora (achado I3): o peixe entra
     // na vista com o ritmo ja mais lento, nao so com a perda desligada.
     const fish = guaranteed ? guaranteedFish(picked) : picked;
-    setPhase({ kind: 'playing', fish });
-  }, [boat, guaranteed]);
+    setPhase({ kind: 'playing', fish, bait: comIsca });
+  }, [boat, guaranteed, progress, saveAnd]);
 
   const enter = useCallback(() => {
     setPlaying(true);
@@ -193,26 +220,31 @@ export default function Fishing({ texts }: { texts: Texts }) {
       const alvo = document.activeElement;
       if (alvo instanceof HTMLButtonElement || alvo instanceof HTMLInputElement) return;
       if (phase.kind === 'result') { ev.preventDefault(); setPhase({ kind: 'idle' }); return; }
-      if (phase.kind === 'idle' && spot) { ev.preventDefault(); cast(); }
+      if (phase.kind !== 'idle') return;
+      if (atShop(boat)) { ev.preventDefault(); setShop(true); return; }
+      if (spot) { ev.preventDefault(); cast(); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [playing, phase.kind, spot, menu, cast]);
+  }, [playing, phase.kind, spot, menu, boat, cast]);
 
   const onDone = useCallback(
-    (fish: Fish) => (raw: Result) => {
+    (fish: Fish, comIsca: boolean) => (raw: Result) => {
       // Modo garantido forca a captura mas nao mexe em quality: o tamanho
       // continua refletindo o desempenho do jogador, so a perda e desligada.
       const result = guaranteed ? { caught: true, quality: raw.quality } : raw;
-      const size = sizeOf(fish, result.quality);
+      // A isca tambem puxa o TAMANHO para cima, sem passar do teto da especie.
+      const size = sizeOf(fish, luckyQuality(result.quality, comIsca));
       if (result.caught) {
         const updated = recordCatch(log, fish.id, size);
         setLog(updated);
         saveLog(updated);
+        // O peixe vai pro porao; vender na loja e o que vira moeda.
+        saveAnd(addCatch(progress, size));
       }
       setPhase({ kind: 'result', fish, result, size });
     },
-    [log, guaranteed],
+    [log, guaranteed, progress, saveAnd],
   );
 
   return (
@@ -309,7 +341,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
                 {phase.fish.engine === 'track' && (
                   <TrackView
                     params={phase.fish.params as TrackParams}
-                    onDone={onDone(phase.fish)}
+                    onDone={onDone(phase.fish, phase.bait)}
                     onMiss={onMiss}
                   />
                 )}
@@ -317,14 +349,14 @@ export default function Fishing({ texts }: { texts: Texts }) {
                   <HoldView
                     params={phase.fish.params as HoldParams}
                     color={phase.fish.color}
-                    onDone={onDone(phase.fish)}
+                    onDone={onDone(phase.fish, phase.bait)}
                   />
                 )}
                 {phase.fish.engine === 'dodge' && (
                   <DodgeView
                     params={phase.fish.params as DodgeParams}
                     texts={{ reeling: texts.reeling, falls: texts.falls, resets: texts.resets, fallsUnlimited: texts.fallsUnlimited }}
-                    onDone={onDone(phase.fish)}
+                    onDone={onDone(phase.fish, phase.bait)}
                     onMiss={onMiss}
                   />
                 )}
@@ -348,6 +380,15 @@ export default function Fishing({ texts }: { texts: Texts }) {
 
             {/* Caderno por cima da cena. Por enquanto so o nome e um quadrado
                 vazio no lugar da foto — o espaco ja fica reservado para ela. */}
+            {shop && (
+              <ShopView
+                progress={progress}
+                onChange={saveAnd}
+                onClose={() => setShop(false)}
+                texts={{ ...texts.shop, depth: texts.world.depth }}
+              />
+            )}
+
             {menu && (
               <div class="fishing-menu">
                 <h3>{texts.log}</h3>

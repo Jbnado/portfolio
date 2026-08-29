@@ -283,15 +283,25 @@ ainda não existe. Os peixes já têm lugar reservado para a foto no caderno.
 - **O minigame cobre a cena, não a substitui.** O lago fica desenhado atrás.
 - **Tab abre o caderno** por cima da cena.
 
-### A loja, ainda por construir
+### A loja
 
-Decisões do dono já tomadas, aguardando implementação:
+Abre com espaço quando o barco está na margem. Setas escolhem, espaço age — a mesma gramática do
+resto do jogo, uma tecla faz tudo.
 
-- **Três melhorias de linha**, uma por profundidade. A do raso libera **o peixe mais raro do
-  raso**, e assim por diante. Isso encaixa com uma decisão anterior: o SUSTENTAÇÃO já é o peixe
-  raro de toda faixa, então é ele que cada linha destrava.
-- **Iscas** aumentam a sorte: peixes maiores com mais frequência, e a sorte **soma** na chance de
-  o peixe muito raro aparecer.
+**Linha é permissão, isca é probabilidade.** A separação importa e veio das palavras do dono.
+
+- **Três melhorias de linha**, uma por profundidade (40, 120, 300). A do raso libera **o peixe
+  mais raro do raso**, e assim por diante. Isso encaixa com uma decisão anterior dele: o
+  SUSTENTAÇÃO já é o peixe raro de toda faixa, então é exatamente ele que cada linha destrava.
+  Sem a linha, aquele peixe **nem entra no sorteio**.
+- **Iscas** somam sorte, e somam em dois lugares: multiplicam o peso do raro no sorteio (ele
+  aparece mais) e puxam o tamanho para cima, travado no máximo da espécie. Vêm em pacote de 5, e
+  cada lance gasta uma.
+- **Vender o pescado** é o que vira moeda: um peixe vale metade do tamanho em cm, com piso de 1.
+  Pescar enche o porão; vender esvazia e credita.
+
+O progresso mora numa chave própria (`fishing:progress`), separada do caderno de espécimes — o
+caderno tem formato já publicado, e misturar obrigaria a migrar um dado que não precisa mudar.
 
 ### Origem das mecânicas
 

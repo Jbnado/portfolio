@@ -183,6 +183,18 @@
     "exitHelp": "Esc también sale",
     "gameArea": "Área de juego",
     "howToPlay": "Espacio hace todo: lanza la línea y resuelve el minijuego de cada pez.",
+    "shop": {
+          "title": "Tienda de la orilla",
+          "coins": "Monedas",
+          "sell": "Vender la pesca",
+          "nothingToSell": "bodega vacía",
+          "line": "Línea",
+          "owned": "comprada",
+          "bait": "Cebos",
+          "inStock": "Cebos",
+          "close": "Esc cierra",
+          "help": "flechas eligen, espacio actúa"
+    },
     "world": {
           "shop": "Tienda",
           "cast": "Espacio lanza la línea",

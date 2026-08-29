@@ -183,6 +183,18 @@
     "exitHelp": "Esc também sai",
     "gameArea": "Área de jogo",
     "howToPlay": "Espaço faz tudo: lança a linha e resolve o minigame de cada peixe.",
+    "shop": {
+          "title": "Loja da margem",
+          "coins": "Moedas",
+          "sell": "Vender o pescado",
+          "nothingToSell": "porão vazio",
+          "line": "Linha",
+          "owned": "comprada",
+          "bait": "Iscas",
+          "inStock": "Iscas",
+          "close": "Esc fecha",
+          "help": "setas escolhem, espaço age"
+    },
     "world": {
           "shop": "Loja",
           "cast": "Espaço lança a linha",

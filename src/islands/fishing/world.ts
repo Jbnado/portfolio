@@ -36,6 +36,12 @@ export const TIER_BY_DEPTH: Record<Depth, 1 | 2 | 3> = {
   raso: 1, medio: 2, abissal: 3,
 };
 
+/** O inverso: de que profundidade e o peixe desta faixa. A loja precisa dele
+    para saber QUAL linha libera qual peixe raro. */
+export const DEPTH_BY_TIER: Record<1 | 2 | 3, Depth> = {
+  1: 'raso', 2: 'medio', 3: 'abissal',
+};
+
 /** Ponto de pesca: a marca fina sobre a agua. So da pra lancar em cima de um. */
 export type Spot = { id: string; x: number };
 

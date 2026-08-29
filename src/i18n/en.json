@@ -183,6 +183,18 @@
     "exitHelp": "Esc exits too",
     "gameArea": "Game area",
     "howToPlay": "Space does everything: it casts the line and plays each fish's minigame.",
+    "shop": {
+          "title": "Shore shop",
+          "coins": "Coins",
+          "sell": "Sell the catch",
+          "nothingToSell": "hold empty",
+          "line": "Line",
+          "owned": "owned",
+          "bait": "Bait",
+          "inStock": "Bait",
+          "close": "Esc closes",
+          "help": "arrows choose, space acts"
+    },
     "world": {
           "shop": "Shop",
           "cast": "Space casts the line",
