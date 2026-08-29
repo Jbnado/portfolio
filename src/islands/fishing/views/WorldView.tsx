@@ -67,7 +67,7 @@ export function WorldView({ boat, reach, onSailTo, texts, children }: Props) {
           <div
             key={i}
             class="world-far"
-            style={{ left: `${sxFar(m.x)}%`, width: `${(m.w / VIEW_W) * 100}%`, height: `${m.h * 0.18}%` }}
+            style={{ left: `${sxFar(m.x)}%`, width: `${(m.w / VIEW_W) * 100}%`, height: `${m.h * 0.3}%` }}
           />
         ))}
 

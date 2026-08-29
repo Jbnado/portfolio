@@ -23,14 +23,16 @@
   background: var(--fishing-surface);
 }
 
-/* ---- A cena tem tres planos: ceu, a outra margem, e a agua.
+/* ---- A cena tem tres planos: a outra margem, a agua, e o barco.
 
-   A linha d'agua fica em 40%, e o barco pousa EM CIMA dela. Antes o barco
-   flutuava no alto da moldura, sem nada atras, e a cena nao tinha longe nem
-   perto. */
+   A camera olha o lago DE CIMA, em angulo: a linha d'agua fica alta, em 25%,
+   e os 75% de baixo sao o plano da agua a vir na nossa direcao. O barco NAO
+   se cola ao horizonte — flutua no meio desse plano, com agua atras e agua a
+   frente. Foi o que faltava na versao de 40%: com a linha a meio da moldura,
+   o barco pousado nela ficava sempre no alto do quadro. */
 .world-sky {
   position: absolute;
-  inset: 0 0 60% 0;
+  inset: 0 0 75% 0;
   background: linear-gradient(
     to bottom,
     color-mix(in srgb, var(--fishing-rule) 6%, transparent),
@@ -41,7 +43,7 @@
 /* A outra margem. Fica ancorada NA linha d'agua e sobe dali. */
 .world-far {
   position: absolute;
-  bottom: 60%;
+  bottom: 75%;
   background: color-mix(in srgb, var(--fishing-rule) 58%, transparent);
   border-radius: 4px 4px 0 0;
   pointer-events: none;
@@ -51,14 +53,14 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 40%;
+  top: 25%;
   height: 2px;
   background: var(--fishing-rule);
   opacity: 0.5;
   pointer-events: none;
 }
 
-.world-water { position: absolute; top: 40%; bottom: 0; }
+.world-water { position: absolute; top: 25%; bottom: 0; }
 
 /* Gradiente vertical na agua: o longe escurece. E o segundo sinal de
    profundidade, junto do parallax — cor sozinha nao daria angulo nenhum. */
@@ -67,9 +69,9 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 40%;
+  top: 25%;
   bottom: 0;
-  background: linear-gradient(to bottom, color-mix(in srgb, var(--fishing-rule) 22%, transparent), transparent 55%);
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--fishing-rule) 30%, transparent), transparent 45%);
   pointer-events: none;
 }
 .world-water[data-depth='raso'] { background: color-mix(in srgb, var(--fishing-zone) 26%, transparent); }
@@ -87,7 +89,7 @@
 }
 
 /* Terra, nao agua translucida: a margem sobe acima da linha d'agua. */
-.world-shore { position: absolute; top: 32%; bottom: 0; background: var(--fishing-rule); }
+.world-shore { position: absolute; top: 17%; bottom: 0; background: var(--fishing-rule); }
 
 /* ---- Alvos clicaveis.
 
@@ -108,9 +110,12 @@
   outline-offset: 3px;
 }
 
+/* A loja fica EM PE na margem, a meia altura do plano — na mesma faixa por
+   onde o barco passa. Encostada ao horizonte, como estava, lia-se como parte
+   do cenario de fundo em vez de um sitio aonde se vai. */
 .world-shop {
-  top: 16%;
-  height: 16%;
+  top: 26%;
+  height: 20%;
   transform: translateX(-50%);
   background: var(--fishing-marker);
   border: 2px solid var(--fishing-rule);
@@ -134,10 +139,11 @@
   color: var(--color-text-primary);
 }
 
-/* Abaixo do horizonte (40%): a marca boia na agua, nao no ceu. */
+/* No plano de agua perto, a meia distancia: e ali que o barco navega. Junto
+   ao horizonte a marca ficava "longe" e o barco nunca parecia chegar nela. */
 .world-spot {
-  top: 43%;
-  height: 8%;
+  top: 57%;
+  height: 12%;
   transform: translateX(-50%);
   background: var(--fishing-rule);
   border-radius: 2px;
@@ -173,12 +179,13 @@
   .world-ping { animation: none; opacity: 0.9; }
 }
 
-/* O barco pousa na linha d'agua: topo em 28%, base em 40%. Antes ele ficava
-   la em cima, solto no ceu. */
+/* O barco flutua NO plano da agua, nao na linha do horizonte: topo em 50%,
+   base em 67%, dentro do retangulo da marca. Com o horizonte a 25% sobra
+   agua atras dele e agua a frente — e o que da o angulo. */
 .world-boat {
   position: absolute;
-  top: 28%;
-  height: 12%;
+  top: 50%;
+  height: 17%;
   transform: translateX(-50%);
   background: var(--fishing-marker);
   border: 2px solid var(--fishing-rule);
@@ -283,6 +290,17 @@
 
 .world-pad-btn:focus-visible,
 .world-pad-act:focus-visible { outline: 3px solid var(--fishing-marker); outline-offset: 2px; }
+
+/* Num telefone os quatro controles nao cabem lado a lado: com 410px sobravam
+   55px para o botao de acao e "Escolha uma marca" quebrava em quatro linhas,
+   com a tecla a sair do botao. O caderno passa para uma linha inteira sua —
+   e nao some, que era a outra saida possivel e a errada: colecao escondida
+   nao existe para quem nao a procura. */
+@media (max-width: 560px) {
+  .world-pad { flex-wrap: wrap; }
+  .world-pad-act { min-width: 0; }
+  .world-pad-log { flex: 1 0 100%; }
+}
 
 @media (max-width: 520px) {
   .world-pad-btn, .world-pad-act { padding: 0 10px; font-size: 0.72rem; }

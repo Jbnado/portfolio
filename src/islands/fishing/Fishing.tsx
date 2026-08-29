@@ -123,11 +123,30 @@ export default function Fishing({ texts }: { texts: Texts }) {
     try { localStorage.setItem('fishing:tuto', JSON.stringify(vistos.current)); } catch { /* modo privado */ }
   }, []);
 
+  /** Um capitulo NAO entra por cima de um painel aberto. A venda dispara o
+      capitulo de dentro da loja, e a caixa de fala, ancorada no rodape do
+      lago, cortava a lista da loja ao meio — com o rodape do painel a sair
+      por baixo dela. Fica pendente e abre quando o painel fecha, que e
+      tambem onde a fala faz mais sentido: acabaste de vender, agora olha. */
+  const pendente = useRef<TutorialChapter | null>(null);
+  const painelRef = useRef(false);
+  painelRef.current = menu || shop;
+
   /** Abre um capitulo, se ele ainda nao foi visto. */
   const contar = useCallback((ch: TutorialChapter) => {
-    if (!vistos.current.includes(ch)) setTuto({ ch, i: 0 });
+    if (vistos.current.includes(ch)) return;
+    if (painelRef.current) { pendente.current = ch; return; }
+    setTuto({ ch, i: 0 });
   }, []);
   contarRef.current = contar;
+
+  useEffect(() => {
+    if (menu || shop) return;
+    const ch = pendente.current;
+    if (ch === null) return;
+    pendente.current = null;
+    if (!vistos.current.includes(ch)) setTuto({ ch, i: 0 });
+  }, [menu, shop]);
 
   const fecharTuto = useCallback(() => {
     setTuto((t) => { if (t) marcarVisto(t.ch); return null; });
