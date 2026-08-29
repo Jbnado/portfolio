@@ -35,6 +35,20 @@ describe('FISH', () => {
     expect(sizes[1]).toBeGreaterThan(sizes[2]);
   });
 
+  // Decisao do dono depois de jogar os tres motores: o SUSTENTACAO e o mais
+  // dificil dos tres, entao ele fica para os peixes mais dificeis — raro em
+  // toda faixa, nao um em cada tres. A faixa 1 ja era assim; as outras duas
+  // tinham os tres empatados.
+  it('o SUSTENTACAO e o peixe raro de TODA faixa', () => {
+    for (const tier of [1, 2, 3]) {
+      const daFaixa = FISH.filter((f) => f.tier === tier);
+      const hold = daFaixa.find((f) => f.engine === 'hold')!;
+      for (const outro of daFaixa.filter((f) => f.engine !== 'hold')) {
+        expect(hold.weight).toBeLessThan(outro.weight);
+      }
+    }
+  });
+
   it('nao repete id', () => {
     expect(new Set(FISH.map((p) => p.id)).size).toBe(FISH.length);
   });

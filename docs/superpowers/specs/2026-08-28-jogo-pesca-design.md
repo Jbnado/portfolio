@@ -199,6 +199,12 @@ sairia pela borda e valeria menos que as outras, e a dificuldade deixaria de ser
 Isso também resolve de graça a saturação de qualidade: com alvo móvel, mesmo quem joga bem varia
 o tamanho do peixe.
 
+**O SUSTENTAÇÃO é o peixe raro de toda faixa.** Depois de jogar os três motores, o dono
+concluiu que ele é de longe o mais difícil — a carga é de controle contínuo, que os outros dois
+não têm — e que por isso ele fica para os peixes mais difíceis. Peso 10 contra 45 dos outros dois
+em **todas** as faixas. A faixa 1 já era assim por decisão anterior dele (o peixe que ensina a
+perder tem que ser raro, senão cai um em cada três); as faixas 2 e 3 tinham os três empatados.
+
 **Este é o minigame de boa.** Por decisão do dono, o TRAJETO é simples e fácil **inclusive no
 abissal** — é o descanso entre os outros dois. A dificuldade sobe só encolhendo a zona
 (30% / 25% / 15% da barra), com a velocidade quase parada.
