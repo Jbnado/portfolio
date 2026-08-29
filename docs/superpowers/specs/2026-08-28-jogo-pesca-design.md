@@ -342,6 +342,36 @@ apareçam em toda faixa.
 **Tolerância se expressa na moeda de cada motor:** tamanho da zona no TRAJETO, taxa de dreno no
 SUSTENTAÇÃO, quedas até arrebentar na DRAGAGEM.
 
+### Orçamento de JS: por página, e dois em vez de um
+
+O v1 nasceu com **um** teto de 48KB medido como "a soma de todos os
+`dist/_astro/*.js`". Essa métrica estava errada por dois motivos, e os dois
+apareceram na prática.
+
+**Ela nunca mediu o que alguém baixa.** Somava a pasta inteira, incluindo
+chunks que só uma rota usa — o `BlogFeed` conta contra o jogo, e vice-versa.
+Medido pelo fecho transitivo dos imports a partir do HTML: a home baixa
+**30,3KB**, a página do jogo **44,4KB**, e o jogo em si é **14,1KB** deles.
+
+**E um teto só faz o jogo pesar contra páginas que não o carregam.** O
+`Fishing.js` é um chunk separado que só a rota do jogo puxa; o site não fica
+mais lento porque o jogo cresceu. Com sprites, loja, barco e mapa vindo, um
+teto compartilhado obrigaria a apertar o site para caber o jogo.
+
+Passam a ser dois, verificados por `pnpm budget`:
+
+| orçamento | mede | teto |
+|---|---|---|
+| **site** | JS que a home baixa | 32KB |
+| **jogo** | JS que `/jogo/pesca` baixa | 80KB |
+
+O do site é apertado de propósito — é ele que protege o portfólio. O do jogo
+tem folga para o que falta construir.
+
+**Sprites não entram aqui.** Imagem não é JS: elas não contam contra estes
+tetos, mas contam contra o peso da página, e vão precisar do seu próprio
+limite quando existirem.
+
 ### Calibragem das faixas
 
 Medida por simulação, não por opinião: três jogadores sintéticos (tempo de reação e tremor
