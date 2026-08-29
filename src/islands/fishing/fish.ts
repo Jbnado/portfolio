@@ -66,17 +66,17 @@ const TABELA: Linha[] = [
 
   // ---- Abissal: seis especies, todas grandes.
   { id: 'p7',  tier: 3, water: 'salgada', min: 45,  max: 95,  engine: 'track' },
-  { id: 'p20', tier: 3, water: 'doce',    min: 60,  max: 120, engine: 'track' },
-  { id: 'p9',  tier: 3, water: 'doce',    min: 80,  max: 150, engine: 'dodge' },
+  { id: 'p20', tier: 3, water: 'doce',    min: 60,  max: 140, engine: 'track' },
+  { id: 'p9',  tier: 3, water: 'doce',    min: 80,  max: 190, engine: 'dodge' },
   { id: 'p21', tier: 3, water: 'salgada', min: 40,  max: 90,  engine: 'dodge' },
-  { id: 'p8',  tier: 3, water: 'doce',    min: 55,  max: 105, engine: 'hold' },
-  { id: 'p22', tier: 3, water: 'doce',    min: 90,  max: 180, engine: 'hold' },
+  { id: 'p8',  tier: 3, water: 'doce',    min: 55,  max: 130, engine: 'hold' },
+  { id: 'p22', tier: 3, water: 'doce',    min: 90,  max: 240, engine: 'hold' },
 
   // ---- Os dois lendarios. Cada um mora num UNICO ponto de pesca e so morde
   // com a melhor isca. Mesmo assim quase nunca aparece: sao o fim do jogo.
-  { id: 'p23', tier: 3, water: 'doce',    min: 150, max: 300, engine: 'hold',
+  { id: 'p23', tier: 3, water: 'doce',    min: 200, max: 400, engine: 'hold',
     legend: { spot: 's6', bait: 'sardinha' } },
-  { id: 'p24', tier: 3, water: 'salgada', min: 120, max: 250, engine: 'hold',
+  { id: 'p24', tier: 3, water: 'salgada', min: 170, max: 350, engine: 'hold',
     legend: { spot: 's7', bait: 'sardinha' } },
 ];
 

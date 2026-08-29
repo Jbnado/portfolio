@@ -2,35 +2,82 @@ import { describe, it, expect } from 'vitest';
 import {
   EMPTY_PROGRESS, LINE_PRICE, BAITS,
   buyLine, equipLine, buyBait, equipBait, sellAll, addCatch,
-  lineReaches, canFish, reachTier, luckOf, fishValue, holdValue, rareWeight, luckyQuality,
+  lineReaches, canFish, reachTier, luckOf, fishValue, coinPerCm, holdValue, rareWeight, luckyQuality,
 } from './shop';
 import { FISH } from './fish';
 
 const rico = { ...EMPTY_PROGRESS, coins: 1000 };
 
 describe('valor do pescado', () => {
-  const raro = (t: 1 | 2 | 3) => FISH.find((f) => f.tier === t && f.engine === 'hold')!;
-  const comum = (t: 1 | 2 | 3) => FISH.find((f) => f.tier === t && f.engine !== 'hold')!;
-  const noMaximo = (f: { id: string; sizeMax: number }) => fishValue(f.id, f.sizeMax);
+  const grupo = (t: 1 | 2 | 3, raro: boolean) =>
+    FISH.filter((f) => f.tier === t && !f.legend && (f.engine === 'hold') === raro);
+  const maiorDo = (t: 1 | 2 | 3, raro: boolean) =>
+    grupo(t, raro).reduce((a, b) => (b.sizeMax > a.sizeMax ? b : a));
 
-  it('o teto de cada faixa e o que o dono pediu', () => {
-    expect(noMaximo(comum(1))).toBe(5);
-    expect(noMaximo(comum(2))).toBe(10);
-    expect(noMaximo(comum(3))).toBe(50);
-  });
-
-  it('so o raro de cada faixa passa do teto comum', () => {
-    expect(noMaximo(raro(1))).toBe(10);
-    expect(noMaximo(raro(2))).toBe(25);
-    expect(noMaximo(raro(3))).toBe(100);
+  // A TAXA por centimetro e a fonte da verdade; o teto de cada grupo e
+  // consequencia dela. Com o teto na frente, engordar um peixe BAIXAVA a taxa
+  // do grupo — um abissal mais imenso pagava menos por cm, que e o oposto do
+  // que o jogo promete.
+  it('a taxa por centimetro e a que o dono definiu', () => {
+    const taxa = { comum: { 1: 0.1, 2: 0.125, 3: 0.333 }, raro: { 1: 0.182, 2: 0.313, 3: 0.556 } };
     for (const t of [1, 2, 3] as const) {
-      expect(noMaximo(raro(t))).toBeGreaterThan(noMaximo(comum(t)));
+      expect(coinPerCm(maiorDo(t, false))).toBeCloseTo(taxa.comum[t], 3);
+      expect(coinPerCm(maiorDo(t, true))).toBeCloseTo(taxa.raro[t], 3);
     }
   });
 
-  it('dentro da especie, peixe maior paga mais', () => {
-    const f = comum(3);
-    expect(fishValue(f.id, f.sizeMax)).toBeGreaterThan(fishValue(f.id, f.sizeMin));
+  it('a taxa nao depende do tamanho: engordar um peixe so faz ele valer mais', () => {
+    for (const t of [1, 2, 3] as const) {
+      const g = grupo(t, false);
+      for (const f of g) expect(coinPerCm(f)).toBeCloseTo(coinPerCm(g[0]), 6);
+    }
+  });
+
+  it('a isca braba custa mais que a linha abissal: e item de fim de jogo', () => {
+    const braba = BAITS[BAITS.length - 1];
+    expect(braba.price).toBeGreaterThan(LINE_PRICE.abissal);
+    expect(braba.luck).toBe(Math.max(...BAITS.map((b) => b.luck)));
+  });
+
+  it('o valor e proporcional aos centimetros: peixe maior paga mais, sempre', () => {
+    for (const t of [1, 2, 3] as const) {
+      const comuns = grupo(t, false);
+      // Entre especies DIFERENTES da mesma faixa, quem der mais cm paga mais.
+      for (const a of comuns) {
+        for (const b of comuns) {
+          if (a.sizeMax === b.sizeMax) continue;
+          const maior = a.sizeMax > b.sizeMax ? a : b;
+          const menor = a.sizeMax > b.sizeMax ? b : a;
+          expect(fishValue(maior.id, maior.sizeMax)).toBeGreaterThanOrEqual(fishValue(menor.id, menor.sizeMax));
+        }
+      }
+      // E dentro da MESMA especie, idem.
+      for (const f of comuns) {
+        expect(fishValue(f.id, f.sizeMax)).toBeGreaterThan(fishValue(f.id, f.sizeMin));
+      }
+    }
+  });
+
+  it('dois peixes do mesmo grupo com o mesmo tamanho valem o mesmo', () => {
+    const [a, b] = grupo(2, false);
+    expect(fishValue(a.id, 40)).toBe(fishValue(b.id, 40));
+  });
+
+  it('o raro paga mais por centimetro que o comum da mesma faixa', () => {
+    for (const t of [1, 2, 3] as const) {
+      expect(coinPerCm(maiorDo(t, true))).toBeGreaterThan(coinPerCm(maiorDo(t, false)));
+    }
+  });
+
+  it('a faixa mais funda paga mais por centimetro', () => {
+    expect(coinPerCm(maiorDo(3, false))).toBeGreaterThan(coinPerCm(maiorDo(2, false)));
+    expect(coinPerCm(maiorDo(2, false))).toBeGreaterThan(coinPerCm(maiorDo(1, false)));
+  });
+
+  it('o lendario paga mais que qualquer outro', () => {
+    const lenda = FISH.find((f) => f.legend)!;
+    const melhorComum = maiorDo(3, true);
+    expect(fishValue(lenda.id, lenda.sizeMax)).toBeGreaterThan(fishValue(melhorComum.id, melhorComum.sizeMax));
   });
 
   it('nenhum peixe vale zero', () => {
@@ -42,12 +89,12 @@ describe('valor do pescado', () => {
   });
 
   it('a linha do raso exige varios peixes do raso', () => {
-    const porPeixe = noMaximo(comum(1));
-    expect(LINE_PRICE.raso / porPeixe).toBeGreaterThanOrEqual(10);
+    const melhor = maiorDo(1, false);
+    expect(LINE_PRICE.raso / fishValue(melhor.id, melhor.sizeMax)).toBeGreaterThanOrEqual(10);
   });
 
   it('vender esvazia o porao e credita', () => {
-    const f = comum(1);
+    const f = maiorDo(1, false);
     let p = addCatch(addCatch(EMPTY_PROGRESS, f.id, f.sizeMax), f.id, f.sizeMin);
     const esperado = holdValue(p.hold);
     p = sellAll(p);

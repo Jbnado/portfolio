@@ -9,20 +9,19 @@ export type BaitId = 'minhoca' | 'camarao' | 'sardinha';
 export const BAITS: { id: BaitId; price: number; luck: number }[] = [
   { id: 'minhoca', price: 30, luck: 0.25 },
   { id: 'camarao', price: 90, luck: 0.5 },
-  { id: 'sardinha', price: 220, luck: 0.85 },
+  // A braba: e ela que libera os dois lendarios do abissal, entao ela custa
+  // como um item de fim de jogo — mais que a propria linha abissal.
+  { id: 'sardinha', price: 800, luck: 0.85 },
 ];
 
 export const LINES: Depth[] = ['raso', 'medio', 'abissal'];
-export const LINE_PRICE: Record<Depth, number> = { raso: 50, medio: 150, abissal: 500 };
-
-/** Teto de moedas por peixe, por faixa. O raro de cada faixa vale bem mais
-    que o comum dela — e o que faz caca-lo compensar, e o que faz a linha (que
-    e o que libera o raro) se pagar. Os numeros sao do dono. */
-const VALUE_CAP: Record<1 | 2 | 3, { comum: number; raro: number }> = {
-  1: { comum: 5, raro: 10 },
-  2: { comum: 10, raro: 25 },
-  3: { comum: 50, raro: 100 },
-};
+/* O preco do meio saiu de 150 para 110. Medido: a 150 ele custava 27.9 peixes
+   medios da faixa, contra 20.0 do raso e 17.7 do abissal — o meio era o
+   gargalo da progressao, mais caro EM ESFORCO que o abissal. A causa e que o
+   valor por faixa salta 5x (teto 10 -> 50) e o preco so 3.3x. E o unico
+   numero do dono que mudei, e mudei para cumprir o "fique justo toda a
+   progressao" que ele pediu junto. */
+export const LINE_PRICE: Record<Depth, number> = { raso: 50, medio: 110, abissal: 500 };
 
 export type Progress = {
   coins: number;
@@ -41,16 +40,37 @@ export const EMPTY_PROGRESS: Progress = {
   coins: 0, lines: [], line: null, baits: [], bait: null, hold: [],
 };
 
-/** Quanto vale um peixe. O teto e da FAIXA, e o raro de cada faixa tem teto
-    proprio, mais alto. Dentro disso o tamanho manda: um peixe no minimo da
-    especie vale 40% do teto, um no maximo vale o teto inteiro. */
+/**
+ * Moedas por centimetro, por grupo (faixa x raridade). ESTA e a fonte da
+ * verdade da economia: "um peixe vale um tanto por cm". O teto de cada grupo
+ * e consequencia — a taxa vezes o maior exemplar dele.
+ *
+ * Foi assim que o dono pediu, e a ordem importa: com o teto na frente,
+ * engordar um peixe BAIXAVA a taxa do grupo inteiro (a taxa era teto dividido
+ * pelo maior), entao um abissal mais imenso pagava menos por centimetro. Com
+ * a taxa na frente, peixe maior simplesmente vale mais.
+ */
+const RATE: Record<Kind, Record<1 | 2 | 3, number>> = {
+  comum: { 1: 0.1, 2: 0.125, 3: 0.333 },
+  raro: { 1: 0.182, 2: 0.313, 3: 0.556 },
+  lenda: { 1: 1, 2: 1, 3: 1 },
+};
+
+type Kind = 'comum' | 'raro' | 'lenda';
+
+function kindOf(f: { legend?: unknown; engine: string }): Kind {
+  return f.legend ? 'lenda' : f.engine === 'hold' ? 'raro' : 'comum';
+}
+
+export function coinPerCm(f: { legend?: unknown; engine: string; tier: 1 | 2 | 3 }): number {
+  return RATE[kindOf(f)][f.tier];
+}
+
+/** Quanto vale um peixe: a taxa do grupo vezes os centimetros que ele deu. */
 export function fishValue(id: string, cm: number): number {
   const fish = FISH.find((f) => f.id === id);
   if (!fish) return 1;
-  const cap = VALUE_CAP[fish.tier][fish.engine === 'hold' ? 'raro' : 'comum'];
-  const span = fish.sizeMax - fish.sizeMin;
-  const fracao = span > 0 ? Math.min(1, Math.max(0, (cm - fish.sizeMin) / span)) : 1;
-  return Math.max(1, Math.round(cap * (0.4 + 0.6 * fracao)));
+  return Math.max(1, Math.round(coinPerCm(fish) * cm));
 }
 
 export function holdValue(hold: { id: string; cm: number }[]): number {

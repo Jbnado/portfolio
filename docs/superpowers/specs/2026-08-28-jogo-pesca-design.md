@@ -325,25 +325,47 @@ resto do jogo, uma tecla faz tudo.
 
 ### Economia
 
-Tetos por faixa, e o raro de cada faixa tem teto próprio. Dentro do teto, o tamanho manda: um
-peixe no mínimo da espécie vale 40% do teto, um no máximo vale o teto inteiro.
+**O peixe vale por centímetro, e a TAXA é a fonte da verdade.** Cada grupo —
+faixa × raridade — tem uma taxa de moedas por cm. O teto de cada grupo é
+consequência: a taxa vezes o maior exemplar dele.
 
-| faixa | peixe comum | peixe raro | linha |
-|---|---|---|---|
-| raso | 5 | 10 | 50 |
-| meio | 10 | 25 | 150 |
-| abissal | 50 | 100 | 500 |
+A ordem importa, e custou uma volta para descobrir. Na primeira versão o teto
+vinha primeiro e a taxa era derivada (teto ÷ maior exemplar). Isso tinha um
+efeito perverso: **engordar um peixe baixava a taxa do grupo inteiro**, então
+um abissal mais imenso passava a pagar menos por centímetro — o oposto do que
+o jogo promete. Com a taxa na frente, peixe maior simplesmente vale mais.
 
-A linha do raso custa **dez peixes do raso**, de propósito: a primeira compra tem que ser
-conquistada. E é o raro que paga a conta — o que faz caçá-lo compensar, e faz a linha (que é o
-que o libera) se pagar.
-- **Três iscas** (30, 90, 220), com sorte crescente. São **permanentes**: compra uma vez e a
-  sorte vale para sempre. A sorte soma em dois lugares — multiplica o peso do raro no sorteio e
-  puxa o tamanho para cima, travado no máximo da espécie.
-- **Só uma linha e só uma isca ficam equipadas por vez.** Comprar já equipa, porque ninguém
-  compra para deixar na gaveta. A melhor domina, e isso é proposital: é progressão, não dilema.
+E antes disso o modelo era pior ainda: dava de 40% a 100% do teto conforme o
+tamanho *dentro da espécie*, de modo que um lambari de 18cm valia o mesmo que
+uma tainha de 50cm. "Peixe maior paga mais" precisa valer **entre** espécies.
 
-### Celular
+| grupo | moedas/cm | maior exemplar |
+|---|---|---|
+| raso comum | 0,100 | 5 |
+| raso raro | 0,182 | 10 |
+| meio comum | 0,125 | 10 |
+| meio raro | 0,313 | 25 |
+| abissal comum | 0,333 | 63 |
+| abissal raro | 0,556 | 133 |
+| lendário | 1,000 | 400 |
+
+**O abissal tem peixe imenso.** Jaú até 190cm, Piraíba até 240cm, e os
+lendários em 400cm e 350cm — que valem 400 e 350 moedas, mais que qualquer
+linha.
+
+**Preços: linhas 50, 110, 500; iscas 30, 90, 800.**
+
+O preço do meio era 150 e foi o **único número do dono que precisou mudar**.
+Medido a 150, custava 27,9 peixes médios da faixa contra 20,0 do raso e 17,7
+do abissal: o meio era o gargalo, mais caro **em esforço** que o abissal. A
+causa é aritmética — o valor salta 5× entre faixas e o preço só 3,3×. A 110 a
+progressão fica em **20,0 / 20,5 / 16,3**, plana e aliviando no fim.
+
+**A isca braba custa 800, mais que a linha abissal**, porque é ela que libera
+os dois lendários. São 26 peixes do abissal para comprá-la, e ela se paga em
+2,7 lendários médios: caríssima, mas com retorno visível.
+
+### Celular### Celular### Celular
 
 **Portrait, e completamente responsivo** — pedido do dono. Duas coisas que só apareceram medindo
 num viewport real de 410px:
