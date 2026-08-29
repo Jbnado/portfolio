@@ -357,6 +357,16 @@ então a contradição sobreviveu. Corrigido para `tolerance: 2`.
   para 6% com o jogador mediano. Mantenha o enchimento acima do dreno e use a largura da faixa
   e a velocidade do peixe para dosar. Regra prática: `fishSpeed ≈ bandHeight / 340` põe o
   jogador de reação média no fio da navalha, porque em 170ms o peixe anda meia faixa.
+
+  Isto já **inverteu a escada uma vez**: o p5 ficou com razão 0,89 enquanto o p8 tinha 1,06, e o
+  peixe do meio passou a doer mais que o do abissal. O dono percebeu jogando antes de qualquer
+  medição minha. Um saldo negativo não é dificuldade — é perder terreno mesmo jogando bem, e
+  lê como jogo quebrado. **A razão fica acima de 1 nos três**, e a escada mora na faixa
+  (34% / 19% / 15%) e na velocidade do peixe.
+
+  Os três também precisam de **larguras de faixa visivelmente diferentes**. p5 e p8 chegaram a
+  ter exatamente 17% os dois, e a primeira coisa que o dono relatou foi "a barra verde nunca
+  muda de tamanho".
 - **DRAGAGEM:** o espaçamento entre portões (`periodMs / nº de portões`) contra o tempo de
   reação. É quase uma função degrau — acima da reação, quase 100%; abaixo, quase 0% — e só o
   tremor humano suaviza a borda. Por isso a dificuldade é a velocidade, como pedido pelo dono.
