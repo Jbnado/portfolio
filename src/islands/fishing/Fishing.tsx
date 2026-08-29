@@ -43,6 +43,7 @@ type Texts = {
   howToPlay: string;
   keys: string;
   close: string;
+  fight: string;
   tuto: { title: string; skip: string; next: string; steps: string[] };
   depth3: Record<string, string>;
   world: {
@@ -425,6 +426,38 @@ export default function Fishing({ texts }: { texts: Texts }) {
             {/* Altura reservada e conteudo estavel: nada entra ou sai do
                 fluxo, entao o lago nao se mexe. */}
             <div class="fishing-actions">
+              {/* O BOTAO DA BRIGA. Os tres motores so escutam a barra de
+                  espaco na window — no celular nao existe espaco, entao sem
+                  isto da para navegar e lancar e o jogo TRAVA no minigame.
+
+                  Ele dispara o evento de tecla de verdade em vez de mexer nos
+                  motores: eles estao afinados e fechados, e um caminho de
+                  entrada novo nao justifica reabri-los. Manda keydown e keyup
+                  porque o SUSTENTACAO precisa dos dois — la se SEGURA.
+
+                  preventDefault no pointerdown impede o botao de tomar foco:
+                  com foco, apertar espaco clicaria o botao E chegaria ao
+                  motor, agindo duas vezes. */}
+              {phase.kind === 'playing' && (
+                <button
+                  type="button"
+                  class="fishing-fight"
+                  onPointerDown={(ev) => {
+                    ev.preventDefault();
+                    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', key: ' ', bubbles: true, cancelable: true }));
+                    const solta = () => {
+                      window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space', key: ' ', bubbles: true }));
+                      window.removeEventListener('pointerup', solta);
+                      window.removeEventListener('pointercancel', solta);
+                    };
+                    window.addEventListener('pointerup', solta);
+                    window.addEventListener('pointercancel', solta);
+                  }}
+                >
+                  {texts.fight}
+                </button>
+              )}
+
               {phase.kind !== 'playing' && (
                 <WorldPad
                   setDir={setDir}

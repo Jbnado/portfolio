@@ -436,3 +436,45 @@ body.fishing-locked {
 
 .fishing-help:hover { filter: brightness(1.15); }
 .fishing-help:focus-visible { outline: 3px solid var(--fishing-marker); outline-offset: 2px; }
+
+/* ---- Celular em retrato.
+
+   Medido num viewport real de 410px: a barra de status ocupava 134px, quase
+   um terco da altura util, porque o texto de ajuda do modo garantido quebrava
+   em varias linhas. Numa tela de telefone o lago tem que ganhar essa altura,
+   nao a legenda de um ajuste. */
+@media (max-width: 640px) {
+  .fishing-overlay-bar {
+    gap: 6px 12px;
+    font-size: 0.68rem;
+  }
+
+  /* A ajuda do modo garantido some: o rotulo ja diz o que e, e a frase
+     inteira custava tres linhas de tela. */
+  .fishing-overlay-bar .fishing-option small { display: none; }
+  .fishing-overlay-bar .fishing-option { margin-left: 0; }
+
+  .fishing-exit small { display: none; }
+  .fishing-stat { font-size: 0.66rem; }
+}
+
+/* O botao da briga: grande, porque no celular ele e o unico jeito de jogar o
+   minigame, e porque nos tres motores o gesto e o mesmo — tocar ou segurar. */
+.fishing-fight {
+  width: 100%;
+  max-width: min(96vw, 1080px, 128vh);
+  min-height: 56px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-bg-primary);
+  background: var(--fishing-marker);
+  border: 2px solid var(--fishing-marker);
+  border-radius: 4px;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+
+.fishing-fight:active { filter: brightness(0.9); }

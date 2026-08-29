@@ -184,59 +184,61 @@
     "gameArea": "Área de juego",
     "howToPlay": "Espacio hace todo: lanza la línea y resuelve el minijuego de cada pez.",
     "tuto": {
-          "title": "Ver el tutorial otra vez",
-          "skip": "Saltar",
-          "next": "Continuar",
-          "steps": [
-                "Este lago tiene una rareza: peces de agua dulce y salada aparecen aquí de la nada. Nadie sabe por qué. Por eso pescamos aquí.",
-                "Haz clic en una marca del agua y el barco navega hasta ella. Las flechas del teclado también sirven.",
-                "Con el barco sobre la marca, haz clic en LANZAR. Ahí empieza la pelea — y desde ahí solo vale la barra espaciadora.",
-                "Vende la pesca en la tienda de la orilla. Con las monedas compra una línea mejor: es ella la que abre la media agua y el abismo.",
-                "El cuaderno guarda cada especie que pesques. Los '???' son los que faltan. Buena pesca."
-          ]
+      "title": "Ver el tutorial otra vez",
+      "skip": "Saltar",
+      "next": "Continuar",
+      "steps": [
+        "Este lago tiene una rareza: peces de agua dulce y salada aparecen aquí de la nada.",
+        "Nadie sabe por qué. Por eso pescamos aquí.",
+        "Haz clic en una marca del agua. El barco navega solo hasta ella.",
+        "Con el barco en la marca, haz clic en LANZAR. De ahí la pelea es en la barra espaciadora.",
+        "Vende la pesca en la tienda de la orilla.",
+        "Con las monedas compra una línea mejor: abre la media agua y el abismo.",
+        "El cuaderno guarda cada especie. Los '???' son los que faltan."
+      ]
     },
     "keys": "Flechas mueven · Espacio actúa · Tab abre el cuaderno · Esc cierra",
     "close": "Cerrar",
     "depth3": {
-          "1": "Bajío",
-          "2": "Media agua",
-          "3": "Abismo"
+      "1": "Bajío",
+      "2": "Media agua",
+      "3": "Abismo"
     },
     "shop": {
       "baitLabel": "Cebo",
-          "title": "Tienda de la orilla",
-          "coins": "Monedas",
-          "sell": "Vender la pesca",
-          "nothingToSell": "bodega vacía",
-          "line": "Línea",
-          "equip": "equipar",
-          "equipped": "en uso",
-          "close": "Cerrar",
-          "help": "flechas eligen, espacio actúa",
-          "baitName": {
-                "minhoca": "Cebo de lombriz",
-                "camarao": "Cebo de camarón",
-                "sardinha": "Cebo de sardina"
-          }
+      "title": "Tienda de la orilla",
+      "coins": "Monedas",
+      "sell": "Vender la pesca",
+      "nothingToSell": "bodega vacía",
+      "line": "Línea",
+      "equip": "equipar",
+      "equipped": "en uso",
+      "close": "Cerrar",
+      "help": "flechas eligen, espacio actúa",
+      "baitName": {
+        "minhoca": "Cebo de lombriz",
+        "camarao": "Cebo de camarón",
+        "sardinha": "Cebo de sardina"
+      }
     },
     "world": {
       "clickHint": "Haz clic en una marca para navegar",
-          "shop": "Tienda aquí",
-          "cast": "Aquí se puede pescar",
-          "noSpot": "Navega hasta una marca en el agua",
-          "menu": "Tab abre el cuaderno",
-          "shopShort": "Tienda",
-          "castShort": "Lanzar",
-          "noSpotShort": "Elige una marca",
-          "logShort": "Cuaderno",
-          "needLine": "Tu línea es corta para este fondo",
-          "needLineShort": "Sin línea",
-          "turnPhone": "Gira el móvil en vertical.",
-          "depth": {
-                "raso": "Bajío",
-                "medio": "Media agua",
-                "abissal": "Abismo"
-          }
+      "shop": "Tienda aquí",
+      "cast": "Aquí se puede pescar",
+      "noSpot": "Navega hasta una marca en el agua",
+      "menu": "Tab abre el cuaderno",
+      "shopShort": "Tienda",
+      "castShort": "Lanzar",
+      "noSpotShort": "Elige una marca",
+      "logShort": "Cuaderno",
+      "needLine": "Tu línea es corta para este fondo",
+      "needLineShort": "Sin línea",
+      "turnPhone": "Gira el móvil en vertical.",
+      "depth": {
+        "raso": "Bajío",
+        "medio": "Media agua",
+        "abissal": "Abismo"
+      }
     },
     "instruction": {
       "track": "Espacio cuando el marcador cruce la zona.",
@@ -257,13 +259,20 @@
     "resets": "Reinicios",
     "fallsUnlimited": "El pez no escapa.",
     "water": {
-          "doce": "agua dulce",
-          "salgada": "agua salada"
+      "doce": "agua dulce",
+      "salgada": "agua salada"
     },
     "fish": {
-      "p1": "Lambarí", "p2": "Tararira", "p3": "Lisa",
-      "p4": "Róbalo", "p5": "Matrinxã", "p6": "Pacú",
-      "p7": "Mero", "p8": "Dorado", "p9": "Jaú"
-    }
+      "p1": "Lambarí",
+      "p2": "Tararira",
+      "p3": "Lisa",
+      "p4": "Róbalo",
+      "p5": "Matrinxã",
+      "p6": "Pacú",
+      "p7": "Mero",
+      "p8": "Dorado",
+      "p9": "Jaú"
+    },
+    "fight": "MANTENER / TOCAR"
   }
 }

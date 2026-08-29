@@ -184,59 +184,61 @@
     "gameArea": "Game area",
     "howToPlay": "Space does everything: it casts the line and plays each fish's minigame.",
     "tuto": {
-          "title": "Replay the tutorial",
-          "skip": "Skip",
-          "next": "Continue",
-          "steps": [
-                "This lake has a quirk: freshwater and saltwater fish turn up here out of nowhere. Nobody knows why. That is why we fish here.",
-                "Click a mark on the water and the boat sails to it. Arrow keys work too, if you prefer.",
-                "With the boat over the mark, click CAST. That starts the fight — and from there only the space bar counts.",
-                "Sell the catch at the shore shop. With the coins, buy a better line: it is the line that opens mid water and the abyss.",
-                "The log keeps every species you land. The '???' are the ones still missing. Tight lines."
-          ]
+      "title": "Replay the tutorial",
+      "skip": "Skip",
+      "next": "Continue",
+      "steps": [
+        "This lake has a quirk: freshwater and saltwater fish turn up here out of nowhere.",
+        "Nobody knows why. That is why we fish here.",
+        "Click a mark on the water. The boat sails there on its own.",
+        "With the boat on the mark, click CAST. From there the fight is on the space bar.",
+        "Sell the catch at the shore shop.",
+        "With the coins, buy a better line: it opens mid water and the abyss.",
+        "The log keeps every species. The '???' are the ones still missing."
+      ]
     },
     "keys": "Arrows move · Space acts · Tab opens the log · Esc closes",
     "close": "Close",
     "depth3": {
-          "1": "Shallows",
-          "2": "Mid water",
-          "3": "Abyss"
+      "1": "Shallows",
+      "2": "Mid water",
+      "3": "Abyss"
     },
     "shop": {
       "baitLabel": "Bait",
-          "title": "Shore shop",
-          "coins": "Coins",
-          "sell": "Sell the catch",
-          "nothingToSell": "hold empty",
-          "line": "Line",
-          "equip": "equip",
-          "equipped": "in use",
-          "close": "Close",
-          "help": "arrows choose, space acts",
-          "baitName": {
-                "minhoca": "Worm bait",
-                "camarao": "Shrimp bait",
-                "sardinha": "Sardine bait"
-          }
+      "title": "Shore shop",
+      "coins": "Coins",
+      "sell": "Sell the catch",
+      "nothingToSell": "hold empty",
+      "line": "Line",
+      "equip": "equip",
+      "equipped": "in use",
+      "close": "Close",
+      "help": "arrows choose, space acts",
+      "baitName": {
+        "minhoca": "Worm bait",
+        "camarao": "Shrimp bait",
+        "sardinha": "Sardine bait"
+      }
     },
     "world": {
       "clickHint": "Click a mark to sail there",
-          "shop": "Shop here",
-          "cast": "You can fish here",
-          "noSpot": "Sail to a mark on the water",
-          "menu": "Tab opens the log",
-          "shopShort": "Shop",
-          "castShort": "Cast",
-          "noSpotShort": "Pick a mark",
-          "logShort": "Log",
-          "needLine": "Your line is too short for this depth",
-          "needLineShort": "No line",
-          "turnPhone": "Turn your phone upright.",
-          "depth": {
-                "raso": "Shallows",
-                "medio": "Mid water",
-                "abissal": "Abyss"
-          }
+      "shop": "Shop here",
+      "cast": "You can fish here",
+      "noSpot": "Sail to a mark on the water",
+      "menu": "Tab opens the log",
+      "shopShort": "Shop",
+      "castShort": "Cast",
+      "noSpotShort": "Pick a mark",
+      "logShort": "Log",
+      "needLine": "Your line is too short for this depth",
+      "needLineShort": "No line",
+      "turnPhone": "Turn your phone upright.",
+      "depth": {
+        "raso": "Shallows",
+        "medio": "Mid water",
+        "abissal": "Abyss"
+      }
     },
     "instruction": {
       "track": "Space when the marker crosses the zone.",
@@ -257,13 +259,20 @@
     "resets": "Bar resets",
     "fallsUnlimited": "The fish will not escape.",
     "water": {
-          "doce": "freshwater",
-          "salgada": "saltwater"
+      "doce": "freshwater",
+      "salgada": "saltwater"
     },
     "fish": {
-      "p1": "Lambari", "p2": "Wolf fish", "p3": "Mullet",
-      "p4": "Snook", "p5": "Matrinxã", "p6": "Pacu",
-      "p7": "Grouper", "p8": "Golden dorado", "p9": "Jaú catfish"
-    }
+      "p1": "Lambari",
+      "p2": "Wolf fish",
+      "p3": "Mullet",
+      "p4": "Snook",
+      "p5": "Matrinxã",
+      "p6": "Pacu",
+      "p7": "Grouper",
+      "p8": "Golden dorado",
+      "p9": "Jaú catfish"
+    },
+    "fight": "HOLD / TAP"
   }
 }

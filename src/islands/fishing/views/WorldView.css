@@ -242,3 +242,10 @@
 @media (max-width: 520px) {
   .world-pad-btn, .world-pad-act { padding: 0 10px; font-size: 0.72rem; }
 }
+
+/* Em retrato o lago fica mais alto. Com 16/7 numa largura de 378px sobra uma
+   tira de 165px, estreita demais para ler a cena — e num telefone a altura e
+   justamente o que sobra. */
+@media (max-width: 640px) {
+  .world-view { aspect-ratio: 3 / 2; }
+}

@@ -88,3 +88,15 @@
   .tuto-face { width: 40px; height: 40px; }
   .tuto-body { font-size: 0.72rem; }
 }
+
+/* No celular a caixa NAO pode engolir a cena: ela manda clicar numa marca, e
+   uma fala que esconde a marca se contradiz. Frases curtas resolvem a maior
+   parte; o teto de altura garante o resto. */
+@media (max-width: 640px) {
+  .tuto { padding: 8px; gap: 8px; }
+  /* Sem teto de altura: com as frases curtas a caixa cabe sozinha, e um
+     tutorial com barra de rolagem corta a fala no meio. */
+  .tuto-body { font-size: 0.7rem; line-height: 1.4; }
+  .tuto-face { width: 34px; height: 34px; }
+  .tuto-skip { min-height: 28px; font-size: 0.62rem; }
+}
