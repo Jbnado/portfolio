@@ -27,8 +27,8 @@ export const FISH: Fish[] = [
     params: { bandHeight: 0.25, gravity: 0.0000035, lift: 0.000009, maxSpeed: 0.0009, pattern: 'erratico', fishSpeed: 0.00050, fillRate: 0.00038, drainRate: 0.00025, graceMs: 1600 } },
   { id: 'p6', tier: 2, weight: 45, color: 'var(--fishing-fish-f)', sizeMin: 30, sizeMax: 72,
     engine: 'dodge',
-    params: { periodMs: 2600, gatesMin: 4, gatesMax: 6, gapMin: 0.07, gapMax: 0.11,
-      holdMs: 6000, penaltyMs: 2000, fallsToLose: 3, zeroesToLose: 2 } },
+    params: { periodMs: 2600, gatesMin: 4, gatesMax: 5, gapMin: 0.07, gapMax: 0.11,
+      holdMs: 5000, penaltyMs: 2000, fallsToLose: 3, zeroesToLose: 2 } },
 
   // ---- Faixa 3, o abissal. Sem perdao.
   { id: 'p7', tier: 3, weight: 45, color: 'var(--fishing-fish-g)', sizeMin: 26, sizeMax: 65,
@@ -40,7 +40,7 @@ export const FISH: Fish[] = [
   { id: 'p9', tier: 3, weight: 45, color: 'var(--fishing-fish-i)', sizeMin: 55, sizeMax: 130,
     engine: 'dodge',
     params: { periodMs: 1900, gatesMin: 4, gatesMax: 6, gapMin: 0.06, gapMax: 0.10,
-      holdMs: 9000, penaltyMs: 2500, fallsToLose: 3, zeroesToLose: 2 } },
+      holdMs: 8000, penaltyMs: 2500, fallsToLose: 3, zeroesToLose: 2 } },
 ];
 
 /** Qualidade 0..1 vira tamanho dentro da faixa da especie. */
