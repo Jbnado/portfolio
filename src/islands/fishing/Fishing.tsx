@@ -45,6 +45,7 @@ type Texts = {
   keyAct: string;
   keyLog: string;
   keyClose: string;
+  back: string;
   close: string;
   fight: string;
   tuto: { title: string; skip: string; next: string; chapters: Record<TutorialChapter, string[]> };
@@ -556,8 +557,10 @@ export default function Fishing({ texts }: { texts: Texts }) {
                     ? `${texts.caught}: ${texts.fish[phase.fish.id]}, ${phase.size} cm`
                     : `${texts.escaped}: ${texts.fish[phase.fish.id]}`}
                 </p>
+                {/* Dispensar o resultado NAO e sair do jogo. O rotulo era
+                    "Sair" e mentia: quem lesse achava que ia perder a partida. */}
                 <button class="fishing-button" ref={castBtnRef} onClick={() => setPhase({ kind: 'idle' })}>
-                  {texts.exit}
+                  {texts.back}<kbd class="key">{texts.keyAct}</kbd>
                 </button>
               </>
             )}

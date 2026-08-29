@@ -296,6 +296,7 @@
     "keyMove": "A D",
     "keyAct": "Espacio",
     "keyLog": "Tab",
-    "keyClose": "Esc"
+    "keyClose": "Esc",
+    "back": "Continuar"
   }
 }
