@@ -38,7 +38,7 @@ export const FISH: Fish[] = [
     params: { periodMs: 2200, zoneSize: 0.15, hits: 3, tolerance: 2 } },
   { id: 'p8', tier: 3, weight: 1, color: 'var(--fishing-fish-h)', sizeMin: 40, sizeMax: 95,
     engine: 'hold',
-    params: { bandHeight: 0.20, gravity: 0.0000045, lift: 0.000011, maxSpeed: 0.0012, pattern: 'arisco', fishSpeed: 0.00060, fillRate: 0.00038, drainRate: 0.00024, graceMs: 1400 } },
+    params: { bandHeight: 0.20, gravity: 0.0000045, lift: 0.000011, maxSpeed: 0.0012, pattern: 'arisco', fishSpeed: 0.00060, fillRate: 0.00060, drainRate: 0.00024, graceMs: 1400 } },
   { id: 'p9', tier: 3, weight: 1, color: 'var(--fishing-fish-i)', sizeMin: 55, sizeMax: 130,
     engine: 'dodge',
     params: { lanes: 3, periodMs: 1950, gapWidth: 0.08, cleanToCatch: 3, bumpsAllowed: 1,
