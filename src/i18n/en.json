@@ -189,17 +189,26 @@
           "sell": "Sell the catch",
           "nothingToSell": "hold empty",
           "line": "Line",
-          "owned": "owned",
-          "bait": "Bait",
-          "inStock": "Bait",
-          "close": "Esc closes",
-          "help": "arrows choose, space acts"
+          "equip": "equip",
+          "equipped": "in use",
+          "close": "Close",
+          "help": "arrows choose, space acts",
+          "baitName": {
+                "minhoca": "Worm bait",
+                "camarao": "Shrimp bait",
+                "sardinha": "Sardine bait"
+          }
     },
     "world": {
-          "shop": "Shop",
-          "cast": "Space casts the line",
+          "shop": "Shop here",
+          "cast": "You can fish here",
           "noSpot": "Sail to a mark on the water",
           "menu": "Tab opens the log",
+          "shopShort": "Shop",
+          "castShort": "Cast",
+          "noSpotShort": "—",
+          "logShort": "Log",
+          "turnPhone": "Turn your phone upright.",
           "depth": {
                 "raso": "Shallows",
                 "medio": "Mid water",

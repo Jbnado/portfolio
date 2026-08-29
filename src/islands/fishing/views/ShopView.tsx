@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { Depth } from '../world';
 import {
-  LINE_PRICE, BAIT_PRICE, BAIT_PACK, buyBait, buyLine, sellAll, hasLine, holdValue,
-  type Progress,
+  LINES, LINE_PRICE, BAITS, buyBait, buyLine, equipBait, equipLine, sellAll, holdValue,
+  type BaitId, type Progress,
 } from '../shop';
 import './ShopView.css';
 
@@ -12,36 +12,51 @@ type Props = {
   onClose: () => void;
   texts: {
     title: string; coins: string; sell: string; nothingToSell: string;
-    line: string; owned: string; bait: string; inStock: string;
-    close: string; help: string; depth: Record<string, string>;
+    line: string; equip: string; equipped: string;
+    close: string; help: string;
+    depth: Record<string, string>; baitName: Record<string, string>;
   };
 };
 
-const DEPTHS: Depth[] = ['raso', 'medio', 'abissal'];
+type Item = { rotulo: string; detalhe: string; podeAgir: boolean; agir: () => void };
 
 export function ShopView({ progress, onChange, onClose, texts }: Props) {
   const [sel, setSel] = useState(0);
-
   const valor = holdValue(progress.hold);
-  const itens = [
+
+  /** Um item por coisa comprável. Se ainda não tem, o preço; se tem mas não
+      está na vara, "equipar"; se está, "equipada". Uma linha por estado. */
+  const doDono = (
+    rotulo: string, preco: number, tem: boolean, posto: boolean,
+    comprar: () => Progress, equipar: () => Progress,
+  ): Item => ({
+    rotulo,
+    detalhe: posto ? texts.equipped : tem ? texts.equip : `${preco}`,
+    podeAgir: posto ? false : tem ? true : progress.coins >= preco,
+    agir: () => onChange(tem ? equipar() : comprar()),
+  });
+
+  const itens: Item[] = [
     {
       rotulo: `${texts.sell} (${progress.hold.length})`,
       detalhe: valor > 0 ? `+${valor}` : texts.nothingToSell,
       podeAgir: valor > 0,
       agir: () => onChange(sellAll(progress)),
     },
-    ...DEPTHS.map((d) => ({
-      rotulo: `${texts.line} — ${texts.depth[d]}`,
-      detalhe: hasLine(progress, d) ? texts.owned : `${LINE_PRICE[d]}`,
-      podeAgir: !hasLine(progress, d) && progress.coins >= LINE_PRICE[d],
-      agir: () => onChange(buyLine(progress, d)),
-    })),
-    {
-      rotulo: `${texts.bait} (+${BAIT_PACK})`,
-      detalhe: `${BAIT_PRICE}`,
-      podeAgir: progress.coins >= BAIT_PRICE,
-      agir: () => onChange(buyBait(progress)),
-    },
+    ...LINES.map((d: Depth) =>
+      doDono(
+        `${texts.line} — ${texts.depth[d]}`, LINE_PRICE[d],
+        progress.lines.includes(d), progress.line === d,
+        () => buyLine(progress, d), () => equipLine(progress, d),
+      ),
+    ),
+    ...BAITS.map((b) =>
+      doDono(
+        texts.baitName[b.id], b.price,
+        progress.baits.includes(b.id), progress.bait === b.id,
+        () => buyBait(progress, b.id as BaitId), () => equipBait(progress, b.id as BaitId),
+      ),
+    ),
   ];
 
   useEffect(() => {
@@ -72,7 +87,13 @@ export function ShopView({ progress, onChange, onClose, texts }: Props) {
 
       <ul class="shop-list">
         {itens.map((item, i) => (
-          <li key={item.rotulo} class="shop-item" data-sel={String(i === sel)} data-off={String(!item.podeAgir)}>
+          <li
+            key={item.rotulo}
+            class="shop-item"
+            data-sel={String(i === sel)}
+            data-off={String(!item.podeAgir)}
+            onClick={() => { setSel(i); if (item.podeAgir) item.agir(); }}
+          >
             <span class="shop-mark" aria-hidden="true" />
             <span class="shop-name">{item.rotulo}</span>
             <span class="shop-price">{item.detalhe}</span>
@@ -81,7 +102,7 @@ export function ShopView({ progress, onChange, onClose, texts }: Props) {
       </ul>
 
       <p class="shop-foot">
-        <span>{texts.inStock}: {progress.bait}</span>
+        <button class="shop-close" onClick={onClose}>{texts.close}</button>
         <span>{texts.help}</span>
       </p>
     </div>

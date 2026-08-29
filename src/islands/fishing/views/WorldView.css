@@ -80,3 +80,64 @@
 
 .world-depth { font-weight: 700; }
 .world-hint { opacity: 0.85; }
+
+/* ---- Controles de toque.
+
+   Ficam sempre no DOM e somem onde ha ponteiro fino E tela larga — ou seja,
+   no desktop. Em celular, tablet ou janela estreita eles aparecem, porque sem
+   eles o jogo nao tem entrada nenhuma: tudo dependia de tecla. */
+.world-pad {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  width: 100%;
+}
+
+.world-pad-move { display: flex; gap: 10px; }
+
+.world-pad-btn,
+.world-pad-act {
+  /* 48px e o alvo de toque confortavel; abaixo disso erra-se o botao. */
+  min-height: 48px;
+  min-width: 48px;
+  padding: 0 14px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--color-text-primary);
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  cursor: pointer;
+  /* Sem isto, segurar a seta seleciona texto e o arrasto vira rolagem. */
+  touch-action: none;
+  user-select: none;
+}
+
+.world-pad-act { flex: 1; font-weight: 700; }
+
+.world-pad-btn:active,
+.world-pad-act:active { background: var(--fishing-zone); }
+
+@media (pointer: fine) and (min-width: 721px) {
+  .world-pad { display: none; }
+}
+
+/* Retrato e o formato pedido. Em paisagem estreita a cena nao cabe junto dos
+   controles, entao em vez de espremer, pedimos para girar. */
+.world-turn {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  font-family: var(--font-mono);
+  background: var(--color-bg-primary);
+}
+
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 520px) {
+  .world-turn { display: flex; }
+}

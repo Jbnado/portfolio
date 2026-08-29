@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import {
   SPOTS, SHOP_X, SHORE_TO, BOAT_START, REACH, WORLD_MAX,
   cameraAt, depthAt, moveBoat, spotUnder, atShop, type Depth,
@@ -20,7 +20,7 @@ const BANDS: { depth: Depth; from: number; to: number }[] = [
 
 type Props = {
   boat: number;
-  texts: { shop: string; cast: string; noSpot: string; depth: Record<string, string> };
+  texts: { shop: string; cast: string; noSpot: string; turnPhone: string; depth: Record<string, string> };
 };
 
 export function WorldView({ boat, texts }: Props) {
@@ -68,6 +68,11 @@ export function WorldView({ boat, texts }: Props) {
           class="world-boat"
           style={{ left: `${sx(boat)}%`, width: `${((REACH * 1.7) / VIEW_W) * 100}%` }}
         />
+
+        {/* Retrato e o formato pedido. Em paisagem baixa a cena nao cabe junto
+            dos controles, entao em vez de espremer, pedimos para girar. Quem
+            decide se isto aparece e o CSS, nao o JS: e questao de viewport. */}
+        <p class="world-turn">{texts.turnPhone}</p>
       </div>
 
       <p class="world-hud">
@@ -82,8 +87,11 @@ export function WorldView({ boat, texts }: Props) {
 
 /** Andar e um estado continuo, nao um evento por tecla: segurar a seta move.
     Fica aqui e nao na casca porque e a unica coisa da navegacao que precisa
-    de laco de quadro. Devolve a posicao do barco. */
-export function useBoat(active: boolean): number {
+    de laco de quadro.
+
+    Devolve a posicao do barco E o comando de direcao, porque no celular nao
+    ha tecla nenhuma: o mesmo laco precisa aceitar dedo tambem. */
+export function useBoat(active: boolean): { boat: number; setDir: (d: number) => void } {
   const [boat, setBoat] = useState(BOAT_START);
   const dirRef = useRef(0);
 
@@ -122,5 +130,43 @@ export function useBoat(active: boolean): number {
     };
   }, [active]);
 
-  return boat;
+  const setDir = useCallback((d: number) => { dirRef.current = d; }, []);
+  return { boat, setDir };
+}
+
+/** Controles de toque. No celular nao existe tecla, entao sem isto o jogo e
+    simplesmente injogavel — nao da nem para mover o barco. Ficam sempre no
+    DOM e o CSS os esconde onde ha ponteiro fino e tela larga. */
+export function WorldPad({ setDir, onAct, onLog, actLabel, logLabel }: {
+  setDir: (d: number) => void;
+  onAct: () => void;
+  onLog: () => void;
+  actLabel: string;
+  logLabel: string;
+}) {
+  // Segurar move; soltar para. `onPointerUp` no proprio botao nao basta: se o
+  // dedo escorregar para fora antes de soltar, o botao nunca ve o evento e o
+  // barco fica andando sozinho. Por isso a soltura tambem escuta na janela.
+  const segura = (d: number) => (ev: PointerEvent) => {
+    ev.preventDefault();
+    setDir(d);
+    const solta = () => {
+      setDir(0);
+      window.removeEventListener('pointerup', solta);
+      window.removeEventListener('pointercancel', solta);
+    };
+    window.addEventListener('pointerup', solta);
+    window.addEventListener('pointercancel', solta);
+  };
+
+  return (
+    <div class="world-pad">
+      <div class="world-pad-move">
+        <button type="button" class="world-pad-btn" aria-label="←" onPointerDown={segura(-1)}>&#9664;</button>
+        <button type="button" class="world-pad-btn" aria-label="→" onPointerDown={segura(1)}>&#9654;</button>
+      </div>
+      <button type="button" class="world-pad-act" onClick={onAct}>{actLabel}</button>
+      <button type="button" class="world-pad-btn" onClick={onLog}>{logLabel}</button>
+    </div>
+  );
 }

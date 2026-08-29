@@ -189,17 +189,26 @@
           "sell": "Vender o pescado",
           "nothingToSell": "porão vazio",
           "line": "Linha",
-          "owned": "comprada",
-          "bait": "Iscas",
-          "inStock": "Iscas",
-          "close": "Esc fecha",
-          "help": "setas escolhem, espaço age"
+          "equip": "equipar",
+          "equipped": "na vara",
+          "close": "Fechar",
+          "help": "setas escolhem, espaço age",
+          "baitName": {
+                "minhoca": "Isca de minhoca",
+                "camarao": "Isca de camarão",
+                "sardinha": "Isca de sardinha"
+          }
     },
     "world": {
-          "shop": "Loja",
-          "cast": "Espaço lança a linha",
+          "shop": "Loja aqui",
+          "cast": "Dá para pescar aqui",
           "noSpot": "Ande até uma marca na água",
           "menu": "Tab abre o caderno",
+          "shopShort": "Loja",
+          "castShort": "Lançar",
+          "noSpotShort": "—",
+          "logShort": "Caderno",
+          "turnPhone": "Gire o celular para a vertical.",
           "depth": {
                 "raso": "Raso",
                 "medio": "Meio",

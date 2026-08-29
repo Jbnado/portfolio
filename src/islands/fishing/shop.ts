@@ -1,30 +1,36 @@
-import type { Depth } from './world';
+import { TIER_BY_DEPTH, type Depth } from './world';
 
-/** Tudo que o jogador acumula fora do caderno de especimes. Fica numa chave
-    propria do localStorage: o caderno tem formato antigo e ja publicado, e
-    misturar os dois obrigaria a migrar um dado que nao precisa mudar. */
+/** Iscas sao PERMANENTES: compra uma vez e a sorte dela vale para sempre.
+    So uma fica equipada por vez, como as linhas. A melhor domina, e isso e
+    proposital — e progressao, nao dilema. */
+export type BaitId = 'minhoca' | 'camarao' | 'sardinha';
+
+export const BAITS: { id: BaitId; price: number; luck: number }[] = [
+  { id: 'minhoca', price: 30, luck: 0.25 },
+  { id: 'camarao', price: 90, luck: 0.5 },
+  { id: 'sardinha', price: 220, luck: 0.85 },
+];
+
+export const LINES: Depth[] = ['raso', 'medio', 'abissal'];
+export const LINE_PRICE: Record<Depth, number> = { raso: 40, medio: 120, abissal: 300 };
+
 export type Progress = {
   coins: number;
-  /** Linhas compradas. Cada uma libera o peixe RARO da sua profundidade. */
+  /** Linhas compradas, e qual esta na vara. */
   lines: Depth[];
-  /** Iscas em estoque. Cada lance gasta uma, se houver. */
-  bait: number;
-  /** Pescado ainda nao vendido, em cm. Vender e o que vira moeda. */
+  line: Depth | null;
+  /** Iscas compradas, e qual esta no anzol. */
+  baits: BaitId[];
+  bait: BaitId | null;
+  /** Pescado ainda nao vendido, em cm. */
   hold: number[];
 };
 
-export const EMPTY_PROGRESS: Progress = { coins: 0, lines: [], bait: 0, hold: [] };
+export const EMPTY_PROGRESS: Progress = {
+  coins: 0, lines: [], line: null, baits: [], bait: null, hold: [],
+};
 
-export const LINE_PRICE: Record<Depth, number> = { raso: 40, medio: 120, abissal: 300 };
-export const BAIT_PRICE = 15;
-export const BAIT_PACK = 5;
-
-/** Sorte que uma isca adiciona. Entra em DOIS lugares, como o dono descreveu:
-    soma no peso do peixe raro no sorteio e soma no tamanho do que vier. */
-export const BAIT_LUCK = 0.6;
-
-/** Um peixe vale metade do seu tamanho em moedas, com piso de 1: peixe grande
-    paga mais, e nenhum lance da em nada. */
+/** Um peixe vale metade do tamanho em moedas, com piso de 1. */
 export function fishValue(cm: number): number {
   return Math.max(1, Math.round(cm / 2));
 }
@@ -33,8 +39,16 @@ export function holdValue(hold: number[]): number {
   return hold.reduce((total, cm) => total + fishValue(cm), 0);
 }
 
-export function hasLine(p: Progress, d: Depth): boolean {
-  return p.lines.includes(d);
+/** A linha equipada ALCANCA esta profundidade? Uma linha mais funda cobre
+    tudo que e mais raso: por isso a abissal e a melhor — com ela se pesca o
+    raro em qualquer lugar. Sem linha nenhuma, nenhum raro morde. */
+export function lineReaches(p: Progress, d: Depth): boolean {
+  return p.line !== null && TIER_BY_DEPTH[p.line] >= TIER_BY_DEPTH[d];
+}
+
+/** Sorte da isca equipada. Zero sem isca. */
+export function luckOf(p: Progress): number {
+  return BAITS.find((b) => b.id === p.bait)?.luck ?? 0;
 }
 
 export function sellAll(p: Progress): Progress {
@@ -42,33 +56,39 @@ export function sellAll(p: Progress): Progress {
 }
 
 export function buyLine(p: Progress, d: Depth): Progress {
-  if (hasLine(p, d) || p.coins < LINE_PRICE[d]) return p;
-  return { ...p, coins: p.coins - LINE_PRICE[d], lines: [...p.lines, d] };
+  if (p.lines.includes(d) || p.coins < LINE_PRICE[d]) return p;
+  // Comprar ja equipa: ninguem compra uma linha para deixar na gaveta.
+  return { ...p, coins: p.coins - LINE_PRICE[d], lines: [...p.lines, d], line: d };
 }
 
-export function buyBait(p: Progress): Progress {
-  if (p.coins < BAIT_PRICE) return p;
-  return { ...p, coins: p.coins - BAIT_PRICE, bait: p.bait + BAIT_PACK };
+export function equipLine(p: Progress, d: Depth): Progress {
+  return p.lines.includes(d) ? { ...p, line: d } : p;
+}
+
+export function buyBait(p: Progress, id: BaitId): Progress {
+  const bait = BAITS.find((b) => b.id === id);
+  if (!bait || p.baits.includes(id) || p.coins < bait.price) return p;
+  return { ...p, coins: p.coins - bait.price, baits: [...p.baits, id], bait: id };
+}
+
+export function equipBait(p: Progress, id: BaitId): Progress {
+  return p.baits.includes(id) ? { ...p, bait: id } : p;
 }
 
 export function addCatch(p: Progress, cm: number): Progress {
   return { ...p, hold: [...p.hold, cm] };
 }
 
-export function useBait(p: Progress): Progress {
-  return p.bait > 0 ? { ...p, bait: p.bait - 1 } : p;
+/** Peso do peixe raro no sorteio. A sorte da isca SOMA: com ela o raro
+    aparece mais. Sem isca, o peso e o da tabela. */
+export function rareWeight(base: number, luck: number): number {
+  return Math.max(1, Math.round(base * (1 + luck)));
 }
 
-/** Peso do peixe raro no sorteio. A isca SOMA sorte: com ela o raro aparece
-    mais, sem ela o peso e o da tabela. */
-export function rareWeight(base: number, withBait: boolean): number {
-  return withBait ? Math.round(base * (1 + BAIT_LUCK)) : base;
-}
-
-/** A isca tambem puxa o tamanho para cima. Travado em 1 para nao passar do
+/** A isca tambem puxa o TAMANHO para cima, travado em 1 para nao passar do
     maximo da especie — o teto continua sendo o teto. */
-export function luckyQuality(quality: number, withBait: boolean): number {
-  return withBait ? Math.min(1, quality + BAIT_LUCK * (1 - quality)) : quality;
+export function luckyQuality(quality: number, luck: number): number {
+  return Math.min(1, quality + luck * (1 - quality));
 }
 
 const KEY = 'fishing:progress';
@@ -77,11 +97,17 @@ export function loadProgress(): Progress {
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? 'null');
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return EMPTY_PROGRESS;
+    const lines: Depth[] = Array.isArray(raw.lines) ? raw.lines.filter((d: Depth) => LINES.includes(d)) : [];
+    const baits: BaitId[] = Array.isArray(raw.baits) ? raw.baits.filter((b: BaitId) => BAITS.some((x) => x.id === b)) : [];
     return {
       coins: typeof raw.coins === 'number' ? raw.coins : 0,
-      lines: Array.isArray(raw.lines) ? raw.lines : [],
-      bait: typeof raw.bait === 'number' ? raw.bait : 0,
-      hold: Array.isArray(raw.hold) ? raw.hold : [],
+      lines,
+      // Equipado tem que estar entre os possuidos: um valor gravado por fora
+      // (ou de uma versao antiga) nao pode deixar a vara com linha fantasma.
+      line: lines.includes(raw.line) ? raw.line : (lines[lines.length - 1] ?? null),
+      baits,
+      bait: baits.includes(raw.bait) ? raw.bait : (baits[baits.length - 1] ?? null),
+      hold: Array.isArray(raw.hold) ? raw.hold.filter((n: unknown) => typeof n === 'number') : [],
     };
   } catch {
     return EMPTY_PROGRESS;

@@ -326,3 +326,10 @@ body.fishing-locked {
   background: var(--fishing-surface);
   border: 2px solid var(--fishing-rule);
 }
+
+/* Onde o pad de toque aparece, ele e o unico controle de acao: o botao solto
+   de lancar viraria um segundo botao para a mesma coisa, gastando altura de
+   tela justamente onde ela e escassa. */
+@media (pointer: coarse), (max-width: 720px) {
+  .fishing-arena > .fishing-button { display: none; }
+}

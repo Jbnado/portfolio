@@ -189,17 +189,26 @@
           "sell": "Vender la pesca",
           "nothingToSell": "bodega vacía",
           "line": "Línea",
-          "owned": "comprada",
-          "bait": "Cebos",
-          "inStock": "Cebos",
-          "close": "Esc cierra",
-          "help": "flechas eligen, espacio actúa"
+          "equip": "equipar",
+          "equipped": "en uso",
+          "close": "Cerrar",
+          "help": "flechas eligen, espacio actúa",
+          "baitName": {
+                "minhoca": "Cebo de lombriz",
+                "camarao": "Cebo de camarón",
+                "sardinha": "Cebo de sardina"
+          }
     },
     "world": {
-          "shop": "Tienda",
-          "cast": "Espacio lanza la línea",
+          "shop": "Tienda aquí",
+          "cast": "Aquí se puede pescar",
           "noSpot": "Navega hasta una marca en el agua",
           "menu": "Tab abre el cuaderno",
+          "shopShort": "Tienda",
+          "castShort": "Lanzar",
+          "noSpotShort": "—",
+          "logShort": "Cuaderno",
+          "turnPhone": "Gira el móvil en vertical.",
           "depth": {
                 "raso": "Bajío",
                 "medio": "Media agua",

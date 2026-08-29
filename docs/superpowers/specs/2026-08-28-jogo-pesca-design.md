@@ -311,13 +311,30 @@ resto do jogo, uma tecla faz tudo.
 
 **Linha é permissão, isca é probabilidade.** A separação importa e veio das palavras do dono.
 
-- **Três melhorias de linha**, uma por profundidade (40, 120, 300). A do raso libera **o peixe
-  mais raro do raso**, e assim por diante. Isso encaixa com uma decisão anterior dele: o
-  SUSTENTAÇÃO já é o peixe raro de toda faixa, então é exatamente ele que cada linha destrava.
-  Sem a linha, aquele peixe **nem entra no sorteio**.
-- **Iscas** somam sorte, e somam em dois lugares: multiplicam o peso do raro no sorteio (ele
-  aparece mais) e puxam o tamanho para cima, travado no máximo da espécie. Vêm em pacote de 5, e
-  cada lance gasta uma.
+- **Três linhas**, uma por profundidade (40, 120, 300). Cada uma **alcança** a sua profundidade
+  e todas as mais rasas — por isso **a abissal é a melhor: com ela se pesca o raro em qualquer
+  lugar**. O que a linha libera é o peixe raro daquela faixa, que já é o SUSTENTAÇÃO por decisão
+  anterior do dono. Sem linha equipada, nenhum raro morde.
+- **Três iscas** (30, 90, 220), com sorte crescente. São **permanentes**: compra uma vez e a
+  sorte vale para sempre. A sorte soma em dois lugares — multiplica o peso do raro no sorteio e
+  puxa o tamanho para cima, travado no máximo da espécie.
+- **Só uma linha e só uma isca ficam equipadas por vez.** Comprar já equipa, porque ninguém
+  compra para deixar na gaveta. A melhor domina, e isso é proposital: é progressão, não dilema.
+
+### Celular
+
+**Portrait, e completamente responsivo** — pedido do dono. Duas coisas que só apareceram medindo
+num viewport real de 410px:
+
+- **O jogo era injogável no celular.** Tudo dependia de tecla: mover, lançar, abrir a loja e o
+  caderno. Sem teclado, não havia entrada nenhuma. Agora há uma fileira de controles com alvos de
+  48px, escondida onde há ponteiro fino **e** tela larga.
+- **A cópia do HUD falava de tecla** ("Espaço lança a linha") para quem não tem tecla. As frases
+  passam a ser neutras quanto ao meio de entrada, e o rótulo do botão diz o que fazer.
+
+A ação principal — lançar, abrir a loja, dispensar o resultado — é **uma função só**, que o
+Espaço e o botão de toque chamam. Duplicar a regra faria teclado e dedo divergirem na primeira
+mudança. Em paisagem baixa, um aviso pede para girar o aparelho em vez de espremer a cena.
 - **Vender o pescado** é o que vira moeda: um peixe vale metade do tamanho em cm, com piso de 1.
   Pescar enche o porão; vender esvazia e credita.
 
