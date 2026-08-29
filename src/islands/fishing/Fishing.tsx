@@ -130,14 +130,22 @@ export default function Fishing({ texts }: { texts: Texts }) {
     try { localStorage.setItem('fishing:tuto', JSON.stringify(vistos.current)); } catch { /* modo privado */ }
   }, []);
 
-  /** Um capitulo NAO entra por cima de um painel aberto. A venda dispara o
-      capitulo de dentro da loja, e a caixa de fala, ancorada no rodape do
-      lago, cortava a lista da loja ao meio — com o rodape do painel a sair
-      por baixo dela. Fica pendente e abre quando o painel fecha, que e
-      tambem onde a fala faz mais sentido: acabaste de vender, agora olha. */
+  /** Um capitulo NAO entra por cima do que ja esta na tela. Sao dois casos, e
+      os dois aconteciam:
+
+      - A venda dispara o capitulo de dentro da LOJA, e a caixa de fala,
+        ancorada no rodape do lago, cortava a lista ao meio — com o rodape do
+        painel a sair por baixo dela.
+      - A captura dispara o capitulo junto com a REVELACAO, e o veu do
+        tutorial (z-index 6) tapava o cartao e o clarao (z-index 3). Ou seja:
+        na primeira fisgada, a unica em que o capitulo abre, a comemoracao
+        ficava escondida.
+
+      Fica pendente e abre quando a tela esvazia — que e tambem onde a fala
+      faz mais sentido: acabaste de pescar, agora vem ca. */
   const pendente = useRef<TutorialChapter | null>(null);
   const painelRef = useRef(false);
-  painelRef.current = menu || shop;
+  painelRef.current = menu || shop || phase.kind !== 'idle';
 
   /** Abre um capitulo, se ele ainda nao foi visto. */
   const contar = useCallback((ch: TutorialChapter) => {
@@ -148,12 +156,12 @@ export default function Fishing({ texts }: { texts: Texts }) {
   contarRef.current = contar;
 
   useEffect(() => {
-    if (menu || shop) return;
+    if (menu || shop || phase.kind !== 'idle') return;
     const ch = pendente.current;
     if (ch === null) return;
     pendente.current = null;
     if (!vistos.current.includes(ch)) setTuto({ ch, i: 0 });
-  }, [menu, shop]);
+  }, [menu, shop, phase.kind]);
 
   const fecharTuto = useCallback(() => {
     setTuto((t) => { if (t) marcarVisto(t.ch); return null; });
