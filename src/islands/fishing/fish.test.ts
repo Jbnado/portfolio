@@ -68,7 +68,7 @@ describe('FISH', () => {
     const track = shallow.find((f) => f.engine === 'track')!;
     const dodge = shallow.find((f) => f.engine === 'dodge')!;
     const hold = shallow.find((f) => f.engine === 'hold')!;
-    expect((dodge.params as { bumpsAllowed: number | null }).bumpsAllowed).toBeNull();
+    expect((dodge.params as { fallsToLose: number | null }).fallsToLose).toBeNull();
     expect((hold.params as { graceMs: number }).graceMs).toBeGreaterThan(0);
     expect(hold.weight).toBeLessThan(track.weight);
   });

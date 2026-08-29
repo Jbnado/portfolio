@@ -34,26 +34,40 @@ export type HoldParams = {
   /** Carencia: quanto tempo a barra pode ficar zerada antes de o peixe ir
       embora. Zerar deixa de ser perda imediata e vira "esta escapando".
       null = nunca perde por carencia estourada, mesma convencao de
-      `tolerance` (TRAJETO) e `bumpsAllowed` (DRAGAGEM) — sem isto o
+      `tolerance` (TRAJETO) e `fallsToLose` (DRAGAGEM) — sem isto o
       SUSTENTACAO nao tinha como declarar "este peixe nunca escapa". */
   graceMs: number | null;
 };
 
-/** Portao no anel: em `pos` (0..1 da volta), so estas pistas estao abertas. */
-export type Gate = { pos: number; open: number[] };
+/** Vao no anel: um buraco de `width` (fracao da volta) centrado em `pos`, que
+    quebra TODAS as pistas menos `open`. Posicao e largura sao sorteadas a cada
+    lance, entao nao moram nos parametros do peixe — vivem no estado. */
+export type Gate = { pos: number; width: number; open: number };
 
 export type DodgeParams = {
-  lanes: number;
   periodMs: number;
-  gates: Gate[];
-  /** Largura angular do vao, em fracao da volta. E a MESMA largura que a
-      vista desenha como buraco no anel: o que se ve e o que se julga. */
-  gapWidth: number;
-  /** Passagens limpas SEGUIDAS para fisgar. Cair zera a contagem, entao
-      ficar parado nunca pesca: toda pista quebra em algum portao. */
-  cleanToCatch: number;
-  /** null = nunca perde o peixe; cair custa so tamanho e zera a sequencia. */
-  bumpsAllowed: number | null;
+  /** Quantos vaos o anel tem neste lance, sorteado neste intervalo. Junto com
+      a velocidade da volta, e o botao de dificuldade da DRAGAGEM: mais vaos
+      significa mais trocas de pista obrigatorias por volta. */
+  gatesMin: number;
+  gatesMax: number;
+  /** Largura de cada vao, sorteada neste intervalo, vao a vao. */
+  gapMin: number;
+  gapMax: number;
+  /** Milissegundos limpos SEGUIDOS para fisgar. A barrinha enche enquanto
+      voce nao cai e zera quando cai — e o peixe sendo puxado. */
+  holdMs: number;
+  /** Quanto tempo limpo cada queda custa. Errar RECUA a barrinha, nao zera:
+      zerar 15 segundos de luta por um deslize era punicao demais. */
+  penaltyMs: number;
+  /** Quedas SEGUIDAS que perdem o peixe — passar limpo por um vao zera a
+      contagem. null = nunca perde. */
+  fallsToLose: number | null;
+  /** Quantas vezes a barrinha pode chegar a ZERO antes de o peixe ir embora.
+      E a segunda porta de saida: quem cai espacado nunca junta quedas
+      seguidas, mas se a barra zera de novo e de novo, o peixe se soltou.
+      null = nunca perde por esta via. */
+  zeroesToLose: number | null;
 };
 
 type Base = {

@@ -186,7 +186,7 @@
     "instruction": {
       "track": "Espaço quando o marcador cruzar a zona.",
       "hold": "Segure espaço para subir. Mantenha o peixe dentro da faixa.",
-      "dodge": "Espaço troca de pista. Três passagens limpas seguidas fisgam."
+      "dodge": "Espaço troca de pista. Fique sem cair até a barra encher."
     },
     "caught": "Fisgou",
     "escaped": "Escapou",
@@ -196,8 +196,9 @@
     "largest": "maior",
     "guaranteedMode": "Modo garantido",
     "guaranteedModeHelp": "Mais lento, mas sempre pesca.",
-    "clean": "Limpas seguidas",
+    "reeling": "Puxando",
     "falls": "Quedas",
+    "resets": "Zerou",
     "fallsUnlimited": "O peixe não escapa.",
     "fish": {
       "p1": "Tainha", "p2": "Robalo", "p3": "Corvina",

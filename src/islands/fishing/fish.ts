@@ -15,9 +15,8 @@ export const FISH: Fish[] = [
     params: { bandHeight: 0.34, gravity: 0.000003, lift: 0.000008, maxSpeed: 0.0007, pattern: 'calmo', fishSpeed: 0.00020, fillRate: 0.00032, drainRate: 0.00021, graceMs: 2500 } },
   { id: 'p3', tier: 1, weight: 45, color: 'var(--fishing-fish-c)', sizeMin: 22, sizeMax: 58,
     engine: 'dodge',
-    params: { lanes: 2, periodMs: 4200, gapWidth: 0.10, cleanToCatch: 3, bumpsAllowed: null,
-      gates: [{ pos: 0.125, open: [0] }, { pos: 0.375, open: [1] },
-              { pos: 0.625, open: [0] }, { pos: 0.875, open: [1] }] } },
+    params: { periodMs: 4200, gatesMin: 2, gatesMax: 4, gapMin: 0.08, gapMax: 0.12,
+      holdMs: 6000, penaltyMs: 1500, fallsToLose: null, zeroesToLose: null } },
 
   // ---- Faixa 2, o meio. Janela menor, mais velocidade, menos perdao.
   { id: 'p4', tier: 2, weight: 45, color: 'var(--fishing-fish-d)', sizeMin: 15, sizeMax: 40,
@@ -28,9 +27,8 @@ export const FISH: Fish[] = [
     params: { bandHeight: 0.25, gravity: 0.0000035, lift: 0.000009, maxSpeed: 0.0009, pattern: 'erratico', fishSpeed: 0.00050, fillRate: 0.00038, drainRate: 0.00025, graceMs: 1600 } },
   { id: 'p6', tier: 2, weight: 45, color: 'var(--fishing-fish-f)', sizeMin: 30, sizeMax: 72,
     engine: 'dodge',
-    params: { lanes: 2, periodMs: 2300, gapWidth: 0.09, cleanToCatch: 3, bumpsAllowed: 2,
-      gates: [{ pos: 0.125, open: [0] }, { pos: 0.375, open: [1] },
-              { pos: 0.625, open: [0] }, { pos: 0.875, open: [1] }] } },
+    params: { periodMs: 2600, gatesMin: 4, gatesMax: 6, gapMin: 0.07, gapMax: 0.11,
+      holdMs: 10000, penaltyMs: 2000, fallsToLose: 3, zeroesToLose: 2 } },
 
   // ---- Faixa 3, o abissal. Sem perdao.
   { id: 'p7', tier: 3, weight: 45, color: 'var(--fishing-fish-g)', sizeMin: 26, sizeMax: 65,
@@ -41,9 +39,8 @@ export const FISH: Fish[] = [
     params: { bandHeight: 0.20, gravity: 0.0000045, lift: 0.000011, maxSpeed: 0.0012, pattern: 'arisco', fishSpeed: 0.00060, fillRate: 0.00040, drainRate: 0.00024, graceMs: 1400 } },
   { id: 'p9', tier: 3, weight: 45, color: 'var(--fishing-fish-i)', sizeMin: 55, sizeMax: 130,
     engine: 'dodge',
-    params: { lanes: 3, periodMs: 1950, gapWidth: 0.08, cleanToCatch: 3, bumpsAllowed: 1,
-      gates: [{ pos: 0.1, open: [1] }, { pos: 0.3, open: [0] }, { pos: 0.5, open: [2] },
-              { pos: 0.7, open: [1] }, { pos: 0.9, open: [0] }] } },
+    params: { periodMs: 1900, gatesMin: 4, gatesMax: 6, gapMin: 0.06, gapMax: 0.10,
+      holdMs: 15000, penaltyMs: 2500, fallsToLose: 3, zeroesToLose: 2 } },
 ];
 
 /** Qualidade 0..1 vira tamanho dentro da faixa da especie. */

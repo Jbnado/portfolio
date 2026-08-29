@@ -232,34 +232,35 @@ calmo, com a mesma implementação.
 
 ### 3. DRAGAGEM — desvio contínuo
 
-O indicador ocupa uma pista; os anéis giram e **cada anel é desenhado quebrado**: onde um portão
-fecha aquela pista, o trilho simplesmente acaba. Espaço troca de pista antes do vão. Cair no vão
-é o dano.
+**Sempre duas pistas.** Dois anéis concêntricos giram; onde um vão quebra a pista em que você
+está, o trilho acaba. Espaço troca de pista antes do vão. Cair no vão é o dano.
 
-**Não é acerto no tempo, é posicionamento sob pressão contínua.** É a habilidade genuinamente
-diferente das três, e é o motor de peixe **brigão**.
+**Os vãos são sorteados a cada lance.** Quantos (dentro de um intervalo por peixe), onde e de que
+largura — tudo muda de lance para lance, então não dá para decorar o anel. As pistas abertas
+alternam, então cada vão cobra uma troca; o que varia é o ritmo em que elas chegam. Cada vão
+nasce dentro da sua fatia da volta com folga mínima para o vizinho: sem isso dois vãos poderiam
+colar e exigir uma troca em poucos milissegundos, o que não é dificuldade, é sorte.
 
-**O vão tem largura, e é a mesma que a tela desenha.** Isto revoga o texto original desta seção,
-que dizia "não um tamanho de brecha: o portão é um ponto, a brecha é a pista aberta". O portão
-virou intervalo (`gapWidth`, fração da volta) por dois motivos: um buraco no anel só se desenha
-se tiver largura, e julgar por ponto enquanto se desenha um buraco recria a discordância entre o
-que se vê e o que se julga que esta spec proíbe em todo o resto. Trocar de pista **dentro** do
-vão cai, e isso é a regra, não um efeito colateral.
+**Fisga enchendo uma barrinha, não contando passagens.** A barra sobe enquanto você não cai e
+representa o peixe sendo puxado. Encher exige `holdMs` de tempo limpo — 6s, 10s e 15s. Isto
+substituiu um modelo de "três passagens limpas seguidas", a pedido do dono.
 
-**Fisga com passagens limpas seguidas, não com voltas sobrevividas.** `cleanToCatch` (3) passagens
-limpas em sequência fisgam; cair **zera** a sequência. Isto substitui `lapsToCatch`, e existe por
-um defeito medido: com a regra de voltas, ficar **parado sem tocar em nada** pescava o p3 com
-47cm de um máximo de 58 — o peixe que existe para ensinar premiava não aprender. Como toda pista
-quebra em algum portão, nenhuma sequência de três limpas sai sem trocar de rota: trocar virou
-obrigatório em vez de opcional.
+**Cair recua, não zera.** Cada queda desconta `penaltyMs` da barra. A regra anterior zerava tudo,
+e perder 15 segundos de luta por um deslize é punição demais para um jogo de portfólio.
 
-**A dificuldade da DRAGAGEM é a velocidade da volta.** `periodMs` encurta por faixa (4200 / 3000 /
-2200), o que encolhe a janela para decidir e agir. Contagem de pistas e tolerância acompanham,
-mas o botão principal é a velocidade.
+**Duas portas de saída para perder o peixe**, ambas desligadas no raso:
 
-Parâmetros: período da volta (`periodMs`), número de pistas, portões (posição no anel e quais
-pistas abrem ali), largura do vão (`gapWidth`), limpas seguidas para fisgar (`cleanToCatch`),
-quedas toleradas (`bumpsAllowed`).
+1. **Três quedas seguidas.** Passar limpo por um vão zera a contagem. Pega quem se perdeu no
+   ritmo — e é alcançável justamente porque as pistas alternam: quem troca *atrasado* erra o vão,
+   troca, e o vão seguinte já pedia a outra pista. Esse cai em todos.
+2. **A barra zerar duas vezes.** Pega o caso que a primeira porta não pega: quem cai espaçado
+   nunca junta uma sequência, mas também nunca progride.
+
+**A dificuldade é a velocidade da volta e a quantidade de vãos** — decisão do dono. Mais vãos por
+volta significa mais trocas obrigatórias; a volta mais curta encurta a janela de cada decisão.
+
+Parâmetros: `periodMs`, `gatesMin`/`gatesMax`, `gapMin`/`gapMax`, `holdMs`, `penaltyMs`,
+`fallsToLose`, `zeroesToLose`.
 
 ### Origem das mecânicas
 

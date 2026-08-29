@@ -9,3 +9,24 @@
 }
 
 .dodge-falls { color: var(--fishing-danger); }
+
+/* A barrinha do peixe sendo puxado. Mesma linguagem do medidor do
+   SUSTENTACAO: superficie com borda, preenchimento na cor da zona. */
+.dodge-meter {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  height: 12px;
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dodge-meter-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--fishing-zone);
+}

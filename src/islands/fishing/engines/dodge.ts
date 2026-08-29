@@ -1,20 +1,30 @@
-import type { DodgeParams, Result } from '../types';
+import type { DodgeParams, Gate, Result } from '../types';
+
+/** Sempre duas pistas, por decisao do dono. O que muda entre as faixas e a
+    velocidade da volta e quantos vaos obrigam a trocar de pista. */
+export const LANES = 2;
+
+/** Folga minima entre a borda de um vao e a do vizinho, em fracao da volta.
+    Sem ela dois vaos sorteados podem colar e exigir uma troca em poucos
+    milissegundos — isso nao e dificuldade, e sorte. */
+const MIN_SEP = 0.05;
 
 export type DodgeState = {
   lane: number;
-  /** Quedas no total. Alimenta a tolerancia e a qualidade. */
+  /** Quedas no total, so para a qualidade. */
   bumps: number;
-  /** Passagens limpas SEGUIDAS. Cair zera. E a sequencia que pesca. */
-  streak: number;
-  /** Passagens limpas no total, so para a qualidade. */
-  cleanTotal: number;
-  /** Ultimo instante ja processado, em ms desde o inicio do minigame. */
+  /** Quedas SEGUIDAS. Passar limpo por um vao zera. Perde o peixe. */
+  streakFalls: number;
+  /** Quantas vezes a barrinha ja voltou a zero depois de ter subido. */
+  zeroed: number;
+  /** Os vaos deste lance: sorteados na largada, nao fixos no peixe. */
+  gates: Gate[];
+  /** Milissegundos limpos SEGUIDOS. Cair zera. Chegar em holdMs fisga. */
+  cleanMs: number;
   tMs: number;
-  /** Indice do vao em que o marcador esta AGORA, ou null fora de todos.
-      A visita e a unidade do julgamento: entrar num vao abre uma, sair
-      fecha. Sem isto, um vao com largura contaria uma queda por quadro. */
+  /** Vao em que o marcador esta AGORA, ou null. A visita e a unidade do
+      julgamento: sem ela um vao com largura contaria uma queda por quadro. */
   visitGate: number | null;
-  /** Se ja caiu nesta visita. Uma queda por vao visitado. */
   visitFell: boolean;
   done: Result | null;
 };
@@ -25,36 +35,61 @@ function arcDist(a: number, b: number): number {
   return Math.min(d, 1 - d);
 }
 
-/** Em qual vao o marcador esta no instante tMs, ou null. O vao tem LARGURA
-    (params.gapWidth), a mesma que a tela desenha como buraco no anel: quem
-    ve o marcador sobre o buraco ve exatamente o que o motor julga. */
-export function gateAt(params: DodgeParams, tMs: number): number | null {
+/** Sorteia os vaos do lance. As pistas abertas alternam, entao cada vao
+    obriga uma troca; a posicao e a largura e que variam. Cada vao nasce
+    dentro da sua fatia da volta, com folga para nao encostar no vizinho:
+    assim "estao perto ou longe" muda a cada lance sem virar armadilha. */
+export function makeGates(params: DodgeParams, rnd: () => number): Gate[] {
+  const span = params.gatesMax - params.gatesMin;
+  const n = params.gatesMin + Math.floor(rnd() * (span + 1));
+  const slot = 1 / n;
+  const gates: Gate[] = [];
+  for (let i = 0; i < n; i++) {
+    const width = params.gapMin + rnd() * (params.gapMax - params.gapMin);
+    const room = Math.max(0, slot - width - MIN_SEP);
+    const pos = (i + 0.5) * slot + (rnd() - 0.5) * room;
+    gates.push({ pos: (pos + 1) % 1, width, open: i % LANES });
+  }
+  return gates;
+}
+
+/** Em qual vao o marcador esta no instante tMs, ou null. O vao tem largura, a
+    mesma que a tela desenha como buraco: quem ve o marcador sobre o buraco ve
+    exatamente o que o motor julga. */
+export function gateAt(
+  params: DodgeParams,
+  gates: Gate[],
+  tMs: number,
+): number | null {
   const ph = (((tMs % params.periodMs) / params.periodMs) + 1) % 1;
-  const half = params.gapWidth / 2;
-  for (let i = 0; i < params.gates.length; i++) {
-    if (arcDist(ph, params.gates[i].pos) <= half) return i;
+  for (let i = 0; i < gates.length; i++) {
+    if (arcDist(ph, gates[i].pos) <= gates[i].width / 2) return i;
   }
   return null;
 }
 
-export function startDodge(_params: DodgeParams): DodgeState {
+export function startDodge(
+  params: DodgeParams,
+  rnd: () => number = Math.random,
+): DodgeState {
   return {
-    lane: 0, bumps: 0, streak: 0, cleanTotal: 0, tMs: 0,
+    lane: 0, bumps: 0, streakFalls: 0, zeroed: 0, gates: makeGates(params, rnd), cleanMs: 0, tMs: 0,
     visitGate: null, visitFell: false, done: null,
   };
 }
 
-export function switchLane(params: DodgeParams, state: DodgeState): DodgeState {
+export function switchLane(state: DodgeState): DodgeState {
   if (state.done) return state;
-  return { ...state, lane: (state.lane + 1) % params.lanes };
+  return { ...state, lane: (state.lane + 1) % LANES };
 }
 
-/** Qualidade e a limpeza da luta: das passagens que voce tentou, quantas
-    saiu inteiro. Jogo perfeito da exatamente 1, entao o topo da faixa de
-    tamanho e alcancavel de verdade. */
-function dodgeQuality(cleanTotal: number, bumps: number): number {
-  const tries = cleanTotal + bumps;
-  return tries > 0 ? cleanTotal / tries : 0;
+/** Qualidade e o quanto da luta foi a arrancada final: quem puxou sem cair
+    gasta exatamente holdMs e tira 1. Cada queda alonga a luta e encolhe o
+    peixe, sem degrau — resolve a saturacao que a regra antiga tinha, onde
+    jogar limpo dava sempre o tamanho maximo. */
+function dodgeQuality(params: DodgeParams, cleanMs: number, tMs: number): number {
+  if (tMs <= 0) return 0;
+  return Math.max(0, Math.min(1, Math.max(cleanMs, params.holdMs) / tMs));
 }
 
 export function stepDodge(
@@ -64,39 +99,47 @@ export function stepDodge(
 ): DodgeState {
   if (state.done) return state;
 
-  const g = gateAt(params, tMs);
-  let { visitGate, visitFell, streak, bumps, cleanTotal } = state;
+  const dt = Math.max(0, tMs - state.tMs);
+  const g = gateAt(params, state.gates, tMs);
+  let { visitGate, visitFell, bumps, streakFalls, zeroed, cleanMs } = state;
 
-  // Trocou de vao (ou saiu de um): fecha a visita anterior. Sair inteiro de
-  // um vao e o que conta como passagem limpa.
   if (g !== visitGate) {
-    if (visitGate !== null && !visitFell) {
-      streak += 1;
-      cleanTotal += 1;
-    }
+    // Saiu de um vao sem cair: a sequencia de quedas zera. E isso que faz
+    // "tres seguidas" significar seguidas, e nao tres no lance inteiro.
+    if (visitGate !== null && !visitFell) streakFalls = 0;
     visitGate = g;
     visitFell = false;
   }
 
-  // Dentro do vao, na pista que quebra ali: cai. Cair ZERA a sequencia em
-  // vez de descontar dela — sao tres limpas SEGUIDAS que pescam.
-  if (
-    visitGate !== null &&
-    !visitFell &&
-    !params.gates[visitGate].open.includes(state.lane)
-  ) {
+  const caiu =
+    visitGate !== null && !visitFell && state.gates[visitGate].open !== state.lane;
+
+  if (caiu) {
     visitFell = true;
     bumps += 1;
-    streak = 0;
+    streakFalls += 1;
+    // Errou: a barrinha RECUA. O peixe puxou de volta um pedaco.
+    const recuado = Math.max(0, cleanMs - params.penaltyMs);
+    // Zerou de novo depois de ter subido: conta como um recomeco.
+    if (recuado === 0 && cleanMs > 0) zeroed += 1;
+    cleanMs = recuado;
+  } else {
+    cleanMs += dt;
   }
 
-  const next = { ...state, tMs, visitGate, visitFell, streak, bumps, cleanTotal };
+  const next = { ...state, tMs, visitGate, visitFell, bumps, streakFalls, zeroed, cleanMs };
 
-  if (params.bumpsAllowed !== null && bumps > params.bumpsAllowed) {
-    return { ...next, done: { caught: false, quality: dodgeQuality(cleanTotal, bumps) } };
+  // Duas portas de saida: cair varias vezes em fila, ou a barrinha zerar
+  // vezes demais. A primeira pega quem se perdeu no ritmo; a segunda pega
+  // quem cai espacado e nunca junta uma sequencia, mas tambem nao progride.
+  const perdeu =
+    (params.fallsToLose !== null && streakFalls >= params.fallsToLose) ||
+    (params.zeroesToLose !== null && zeroed >= params.zeroesToLose);
+  if (perdeu) {
+    return { ...next, done: { caught: false, quality: dodgeQuality(params, cleanMs, tMs) } };
   }
-  if (streak >= params.cleanToCatch) {
-    return { ...next, done: { caught: true, quality: dodgeQuality(cleanTotal, bumps) } };
+  if (cleanMs >= params.holdMs) {
+    return { ...next, done: { caught: true, quality: dodgeQuality(params, cleanMs, tMs) } };
   }
   return next;
 }

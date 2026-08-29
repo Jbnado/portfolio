@@ -186,7 +186,7 @@
     "instruction": {
       "track": "Space when the marker crosses the zone.",
       "hold": "Hold space to rise. Keep the fish inside the band.",
-      "dodge": "Space switches lane. Three clean passes in a row land the fish."
+      "dodge": "Space switches lane. Stay clean until the bar fills."
     },
     "caught": "Hooked",
     "escaped": "Got away",
@@ -196,8 +196,9 @@
     "largest": "largest",
     "guaranteedMode": "Guaranteed mode",
     "guaranteedModeHelp": "Slower, but always lands the fish.",
-    "clean": "Clean in a row",
+    "reeling": "Reeling in",
     "falls": "Falls",
+    "resets": "Bar resets",
     "fallsUnlimited": "The fish will not escape.",
     "fish": {
       "p1": "Mullet", "p2": "Sea bass", "p3": "Croaker",

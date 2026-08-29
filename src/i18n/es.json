@@ -186,7 +186,7 @@
     "instruction": {
       "track": "Espacio cuando el marcador cruce la zona.",
       "hold": "Mantén espacio para subir. Conserva el pez dentro de la franja.",
-      "dodge": "Espacio cambia de carril. Tres pasadas limpias seguidas pescan."
+      "dodge": "Espacio cambia de carril. Aguanta sin caer hasta llenar la barra."
     },
     "caught": "Picó",
     "escaped": "Se escapó",
@@ -196,8 +196,9 @@
     "largest": "mayor",
     "guaranteedMode": "Modo garantizado",
     "guaranteedModeHelp": "Más lento, pero siempre pesca.",
-    "clean": "Limpias seguidas",
+    "reeling": "Recogiendo",
     "falls": "Caídas",
+    "resets": "Reinicios",
     "fallsUnlimited": "El pez no escapa.",
     "fish": {
       "p1": "Lisa", "p2": "Róbalo", "p3": "Corvina",
