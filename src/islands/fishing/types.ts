@@ -84,6 +84,10 @@ type Base = {
   color: string;
   sizeMin: number;
   sizeMax: number;
+  /** Peixe lendario: so morde NESTE ponto de pesca e so com ESTA isca
+      equipada. Fora disso ele nem entra no sorteio, e mesmo dentro o peso e
+      minimo — sao os dois trofeus do lago. */
+  legend?: { spot: string; bait: string };
 };
 
 export type Fish = Base &

@@ -41,10 +41,13 @@ type Texts = {
   exitHelp: string;
   gameArea: string;
   howToPlay: string;
-  keys: string;
+  keyMove: string;
+  keyAct: string;
+  keyLog: string;
+  keyClose: string;
   close: string;
   fight: string;
-  tuto: { title: string; skip: string; next: string; steps: string[] };
+  tuto: { title: string; skip: string; next: string; chapters: Record<TutorialChapter, string[]> };
   depth3: Record<string, string>;
   world: {
     shop: string; cast: string; noSpot: string; menu: string;
@@ -64,6 +67,8 @@ type Texts = {
   fish: Record<string, string>;
   water: Record<string, string>;
 };
+
+type TutorialChapter = 'intro' | 'catch' | 'sale';
 
 type Phase =
   | { kind: 'idle' }
@@ -89,6 +94,9 @@ export default function Fishing({ texts }: { texts: Texts }) {
   // de keyframe (data-miss 1 e 2) porque trocar de classe pro MESMO nome nao
   // reinicia a animacao — nomes diferentes reiniciam, sem timer nenhum.
   const [miss, setMiss] = useState(0);
+  /** Aponta para `contar`, que nasce mais abaixo. A ref quebra a ordem de
+      declaracao sem religar callbacks a cada render. */
+  const contarRef = useRef<(ch: TutorialChapter) => void>(() => {});
   const [menu, setMenu] = useState(false);
   const [shop, setShop] = useState(false);
   /** O efeito da sobreposicao so depende de `playing`, entao ele enxergaria
@@ -96,33 +104,58 @@ export default function Fishing({ texts }: { texts: Texts }) {
   const menuRef = useRef(false);
   menuRef.current = menu;
 
-  /** Tutorial: aparece na primeira visita e pode ser rechamado pelo "?" da
-      barra. Guardado a parte do progresso: ja ter visto e sobre a PESSOA,
-      nao sobre a partida. */
-  const [tuto, setTuto] = useState<number | null>(null);
+  /** Tutorial em CAPITULOS, disparados por acontecimento: despejar tudo na
+      abertura e o jeito errado — ninguem le um manual antes de jogar. Quem
+      fala e o lojista, e ele volta quando voce faz algo novo.
+
+      O que ja foi visto e da PESSOA, nao da partida: fica em chave propria. */
+  const [tuto, setTuto] = useState<{ ch: TutorialChapter; i: number } | null>(null);
+  const vistos = useRef<string[]>([]);
   useEffect(() => {
-    try {
-      if (!localStorage.getItem('fishing:tuto')) setTuto(0);
-    } catch { /* modo privado */ }
+    try { vistos.current = JSON.parse(localStorage.getItem('fishing:tuto') ?? '[]'); } catch { /* modo privado */ }
+    if (!Array.isArray(vistos.current)) vistos.current = [];
+    if (!vistos.current.includes('intro')) setTuto({ ch: 'intro', i: 0 });
   }, []);
+
+  const marcarVisto = useCallback((ch: TutorialChapter) => {
+    if (!vistos.current.includes(ch)) vistos.current = [...vistos.current, ch];
+    try { localStorage.setItem('fishing:tuto', JSON.stringify(vistos.current)); } catch { /* modo privado */ }
+  }, []);
+
+  /** Abre um capitulo, se ele ainda nao foi visto. */
+  const contar = useCallback((ch: TutorialChapter) => {
+    if (!vistos.current.includes(ch)) setTuto({ ch, i: 0 });
+  }, []);
+  contarRef.current = contar;
+
   const fecharTuto = useCallback(() => {
-    setTuto(null);
-    try { localStorage.setItem('fishing:tuto', '1'); } catch { /* modo privado */ }
-  }, []);
+    setTuto((t) => { if (t) marcarVisto(t.ch); return null; });
+  }, [marcarVisto]);
+
   const passoTuto = useCallback(() => {
-    setTuto((i) => {
-      if (i === null) return null;
-      const proximo = i + 1;
-      if (proximo < texts.tuto.steps.length) return proximo;
-      try { localStorage.setItem('fishing:tuto', '1'); } catch { /* modo privado */ }
+    setTuto((t) => {
+      if (!t) return null;
+      const proximo = t.i + 1;
+      if (proximo < texts.tuto.chapters[t.ch].length) return { ...t, i: proximo };
+      marcarVisto(t.ch);
       return null;
     });
-  }, [texts.tuto.steps.length]);
+  }, [texts.tuto.chapters, marcarVisto]);
   const [progress, setProgress] = useState<Progress>(() => loadProgress());
+  const progressRef = useRef(progress);
+  progressRef.current = progress;
 
-  const saveAnd = useCallback((p: Progress) => { setProgress(p); saveProgress(p); }, []);
+  const saveAnd = useCallback((p: Progress) => {
+    // Vender e o porao sair de cheio para vazio. A comparacao usa uma ref e
+    // nao o atualizador de estado: disparar efeito de dentro do updater e
+    // impuro, e um dia rodaria duas vezes sem aviso.
+    if (progressRef.current.hold.length > 0 && p.hold.length === 0) contarRef.current('sale');
+    progressRef.current = p;
+    setProgress(p);
+    saveProgress(p);
+  }, []);
   const onMiss = useCallback(() => setMiss((n) => n + 1), []);
-  const { boat, setDir, sailTo } = useBoat(playing && phase.kind !== 'playing' && !menu && !shop);
+  const { boat, setDir, sailTo } = useBoat(playing && phase.kind !== 'playing' && !menu && !shop && tuto === null);
   /** A linha equipada decide ate onde da para pescar. Sem ela, o meio e o
       abissal ficam fechados. */
   const podePescar = canFish(progress, depthAt(boat));
@@ -245,12 +278,21 @@ export default function Fishing({ texts }: { texts: Texts }) {
     // permissao; sem ela o raro nem entra no sorteio.
     const pool = FISH.filter((f) => {
       if (f.tier > maxTier) return false;
+      // Lendario so morde no ponto dele e so com a isca dele. Fora disso nem
+      // entra no sorteio — e o que faz "raríssimo" significar algo.
+      if (f.legend) return f.legend.spot === spot?.id && progress.bait === f.legend.bait;
       if (f.engine === 'hold') return lineReaches(progress, DEPTH_BY_TIER[f.tier]);
       return true;
-    }).map((f) =>
+    }).map((f) => {
+      // A profundidade em que o barco ESTA manda no sorteio. Sem isto, com 24
+      // especies, o abissal devolveria lambari o tempo todo: o cardume raso
+      // continua no bolo e afogaria o que se foi buscar la.
+      const distancia = maxTier - f.tier;
+      const perto = distancia === 0 ? 1 : distancia === 1 ? 0.35 : 0.12;
       // A isca e probabilidade, nao permissao: ela SOMA sorte no peso do raro.
-      f.engine === 'hold' ? { ...f, weight: rareWeight(f.weight, luck) } : f,
-    );
+      const base = f.engine === 'hold' ? rareWeight(f.weight, luck) : f.weight;
+      return { ...f, weight: Math.max(1, Math.round(base * perto)) };
+    });
     // Sorteio ponderado: sorteio uniforme faria o peixe raro (HOLD na faixa 1)
     // aparecer um em tres, e ele precisa ser raro pra ensinar por surpresa.
     const picked = weightedPick(pool, Math.random);
@@ -306,6 +348,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
         saveLog(updated);
         // O peixe vai pro porao; vender na loja e o que vira moeda.
         saveAnd(addCatch(progress, fish.id, size));
+        contarRef.current('catch');
       }
       setPhase({ kind: 'result', fish, result, size });
     },
@@ -353,7 +396,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
 
           <div class="fishing-overlay-bar">
             <button class="fishing-exit" onClick={() => setPlaying(false)}>
-              {texts.exit} <small>{texts.exitHelp}</small>
+              {texts.exit}<kbd class="key">{texts.keyClose}</kbd>
             </button>
 
             {/* Estado sempre a vista. Moeda escondida faz a economia parecer
@@ -369,7 +412,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
 
             {/* Rever o tutorial e um botao, nao um segredo: quem chegou
                 depois da primeira visita tambem precisa aprender. */}
-            <button class="fishing-help" onClick={() => setTuto(0)} aria-label={texts.tuto.title}>
+            <button class="fishing-help" onClick={() => setTuto({ ch: 'intro', i: 0 })} aria-label={texts.tuto.title}>
               ?
             </button>
 
@@ -409,9 +452,9 @@ export default function Fishing({ texts }: { texts: Texts }) {
             <WorldView boat={boat} reach={reachTier(progress)} onSailTo={sailTo} texts={texts.world}>
               {tuto !== null && (
                 <TutorialView
-                  step={tuto}
-                  total={texts.tuto.steps.length}
-                  text={texts.tuto.steps[tuto]}
+                  step={tuto.i}
+                  total={texts.tuto.chapters[tuto.ch].length}
+                  text={texts.tuto.chapters[tuto.ch][tuto.i]}
                   onNext={passoTuto}
                   onSkip={fecharTuto}
                   texts={{ skip: texts.tuto.skip, next: texts.tuto.next }}
@@ -454,7 +497,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
                     window.addEventListener('pointercancel', solta);
                   }}
                 >
-                  {texts.fight}
+                  {texts.fight}<kbd class="key">{texts.keyAct}</kbd>
                 </button>
               )}
 
@@ -463,17 +506,17 @@ export default function Fishing({ texts }: { texts: Texts }) {
                   setDir={setDir}
                   onAct={act}
                   onLog={() => setMenu((m) => !m)}
-                  actEnabled={atShop(boat) || (!!spot && podePescar)}
+                  actEnabled={tuto === null && (atShop(boat) || (!!spot && podePescar))}
                   actLabel={
                     atShop(boat) ? texts.world.shopShort
                       : !podePescar ? texts.world.needLineShort
                         : spot ? texts.world.castShort : texts.world.noSpotShort
                   }
                   logLabel={`${texts.world.logShort} ${Object.keys(log).length}/${FISH.length}`}
+                  keys={{ move: texts.keyMove, act: texts.keyAct, log: texts.keyLog }}
                 />
               )}
 
-              <p class="fishing-keys">{texts.keys}</p>
             </div>
 
             {phase.kind !== 'idle' && (
@@ -537,7 +580,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
                 <header class="fishing-menu-head">
                   <h3>{texts.log}</h3>
                   <button class="fishing-menu-close" onClick={() => setMenu(false)}>
-                    {texts.close}
+                    {texts.close}<kbd class="key">{texts.keyClose}</kbd>
                   </button>
                 </header>
 

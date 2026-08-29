@@ -380,15 +380,6 @@ body.fishing-locked {
   min-height: 108px;
 }
 
-.fishing-keys {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-  opacity: 0.7;
-  text-align: center;
-}
-
 /* O checkbox mora na barra de cima: e ajuste, nao cena. Dentro da arena ele
    entrava e saia do fluxo e empurrava o lago a cada troca de fase. */
 /* Barra de status. Moeda, linha e isca sempre a vista: escondidas, a
@@ -478,3 +469,29 @@ body.fishing-locked {
 }
 
 .fishing-fight:active { filter: brightness(0.9); }
+
+/* ---- A tecla vai NO botao.
+
+   Legenda solta no rodape ninguem le: a dica precisa estar onde a acao esta.
+   E como jogo faz — o atalho mora ao lado do rotulo, nao numa nota de pe de
+   pagina. */
+.key {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 6px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+  color: inherit;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  opacity: 0.75;
+}
+
+/* No celular nao ha teclado: a etiqueta so ocuparia espaco mentindo. */
+@media (pointer: coarse) {
+  .key { display: none; }
+}

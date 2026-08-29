@@ -9,12 +9,15 @@ type Props = {
   texts: { skip: string; next: string };
 };
 
-/** Tutorial em caixa de fala, no rodape da cena. Nao BLOQUEIA o jogo de
-    proposito: ele manda clicar numa marca, entao precisa deixar clicar na
-    marca enquanto fala. Quem quiser sair, sai pelo Pular. */
+/** Tutorial em caixa de fala. BLOQUEIA a cena enquanto fala, que e como
+    novel funciona: a historia roda, o jogo espera. Sem isso a pessoa sai
+    navegando por baixo do texto e nao le nada — e a fala vira ruido.
+
+    O veu cobre a cena inteira; quem quiser pular, pula. */
 export function TutorialView({ step, total, text, onNext, onSkip, texts }: Props) {
   return (
-    <div class="tuto" role="region" aria-label={text}>
+    <div class="tuto-block" role="dialog" aria-modal="true" aria-label={text}>
+    <div class="tuto">
       {/* Quadrado reservado para o retrato de quem fala — ainda nao existe,
           mas o lugar dele ja esta guardado, como no caderno. */}
       <span class="tuto-face" aria-hidden="true" />
@@ -28,6 +31,7 @@ export function TutorialView({ step, total, text, onNext, onSkip, texts }: Props
       </button>
 
       <button type="button" class="tuto-skip" onClick={onSkip}>{texts.skip}</button>
+    </div>
     </div>
   );
 }

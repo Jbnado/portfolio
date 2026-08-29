@@ -1,12 +1,18 @@
-/* Caixa de fala no rodape da cena. Fica POR CIMA do lago mas nao cobre a
-   agua toda: o tutorial manda clicar numa marca, entao precisa deixar a marca
-   a vista e clicavel enquanto fala. */
-.tuto {
+/* Veu que BLOQUEIA a cena enquanto a fala roda — e assim que novel funciona.
+   Sem ele a pessoa sai navegando por baixo do texto e nao le nada. O lago
+   continua visivel atras, so nao aceita clique. */
+.tuto-block {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   z-index: 6;
+  display: flex;
+  align-items: flex-end;
+  background: color-mix(in srgb, var(--color-bg-primary) 62%, transparent);
+}
+
+/* Caixa de fala no rodape da cena. */
+.tuto {
+  width: 100%;
   display: flex;
   align-items: stretch;
   gap: 10px;

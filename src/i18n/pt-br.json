@@ -187,17 +187,21 @@
       "title": "Rever o tutorial",
       "skip": "Pular",
       "next": "Continuar",
-      "steps": [
-        "Este lago tem uma esquisitice: peixe de água doce e de água salgada aparecem aqui do nada.",
-        "Ninguém sabe por quê. É por isso que a gente pesca aqui.",
-        "Clique numa marca na água. O barco navega até ela sozinho.",
-        "Com o barco na marca, clique em LANÇAR. Aí a briga é na barra de espaço.",
-        "Venda o pescado na loja da margem.",
-        "Com o dinheiro, compre linha melhor: é ela que abre o meio e o abissal.",
-        "O caderno guarda cada espécie. Os '???' são os que ainda faltam."
-      ]
+      "chapters": {
+        "intro": [
+          "Ô, chegou. Esse lago aqui é esquisito: aparece peixe de água doce e de água salgada, do nada. Ninguém explica.",
+          "Vai lá, clica numa marca na água que o barco vai sozinho. Chegando, joga a linha."
+        ],
+        "catch": [
+          "Pescou! Viu como é fácil. Ó, pode vender aqui comigo, na loja da margem.",
+          "Peixe grande paga melhor. E os raros, bem melhor."
+        ],
+        "sale": [
+          "Isso. Agora com o dinheiro compra uma linha melhor — é ela que te deixa pescar mais fundo.",
+          "E olha, tem muito mais peixe do que você viu até agora. Muito mais. Dá uma espiada no caderno."
+        ]
+      }
     },
-    "keys": "Setas andam · Espaço age · Tab abre o caderno · Esc fecha",
     "close": "Fechar",
     "depth3": {
       "1": "Raso",
@@ -264,15 +268,34 @@
     },
     "fish": {
       "p1": "Lambari",
-      "p2": "Traíra",
+      "p10": "Acará",
       "p3": "Tainha",
+      "p11": "Piau",
+      "p2": "Traíra",
+      "p12": "Bagre",
       "p4": "Robalo",
-      "p5": "Matrinxã",
+      "p13": "Corvina",
+      "p14": "Piraputanga",
+      "p15": "Cascudo",
       "p6": "Pacu",
+      "p16": "Curimbatá",
+      "p17": "Piapara",
+      "p18": "Xaréu",
+      "p5": "Matrinxã",
+      "p19": "Barbado",
       "p7": "Garoupa",
+      "p20": "Pirarara",
+      "p9": "Jaú",
+      "p21": "Badejo",
       "p8": "Dourado",
-      "p9": "Jaú"
+      "p22": "Piraíba",
+      "p23": "Pirarucu",
+      "p24": "Mero"
     },
-    "fight": "SEGURAR / TOCAR"
+    "fight": "SEGURAR / TOCAR",
+    "keyMove": "A D",
+    "keyAct": "Espaço",
+    "keyLog": "Tab",
+    "keyClose": "Esc"
   }
 }

@@ -23,13 +23,55 @@
   background: var(--fishing-surface);
 }
 
+/* ---- A cena tem tres planos: ceu, a outra margem, e a agua.
+
+   A linha d'agua fica em 40%, e o barco pousa EM CIMA dela. Antes o barco
+   flutuava no alto da moldura, sem nada atras, e a cena nao tinha longe nem
+   perto. */
 .world-sky {
   position: absolute;
-  inset: 0 0 62% 0;
-  background: color-mix(in srgb, var(--fishing-rule) 12%, transparent);
+  inset: 0 0 60% 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--fishing-rule) 6%, transparent),
+    color-mix(in srgb, var(--fishing-rule) 18%, transparent)
+  );
 }
 
-.world-water { position: absolute; top: 38%; bottom: 0; }
+/* A outra margem. Fica ancorada NA linha d'agua e sobe dali. */
+.world-far {
+  position: absolute;
+  bottom: 60%;
+  background: color-mix(in srgb, var(--fishing-rule) 58%, transparent);
+  border-radius: 4px 4px 0 0;
+  pointer-events: none;
+}
+
+.world-horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40%;
+  height: 2px;
+  background: var(--fishing-rule);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.world-water { position: absolute; top: 40%; bottom: 0; }
+
+/* Gradiente vertical na agua: o longe escurece. E o segundo sinal de
+   profundidade, junto do parallax — cor sozinha nao daria angulo nenhum. */
+.world-view::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40%;
+  bottom: 0;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--fishing-rule) 22%, transparent), transparent 55%);
+  pointer-events: none;
+}
 .world-water[data-depth='raso'] { background: color-mix(in srgb, var(--fishing-zone) 26%, transparent); }
 .world-water[data-depth='medio'] { background: color-mix(in srgb, var(--fishing-zone) 48%, transparent); }
 .world-water[data-depth='abissal'] { background: color-mix(in srgb, var(--fishing-zone) 72%, transparent); }
@@ -45,7 +87,7 @@
 }
 
 /* Terra, nao agua translucida: a margem sobe acima da linha d'agua. */
-.world-shore { position: absolute; top: 30%; bottom: 0; background: var(--fishing-rule); }
+.world-shore { position: absolute; top: 32%; bottom: 0; background: var(--fishing-rule); }
 
 /* ---- Alvos clicaveis.
 
@@ -67,8 +109,8 @@
 }
 
 .world-shop {
-  top: 12%;
-  height: 20%;
+  top: 16%;
+  height: 16%;
   transform: translateX(-50%);
   background: var(--fishing-marker);
   border: 2px solid var(--fishing-rule);
@@ -92,9 +134,10 @@
   color: var(--color-text-primary);
 }
 
+/* Abaixo do horizonte (40%): a marca boia na agua, nao no ceu. */
 .world-spot {
-  top: 33%;
-  height: 10%;
+  top: 43%;
+  height: 8%;
   transform: translateX(-50%);
   background: var(--fishing-rule);
   border-radius: 2px;
@@ -130,10 +173,12 @@
   .world-ping { animation: none; opacity: 0.9; }
 }
 
+/* O barco pousa na linha d'agua: topo em 28%, base em 40%. Antes ele ficava
+   la em cima, solto no ceu. */
 .world-boat {
   position: absolute;
-  top: 20%;
-  height: 15%;
+  top: 28%;
+  height: 12%;
   transform: translateX(-50%);
   background: var(--fishing-marker);
   border: 2px solid var(--fishing-rule);

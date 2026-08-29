@@ -26,7 +26,7 @@ describe('paridade trilingue', () => {
       expect(dic.game).toBeDefined();
       expect(typeof dic.game.title).toBe('string');
       expect(typeof dic.game.cast).toBe('string');
-      expect(Object.keys(dic.game.fish)).toHaveLength(9);
+      expect(Object.keys(dic.game.fish)).toHaveLength(24);
     }
   });
 });

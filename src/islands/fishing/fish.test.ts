@@ -3,8 +3,24 @@ import { FISH, sizeOf, guaranteedFish } from './fish';
 import type { TrackParams, HoldParams, DodgeParams } from './types';
 
 describe('FISH', () => {
-  it('tem nove peixes', () => {
-    expect(FISH).toHaveLength(9);
+  it('tem o elenco que o dono pediu: 6 no raso, 10 no meio, 6 no abissal e 2 lendarios', () => {
+    const porFaixa = (t: number) => FISH.filter((f) => f.tier === t && !f.legend).length;
+    expect(porFaixa(1)).toBe(6);
+    expect(porFaixa(2)).toBe(10);
+    expect(porFaixa(3)).toBe(6);
+    expect(FISH.filter((f) => f.legend)).toHaveLength(2);
+    expect(FISH).toHaveLength(24);
+  });
+
+  it('cada lendario mora num ponto so, e num ponto diferente do outro', () => {
+    const lendas = FISH.filter((f) => f.legend);
+    const pontos = lendas.map((f) => f.legend!.spot);
+    expect(new Set(pontos).size).toBe(lendas.length);
+    for (const f of lendas) {
+      // A isca da lenda tem que ser a MELHOR: e o que faz valer a pena compra-la.
+      expect(f.legend!.bait).toBe('sardinha');
+      expect(f.weight).toBeLessThan(Math.min(...FISH.filter((x) => !x.legend).map((x) => x.weight)));
+    }
   });
 
   it('cobre os tres motores', () => {
@@ -12,10 +28,30 @@ describe('FISH', () => {
     expect(motores).toEqual(new Set(['track', 'hold', 'dodge']));
   });
 
-  it('cada faixa tem exatamente um peixe de cada engine', () => {
+  it('cada faixa tem pelo menos um peixe de cada engine', () => {
     for (const tier of [1, 2, 3]) {
-      const engines = FISH.filter((f) => f.tier === tier).map((f) => f.engine).sort();
-      expect(engines).toEqual(['dodge', 'hold', 'track']);
+      const engines = new Set(FISH.filter((f) => f.tier === tier).map((f) => f.engine));
+      expect(engines).toEqual(new Set(['dodge', 'hold', 'track']));
+    }
+  });
+
+  // O elenco cresceu reaproveitando os parametros ja afinados: especies da
+  // mesma faixa e do mesmo motor tem que jogar EXATAMENTE igual, senao a
+  // afinacao de cada minigame deixaria de valer.
+  it('especies da mesma faixa e motor jogam igual', () => {
+    for (const engine of ['track', 'hold', 'dodge'] as const) {
+      for (const tier of [1, 2, 3]) {
+        const iguais = FISH.filter((f) => f.engine === engine && f.tier === tier);
+        for (const f of iguais) expect(f.params).toEqual(iguais[0].params);
+      }
+    }
+  });
+
+  it('cada especie leva a propria copia dos parametros', () => {
+    for (let i = 0; i < FISH.length; i++) {
+      for (let j = i + 1; j < FISH.length; j++) {
+        expect(FISH[i].params).not.toBe(FISH[j].params);
+      }
     }
   });
 
@@ -28,11 +64,10 @@ describe('FISH', () => {
   });
 
   it('a zona do TRAJETO encolhe conforme a faixa sobe', () => {
-    const sizes = FISH.filter((f) => f.engine === 'track')
-      .sort((a, b) => a.tier - b.tier)
-      .map((f) => (f.params as { zoneSize: number }).zoneSize);
-    expect(sizes[0]).toBeGreaterThan(sizes[1]);
-    expect(sizes[1]).toBeGreaterThan(sizes[2]);
+    const zona = (t: number) =>
+      (FISH.find((f) => f.engine === 'track' && f.tier === t)!.params as { zoneSize: number }).zoneSize;
+    expect(zona(1)).toBeGreaterThan(zona(2));
+    expect(zona(2)).toBeGreaterThan(zona(3));
   });
 
   // Decisao do dono depois de jogar os tres motores: o SUSTENTACAO e o mais

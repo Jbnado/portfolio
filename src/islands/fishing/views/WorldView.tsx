@@ -33,9 +33,22 @@ type Props = {
   children?: preact.ComponentChildren;
 };
 
+/** Cenario do fundo: morros e mata da outra margem. Sao so blocos, mas em
+    posicoes irregulares — fila regular le como cerca, nao como paisagem. */
+const FUNDO = [
+  { x: 6, w: 14, h: 46 }, { x: 21, w: 9, h: 30 }, { x: 33, w: 18, h: 54 },
+  { x: 49, w: 11, h: 34 }, { x: 62, w: 16, h: 62 }, { x: 80, w: 12, h: 40 },
+  { x: 93, w: 15, h: 50 },
+];
+
+/** O fundo anda MENOS que a cena: e o parallax que da profundidade. Sem ele
+    tudo desliza junto e a paisagem parece colada no barco. */
+const PARALLAX = 0.35;
+
 export function WorldView({ boat, reach, onSailTo, texts, children }: Props) {
   const cam = cameraAt(boat, VIEW_W);
   const sx = (x: number) => ((x - cam) / VIEW_W) * 100;
+  const sxFar = (x: number) => ((x - cam * PARALLAX) / VIEW_W) * 100;
 
   const spot = spotUnder(boat);
   const naLoja = atShop(boat);
@@ -48,6 +61,18 @@ export function WorldView({ boat, reach, onSailTo, texts, children }: Props) {
     <div class="world">
       <div class="world-view">
         <div class="world-sky" />
+
+        {/* A outra margem, la longe. */}
+        {FUNDO.map((m, i) => (
+          <div
+            key={i}
+            class="world-far"
+            style={{ left: `${sxFar(m.x)}%`, width: `${(m.w / VIEW_W) * 100}%`, height: `${m.h * 0.18}%` }}
+          />
+        ))}
+
+        {/* A linha d'agua. E ela que separa o longe do perto. */}
+        <div class="world-horizon" />
 
         {BANDS.map((b) => (
           <div
@@ -117,13 +142,16 @@ export function WorldView({ boat, reach, onSailTo, texts, children }: Props) {
 
     A pokedex mora aqui, com contador, porque colecao escondida atras de uma
     tecla nao existe para quem nao adivinha a tecla. */
-export function WorldPad({ setDir, onAct, onLog, actLabel, actEnabled, logLabel }: {
+export function WorldPad({ setDir, onAct, onLog, actLabel, actEnabled, logLabel, keys }: {
   setDir: (d: number) => void;
   onAct: () => void;
   onLog: () => void;
   actLabel: string;
   actEnabled: boolean;
   logLabel: string;
+  /** A tecla de cada botao vai NO botao. Legenda solta no rodape ninguem le:
+      a dica precisa estar onde a acao esta. */
+  keys: { move: string; act: string; log: string };
 }) {
   // Segurar move; soltar para. `onPointerUp` no proprio botao nao basta: se o
   // ponteiro escorregar para fora antes de soltar, o botao nunca ve o evento
@@ -143,13 +171,19 @@ export function WorldPad({ setDir, onAct, onLog, actLabel, actEnabled, logLabel 
   return (
     <div class="world-pad">
       <div class="world-pad-move">
-        <button type="button" class="world-pad-btn" aria-label="←" onPointerDown={segura(-1)}>&#9664;</button>
-        <button type="button" class="world-pad-btn" aria-label="→" onPointerDown={segura(1)}>&#9654;</button>
+        <button type="button" class="world-pad-btn" aria-label="←" onPointerDown={segura(-1)}>
+          &#9664;<kbd class="key">{keys.move}</kbd>
+        </button>
+        <button type="button" class="world-pad-btn" aria-label="→" onPointerDown={segura(1)}>
+          &#9654;
+        </button>
       </div>
       <button type="button" class="world-pad-act" onClick={onAct} disabled={!actEnabled}>
-        {actLabel}
+        {actLabel}<kbd class="key">{keys.act}</kbd>
       </button>
-      <button type="button" class="world-pad-btn world-pad-log" onClick={onLog}>{logLabel}</button>
+      <button type="button" class="world-pad-btn world-pad-log" onClick={onLog}>
+        {logLabel}<kbd class="key">{keys.log}</kbd>
+      </button>
     </div>
   );
 }
