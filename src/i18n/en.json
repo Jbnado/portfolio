@@ -216,6 +216,7 @@
     "log": "Specimen log",
     "logEmpty": "No fish logged yet.",
     "times": "times",
+    "time": "time",
     "largest": "largest",
     "guaranteedMode": "Guaranteed mode",
     "guaranteedModeHelp": "Slower, but always lands the fish.",
@@ -223,10 +224,14 @@
     "falls": "Falls",
     "resets": "Bar resets",
     "fallsUnlimited": "The fish will not escape.",
+    "water": {
+          "doce": "freshwater",
+          "salgada": "saltwater"
+    },
     "fish": {
-      "p1": "Mullet", "p2": "Sea bass", "p3": "Croaker",
-      "p4": "Sardine", "p5": "Bluefish", "p6": "Catfish",
-      "p7": "Mackerel", "p8": "Ray", "p9": "Shadow"
+      "p1": "Lambari", "p2": "Wolf fish", "p3": "Mullet",
+      "p4": "Snook", "p5": "Matrinxã", "p6": "Pacu",
+      "p7": "Grouper", "p8": "Golden dorado", "p9": "Jaú catfish"
     }
   }
 }

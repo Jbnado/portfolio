@@ -298,7 +298,11 @@ body.fishing-locked {
 
 .fishing-menu {
   position: absolute;
-  inset: 8% 12%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92%, 700px);
+  max-height: 84%;
   z-index: 4;
   overflow: auto;
   padding: 16px 20px;

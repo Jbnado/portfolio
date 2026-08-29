@@ -216,6 +216,7 @@
     "log": "Cuaderno de especímenes",
     "logEmpty": "Aún no hay peces registrados.",
     "times": "veces",
+    "time": "vez",
     "largest": "mayor",
     "guaranteedMode": "Modo garantizado",
     "guaranteedModeHelp": "Más lento, pero siempre pesca.",
@@ -223,10 +224,14 @@
     "falls": "Caídas",
     "resets": "Reinicios",
     "fallsUnlimited": "El pez no escapa.",
+    "water": {
+          "doce": "agua dulce",
+          "salgada": "agua salada"
+    },
     "fish": {
-      "p1": "Lisa", "p2": "Róbalo", "p3": "Corvina",
-      "p4": "Sardina", "p5": "Anchoa", "p6": "Bagre",
-      "p7": "Caballa", "p8": "Raya", "p9": "Sombra"
+      "p1": "Lambarí", "p2": "Tararira", "p3": "Lisa",
+      "p4": "Róbalo", "p5": "Matrinxã", "p6": "Pacú",
+      "p7": "Mero", "p8": "Dorado", "p9": "Jaú"
     }
   }
 }

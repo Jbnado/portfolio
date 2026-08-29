@@ -27,6 +27,7 @@ type Texts = {
   log: string;
   logEmpty: string;
   times: string;
+  time: string;
   largest: string;
   guaranteedMode: string;
   guaranteedModeHelp: string;
@@ -50,6 +51,7 @@ type Texts = {
   };
   instruction: Record<string, string>;
   fish: Record<string, string>;
+  water: Record<string, string>;
 };
 
 type Phase =
@@ -263,7 +265,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
           <ul>
             {Object.entries(log).map(([id, r]) => (
               <li key={id}>
-                {texts.fish[id]} — {r.times} {texts.times}, {texts.largest} {r.largest} cm
+                {texts.fish[id]} — {r.times} {r.times === 1 ? texts.time : texts.times}, {texts.largest} {r.largest} cm
               </li>
             ))}
           </ul>
@@ -400,7 +402,11 @@ export default function Fishing({ texts }: { texts: Texts }) {
                       <li key={id}>
                         <span class="fishing-menu-pic" aria-hidden="true" />
                         <span>{texts.fish[id]}</span>
-                        <small>{r.times} {texts.times}, {texts.largest} {r.largest} cm</small>
+                        <small>
+                          {texts.water[FISH.find((f) => f.id === id)?.water ?? 'doce']}
+                          {' · '}{r.times} {r.times === 1 ? texts.time : texts.times}
+                          {', '}{texts.largest} {r.largest} cm
+                        </small>
                       </li>
                     ))}
                   </ul>

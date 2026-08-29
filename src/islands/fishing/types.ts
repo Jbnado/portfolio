@@ -77,6 +77,9 @@ type Base = {
   /** Peso relativo no sorteio dentro da faixa elegivel. Existe para que o
       peixe que ensina a perder seja raro de encontrar, e nao um em tres. */
   weight: number;
+  /** De que agua o peixe e. A graca do lago e que os dois aparecem ali: e a
+      premissa do cenario, entao ela precisa estar visivel no caderno. */
+  water: 'doce' | 'salgada';
   /** Retangulo colorido de placeholder. Token CSS, nunca hex literal. */
   color: string;
   sizeMin: number;

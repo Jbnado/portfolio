@@ -49,6 +49,22 @@ describe('FISH', () => {
     }
   });
 
+  // A premissa do cenario e um lago onde peixe de agua doce e salgada
+  // aparecem do nada. Se todas as faixas fossem de agua doce, a surpresa
+  // sumiria justamente onde o jogador passa mais tempo.
+  it('cada faixa tem pelo menos um peixe de agua salgada', () => {
+    for (const tier of [1, 2, 3]) {
+      const daFaixa = FISH.filter((f) => f.tier === tier);
+      expect(daFaixa.some((f) => f.water === 'salgada')).toBe(true);
+    }
+  });
+
+  it('o peixe fica maior conforme a faixa sobe', () => {
+    const maior = (t: number) => Math.max(...FISH.filter((f) => f.tier === t).map((f) => f.sizeMax));
+    expect(maior(2)).toBeGreaterThan(maior(1));
+    expect(maior(3)).toBeGreaterThan(maior(2));
+  });
+
   it('nao repete id', () => {
     expect(new Set(FISH.map((p) => p.id)).size).toBe(FISH.length);
   });

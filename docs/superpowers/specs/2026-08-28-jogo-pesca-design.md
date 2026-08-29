@@ -266,8 +266,29 @@ Parâmetros: `periodMs`, `gatesMin`/`gatesMax`, `gapMin`/`gapMax`, `holdMs`, `pe
 
 **O cenário é um lago pequeno, visto de lado.** A premissa, do dono: peixes de água doce e
 salgada aparecem ali **do nada** — é justamente por isso que se pesca nesse lago, e é o que
-autoriza a matriz de espécies a misturar o que na natureza não se encontra junto. Só peixes
-**endêmicos brasileiros**.
+autoriza a matriz de espécies a misturar o que na natureza não se encontra junto.
+
+### As espécies
+
+O pedido foi "só peixes endêmicos brasileiros". **Endemismo estrito não sobrevive ao contato com
+a lista**: as bacias brasileiras atravessam fronteiras, então pirarucu, tucunaré, dourado e jaú
+também ocorrem no Peru, no Paraguai ou na Argentina. Espécie estritamente endêmica costuma ser
+peixe obscuro de uma bacia só, que ninguém reconheceria. A régua adotada é outra e está dita
+aqui para não virar discussão depois: **peixes brasileiros icônicos**, e a decisão de mudar de
+régua é do dono.
+
+Cada faixa tem **pelo menos um peixe de água salgada** — é a premissa aparecendo onde o jogador
+está, e não só na ficha do cenário. Há teste travando isso.
+
+| faixa | TRAJETO | SUSTENTAÇÃO (raro) | DRAGAGEM |
+|---|---|---|---|
+| 1 — raso | Lambari, doce, 8–18cm | Traíra, doce, 25–55cm | Tainha, **salgada**, 25–50cm |
+| 2 — meio | Robalo, **salgada**, 30–70cm | Matrinxã, doce, 28–58cm | Pacu, doce, 35–80cm |
+| 3 — abissal | Garoupa, **salgada**, 45–95cm | Dourado, doce, 55–105cm | Jaú, doce, 80–150cm |
+
+Os tamanhos são fiéis às espécies, e o teto sobe a cada faixa — há teste para isso também. Mudar
+tamanho **não** mexe na dificuldade: ela mora nos parâmetros dos motores, e o tamanho é só a
+recompensa que a qualidade vira.
 
 **Blockout primeiro, arte depois.** Tudo quadrado de propósito: o que se julga nesta fase é o
 arranjo — onde fica a loja, quanto se anda, como o minigame cobre a cena — e não o desenho, que
