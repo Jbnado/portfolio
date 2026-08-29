@@ -33,10 +33,43 @@ describe('valor do pescado', () => {
     }
   });
 
-  it('a isca braba custa mais que a linha abissal: e item de fim de jogo', () => {
+  /** Peixe medio de uma faixa: o valor do exemplar do meio da escala, media
+      sobre as especies nao lendarias. E a unidade em que o dono pensa o
+      preco — "quantos peixes tenho de vender para comprar a proxima linha". */
+  const peixeMedio = (t: 1 | 2 | 3) => {
+    const g = FISH.filter((f) => f.tier === t && !f.legend);
+    const v = g.map((f) => fishValue(f.id, (f.sizeMin + f.sizeMax) / 2));
+    return v.reduce((a, b) => a + b, 0) / v.length;
+  };
+
+  // O dono fixou o ESFORCO, nao o preco: 15 peixes medios para a linha do
+  // meio, 20 para a abissal. O preco e derivado. Sem este teste, mudar o
+  // tamanho ou a taxa de um peixe move a progressao em silencio — e nada mais
+  // no projeto olha para essa relacao.
+  it('o esforco de cada linha e o que o dono pediu: 15 no meio, 20 no abissal', () => {
+    expect(LINE_PRICE.medio / peixeMedio(2)).toBeCloseTo(15, 0);
+    expect(LINE_PRICE.abissal / peixeMedio(3)).toBeCloseTo(20, 0);
+    // O raso continua nos 50 que ele deu, sem esforco alvo.
+    expect(LINE_PRICE.raso).toBe(50);
+  });
+
+  it('a linha custa mais esforco a cada faixa: o abissal e o compromisso grande', () => {
+    const e = ([1, 2, 3] as const).map((t) => {
+      const preco = t === 1 ? LINE_PRICE.raso : t === 2 ? LINE_PRICE.medio : LINE_PRICE.abissal;
+      return preco / peixeMedio(t);
+    });
+    expect(e[1]).toBeGreaterThan(e[0]);
+    expect(e[2]).toBeGreaterThan(e[1]);
+  });
+
+  // A isca braba deixou de ser o item mais caro do jogo quando a linha abissal
+  // subiu para 900. O que a define nao e o lugar no ranking de precos: e ser a
+  // ultima compra, a de melhor sorte, e custar uma temporada no abissal.
+  it('a isca braba e de fim de jogo: melhor sorte e uma temporada de abissal', () => {
     const braba = BAITS[BAITS.length - 1];
-    expect(braba.price).toBeGreaterThan(LINE_PRICE.abissal);
+    expect(braba.price).toBe(Math.max(...BAITS.map((b) => b.price)));
     expect(braba.luck).toBe(Math.max(...BAITS.map((b) => b.luck)));
+    expect(braba.price / peixeMedio(3)).toBeGreaterThan(12);
   });
 
   it('o valor e proporcional aos centimetros: peixe maior paga mais, sempre', () => {

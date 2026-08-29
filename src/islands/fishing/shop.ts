@@ -15,13 +15,18 @@ export const BAITS: { id: BaitId; price: number; luck: number }[] = [
 ];
 
 export const LINES: Depth[] = ['raso', 'medio', 'abissal'];
-/* O preco do meio saiu de 150 para 110. Medido: a 150 ele custava 27.9 peixes
-   medios da faixa, contra 20.0 do raso e 17.7 do abissal — o meio era o
-   gargalo da progressao, mais caro EM ESFORCO que o abissal. A causa e que o
-   valor por faixa salta 5x (teto 10 -> 50) e o preco so 3.3x. E o unico
-   numero do dono que mudei, e mudei para cumprir o "fique justo toda a
-   progressao" que ele pediu junto. */
-export const LINE_PRICE: Record<Depth, number> = { raso: 50, medio: 150, abissal: 500 };
+/* Os precos das linhas sao derivados do ESFORCO que o dono pediu, nao
+   escolhidos a mao: quantos peixes medios da faixa e preciso vender para
+   comprar a linha seguinte. Ele fixou 15 para o meio e 20 para o abissal.
+
+   Peixe medio por faixa (tamanho no meio da escala, sem os lendarios):
+   3.67 / 7.50 / 44.33. Logo 15 x 7.50 = 112.5 e 20 x 44.33 = 886.7, que
+   arredondam para 110 e 900 — 14.7 e 20.3 de esforco medido. O raso fica nos
+   50 do dono, 13.6.
+
+   Mexer no tamanho ou no valor de um peixe MOVE estes numeros: quem mexer
+   volta aqui e recalcula, senao a progressao sai do que foi pedido. */
+export const LINE_PRICE: Record<Depth, number> = { raso: 50, medio: 110, abissal: 900 };
 
 export type Progress = {
   coins: number;

@@ -325,7 +325,7 @@ resto do jogo, uma tecla faz tudo.
 
 **Linha é permissão, isca é probabilidade.** A separação importa e veio das palavras do dono.
 
-- **Três linhas** (50, 150, 500). A linha decide **até onde dá para pescar**, não só qual peixe
+- **Três linhas** (50, 110, 900 — ver Economia). A linha decide **até onde dá para pescar**, não só qual peixe
   morde: sem a linha do meio, o meio inteiro está fechado. Cada uma alcança a sua profundidade e
   todas as mais rasas — por isso **a abissal é a melhor: com ela se pesca em qualquer lugar**.
 
@@ -367,20 +367,32 @@ uma tainha de 50cm. "Peixe maior paga mais" precisa valer **entre** espécies.
 lendários em 400cm e 350cm — que valem 400 e 350 moedas, mais que qualquer
 linha.
 
-**Preços: linhas 50, 150, 500; iscas 30, 90, 800.** São os números do dono, e
-ficam como ele os deu. O pedido de arrumar a economia era sobre **quanto vale
-um peixe**, não sobre quanto custa uma linha; a certa altura o preço do meio
-esteve em 110 para achatar a progressão, e voltou.
+**O preço da linha é derivado do esforço, não escolhido à mão.** Esforço é
+quantos peixes médios da faixa é preciso vender para comprar a linha seguinte
+— preço ÷ valor do peixe médio, tamanho no meio da escala, sem os lendários.
+O dono fixou o esforço, não o preço: **15 no meio e 20 no abissal**.
 
-Medindo o esforço — preço ÷ valor do peixe médio da faixa, tamanho no meio da
-escala, sem os lendários — a progressão fica em **13,6 / 20,0 / 11,3 peixes**.
-O meio é o trecho mais longo, e é isso mesmo: é a travessia antes do abissal,
-que depois alivia. A linha abissal é a que menos custa em esforço, coerente
-com ela ser a melhor compra do jogo.
+Com o peixe médio em 3,67 / 7,50 / 44,33 moedas, sai 15 × 7,50 = 112,5 e
+20 × 44,33 = 886,7, que arredondam para **110 e 900**. O raso fica nos 50 que
+o dono deu.
 
-**A isca braba custa 800, mais que a linha abissal**, porque é ela que libera
-os dois lendários. São 18 peixes do abissal para comprá-la, e ela se paga em
-2,9 lendários médios: caríssima, mas com retorno visível.
+| linha | preço | peixe médio | esforço medido |
+|---|---|---|---|
+| raso | 50 | 3,67 | 13,6 |
+| meio | 110 | 7,50 | 14,7 |
+| abissal | 900 | 44,33 | 20,3 |
+
+A progressão **sobe**: cada faixa custa mais trabalho que a anterior, e o
+abissal é o compromisso grande do jogo. Isto inverte o desenho anterior, em
+que o abissal era o mais barato em esforço porque a linha estava em 500.
+
+**Mexer no tamanho ou no valor de um peixe move estes números.** Quem mexer
+recalcula os preços, senão a progressão sai do que foi pedido.
+
+**A isca braba custa 800**, porque é ela que libera os dois lendários: 18
+peixes do abissal para comprá-la, e paga-se em 2,9 lendários médios. Passa a
+ser a segunda compra mais cara, atrás da linha abissal — ela era a mais cara
+de todas quando a linha custava 500.
 
 ### Celular
 
