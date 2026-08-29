@@ -304,6 +304,20 @@ ainda não existe. Os peixes já têm lugar reservado para a foto no caderno.
 - **O minigame cobre a cena, não a substitui.** O lago fica desenhado atrás.
 - **Tab abre o caderno** por cima da cena.
 
+**A câmera olha o lago de cima, em ângulo.** A linha d'água fica em **25%** e
+os 75% de baixo são o plano da água. O barco **não se cola ao horizonte**:
+flutua nesse plano, entre 50% e 67%, dentro do retângulo da marca — água
+atrás dele e água à frente. A loja fica em pé na margem (26%–46%), na mesma
+faixa por onde o barco passa.
+
+Duas versões anteriores ficaram pelo caminho, e a lição é a mesma nas duas.
+Primeiro o barco estava solto no alto da moldura, sem nada atrás. Depois veio
+o horizonte a 40% com o barco pousado nele, em 28% — e o dono voltou a dizer
+que continuava "super alto na água". **Mexer na altura do barco não resolve
+enquanto a linha d'água estiver a meio da moldura**: pousado nela, o barco vai
+sempre ficar no alto do quadro. O que muda o enquadramento é subir a linha e
+soltar o barco dela.
+
 ### A loja
 
 Abre com espaço quando o barco está na margem. Setas escolhem, espaço age — a mesma gramática do
@@ -353,19 +367,22 @@ uma tainha de 50cm. "Peixe maior paga mais" precisa valer **entre** espécies.
 lendários em 400cm e 350cm — que valem 400 e 350 moedas, mais que qualquer
 linha.
 
-**Preços: linhas 50, 110, 500; iscas 30, 90, 800.**
+**Preços: linhas 50, 150, 500; iscas 30, 90, 800.** São os números do dono, e
+ficam como ele os deu. O pedido de arrumar a economia era sobre **quanto vale
+um peixe**, não sobre quanto custa uma linha; a certa altura o preço do meio
+esteve em 110 para achatar a progressão, e voltou.
 
-O preço do meio era 150 e foi o **único número do dono que precisou mudar**.
-Medido a 150, custava 27,9 peixes médios da faixa contra 20,0 do raso e 17,7
-do abissal: o meio era o gargalo, mais caro **em esforço** que o abissal. A
-causa é aritmética — o valor salta 5× entre faixas e o preço só 3,3×. A 110 a
-progressão fica em **20,0 / 20,5 / 16,3**, plana e aliviando no fim.
+Medindo o esforço — preço ÷ valor do peixe médio da faixa, tamanho no meio da
+escala, sem os lendários — a progressão fica em **13,6 / 20,0 / 11,3 peixes**.
+O meio é o trecho mais longo, e é isso mesmo: é a travessia antes do abissal,
+que depois alivia. A linha abissal é a que menos custa em esforço, coerente
+com ela ser a melhor compra do jogo.
 
 **A isca braba custa 800, mais que a linha abissal**, porque é ela que libera
-os dois lendários. São 26 peixes do abissal para comprá-la, e ela se paga em
-2,7 lendários médios: caríssima, mas com retorno visível.
+os dois lendários. São 18 peixes do abissal para comprá-la, e ela se paga em
+2,9 lendários médios: caríssima, mas com retorno visível.
 
-### Celular### Celular### Celular
+### Celular
 
 **Portrait, e completamente responsivo** — pedido do dono. Duas coisas que só apareceram medindo
 num viewport real de 410px:
@@ -379,8 +396,30 @@ num viewport real de 410px:
 A ação principal — lançar, abrir a loja, dispensar o resultado — é **uma função só**, que o
 Espaço e o botão de toque chamam. Duplicar a regra faria teclado e dedo divergirem na primeira
 mudança. Em paisagem baixa, um aviso pede para girar o aparelho em vez de espremer a cena.
-- **Vender o pescado** é o que vira moeda: um peixe vale metade do tamanho em cm, com piso de 1.
-  Pescar enche o porão; vender esvazia e credita.
+
+**Num telefone os quatro controles não cabem lado a lado.** Com 410px sobravam
+55px para o botão de ação e "Escolha uma marca" quebrava em quatro linhas, com
+a tecla a sair do botão. Abaixo de 560px a fileira quebra e o **caderno passa
+a ocupar uma linha inteira** — que era a única saída aceitável, porque a outra
+seria escondê-lo, e coleção escondida não existe para quem não a procura.
+
+### O tutorial
+
+**Capítulos disparados por acontecimento, não um manual na abertura.** Quem
+fala é o lojista, e ele volta quando você faz algo novo: `intro` na primeira
+partida, `catch` no primeiro peixe, `sale` na primeira venda. O que já foi
+visto é da **pessoa**, não da partida — fica em `fishing:tuto`.
+
+Enquanto a fala corre, um véu bloqueia a cena: é assim que novel funciona, e
+sem ele a pessoa navega por baixo do texto e não lê nada.
+
+**Um capítulo não entra por cima de um painel aberto.** A venda dispara o
+capítulo de dentro da loja, e a caixa de fala, ancorada no rodapé do lago,
+cortava a lista da loja ao meio — com o rodapé do painel a sair por baixo
+dela. O capítulo fica pendente e abre quando o painel fecha, que é também
+onde a fala faz sentido: acabou de vender, agora olha.
+- **Vender o pescado** é o que vira moeda: o valor sai da taxa por cm do grupo
+  (ver Economia), com piso de 1. Pescar enche o porão; vender esvazia e credita.
 
 O progresso mora numa chave própria (`fishing:progress`), separada do caderno de espécimes — o
 caderno tem formato já publicado, e misturar obrigaria a migrar um dado que não precisa mudar.

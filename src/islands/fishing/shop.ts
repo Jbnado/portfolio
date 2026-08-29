@@ -21,7 +21,7 @@ export const LINES: Depth[] = ['raso', 'medio', 'abissal'];
    valor por faixa salta 5x (teto 10 -> 50) e o preco so 3.3x. E o unico
    numero do dono que mudei, e mudei para cumprir o "fique justo toda a
    progressao" que ele pediu junto. */
-export const LINE_PRICE: Record<Depth, number> = { raso: 50, medio: 110, abissal: 500 };
+export const LINE_PRICE: Record<Depth, number> = { raso: 50, medio: 150, abissal: 500 };
 
 export type Progress = {
   coins: number;
