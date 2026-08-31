@@ -670,3 +670,33 @@ body.fishing-locked {
   outline: 3px solid var(--fishing-marker);
   outline-offset: 3px;
 }
+
+/* ---- Tipografia e respiro da vitrine.
+
+   O h1 nao tinha regra nenhuma e saia do tamanho de texto corrido, o que fazia
+   o titulo da pagina desaparecer ao lado do proprio menu. Os degraus abaixo
+   sao os que o DESIGN.md ja documenta: 28/36 e a camada Headline ("titulo de
+   seccao"), 20/24 e a camada Titulo. Nada de valor novo na rampa. */
+.vitrine-topo h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.vitrine-bloco h2,
+.vitrine-ficha h2 { font-size: 1.25rem; }
+
+@media (min-width: 768px) {
+  .vitrine-topo h1 { font-size: 2.25rem; }
+  .vitrine-bloco h2,
+  .vitrine-ficha h2 { font-size: 1.5rem; }
+}
+
+/* No telefone a pagina respira menos, senao o texto vira uma coluna de
+   paragrafos separados por buracos e obriga a rolar por nada. */
+@media (max-width: 640px) {
+  .vitrine { gap: 28px; }
+  .vitrine-prints { gap: 10px; }
+  .vitrine-ficha { padding-top: 18px; }
+}
