@@ -79,73 +79,30 @@
   );
 }
 
-/* O plano da agua em DEGRAUS, nao em degrade.
+/* A distancia, num degrade LISO.
 
-   Pixel art nao interpola: escolhe poucos valores e passa de um para o outro
-   por trama. Era isto que faltava ao lago de dia — ele tinha a cor certa e
-   materia nenhuma, e uma laje chapada de 900px nao le como agua por mais
-   afinada que esteja a cor. Aqui sao quatro valores, do mais fundo junto ao
-   horizonte ao mais claro no primeiro plano.
+   Este bloco ja foi hachura diagonal, estrias a deslizar e xadrez de 16 bits,
+   e as tres foram recusadas pelo mesmo motivo: qualquer trama sobre uma area
+   desta dimensao le como listra, nao como agua. Sobre 900px de largura nao ha
+   padrao discreto que passe por superficie.
 
-   Os degraus valem para as tres profundidades ao mesmo tempo: a faixa por
-   baixo diz ONDE se esta no lago, isto diz o quao LONGE se esta olhando. */
+   A agua e o FUNDO onde o pixel art acontece, nao pixel art ela propria. Quem
+   carrega essa linguagem e o pescador e o barco, que sao pequenos e tem
+   contorno. O lago so precisa de dar distancia — e distancia faz-se com dois
+   degrades lisos a cruzarem-se: este, do horizonte para o primeiro plano, e o
+   da profundidade, da margem para o abissal. */
 .world-view::before {
   content: '';
   position: absolute;
   inset: 25% 0 0 0;
   background-image: linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--lago-fundo) 52%, transparent) 0 6%,
-    color-mix(in srgb, var(--lago-fundo) 41%, transparent) 6% 14%,
-    color-mix(in srgb, var(--lago-fundo) 31%, transparent) 14% 25%,
-    color-mix(in srgb, var(--lago-fundo) 21%, transparent) 25% 40%,
-    color-mix(in srgb, var(--lago-fundo) 11%, transparent) 40% 60%,
-    transparent 60%
+    color-mix(in srgb, var(--lago-fundo) 52%, transparent),
+    color-mix(in srgb, var(--lago-fundo) 16%, transparent) 38%,
+    transparent 72%
   );
   pointer-events: none;
   z-index: var(--camada-atmosfera);
-}
-
-/* A TRAMA nas fronteiras entre degraus.
-
-   Xadrez de 4px, que e como 16 bits faziam degrade sem terem cores para
-   isso. A mascara recorta a trama SO nas costuras: xadrez em todo o lado
-   seria textura, e o que se quer e transicao.
-
-   E ela pisca entre duas fases em vez de deslizar. Foi assim que os jogos da
-   epoca animavam agua, e e o unico movimento que nao briga com a grade — a
-   tentativa anterior deslizava estrias e lia como chuva. */
-.world-view::after {
-  content: '';
-  position: absolute;
-  inset: 25% 0 0 0;
-  --trama: color-mix(in srgb, var(--lago-fundo) 30%, transparent);
-  background-image:
-    linear-gradient(45deg, var(--trama) 25%, transparent 25% 75%, var(--trama) 75%),
-    linear-gradient(45deg, var(--trama) 25%, transparent 25% 75%, var(--trama) 75%);
-  background-size: 4px 4px;
-  background-position: 0 0, 2px 2px;
-  /* As zonas de trama caem em cima de cada fronteira de degrau, e vao ficando
-     mais altas conforme se aproximam: e o mesmo espacamento de perspectiva
-     dos degraus. Agua perto ocupa mais ecra por unidade de distancia. */
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0 4.5%,  rgb(0 0 0) 4.5% 7.5%,
-    transparent 7.5% 12%, rgb(0 0 0) 12% 16%,
-    transparent 16% 22.5%, rgb(0 0 0) 22.5% 27.5%,
-    transparent 27.5% 37%, rgb(0 0 0) 37% 43%,
-    transparent 43% 56%, rgb(0 0 0) 56% 64%,
-    transparent 64%
-  );
-  animation: world-trama 2.6s steps(2) infinite;
-  pointer-events: none;
-  z-index: var(--camada-atmosfera);
-}
-
-/* Duas fases, nada entre elas: `steps(2)` e o que mantem a agua na grade. */
-@keyframes world-trama {
-  from { background-position: 0 0, 2px 2px; }
-  to   { background-position: 2px 2px, 0 0; }
 }
 
 /* ---- Camadas da cena, declaradas de uma vez.
@@ -359,11 +316,8 @@
   /* As bolhas param mas FICAM: sao elas que marcam o sitio, e apaga-las
      tiraria a informacao junto com o movimento. */
   .world-bolha { animation: none; opacity: 0.85; }
-  /* O brilho varre a largura toda da agua e nao carrega informacao nenhuma —
-     e exatamente o tipo de movimento que a preferencia existe para evitar. Ao
-     contrario do gesto do pescador, que e conteudo do jogo, este some. O
-     reflexo fica parado, nao desaparece: a agua continua a ter luz. */
-  .world-view::after { animation: none; }
+  /* O vulto que se aproxima para de nadar mas FICA: ele diz o tamanho do que
+     vem vindo, e isso e informacao, nao enfeite. */
   .world-shadow { animation: none; opacity: 0.5; }
   /* A sombra que passa e puro acontecimento decorativo, e some por inteiro:
      deixa-la parada seria uma mancha permanente que nao quer dizer nada. As
