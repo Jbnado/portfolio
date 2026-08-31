@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Fishing from '../../../islands/fishing/Fishing';
+import GameShowcase from "../../../components/GameShowcase.astro";
 import { t } from '../../../i18n/utils';
 import es from '../../../i18n/es.json';
 import { SITE_URL, gameUrl } from '../../../utils/constants';
@@ -24,8 +25,9 @@ const alternates = {
   <div class="fishing-stage">
     <canvas class="fishing-sea" aria-hidden="true"></canvas>
     <div class="fishing-content">
-      <h1>{t('game.title', locale)}</h1>
-      <Fishing client:load texts={es.game} />
+      <GameShowcase locale={locale}>
+        <Fishing client:load texts={es.game} slot="jogar" />
+      </GameShowcase>
     </div>
   </div>
 </BaseLayout>

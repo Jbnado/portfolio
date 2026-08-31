@@ -483,20 +483,10 @@ export default function Fishing({ texts }: { texts: Texts }) {
         {texts.play}
       </button>
 
-      <section>
-        <h2>{texts.log}</h2>
-        {Object.keys(log).length === 0 ? (
-          <p>{texts.logEmpty}</p>
-        ) : (
-          <ul>
-            {Object.entries(log).map(([id, r]) => (
-              <li key={id}>
-                {texts.fish[id]} — {r.times} {r.times === 1 ? texts.time : texts.times}, {texts.largest} {r.largest} cm
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      {/* O caderno saiu daqui. Ele vive DENTRO do jogo, atras da tecla Tab,
+          que e onde ele faz sentido como colecao. Fora, na pagina de vitrine,
+          era uma lista vazia dizendo "nenhum peixe registrado" para quem
+          ainda nem tinha clicado em jogar. */}
 
       {playing && (
         <div

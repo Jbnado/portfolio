@@ -579,3 +579,94 @@ body.fishing-locked {
   text-transform: uppercase;
   opacity: 0.7;
 }
+
+/* ---- A vitrine do jogo, no formato de itch.io.
+
+   A pagina era o titulo, um botao e uma lista vazia de caderno. Agora ela
+   mostra o jogo antes de falar dele: acao principal em cima, prints logo a
+   seguir, texto por baixo para quem ficou. */
+.vitrine {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 100%;
+  /* Larga o bastante para os prints respirarem. Quem segura a medida de
+     leitura sao os paragrafos, com o seu proprio max-width em ch: se fosse a
+     coluna inteira a 72ch, os prints ficavam do tamanho de miniatura numa
+     pagina que existe justamente para os mostrar. */
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.vitrine-topo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* A linha que diz o que e o jogo, antes de qualquer explicacao. */
+.vitrine-linha {
+  margin: 0;
+  max-width: 56ch;
+  color: var(--color-text-secondary);
+}
+
+/* Os prints em grade que quebra numa coluna no telemovel. `min()` no minimo
+   da coluna evita o transbordo horizontal que `minmax` fixo causa em ecra
+   estreito. */
+.vitrine-prints {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vitrine-prints li { margin: 0; }
+
+.vitrine-prints img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+}
+
+.vitrine-bloco,
+.vitrine-ficha {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vitrine-bloco h2,
+.vitrine-ficha h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.vitrine-bloco p,
+.vitrine-ficha p {
+  margin: 0;
+  max-width: 66ch;
+  line-height: 1.7;
+}
+
+.vitrine-ficha {
+  padding-top: 24px;
+  border-top: 2px solid var(--fishing-rule);
+}
+
+.vitrine-repo {
+  align-self: flex-start;
+  color: var(--fishing-marker);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.vitrine-repo:focus-visible {
+  outline: 3px solid var(--fishing-marker);
+  outline-offset: 3px;
+}

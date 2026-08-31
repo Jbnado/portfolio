@@ -1,0 +1,75 @@
+---
+/**
+ * A pagina de vitrine do jogo, no formato de itch.io.
+ *
+ * Vive num componente so, e nao dentro de cada `.astro` de idioma, porque sao
+ * TRES paginas com a mesma estrutura. Duplicado, o markup divergia na primeira
+ * mudanca e um idioma ficava para tras sem ninguem ver.
+ *
+ * Os prints sao capturados do jogo a correr, nao sao mockup.
+ */
+import { Image } from 'astro:assets';
+import { t } from '../i18n/utils';
+import vendaImg from '../assets/imgs/jogo-pesca-venda.webp';
+import noiteImg from '../assets/imgs/jogo-pesca-noite.webp';
+import minigameImg from '../assets/imgs/jogo-pesca-minigame.webp';
+
+interface Props { locale: string }
+const { locale } = Astro.props;
+
+const prints = [
+  { src: vendaImg, alt: t('game.page.shotVenda', locale) },
+  { src: noiteImg, alt: t('game.page.shotNoite', locale) },
+  { src: minigameImg, alt: t('game.page.shotMinigame', locale) },
+];
+---
+
+<article class="vitrine">
+  <header class="vitrine-topo">
+    <h1>{t('game.title', locale)}</h1>
+    <p class="vitrine-linha">{t('game.page.tagline', locale)}</p>
+    <slot name="jogar" />
+  </header>
+
+  <!-- Os prints vem logo depois da acao principal: quem chega quer ver o
+       jogo, nao ler sobre ele. O texto fica por baixo, para quem ficou. -->
+  <ul class="vitrine-prints">
+    {prints.map((p, i) => (
+      <li>
+        <Image
+          src={p.src}
+          alt={p.alt}
+          widths={[600, 1000]}
+          sizes="(min-width: 760px) 46vw, 92vw"
+          format="webp"
+          quality={80}
+          loading={i === 0 ? 'eager' : 'lazy'}
+        />
+      </li>
+    ))}
+  </ul>
+
+  <section class="vitrine-bloco">
+    <h2>{t('game.page.whyTitle', locale)}</h2>
+    <p>{t('game.page.why1', locale)}</p>
+    <p>{t('game.page.why2', locale)}</p>
+  </section>
+
+  <section class="vitrine-bloco">
+    <h2>{t('game.page.howTitle', locale)}</h2>
+    <p>{t('game.page.how1', locale)}</p>
+    <p>{t('game.page.how2', locale)}</p>
+    <p>{t('game.page.how3', locale)}</p>
+  </section>
+
+  <footer class="vitrine-ficha">
+    <h2>{t('game.page.stackTitle', locale)}</h2>
+    <p>{t('game.page.stack', locale)}</p>
+    <a
+      class="vitrine-repo"
+      href="https://github.com/Jbnado/portfolio"
+      target="_blank"
+      rel="noopener noreferrer"
+    >{t('game.page.repo', locale)}</a>
+  </footer>
+</article>

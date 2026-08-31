@@ -306,6 +306,23 @@
       "comum": "Common",
       "raro": "Rare",
       "lenda": "Legendary"
+    },
+    "page": {
+      "tagline": "A small fishing game that runs in the browser. Three minigames, 24 Brazilian species and a lake to sail.",
+      "playCta": "Play now",
+      "whyTitle": "Why it exists",
+      "why1": "I was hooked on fishing games. I played Dredge and Dave the Diver and could not stop thinking about how good that loop of casting, hooking and selling is.",
+      "why2": "So I made mine. It is not Dredge, it is a scrappy browser game, but the whole loop is there. You sail, pick a spot, fight the fish, sell at the shack on the bank and buy a better line to reach deeper water.",
+      "howTitle": "How it was built",
+      "how1": "I built it with coding agents, and I am not hiding that. What I brought was the design and the constraints, which is the part that does not decide itself.",
+      "how2": "A written spec was committed before any code. Each minigame engine is a pair, with pure logic in a tested file and a dumb visual shell that only draws what the logic says. There are 179 tests, and the page JS budget is enforced by a script that fails the build past 80 KB.",
+      "how3": "The decisions worth reading are the ones you only see up close. Each price now comes from effort measured in the band where you save, not the one the purchase unlocks, which took the game from 223 catches down to 54. The casting animation keeps running under reduced motion, because it is game content and not decoration. And the fisherman is the single declared exception to the two-theme colour rule, because he is a person and does not change colour at nightfall.",
+      "shotVenda": "The bait shack on the bank, with the pier and the moored boat",
+      "shotNoite": "The same lake at night, with lit windows on the far bank",
+      "shotMinigame": "The rings minigame, with the world dimmed behind it",
+      "stackTitle": "Under the hood",
+      "stack": "Astro, Preact and TypeScript. No engine, no game dependency. The art is pixel art, generated and reviewed by hand, and the lake is CSS.",
+      "repo": "See the code on GitHub"
     }
   }
 }
