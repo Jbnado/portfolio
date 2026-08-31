@@ -612,12 +612,15 @@ body.fishing-locked {
   color: var(--color-text-secondary);
 }
 
-/* Os prints em grade que quebra numa coluna no telemovel. `min()` no minimo
-   da coluna evita o transbordo horizontal que `minmax` fixo causa em ecra
-   estreito. */
+/* Os prints em grade de DUAS colunas, e nao em auto-fit.
+
+   Com auto-fit e quatro prints, uma janela larga abria tres colunas e deixava
+   o quarto sozinho numa fila — que e exatamente o canto vazio que ter numero
+   par devia resolver. Duas colunas fecham 2x2 em qualquer largura, e de
+   quebra cada print fica maior. */
 .vitrine-prints {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  grid-template-columns: 1fr;
   gap: 12px;
   margin: 0;
   padding: 0;
@@ -686,6 +689,10 @@ body.fishing-locked {
 
 .vitrine-bloco h2,
 .vitrine-ficha h2 { font-size: 1.25rem; }
+
+@media (min-width: 620px) {
+  .vitrine-prints { grid-template-columns: repeat(2, 1fr); }
+}
 
 @media (min-width: 768px) {
   .vitrine-topo h1 { font-size: 2.25rem; }

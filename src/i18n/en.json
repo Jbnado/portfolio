@@ -322,7 +322,8 @@
       "shotMinigame": "The rings minigame, with the world dimmed behind it",
       "stackTitle": "Under the hood",
       "stack": "Astro, Preact and TypeScript. No engine, no game dependency. The art is pixel art, generated and reviewed by hand, and the lake is CSS.",
-      "repo": "See the code on GitHub"
+      "repo": "See the code on GitHub",
+      "shotLoja": "The bank shop open over the lake, with the catch to sell and the prices of the line and baits"
     }
   }
 }

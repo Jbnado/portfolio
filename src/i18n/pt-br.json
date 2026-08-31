@@ -322,7 +322,8 @@
       "shotMinigame": "O minigame dos anéis, com o mundo desfocado por trás",
       "stackTitle": "Ficha técnica",
       "stack": "Astro, Preact e TypeScript. Nenhuma engine, nenhuma dependência de jogo. A arte é pixel art gerada e revisada à mão, e o lago é CSS.",
-      "repo": "Ver o código no GitHub"
+      "repo": "Ver o código no GitHub",
+      "shotLoja": "A loja da margem aberta sobre o lago, com o pescado a vender e os precos da linha e das iscas"
     }
   }
 }

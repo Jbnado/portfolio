@@ -13,14 +13,21 @@ import { t } from '../i18n/utils';
 import vendaImg from '../assets/imgs/jogo-pesca-venda.webp';
 import noiteImg from '../assets/imgs/jogo-pesca-noite.webp';
 import minigameImg from '../assets/imgs/jogo-pesca-minigame.webp';
+import lojaImg from '../assets/imgs/jogo-pesca-loja.webp';
 
 interface Props { locale: string }
 const { locale } = Astro.props;
 
+/* Quatro, e nao tres: em duas colunas o numero impar deixava o ultimo print
+   sozinho a meia largura, e a grade ficava a faltar um canto.
+
+   A ordem conta o laco do jogo. O lugar, o mesmo lugar de noite, a luta, e o
+   que se faz com o peixe depois. */
 const prints = [
   { src: vendaImg, alt: t('game.page.shotVenda', locale) },
   { src: noiteImg, alt: t('game.page.shotNoite', locale) },
   { src: minigameImg, alt: t('game.page.shotMinigame', locale) },
+  { src: lojaImg, alt: t('game.page.shotLoja', locale) },
 ];
 ---
 
