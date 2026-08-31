@@ -106,19 +106,29 @@ aleatoriedade não-injetada, testada no vitest em ambiente `node`.
 |---|---|
 | `castDuration(rng: () => number): number` | Sorteia a espera em 1000–2000ms. Um valor fixo fica mecânico e se percebe no terceiro lance. |
 | `shadowScale(fish: Fish): number` | Devolve o multiplicador do vulto a partir de `fish.sizeMax`, na faixa de 0,6 a 1,6. Monotônico: peixe maior, sombra maior, sem exceção. |
-| `frameAt(elapsed: number, total: number): 1 \| 2` | Traduz tempo decorrido em índice de quadro dentro da espera. Nunca devolve 0, que é a fase `idle`, nem 3, que pertence à transição para `playing`. |
+| `frameAt(elapsed: number, esperaMs: number): 1 \| 2 \| 3` | Traduz tempo decorrido em índice de quadro. Nunca devolve 0, que é a fase `idle`. |
+| `fightFrame(rarity, elapsed): 2 \| 3` | O quadro durante a luta. O comum fica parado no 3; raro e lenda alternam entre ceder e puxar, e o lendário mais depressa — é o que faz a lenda parecer lenda antes de o nome dela aparecer. |
 
-A troca do quadro 1 para o 2 acontece aos 300ms, um valor fixo: é o gesto de
-levantar, que não tem por que variar com a sorte do lance.
+A troca do quadro 1 para o 2 acontece aos 300ms (`LEVANTA_MS`), fixo: é o gesto
+de levantar, e não tem por que variar com a sorte do lance.
+
+Depois da espera vem a **batida da fisgada**: `FISGA_MS` = 700ms em que o quadro
+3 fica na tela com o mundo ainda limpo, antes de o véu e o minigame entrarem.
+Ela existe porque a mordida e a subida do véu aconteciam no mesmo instante, e o
+quadro mais bonito da folha nunca era visto. É o único tempo morto do lance, e é
+de propósito.
 
 ### Mapa de fase para quadro
 
 | Estado | Quadro | O que se vê |
 |---|---|---|
 | `idle` | 0 | Sentado, vara apoiada |
-| `casting`, primeiros ~300ms | 1 | Levantando |
-| `casting`, o resto da espera | 2 | Lançou; o vulto se aproxima na água |
-| Entrada em `playing` | 3 | Fisgou, vara curvada por cima da cabeça |
+| `casting`, primeiros 300ms | 1 | Levantando |
+| `casting`, até a mordida | 2 | Lançou; o vulto se aproxima na água |
+| `casting`, os 700ms finais | 3 | Fisgou, com o mundo ainda limpo |
+| `playing`, peixe comum | 3 | Segura, parado |
+| `playing`, raro e lenda | 2 ↔ 3 | Debate-se; o lendário mais depressa |
+| `result` | 0 | Sentado outra vez |
 
 ### Comportamentos
 
@@ -139,13 +149,14 @@ Renderizado numa `div` com `background-image`, `image-rendering: pixelated`,
 `background-size` de `calc(256px * var(--s))` e `background-position` em múltiplos
 exatos de 64 vezes a escala. O `data-frame` no elemento escolhe a posição.
 
-O vulto do peixe é um segundo asset em `src/islands/fishing/art/vulto.png`, ainda
-por produzir: uma silhueta genérica de peixe, de uma cor só mais alfa, que serve a
-todas as espécies e é escalada por `shadowScale`. Ele não revela a espécie — a
-revelação pertence ao `CatchView`, que foi construído em cima dela.
+O vulto é uma **elipse em CSS**, não um asset: o que ele comunica é TAMANHO, e
+forma de peixe entregaria a espécie. Ele some no instante da mordida — estava a
+aproximar-se, e chegou. Serve a todas as espécies e é escalado por `shadowScale`.
+Ele não revela a espécie — a revelação pertence ao `CatchView`, que foi
+construído em cima dela.
 
-Por ser silhueta chapada, o vulto é o único asset do jogo que pode ser recolorido
-por tema com `mask-image` sobre um token de cor, se isso vier a ser desejado.
+Por não ser imagem, ele obedece à Regra do Turno sem esforço: a cor sai de
+`--fishing-rule`, declarada nos dois temas.
 
 ### Como o asset é gerado
 
@@ -182,8 +193,8 @@ nas fronteiras — início, troca de quadro, e fim da espera.
 Não existe jsdom no projeto: nenhum teste toca `document` ou `window`.
 
 **Na mão:** a sequência completa nos dois temas; Esc durante `casting` voltando a
-`idle` com o foco no botão; o barco nítido em 1× e 2×; e a página do jogo dentro
-do orçamento de JS depois da mudança.
+`idle` com o foco no botão; o barco nítido em 1× e 2×; o desenho virando ao andar
+para a esquerda; e a página do jogo dentro do orçamento de JS depois da mudança.
 
 ## Defeitos conhecidos da arte
 

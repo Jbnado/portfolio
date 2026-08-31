@@ -6,7 +6,7 @@ import { TrackView } from './views/TrackView';
 import { HoldView } from './views/HoldView';
 import { DodgeView } from './views/DodgeView';
 import { weightedPick } from './draw';
-import { castDuration, frameAt, fightFrame, shadowScale } from './cast';
+import { castDuration, frameAt, fightFrame, shadowScale, FISGA_MS } from './cast';
 import { WorldView, WorldPad, useBoat } from './views/WorldView';
 import { TIER_BY_DEPTH, DEPTH_BY_TIER, depthAt, spotUnder, atShop } from './world';
 import { ShopView } from './views/ShopView';
@@ -99,8 +99,8 @@ function validLog(c: Log): Log {
 export default function Fishing({ texts }: { texts: Texts }) {
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
   /** Quadro do pescador durante a espera. So 1 ou 2: o 0 e a fase parada e o
-      3 pertence a luta, e nenhum dos dois depende de tempo. */
-  const [castFrame, setCastFrame] = useState<1 | 2>(1);
+      3 aqui e a fisgada com o mundo ainda limpo, antes de o veu subir. */
+  const [castFrame, setCastFrame] = useState<1 | 2 | 3>(1);
   /** Quadro da luta. O comum fica no 3; raro e lenda alternam, e a alternancia
       le como esforco. */
   const [fightF, setFightF] = useState<2 | 3>(3);
@@ -379,8 +379,12 @@ export default function Fishing({ texts }: { texts: Texts }) {
     let raf = 0;
     const passo = () => {
       const decorrido = performance.now() - t0;
-      if (decorrido >= ms) { setPhase({ kind: 'playing', fish, luck }); return; }
-      setCastFrame(frameAt(decorrido));
+      // A luta so comeca depois da BATIDA da fisgada: `ms` e a espera, e os
+      // FISGA_MS seguintes sao o puxao com o mundo ainda limpo. Entrar em
+      // `playing` no fim da espera subia o veu por cima do proprio quadro
+      // que se quer mostrar.
+      if (decorrido >= ms + FISGA_MS) { setPhase({ kind: 'playing', fish, luck }); return; }
+      setCastFrame(frameAt(decorrido, ms));
       raf = requestAnimationFrame(passo);
     };
     raf = requestAnimationFrame(passo);
@@ -580,7 +584,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
               onSailTo={sailTo}
               texts={texts.world}
               frame={phase.kind === 'casting' ? castFrame : phase.kind === 'playing' ? fightF : 0}
-              shadow={phase.kind === 'casting' ? shadowScale(phase.fish) : null}
+              shadow={phase.kind === 'casting' && castFrame < 3 ? shadowScale(phase.fish) : null}
               facing={facing}
             >
               {tuto !== null && (

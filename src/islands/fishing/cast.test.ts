@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { Fish } from './types';
-import { castDuration, shadowScale, frameAt, fightFrame, LEVANTA_MS } from './cast';
+import { castDuration, shadowScale, frameAt, fightFrame, LEVANTA_MS, FISGA_MS } from './cast';
 
 /** Peixe de teste: so `sizeMax` importa aqui, o resto e enchimento valido. */
 const peixe = (sizeMax: number): Fish => ({
@@ -47,25 +47,35 @@ describe('shadowScale', () => {
 });
 
 describe('frameAt', () => {
+  const ESPERA = 1500;
+
   it('o gesto de levantar abre a espera', () => {
-    expect(frameAt(0)).toBe(1);
-    expect(frameAt(LEVANTA_MS - 1)).toBe(1);
+    expect(frameAt(0, ESPERA)).toBe(1);
+    expect(frameAt(LEVANTA_MS - 1, ESPERA)).toBe(1);
   });
 
-  it('depois de levantar, fica no quadro de lancado ate o fim', () => {
-    expect(frameAt(LEVANTA_MS)).toBe(2);
-    expect(frameAt(1499)).toBe(2);
-    expect(frameAt(1500)).toBe(2);
+  it('depois de levantar, fica no quadro de lancado ate o peixe morder', () => {
+    expect(frameAt(LEVANTA_MS, ESPERA)).toBe(2);
+    expect(frameAt(ESPERA - 1, ESPERA)).toBe(2);
   });
 
-  it('a espera mais curta ainda mostra os dois quadros', () => {
+  it('acabada a espera, a fisgada aparece com o mundo ainda limpo', () => {
+    // A batida existe para a fisgada ser VISTA: antes dela o veu subia no
+    // mesmo instante e cobria o quadro mais bonito da folha.
+    expect(frameAt(ESPERA, ESPERA)).toBe(3);
+    expect(frameAt(ESPERA + FISGA_MS - 1, ESPERA)).toBe(3);
+  });
+
+  it('a batida da fisgada nao encolhe nem estica', () => {
+    expect(frameAt(ESPERA + FISGA_MS, ESPERA)).toBe(3);
+    expect(frameAt(99999, ESPERA)).toBe(3);
+  });
+
+  it('a espera mais curta ainda mostra os tres quadros', () => {
     // Sem isto, um sorteio no piso pularia o gesto de levantar.
-    expect(frameAt(0)).toBe(1);
-    expect(frameAt(999)).toBe(2);
-  });
-
-  it('tempo alem do fim nao inventa um quadro que nao existe', () => {
-    expect(frameAt(99999)).toBe(2);
+    expect(frameAt(0, 1000)).toBe(1);
+    expect(frameAt(999, 1000)).toBe(2);
+    expect(frameAt(1000, 1000)).toBe(3);
   });
 });
 

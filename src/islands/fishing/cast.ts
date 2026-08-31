@@ -45,12 +45,23 @@ export function shadowScale(fish: Fish): number {
 }
 
 /**
- * Qual quadro da folha mostrar durante a espera.
+ * Quanto tempo a fisgada fica na tela ANTES de o veu e o minigame entrarem.
  *
- * Nunca devolve 0, que e a fase parada, nem 3, que pertence a entrada na luta.
+ * Sem esta batida, o quadro mais bonito da folha aparecia ja coberto: a
+ * mordida e a subida do veu aconteciam no mesmo instante, e o puxao nunca era
+ * visto. E tempo morto de proposito — o unico do lance.
  */
-export function frameAt(elapsed: number): 1 | 2 {
-  return elapsed < LEVANTA_MS ? 1 : 2;
+export const FISGA_MS = 700;
+
+/**
+ * Qual quadro da folha mostrar durante a espera e a batida que a fecha.
+ *
+ * Nunca devolve 0, que e a fase parada. O 3 aqui NAO e o mesmo 3 da luta:
+ * este e a fisgada com o mundo ainda limpo, aquele ja e com o veu por cima.
+ */
+export function frameAt(elapsed: number, esperaMs: number): 1 | 2 | 3 {
+  if (elapsed < LEVANTA_MS) return 1;
+  return elapsed < esperaMs ? 2 : 3;
 }
 
 /** Cadencia do debate, em ms por quadro. O lendario se sacode mais depressa:
