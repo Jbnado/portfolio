@@ -36,6 +36,11 @@ type Props = {
   /** Para que lado o pescador olha: 1 direita, -1 esquerda. O desenho e
       virado para a direita, entao sem isto andar para a esquerda dava re. */
   facing: 1 | -1;
+  /** Fora de `idle` o lago nao aceita ordens. Os alvos ficam desabilitados de
+      verdade, e nao so inertes: um botao com cara de vivo que nao faz nada e
+      pior do que botao nenhum, e ainda por cima o teclado continuaria a
+      alcanca-lo por Tab. */
+  paused: boolean;
   /** A caixa de fala do tutorial entra AQUI DENTRO, sobre a cena — e a
       convencao de novel, e faz a fala pertencer ao lago em vez de ficar
       solta no rodape da pagina. */
@@ -54,7 +59,7 @@ const FUNDO = [
     tudo desliza junto e a paisagem parece colada no barco. */
 const PARALLAX = 0.35;
 
-export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing, children }: Props) {
+export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing, paused, children }: Props) {
   const cam = cameraAt(boat, VIEW_W);
   const sx = (x: number) => ((x - cam) / VIEW_W) * 100;
   const sxFar = (x: number) => ((x - cam * PARALLAX) / VIEW_W) * 100;
@@ -101,6 +106,7 @@ export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing,
         <button
           type="button"
           class="world-hot world-shop"
+          disabled={paused}
           data-near={String(naLoja)}
           style={{ left: `${sx(SHOP_X)}%`, width: `${(5 / VIEW_W) * 100}%` }}
           onClick={() => onSailTo(SHOP_X)}
@@ -114,6 +120,7 @@ export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing,
             type="button"
             key={s.id}
             class="world-hot world-spot"
+            disabled={paused}
             data-here={String(spot?.id === s.id)}
             style={{ left: `${sx(s.x)}%`, width: `${((REACH * 2) / VIEW_W) * 100}%` }}
             onClick={() => onSailTo(s.x)}
@@ -278,11 +285,23 @@ export function useBoat(active: boolean): {
     };
   }, [active]);
 
+  /** A pausa tem de valer para o comando, nao so para o laco.
+      `active` cai durante a espera e a luta, e o efeito acima limpa as refs
+      NO INSTANTE em que isso acontece — mas nao impedia que uma ordem nova
+      entrasse depois. Um clique na agua durante a espera ficava guardado e o
+      barco saia andando sozinho quando o minigame acabava. */
+  const activeRef = useRef(active);
+  activeRef.current = active;
+
   const setDir = useCallback((d: number) => {
+    if (!activeRef.current) return;
     dirRef.current = d;
     if (d) alvoRef.current = null;
   }, []);
-  const sailTo = useCallback((x: number) => { alvoRef.current = x; }, []);
+  const sailTo = useCallback((x: number) => {
+    if (!activeRef.current) return;
+    alvoRef.current = x;
+  }, []);
 
   return { boat, facing, setDir, sailTo };
 }

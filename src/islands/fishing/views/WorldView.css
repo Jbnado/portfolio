@@ -175,6 +175,19 @@
    entendeu o mouse antes mesmo do clique. */
 .world-hot:hover .world-ping { animation: none; opacity: 1; transform: scale(1.1); }
 
+/* Pausado. Vem DEPOIS do :hover de proposito: sem isto o anel voltava a
+   acender ao passar o rato por cima de um alvo que ja nao aceita clique.
+   O pulso e a promessa de que da para clicar, e durante a espera e a luta
+   essa promessa e falsa. */
+.world-hot:disabled { cursor: default; }
+.world-hot:disabled .world-ping,
+.world-hot:disabled:hover .world-ping { animation: none; opacity: 0; transform: none; }
+.world-hot:disabled .world-tag { opacity: 0.35; }
+/* O :not e obrigatorio: `:disabled:hover` tem especificidade maior que
+   `[data-here='true']`, entao sem ele passar o rato apagava o realce de
+   "estas aqui" — que nao e hover, e estado. */
+.world-spot:disabled:not([data-here='true']):hover { background: transparent; }
+
 @media (prefers-reduced-motion: reduce) {
   .world-ping { animation: none; opacity: 0.9; }
 }

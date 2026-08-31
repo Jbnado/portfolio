@@ -47,22 +47,11 @@ export function shadowScale(fish: Fish): number {
 /**
  * Quanto tempo a fisgada fica na tela ANTES de o veu e o minigame entrarem.
  *
- * Sem esta batida, o quadro mais bonito da folha aparecia ja coberto: a
- * mordida e a subida do veu aconteciam no mesmo instante, e o puxao nunca era
- * visto. E tempo morto de proposito — o unico do lance.
+ * E o unico tempo morto do lance, e e de proposito. Sem esta batida a mordida
+ * e a subida do veu aconteciam no mesmo instante, e o puxao — que e o quadro
+ * mais bonito da folha — nunca era visto por ninguem.
  */
 export const FISGA_MS = 700;
-
-/**
- * Qual quadro da folha mostrar durante a espera e a batida que a fecha.
- *
- * Nunca devolve 0, que e a fase parada. O 3 aqui NAO e o mesmo 3 da luta:
- * este e a fisgada com o mundo ainda limpo, aquele ja e com o veu por cima.
- */
-export function frameAt(elapsed: number, esperaMs: number): 1 | 2 | 3 {
-  if (elapsed < LEVANTA_MS) return 1;
-  return elapsed < esperaMs ? 2 : 3;
-}
 
 /** Cadencia do debate, em ms por quadro. O lendario se sacode mais depressa:
     e o que faz a lenda PARECER lenda antes de o nome dela aparecer. O comum
@@ -82,4 +71,24 @@ const DEBATE_MS: Record<'raro' | 'lenda', number> = { raro: 260, lenda: 150 };
 export function fightFrame(rarity: 'comum' | 'raro' | 'lenda', elapsed: number): 2 | 3 {
   if (rarity === 'comum') return 3;
   return Math.floor(elapsed / DEBATE_MS[rarity]) % 2 === 0 ? 3 : 2;
+}
+
+/**
+ * Qual quadro da folha mostrar em toda a fase do lance.
+ *
+ * Uma funcao so para a fase inteira, em vez de duas a disputarem a fronteira:
+ * levanta, lanca, e entao ENTREGA a batida ao `fightFrame`. E por isso que o
+ * raro se debate com o mundo ainda limpo — enquanto essa alternancia vivia so
+ * na fase da luta, ela acontecia atras de um veu de 82% e ninguem a via.
+ *
+ * Nunca devolve 0, que e a fase parada.
+ */
+export function castFrameAt(
+  elapsed: number,
+  esperaMs: number,
+  rarity: 'comum' | 'raro' | 'lenda',
+): 1 | 2 | 3 {
+  if (elapsed < LEVANTA_MS) return 1;
+  if (elapsed < esperaMs) return 2;
+  return fightFrame(rarity, elapsed - esperaMs);
 }

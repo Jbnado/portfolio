@@ -6,7 +6,7 @@ import { TrackView } from './views/TrackView';
 import { HoldView } from './views/HoldView';
 import { DodgeView } from './views/DodgeView';
 import { weightedPick } from './draw';
-import { castDuration, frameAt, fightFrame, shadowScale, FISGA_MS } from './cast';
+import { castDuration, castFrameAt, fightFrame, shadowScale, FISGA_MS } from './cast';
 import { WorldView, WorldPad, useBoat } from './views/WorldView';
 import { TIER_BY_DEPTH, DEPTH_BY_TIER, depthAt, spotUnder, atShop } from './world';
 import { ShopView } from './views/ShopView';
@@ -324,7 +324,16 @@ export default function Fishing({ texts }: { texts: Texts }) {
       const id = q.get('peixe');
       const forced = id ? FISH.find((f) => f.id === id) : undefined;
       if (forced) {
-        setPhase({ kind: 'playing', fish: guaranteed ? guaranteedFish(forced) : forced, luck: 0 });
+        // Passa pela espera como qualquer outro lance. Ir direto para a luta
+        // fazia o atalho MENTIR sobre o fluxo: era justamente por aqui que se
+        // ia provar a batida da fisgada de um raro, e era o unico caminho em
+        // que ela nao acontecia.
+        setPhase({
+          kind: 'casting',
+          fish: guaranteed ? guaranteedFish(forced) : forced,
+          luck: 0,
+          ms: castDuration(Math.random),
+        });
         return;
       }
     }
@@ -384,7 +393,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
       // `playing` no fim da espera subia o veu por cima do proprio quadro
       // que se quer mostrar.
       if (decorrido >= ms + FISGA_MS) { setPhase({ kind: 'playing', fish, luck }); return; }
-      setCastFrame(frameAt(decorrido, ms));
+      setCastFrame(castFrameAt(decorrido, ms, rarityOf(fish)));
       raf = requestAnimationFrame(passo);
     };
     raf = requestAnimationFrame(passo);
@@ -586,6 +595,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
               frame={phase.kind === 'casting' ? castFrame : phase.kind === 'playing' ? fightF : 0}
               shadow={phase.kind === 'casting' && castFrame < 3 ? shadowScale(phase.fish) : null}
               facing={facing}
+              paused={phase.kind !== 'idle'}
             >
               {tuto !== null && (
                 <TutorialView

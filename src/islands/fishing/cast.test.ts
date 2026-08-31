@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { Fish } from './types';
-import { castDuration, shadowScale, frameAt, fightFrame, LEVANTA_MS, FISGA_MS } from './cast';
+import { castDuration, shadowScale, castFrameAt, fightFrame, LEVANTA_MS, FISGA_MS } from './cast';
 
 /** Peixe de teste: so `sizeMax` importa aqui, o resto e enchimento valido. */
 const peixe = (sizeMax: number): Fish => ({
@@ -46,36 +46,50 @@ describe('shadowScale', () => {
   });
 });
 
-describe('frameAt', () => {
+describe('castFrameAt', () => {
   const ESPERA = 1500;
+  const naBatida = (t: number) => ESPERA + t;
 
   it('o gesto de levantar abre a espera', () => {
-    expect(frameAt(0, ESPERA)).toBe(1);
-    expect(frameAt(LEVANTA_MS - 1, ESPERA)).toBe(1);
+    expect(castFrameAt(0, ESPERA, 'comum')).toBe(1);
+    expect(castFrameAt(LEVANTA_MS - 1, ESPERA, 'comum')).toBe(1);
   });
 
   it('depois de levantar, fica no quadro de lancado ate o peixe morder', () => {
-    expect(frameAt(LEVANTA_MS, ESPERA)).toBe(2);
-    expect(frameAt(ESPERA - 1, ESPERA)).toBe(2);
+    expect(castFrameAt(LEVANTA_MS, ESPERA, 'comum')).toBe(2);
+    expect(castFrameAt(ESPERA - 1, ESPERA, 'comum')).toBe(2);
   });
 
-  it('acabada a espera, a fisgada aparece com o mundo ainda limpo', () => {
-    // A batida existe para a fisgada ser VISTA: antes dela o veu subia no
-    // mesmo instante e cobria o quadro mais bonito da folha.
-    expect(frameAt(ESPERA, ESPERA)).toBe(3);
-    expect(frameAt(ESPERA + FISGA_MS - 1, ESPERA)).toBe(3);
+  it('o comum fisga e segura, sem se debater', () => {
+    for (const p of [0, 0.3, 0.6, 0.99]) expect(castFrameAt(naBatida(p * FISGA_MS), ESPERA, 'comum')).toBe(3);
   });
 
-  it('a batida da fisgada nao encolhe nem estica', () => {
-    expect(frameAt(ESPERA + FISGA_MS, ESPERA)).toBe(3);
-    expect(frameAt(99999, ESPERA)).toBe(3);
+  it('o raro se debate DURANTE a batida, com o mundo ainda limpo', () => {
+    // E aqui que a alternancia tem de morar. Enquanto ela vivia so na fase da
+    // luta, acontecia atras de um veu de 82% e ninguem a via — foi o relato de
+    // quem pescou um bagre, que e `hold` e portanto raro.
+    const vistos = new Set([0, 0.3, 0.55, 0.85].map((p) => castFrameAt(naBatida(p * FISGA_MS), ESPERA, 'raro')));
+    expect(vistos.size).toBe(2);
   });
 
-  it('a espera mais curta ainda mostra os tres quadros', () => {
-    // Sem isto, um sorteio no piso pularia o gesto de levantar.
-    expect(frameAt(0, 1000)).toBe(1);
-    expect(frameAt(999, 1000)).toBe(2);
-    expect(frameAt(1000, 1000)).toBe(3);
+  it('a batida comeca sempre no puxao, seja qual for a raridade', () => {
+    for (const k of ['comum', 'raro', 'lenda'] as const) {
+      expect(castFrameAt(naBatida(0), ESPERA, k)).toBe(3);
+    }
+  });
+
+  it('a espera mais curta ainda mostra o gesto de levantar', () => {
+    expect(castFrameAt(0, 1000, 'comum')).toBe(1);
+    expect(castFrameAt(999, 1000, 'comum')).toBe(2);
+    expect(castFrameAt(1000, 1000, 'comum')).toBe(3);
+  });
+
+  it('nunca devolve um quadro que nao existe na folha', () => {
+    for (const k of ['comum', 'raro', 'lenda'] as const) {
+      for (let t = 0; t < ESPERA + FISGA_MS; t += 23) {
+        expect([1, 2, 3]).toContain(castFrameAt(t, ESPERA, k));
+      }
+    }
   });
 });
 

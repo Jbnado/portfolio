@@ -106,17 +106,21 @@ aleatoriedade não-injetada, testada no vitest em ambiente `node`.
 |---|---|
 | `castDuration(rng: () => number): number` | Sorteia a espera em 1000–2000ms. Um valor fixo fica mecânico e se percebe no terceiro lance. |
 | `shadowScale(fish: Fish): number` | Devolve o multiplicador do vulto a partir de `fish.sizeMax`, na faixa de 0,6 a 1,6. Monotônico: peixe maior, sombra maior, sem exceção. |
-| `frameAt(elapsed: number, esperaMs: number): 1 \| 2 \| 3` | Traduz tempo decorrido em índice de quadro. Nunca devolve 0, que é a fase `idle`. |
-| `fightFrame(rarity, elapsed): 2 \| 3` | O quadro durante a luta. O comum fica parado no 3; raro e lenda alternam entre ceder e puxar, e o lendário mais depressa — é o que faz a lenda parecer lenda antes de o nome dela aparecer. |
+| `castFrameAt(elapsed, esperaMs, rarity): 1 \| 2 \| 3` | O quadro em toda a fase do lance: levanta, lança, e entrega a batida ao `fightFrame`. Nunca devolve 0, que é a fase `idle`. |
+| `fightFrame(rarity, elapsed): 2 \| 3` | O puxão. O comum fica parado no 3; raro e lenda alternam entre ceder e puxar, e o lendário mais depressa — é o que faz a lenda parecer lenda antes de o nome dela aparecer. |
 
 A troca do quadro 1 para o 2 acontece aos 300ms (`LEVANTA_MS`), fixo: é o gesto
 de levantar, e não tem por que variar com a sorte do lance.
 
-Depois da espera vem a **batida da fisgada**: `FISGA_MS` = 700ms em que o quadro
-3 fica na tela com o mundo ainda limpo, antes de o véu e o minigame entrarem.
-Ela existe porque a mordida e a subida do véu aconteciam no mesmo instante, e o
-quadro mais bonito da folha nunca era visto. É o único tempo morto do lance, e é
-de propósito.
+Depois da espera vem a **batida da fisgada**: `FISGA_MS` = 700ms com o mundo
+ainda limpo, antes de o véu e o minigame entrarem. É o único tempo morto do
+lance, e é de propósito.
+
+É nela que o puxão do raro acontece. A alternância chegou a viver só na fase da
+luta, e ali corria atrás de um véu de 82% — quem pescou um bagre (que é `hold`,
+logo raro) não viu animação nenhuma e reportou como bug. Por isso existe uma
+função só para a fase inteira do lance, que entrega a batida ao `fightFrame` em
+vez de duas funções disputarem a fronteira.
 
 ### Mapa de fase para quadro
 
@@ -125,9 +129,10 @@ de propósito.
 | `idle` | 0 | Sentado, vara apoiada |
 | `casting`, primeiros 300ms | 1 | Levantando |
 | `casting`, até a mordida | 2 | Lançou; o vulto se aproxima na água |
-| `casting`, os 700ms finais | 3 | Fisgou, com o mundo ainda limpo |
+| `casting`, os 700ms finais, comum | 3 | Fisgou e segura, mundo limpo |
+| `casting`, os 700ms finais, raro e lenda | 2 ↔ 3 | **O puxão, com o mundo limpo** |
 | `playing`, peixe comum | 3 | Segura, parado |
-| `playing`, raro e lenda | 2 ↔ 3 | Debate-se; o lendário mais depressa |
+| `playing`, raro e lenda | 2 ↔ 3 | Continua a debater-se, agora atrás do véu |
 | `result` | 0 | Sentado outra vez |
 
 ### Comportamentos
