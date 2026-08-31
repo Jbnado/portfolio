@@ -70,16 +70,21 @@
    As paradas caem no CENTRO de cada faixa do mundo (raso 8-44, medio 44-72,
    abissal 72-100), nao nas fronteiras: assim cada faixa tem a sua cor pura no
    meio e a passagem acontece ao longo de meia faixa inteira. E o unico jeito
-   de a transicao ser mesmo suave — nas fronteiras, ela seria um degrau. */
+   de a transicao ser mesmo suave — nas fronteiras, ela seria um degrau.
+
+   Cobre o mundo INTEIRO, desde a coordenada zero, e nao so a partir da orla:
+   a margem e desenhada por cima. Enquanto a agua comecava onde a terra
+   acabava, encolher a terra abria um buraco por onde se via o fundo da
+   moldura. */
 .world-water {
   position: absolute;
   top: var(--horizonte);
   bottom: 0;
   background: linear-gradient(
     to right,
-    var(--lago-raso) 0 20%,
-    var(--lago-medio) 54%,
-    var(--lago-fundo) 85% 100%
+    var(--lago-raso) 0 26%,
+    var(--lago-medio) 58%,
+    var(--lago-fundo) 86% 100%
   );
 }
 
@@ -126,6 +131,11 @@
      menos, e a outra margem — que e onde o LUGAR se ve — ficava espremida
      numa tira no topo. */
   --horizonte: 40%;
+  /* Onde a TERRA acaba e a agua comeca, medido do topo da cena.
+     Tem de ficar ACIMA da linha por onde o barco passa (67%), senao nao ha
+     agua nenhuma entre quem navega e a margem — e era esse o defeito: a
+     terra descia ate ao fundo do quadro e o barco entrava dentro dela. */
+  --margem-agua: 60%;
   /* Escala do pixel, partilhada por TODOS os sprites da cena. Vivia dentro
      do .world-boat, e a loja nao a enxergava — cada sprite novo teria de
      redeclarar o mesmo par de degraus e um deles acabaria por divergir. */
@@ -150,9 +160,29 @@
    Riscar por cima disso era dizer a mesma coisa uma terceira vez, em papel
    milimetrado, na metade mais bonita do lago. */
 
-/* Terra, nao agua translucida: a margem sobe oito pontos acima da linha
-   d'agua, e e isso que a faz ler como margem. */
-.world-shore { position: absolute; top: calc(var(--horizonte) - 8%); bottom: 0; background: var(--lago-terra); }
+/* A margem. Sobe oito pontos acima do horizonte, e PARA em `--margem-agua`.
+
+   Descia ate ao fundo do quadro, o que fazia dela uma parede de terra pela
+   qual o barco navegava adentro. Agora ha agua a frente dela, que e o que
+   torna verdade chegar de barco a uma loja que fica em terra.
+
+   O canto de baixo e arredondado e a orla ganha uma faixa molhada: sem isso
+   a terra acaba num corte reto, e corte reto no meio de um lago le como um
+   retangulo pousado sobre a agua — que e exatamente o que parecia. */
+.world-shore {
+  position: absolute;
+  top: calc(var(--horizonte) - 8%);
+  bottom: calc(100% - var(--margem-agua));
+  /* A areia molhada vive no PROPRIO fundo, e nao num pseudo-elemento: com
+     raio em percentagem, uma tira de 5px a herdar esse raio deforma e sai
+     para fora da curva. Dentro do gradiente ela acompanha a forma. */
+  background: linear-gradient(
+    to bottom,
+    var(--lago-terra) calc(100% - 7px),
+    color-mix(in srgb, var(--lago-terra) 55%, var(--lago-raso))
+  );
+  border-bottom-right-radius: 46% 70%;
+}
 
 /* ---- Alvos clicaveis.
 
@@ -180,15 +210,19 @@
    Em TERRA, entao ao contrario da marca ela pode ser solida: e uma
    construcao, nao um acidente da agua. */
 .world-shop {
-  /* Assente na margem a 66% da cena, logo atras da linha por onde o barco
-     passa (67%): quem esta em terra fica um pouco mais longe do que quem
-     esta na agua a frente dela. */
-  top: calc(66% - 64px * var(--s));
-  width: calc(64px * var(--s));
+  /* A base assenta EXATAMENTE na orla, e nao num numero solto: e o que a
+     planta em terra em vez de a deixar a pairar sobre um bloco. */
+  top: calc(var(--margem-agua) - 64px * var(--s));
+  width: calc(96px * var(--s));
   height: calc(64px * var(--s));
-  transform: translateX(-50%);
+  /* Ancorada pela ESQUERDA, no inicio da terra: a casa fica na margem e o
+     cais avanca dali para a agua, que e a leitura certa.
+
+     Chegou a estar ancorada pela ponta do cais, por essa ser o sitio de
+     atracar — mas a loja fica no canto do mundo e nao ha espaco nenhum a
+     esquerda dela, entao a casa saia inteira para fora da moldura. */
   background-image: url('../art/loja.png');
-  background-size: calc(128px * var(--s)) calc(64px * var(--s));
+  background-size: calc(192px * var(--s)) calc(64px * var(--s));
   background-repeat: no-repeat;
   image-rendering: pixelated;
 }
@@ -199,10 +233,40 @@
 
    Sao dois quadros na mesma folha, entao a troca e so deslocamento. */
 .light .world-shop { background-position: 0 0; }
-.dark .world-shop { background-position: calc(-64px * var(--s)) 0; }
+.dark .world-shop { background-position: calc(-96px * var(--s)) 0; }
 
-.world-shop[data-near='true'] { outline: 3px solid var(--fishing-marker); outline-offset: 3px; }
-.world-shop:hover { filter: brightness(1.15); }
+/* Sombra de contacto, so debaixo da CASA: o cais fica sobre estacas e ja tem
+   as proprias sombras desenhadas. Sem ela a casa flutua, por mais certa que
+   esteja a posicao — e o olho que decide se uma coisa esta pousada, e o que
+   ele procura e a sombra. */
+.world-shop::after {
+  content: '';
+  position: absolute;
+  left: 4%;
+  width: 38%;
+  bottom: -2px;
+  height: calc(4px * var(--s));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--lago-fundo) 38%, transparent);
+  pointer-events: none;
+}
+
+/* Estar atracado acende a construcao pela SILHUETA, e nao com uma moldura.
+   `outline` desenha o retangulo da caixa, e uma caixa vermelha por cima de
+   pixel art le como erro de layout; `drop-shadow` segue o alfa do sprite,
+   entao o brilho contorna o telhado, o toldo e as estacas do cais. */
+.world-shop[data-near='true'] {
+  filter:
+    drop-shadow(0 0 calc(1px * var(--s)) var(--fishing-marker))
+    drop-shadow(0 0 calc(4px * var(--s)) color-mix(in srgb, var(--fishing-marker) 60%, transparent));
+}
+.world-shop:hover { filter: brightness(1.12); }
+.world-shop[data-near='true']:hover {
+  filter:
+    brightness(1.12)
+    drop-shadow(0 0 calc(1px * var(--s)) var(--fishing-marker))
+    drop-shadow(0 0 calc(4px * var(--s)) color-mix(in srgb, var(--fishing-marker) 60%, transparent));
+}
 
 /* Rotulo da loja: o unico texto dentro da cena, porque um quadrado colorido
    sozinho nao diz que ali se compra. */
