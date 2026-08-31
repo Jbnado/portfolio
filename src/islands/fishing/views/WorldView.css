@@ -146,29 +146,16 @@
   to   { transform: translateY(20px); }
 }
 
-/* Agua fora do alcance da linha: hachurada e apagada. A trava tem que se VER
-   na cena — se so o aviso dissesse, andar ate la e nao achar nada pareceria
-   defeito.
+/* A agua fora do alcance ja NAO leva hachura.
 
-   A hachura fica num pseudo-elemento, e nao no `background` da faixa, porque
-   a faixa agora carrega o gradiente das profundidades: escrever por cima dele
-   apagaria a dissolucao das pontas. */
-.world-water[data-locked='true'] { opacity: 0.55; }
-.world-water[data-locked='true']::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  /* Borda DURA de proposito, ao contrario das faixas de profundidade: isto
-     nao e profundidade, e uma REGRA — ate aqui a linha chega, dali nao.
+   Ela existia porque a trava tinha de se ver na cena: sem sinal nenhum, andar
+   ate la e nao pescar pareceria defeito. Mas o sinal passou a existir sozinho
+   quando as marcas viraram bolhas — onde da para pescar borbulha, onde nao da
+   a agua e so agua. Presenca e ausencia bastam, e o aviso no HUD continua a
+   dizer por palavras quando a linha nao alcanca.
 
-     Fio fino e espacado: a hachura a cheio dominava metade da cena e o lago
-     virava papel milimetrado. Ela precisa de se VER, nao de gritar. */
-  background-image: repeating-linear-gradient(
-    45deg,
-    transparent 0 11px,
-    color-mix(in srgb, var(--lago-brilho) 42%, transparent) 11px 12px
-  );
-}
+   Riscar por cima disso era dizer a mesma coisa uma terceira vez, em papel
+   milimetrado, na metade mais bonita do lago. */
 
 /* Terra, nao agua translucida: a margem sobe acima da linha d'agua. */
 .world-shore { position: absolute; top: 17%; bottom: 0; background: var(--lago-terra); }
@@ -241,10 +228,10 @@
   top: 57%;
   height: 12%;
   transform: translateX(-50%);
-  background:
-    radial-gradient(circle at 32% 44%, color-mix(in srgb, var(--lago-brilho) 52%, transparent) 0 2px, transparent 2.5px),
-    radial-gradient(circle at 54% 62%, color-mix(in srgb, var(--lago-brilho) 40%, transparent) 0 3px, transparent 3.5px),
-    radial-gradient(circle at 70% 38%, color-mix(in srgb, var(--lago-brilho) 46%, transparent) 0 2px, transparent 2.5px);
+  /* Sem fundo: quem marca o sitio sao as bolhas, que agora sao elementos e
+     sobem sozinhas. As tres que viviam aqui como gradiente ficavam paradas —
+     bolha parada nao e bolha, e um ponto. */
+  background: none;
 }
 
 /* De vez em quando passa uma sombra por baixo: aparece, encolhe e some. E o
@@ -286,50 +273,62 @@
    alarme — no claro, oxblood a cheio sobre agua lia como aviso de perigo. */
 .world-spot[data-here='true'],
 .world-spot:hover {
-  background:
-    radial-gradient(circle at 32% 44%, color-mix(in srgb, var(--lago-brilho) 52%, transparent) 0 2px, transparent 2.5px),
-    radial-gradient(circle at 54% 62%, color-mix(in srgb, var(--lago-brilho) 40%, transparent) 0 3px, transparent 3.5px),
-    radial-gradient(circle at 70% 38%, color-mix(in srgb, var(--lago-brilho) 46%, transparent) 0 2px, transparent 2.5px),
-    radial-gradient(ellipse at center, color-mix(in srgb, var(--fishing-marker) 26%, transparent), transparent 76%);
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--fishing-marker) 22%, transparent),
+    transparent 76%
+  );
 }
 
 /* Anel pulsante sobre cada marca: e ele que ensina, sem texto, que dali se
    pode clicar. Some com movimento reduzido — o aviso vira estatico. */
-/* Ondulacao em volta das BOLHAS, nao em volta do alvo.
+/* As bolhas. Sobem, incham e estouram.
 
-   Passou por retangulo de interface e depois por elipse do tamanho do alvo —
-   que e largo, entao o anel ficava maior que o barco e dominava a cena. Ele
-   existe para ensinar que ali se clica, nao para ser o assunto: agora e um
-   circulinho fino a cercar as bolhas, e o alvo clicavel continua largo por
-   baixo dele. */
-.world-ping {
+   O anel que havia aqui foi-se: passou por retangulo, por elipse do tamanho
+   do alvo e por circulo fino, e em todas as versoes era uma forma de
+   INTERFACE pousada num lago. O que anuncia o sitio agora e o proprio lago a
+   borbulhar — e isso nao precisa de moldura.
+
+   Cada bolha sobe no seu tempo. Iguais e sincronizadas nao seriam bolhas,
+   seriam tres pontos a piscar. */
+.world-bolha {
   position: absolute;
-  inset: 18% 30%;
-  border: 1px solid color-mix(in srgb, var(--fishing-marker) 40%, transparent);
+  bottom: 34%;
+  width: 3px;
+  height: 3px;
   border-radius: 50%;
-  animation: world-ping 2s ease-out infinite;
+  background: color-mix(in srgb, var(--lago-brilho) 62%, transparent);
+  animation: world-bolha 3.4s ease-in infinite;
   pointer-events: none;
 }
+.world-bolha:nth-of-type(1) { left: 40%; animation-delay: 0s; }
+.world-bolha:nth-of-type(2) { left: 51%; width: 4px; height: 4px; animation-duration: 4.1s; animation-delay: 1.3s; }
+.world-bolha:nth-of-type(3) { left: 60%; animation-duration: 3.9s; animation-delay: 2.4s; }
 
-/* O anel NUNCA some de todo. A versao anterior ia a opacidade zero em 75%
-   do ciclo, entao a pista de "da pra clicar" ficava invisivel a maior parte
-   do tempo — uma dica que so aparece as vezes nao ensina ninguem. */
-@keyframes world-ping {
-  0%, 100% { transform: scale(0.92); opacity: 0.55; }
-  50% { transform: scale(1.12); opacity: 1; }
+/* Sobe acelerando e estoura no fim: por isso `ease-in` e a escala a crescer
+   ate desaparecer, em vez de simplesmente sumir. */
+@keyframes world-bolha {
+  0%        { opacity: 0; transform: translateY(4px) scale(0.4); }
+  18%       { opacity: 0.95; transform: translateY(0) scale(1); }
+  72%       { opacity: 0.8; }
+  92%       { opacity: 0.35; transform: translateY(-15px) scale(1.35); }
+  100%      { opacity: 0; transform: translateY(-17px) scale(1.6); }
 }
 
 /* Passar o ponteiro por cima trava o anel e o acende: o alvo confirma que
    entendeu o mouse antes mesmo do clique. */
-.world-hot:hover .world-ping { animation: none; opacity: 1; transform: scale(1.1); }
+/* Hover acelera o borbulhar: o lago responde ao ponteiro. */
+.world-hot:hover .world-bolha { animation-duration: 1.9s; }
 
 /* Pausado. Vem DEPOIS do :hover de proposito: sem isto o anel voltava a
    acender ao passar o rato por cima de um alvo que ja nao aceita clique.
    O pulso e a promessa de que da para clicar, e durante a espera e a luta
    essa promessa e falsa. */
 .world-hot:disabled { cursor: default; }
-.world-hot:disabled .world-ping,
-.world-hot:disabled:hover .world-ping { animation: none; opacity: 0; transform: none; }
+/* Pausado, o lago para de borbulhar: a bolha promete que ali se pode pescar,
+   e durante a espera e a luta isso e falso. */
+.world-hot:disabled .world-bolha,
+.world-hot:disabled:hover .world-bolha { animation: none; opacity: 0; }
 .world-hot:disabled .world-tag { opacity: 0.35; }
 /* O :not e obrigatorio: `:disabled:hover` tem especificidade maior que
    `[data-here='true']`, entao sem ele passar o rato apagava o realce de
@@ -337,7 +336,9 @@
 .world-spot:disabled:not([data-here='true']):hover { background: transparent; }
 
 @media (prefers-reduced-motion: reduce) {
-  .world-ping { animation: none; opacity: 0.9; }
+  /* As bolhas param mas FICAM: sao elas que marcam o sitio, e apaga-las
+     tiraria a informacao junto com o movimento. */
+  .world-bolha { animation: none; opacity: 0.85; }
   /* O brilho varre a largura toda da agua e nao carrega informacao nenhuma —
      e exatamente o tipo de movimento que a preferencia existe para evitar. Ao
      contrario do gesto do pescador, que e conteudo do jogo, este some. O

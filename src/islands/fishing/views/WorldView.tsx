@@ -93,7 +93,6 @@ export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing,
             key={b.depth}
             class="world-water"
             data-depth={b.depth}
-            data-locked={String(TIER_BY_DEPTH[b.depth] > reach)}
             style={{ left: `${sx(b.from)}%`, width: `${((b.to - b.from) / VIEW_W) * 100}%` }}
           />
         ))}
@@ -128,9 +127,13 @@ export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing,
             onClick={() => onSailTo(s.x)}
             aria-label={texts.cast}
           >
-            {/* Anel pulsante: a pista de que da para clicar. Sem ele nada na
-                cena se anuncia como interativo. */}
-            <span class="world-ping" aria-hidden="true" />
+            {/* Bolhas de verdade, e nao gradientes no fundo do botao: cada uma
+                precisa subir no seu proprio tempo, e uma camada de fundo so
+                sabe mover-se inteira. Sao elas que dizem "ha peixe aqui" — e
+                a ausencia delas, mais adiante, e que diz que ali nao ha. */}
+            <span class="world-bolha" aria-hidden="true" />
+            <span class="world-bolha" aria-hidden="true" />
+            <span class="world-bolha" aria-hidden="true" />
           </button>
         ))}
 
