@@ -61,66 +61,91 @@
   pointer-events: none;
 }
 
-.world-water { position: absolute; top: 25%; bottom: 0; }
+/* A profundidade num gradiente SO, do raso a esquerda ao abissal a direita.
 
-/* As tres profundidades. Cada faixa DISSOLVE-SE na vizinha nas pontas: com
-   borda dura, tres listras da mesma cor no meio de um lago liam como azulejo,
-   nao como agua. A informacao sobrevive porque o escurecer progressivo
-   continua la — o que some e a costura. */
-.world-water[data-depth='raso'] {
-  background: linear-gradient(to right, var(--lago-raso) 82%, var(--lago-medio));
-}
-.world-water[data-depth='medio'] {
-  background: linear-gradient(to right, var(--lago-raso), var(--lago-medio) 14% 86%, var(--lago-fundo));
-}
-.world-water[data-depth='abissal'] {
-  background: linear-gradient(to right, var(--lago-medio), var(--lago-fundo) 18%);
-}
-
-/* O plano da agua vindo na nossa direcao: escuro ao longe, claro ao perto. E
-   o segundo sinal de angulo, junto do parallax — cor sozinha nao daria
-   profundidade nenhuma. Somado, tambem tira o brilho do reflexo do primeiro
-   plano, onde ele nao faria sentido. */
-.world-view::after {
-  content: '';
+   As paradas caem no CENTRO de cada faixa do mundo (raso 8-44, medio 44-72,
+   abissal 72-100), nao nas fronteiras: assim cada faixa tem a sua cor pura no
+   meio e a passagem acontece ao longo de meia faixa inteira. E o unico jeito
+   de a transicao ser mesmo suave — nas fronteiras, ela seria um degrau. */
+.world-water {
   position: absolute;
-  left: 0;
-  right: 0;
   top: 25%;
   bottom: 0;
-  background:
-    linear-gradient(to bottom, color-mix(in srgb, var(--lago-brilho) 22%, transparent), transparent 18%),
-    linear-gradient(to bottom, color-mix(in srgb, var(--lago-fundo) 55%, transparent), transparent 45%);
-  pointer-events: none;
-  z-index: var(--camada-atmosfera);
+  background: linear-gradient(
+    to right,
+    var(--lago-raso) 0 20%,
+    var(--lago-medio) 54%,
+    var(--lago-fundo) 85% 100%
+  );
 }
 
-/* O brilho na agua.
+/* O plano da agua em DEGRAUS, nao em degrade.
 
-   Primeira tentativa foi diagonal e regular, e leu como CHUVA. Agua vista em
-   angulo nao brilha em riscos inclinados: brilha em estrias HORIZONTAIS,
-   densas perto do horizonte e sumindo no primeiro plano — e por isso o
-   degrade que as apaga para baixo. A deriva tambem e vertical, o que le como
-   o plano da agua vindo na nossa direcao, o mesmo que a camera ja diz.
+   Pixel art nao interpola: escolhe poucos valores e passa de um para o outro
+   por trama. Era isto que faltava ao lago de dia — ele tinha a cor certa e
+   materia nenhuma, e uma laje chapada de 900px nao le como agua por mais
+   afinada que esteja a cor. Aqui sao quatro valores, do mais fundo junto ao
+   horizonte ao mais claro no primeiro plano.
 
-   Movimento decorativo de campo largo — ao contrario do gesto do pescador,
-   este OBEDECE a reduced-motion. */
+   Os degraus valem para as tres profundidades ao mesmo tempo: a faixa por
+   baixo diz ONDE se esta no lago, isto diz o quao LONGE se esta olhando. */
 .world-view::before {
   content: '';
   position: absolute;
   inset: 25% 0 0 0;
-  background: repeating-linear-gradient(
+  background-image: linear-gradient(
     to bottom,
-    transparent 0 8px,
-    color-mix(in srgb, var(--lago-brilho) 8%, transparent) 8px 10px,
-    transparent 10px 20px
+    color-mix(in srgb, var(--lago-fundo) 52%, transparent) 0 6%,
+    color-mix(in srgb, var(--lago-fundo) 41%, transparent) 6% 14%,
+    color-mix(in srgb, var(--lago-fundo) 31%, transparent) 14% 25%,
+    color-mix(in srgb, var(--lago-fundo) 21%, transparent) 25% 40%,
+    color-mix(in srgb, var(--lago-fundo) 11%, transparent) 40% 60%,
+    transparent 60%
   );
-  /* Alfa de mascara, nao cor de tema: apaga as estrias na agua de perto, onde
-     reflexo rasante nao existe. */
-  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.85), transparent 62%);
-  animation: world-brilho 9s linear infinite;
   pointer-events: none;
   z-index: var(--camada-atmosfera);
+}
+
+/* A TRAMA nas fronteiras entre degraus.
+
+   Xadrez de 4px, que e como 16 bits faziam degrade sem terem cores para
+   isso. A mascara recorta a trama SO nas costuras: xadrez em todo o lado
+   seria textura, e o que se quer e transicao.
+
+   E ela pisca entre duas fases em vez de deslizar. Foi assim que os jogos da
+   epoca animavam agua, e e o unico movimento que nao briga com a grade — a
+   tentativa anterior deslizava estrias e lia como chuva. */
+.world-view::after {
+  content: '';
+  position: absolute;
+  inset: 25% 0 0 0;
+  --trama: color-mix(in srgb, var(--lago-fundo) 30%, transparent);
+  background-image:
+    linear-gradient(45deg, var(--trama) 25%, transparent 25% 75%, var(--trama) 75%),
+    linear-gradient(45deg, var(--trama) 25%, transparent 25% 75%, var(--trama) 75%);
+  background-size: 4px 4px;
+  background-position: 0 0, 2px 2px;
+  /* As zonas de trama caem em cima de cada fronteira de degrau, e vao ficando
+     mais altas conforme se aproximam: e o mesmo espacamento de perspectiva
+     dos degraus. Agua perto ocupa mais ecra por unidade de distancia. */
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0 4.5%,  rgb(0 0 0) 4.5% 7.5%,
+    transparent 7.5% 12%, rgb(0 0 0) 12% 16%,
+    transparent 16% 22.5%, rgb(0 0 0) 22.5% 27.5%,
+    transparent 27.5% 37%, rgb(0 0 0) 37% 43%,
+    transparent 43% 56%, rgb(0 0 0) 56% 64%,
+    transparent 64%
+  );
+  animation: world-trama 2.6s steps(2) infinite;
+  pointer-events: none;
+  z-index: var(--camada-atmosfera);
+}
+
+/* Duas fases, nada entre elas: `steps(2)` e o que mantem a agua na grade. */
+@keyframes world-trama {
+  from { background-position: 0 0, 2px 2px; }
+  to   { background-position: 2px 2px, 0 0; }
 }
 
 /* ---- Camadas da cena, declaradas de uma vez.
@@ -140,11 +165,6 @@
 .world-hot,
 .world-shadow { z-index: var(--camada-cena); }
 .world-boat { z-index: var(--camada-barco); }
-
-@keyframes world-brilho {
-  from { transform: translateY(0); }
-  to   { transform: translateY(20px); }
-}
 
 /* A agua fora do alcance ja NAO leva hachura.
 
@@ -343,7 +363,7 @@
      e exatamente o tipo de movimento que a preferencia existe para evitar. Ao
      contrario do gesto do pescador, que e conteudo do jogo, este some. O
      reflexo fica parado, nao desaparece: a agua continua a ter luz. */
-  .world-view::before { animation: none; }
+  .world-view::after { animation: none; }
   .world-shadow { animation: none; opacity: 0.5; }
   /* A sombra que passa e puro acontecimento decorativo, e some por inteiro:
      deixa-la parada seria uma mancha permanente que nao quer dizer nada. As

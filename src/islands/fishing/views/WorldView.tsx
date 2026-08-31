@@ -11,11 +11,10 @@ import './WorldView.css';
     mapa que, de proposito, e pequeno. */
 const VIEW_W = 44;
 
-const BANDS: { depth: Depth; from: number; to: number }[] = [
-  { depth: 'raso', from: SHORE_TO, to: 44 },
-  { depth: 'medio', from: 44, to: 72 },
-  { depth: 'abissal', from: 72, to: WORLD_MAX },
-];
+/* As fronteiras das faixas (raso 8-44, medio 44-72, abissal 72-100) ja nao
+   vivem aqui: a agua e um gradiente unico e as paradas dele estao no CSS, em
+   percentagem do lago. Quem manda na REGRA de profundidade continua a ser
+   `depthAt` no world.ts — isto aqui era so pintura. */
 
 type Props = {
   boat: number;
@@ -88,14 +87,19 @@ export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing,
         {/* A linha d'agua. E ela que separa o longe do perto. */}
         <div class="world-horizon" />
 
-        {BANDS.map((b) => (
-          <div
-            key={b.depth}
-            class="world-water"
-            data-depth={b.depth}
-            style={{ left: `${sx(b.from)}%`, width: `${((b.to - b.from) / VIEW_W) * 100}%` }}
-          />
-        ))}
+        {/* UMA agua, nao tres. Eram tres divs, uma por faixa, cada uma com o
+            seu gradiente a dissolver-se nas pontas — mas as faixas tem
+            larguras muito diferentes (36, 28 e 28 unidades de mundo), entao
+            "dissolver nos 18% da ponta" dava comprimentos de transicao
+            diferentes em cada costura, e nenhuma delas suave. Um gradiente
+            unico sobre o lago inteiro nao tem costura para suavizar. */}
+        <div
+          class="world-water"
+          style={{
+            left: `${sx(SHORE_TO)}%`,
+            width: `${((WORLD_MAX - SHORE_TO) / VIEW_W) * 100}%`,
+          }}
+        />
 
         <div class="world-shore" style={{ left: `${sx(0)}%`, width: `${(SHORE_TO / VIEW_W) * 100}%` }} />
 
