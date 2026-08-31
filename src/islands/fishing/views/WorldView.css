@@ -205,8 +205,9 @@
   transform: translateX(-50%);
   background: var(--lago-margem);
   border: 2px solid var(--lago-terra);
+  /* Cantos retos: e uma construcao, e o arredondado sobrava justamente ao
+     lado da faixa de luz que marca a soleira. */
   border-bottom: 3px solid var(--fishing-marker);
-  border-radius: 3px 3px 0 0;
 }
 
 .world-shop[data-near='true'] { outline: 3px solid var(--fishing-marker); outline-offset: 3px; }
