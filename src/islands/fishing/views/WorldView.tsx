@@ -46,13 +46,9 @@ type Props = {
   children?: preact.ComponentChildren;
 };
 
-/** Cenario do fundo: morros e mata da outra margem. Sao so blocos, mas em
-    posicoes irregulares — fila regular le como cerca, nao como paisagem. */
-const FUNDO = [
-  { x: 6, w: 14, h: 46 }, { x: 21, w: 9, h: 30 }, { x: 33, w: 18, h: 54 },
-  { x: 49, w: 11, h: 34 }, { x: 62, w: 16, h: 62 }, { x: 80, w: 12, h: 40 },
-  { x: 93, w: 15, h: 50 },
-];
+/* Os sete blocos que faziam de mata sairam daqui: a outra margem passou a ser
+   uma faixa desenhada que ladrilha, e a irregularidade das copas agora vem do
+   desenho em vez de vir de uma lista de retangulos. */
 
 /** O fundo anda MENOS que a cena: e o parallax que da profundidade. Sem ele
     tudo desliza junto e a paisagem parece colada no barco. */
@@ -75,14 +71,13 @@ export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing,
       <div class="world-view">
         <div class="world-sky" />
 
-        {/* A outra margem, la longe. */}
-        {FUNDO.map((m, i) => (
-          <div
-            key={i}
-            class="world-far"
-            style={{ left: `${sxFar(m.x)}%`, width: `${(m.w / VIEW_W) * 100}%`, height: `${m.h * 0.3}%` }}
-          />
-        ))}
+        {/* A outra margem. Uma faixa que LADRILHA sobre o mundo inteiro, em vez
+            de sete blocos colocados a mao: o parallax continua a vir de
+            `sxFar`, que a move menos do que a cena. */}
+        <div
+          class="world-mata"
+          style={{ left: `${sxFar(0)}%`, width: `${(WORLD_MAX / VIEW_W) * 100}%` }}
+        />
 
         {/* A linha d'agua. E ela que separa o longe do perto. */}
         <div class="world-horizon" />
@@ -101,7 +96,10 @@ export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing,
           }}
         />
 
-        <div class="world-shore" style={{ left: `${sx(0)}%`, width: `${(SHORE_TO / VIEW_W) * 100}%` }} />
+        {/* So a posicao. A largura e px na escala da loja, no CSS: este pedaco
+            de terra existe para dar chao a construcao, entao acompanha a
+            construcao e nao a moldura. */}
+        <div class="world-shore" style={{ left: `${sx(0)}%` }} />
 
         {/* Loja e marcas sao BOTOES de verdade: clicaveis com mouse, focaveis
             por teclado, e com o mesmo destino do teclado. Um alvo que so o

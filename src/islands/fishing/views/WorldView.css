@@ -43,27 +43,33 @@
   background: linear-gradient(to bottom, var(--lago-ceu-alto), var(--lago-ceu-baixo));
 }
 
-/* A outra margem. Fica ancorada NA linha d'agua e sobe dali. */
-.world-far {
+/* A outra margem: mata ciliar com casinhas, ancorada NA linha d'agua e
+   subindo dali. Uma faixa de 256px que LADRILHA na horizontal, no lugar dos
+   sete retangulos que faziam de morro.
+
+   Dia e noite estao empilhados na mesma folha, e nao lado a lado: lado a lado
+   quebrava o `repeat-x`, porque o ladrilho passaria a incluir os dois. */
+.world-mata {
   position: absolute;
   bottom: calc(100% - var(--horizonte));
-  background: var(--lago-margem);
-  border-radius: 4px 4px 0 0;
+  height: calc(64px * var(--s));
+  background-image: url('../art/mata.png');
+  background-size: calc(256px * var(--s)) calc(128px * var(--s));
+  background-repeat: repeat-x;
+  image-rendering: pixelated;
   pointer-events: none;
 }
+.light .world-mata { background-position: 0 0; }
+.dark .world-mata { background-position: 0 calc(-64px * var(--s)); }
 
-/* A linha d'agua apanha luz: e o brilho, nao o filete de instrumento. De
-   noite e por aqui que o fosforo entra na cena. */
-.world-horizon {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: var(--horizonte);
-  height: 2px;
-  background: var(--lago-brilho);
-  opacity: 0.45;
-  pointer-events: none;
-}
+/* A linha d'agua ja NAO leva filete proprio.
+
+   Ela existia para separar o longe do perto quando o fundo eram sete blocos
+   chapados. Com a mata desenhada assente exatamente nessa linha, a base dela
+   ja faz essa separacao — e o filete passou a ser um segundo risco por cima
+   do primeiro. De noite era pior: verde fosforo a 45 por cento sobre a
+   silhueta escura da mata lia como um laser a atravessar a cena. */
+.world-horizon { display: none; }
 
 /* A profundidade num gradiente SO, do raso a esquerda ao abissal a direita.
 
@@ -140,6 +146,8 @@
      do .world-boat, e a loja nao a enxergava — cada sprite novo teria de
      redeclarar o mesmo par de degraus e um deles acabaria por divergir. */
   --s: 1;
+  /* A venda e o chao dela crescem um degrau acima dos outros sprites. */
+  --s-loja: calc(var(--s) + 1);
   --camada-atmosfera: 1;  /* brilho e profundidade, sobre a agua */
   --camada-cena: 2;       /* margem, marcas, vulto sob a superficie */
   --camada-barco: 3;      /* o que flutua */
@@ -171,7 +179,15 @@
    retangulo pousado sobre a agua — que e exatamente o que parecia. */
 .world-shore {
   position: absolute;
-  top: calc(var(--horizonte) - 8%);
+  /* Um PEDACO de terra sob a casa, e nao um bloco que sobe ate ao horizonte.
+     Enquanto era alto e largo, sobrava por todos os lados do sprite e lia
+     como uma mancha colada atras dele — e a mata ao fundo ja diz que ha
+     terra do outro lado, entao esta so tem de dar chao a construcao.
+
+     Medido em px na escala da loja, para acompanhar a casa em vez de
+     acompanhar a moldura. */
+  width: calc(66px * var(--s-loja));
+  top: calc(var(--margem-agua) - 20px * var(--s-loja));
   bottom: calc(100% - var(--margem-agua));
   /* A areia molhada vive no PROPRIO fundo, e nao num pseudo-elemento: com
      raio em percentagem, uma tira de 5px a herdar esse raio deforma e sai
@@ -212,9 +228,14 @@
 .world-shop {
   /* A base assenta EXATAMENTE na orla, e nao num numero solto: e o que a
      planta em terra em vez de a deixar a pairar sobre um bloco. */
-  top: calc(var(--margem-agua) - 64px * var(--s));
-  width: calc(96px * var(--s));
-  height: calc(64px * var(--s));
+  /* A venda cresce um degrau acima dos outros sprites. Uma construcao da
+     altura do barco lia como casa de brinquedo — um homem de pe tem de caber
+     na porta. O degrau e INTEIRO, nunca 1,5x: meio pixel borra a grade.
+     Declarado na cena, e nao aqui, porque o pedaco de terra sob a casa tem
+     de crescer com ela. */
+  top: calc(var(--margem-agua) - 64px * var(--s-loja));
+  width: calc(96px * var(--s-loja));
+  height: calc(64px * var(--s-loja));
   /* Ancorada pela ESQUERDA, no inicio da terra: a casa fica na margem e o
      cais avanca dali para a agua, que e a leitura certa.
 
@@ -222,7 +243,7 @@
      atracar — mas a loja fica no canto do mundo e nao ha espaco nenhum a
      esquerda dela, entao a casa saia inteira para fora da moldura. */
   background-image: url('../art/loja.png');
-  background-size: calc(192px * var(--s)) calc(64px * var(--s));
+  background-size: calc(192px * var(--s-loja)) calc(64px * var(--s-loja));
   background-repeat: no-repeat;
   image-rendering: pixelated;
 }
@@ -233,7 +254,7 @@
 
    Sao dois quadros na mesma folha, entao a troca e so deslocamento. */
 .light .world-shop { background-position: 0 0; }
-.dark .world-shop { background-position: calc(-96px * var(--s)) 0; }
+.dark .world-shop { background-position: calc(-96px * var(--s-loja)) 0; }
 
 /* Sombra de contacto, so debaixo da CASA: o cais fica sobre estacas e ja tem
    as proprias sombras desenhadas. Sem ela a casa flutua, por mais certa que
@@ -245,7 +266,7 @@
   left: 4%;
   width: 38%;
   bottom: -2px;
-  height: calc(4px * var(--s));
+  height: calc(4px * var(--s-loja));
   border-radius: 50%;
   background: color-mix(in srgb, var(--lago-fundo) 38%, transparent);
   pointer-events: none;
@@ -257,15 +278,15 @@
    entao o brilho contorna o telhado, o toldo e as estacas do cais. */
 .world-shop[data-near='true'] {
   filter:
-    drop-shadow(0 0 calc(1px * var(--s)) var(--fishing-marker))
-    drop-shadow(0 0 calc(4px * var(--s)) color-mix(in srgb, var(--fishing-marker) 60%, transparent));
+    drop-shadow(0 0 calc(1px * var(--s-loja)) var(--fishing-marker))
+    drop-shadow(0 0 calc(4px * var(--s-loja)) color-mix(in srgb, var(--fishing-marker) 60%, transparent));
 }
 .world-shop:hover { filter: brightness(1.12); }
 .world-shop[data-near='true']:hover {
   filter:
     brightness(1.12)
-    drop-shadow(0 0 calc(1px * var(--s)) var(--fishing-marker))
-    drop-shadow(0 0 calc(4px * var(--s)) color-mix(in srgb, var(--fishing-marker) 60%, transparent));
+    drop-shadow(0 0 calc(1px * var(--s-loja)) var(--fishing-marker))
+    drop-shadow(0 0 calc(4px * var(--s-loja)) color-mix(in srgb, var(--fishing-marker) 60%, transparent));
 }
 
 /* Rotulo da loja: o unico texto dentro da cena, porque um quadrado colorido
