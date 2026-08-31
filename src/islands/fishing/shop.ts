@@ -8,10 +8,13 @@ export type BaitId = 'minhoca' | 'camarao' | 'sardinha';
 
 export const BAITS: { id: BaitId; price: number; luck: number }[] = [
   { id: 'minhoca', price: 30, luck: 0.25 },
-  { id: 'camarao', price: 90, luck: 0.5 },
+  { id: 'camarao', price: 100, luck: 0.5 },
   // A braba: e ela que libera os dois lendarios do abissal, entao custa como
-  // item de fim de jogo — uma temporada inteira de pescaria no abissal.
-  { id: 'sardinha', price: 800, luck: 0.85 },
+  // item de fim de jogo — a compra de MAIOR esforco do jogo, 18 fisgadas no
+  // abissal. Custava 800 e saia por 28 fisgadas, menos esforco do que a linha
+  // que abre a faixa onde ela se usa: a ultima compra era a penultima em
+  // dificuldade, e a curva descia no fim.
+  { id: 'sardinha', price: 1040, luck: 0.85 },
 ];
 
 /** So ha linha para comprar onde ela e PERMISSAO: o raso pesca-se sem linha
@@ -25,17 +28,30 @@ export const LINES: LineId[] = ['medio', 'abissal'];
     quem a comprou antes de ela deixar de existir — ver `loadProgress`. */
 const PRECO_LINHA_RASO = 50;
 
-/* Os precos sao derivados do ESFORCO que o dono pediu, nao escolhidos a mao:
-   quantos peixes medios da faixa e preciso vender para comprar a linha
-   seguinte. Ele fixou 15 para o meio e 20 para o abissal.
+/* Os precos sao derivados do ESFORCO, e o esforco conta-se em FISGADAS NA
+   FAIXA ONDE SE POUPA — nao na faixa que a compra destrava.
 
-   Peixe medio por faixa (tamanho no meio da escala, sem os lendarios):
-   3.67 / 7.50 / 44.33. Logo 15 x 7.50 = 112.5 e 20 x 44.33 = 886.7, que
-   arredondam para 110 e 900 — 14.7 e 20.3 de esforco medido.
+   Essa distincao ja custou caro. A linha do abissal valia 900 porque foi
+   precificada em "20 peixes medios do abissal"; mas ninguem pesca no abissal
+   antes de comprar a linha do abissal, e essas 900 moedas juntavam-se no
+   MEIO, a cerca de 7 por fisgada. Davam 132 fisgadas em vez de 20: sozinha,
+   59 por cento do grind do jogo inteiro, que somava 223 fisgadas e uns 67
+   minutos. Para um joguinho de browser era tempo a mais para se ver o fim.
 
-   Mexer no tamanho ou no valor de um peixe MOVE estes numeros: quem mexer
-   volta aqui e recalcula, senao a progressao sai do que foi pedido. */
-export const LINE_PRICE: Record<LineId, number> = { medio: 110, abissal: 900 };
+   O alvo agora e o jogo inteiro em cerca de 50 fisgadas, repartidas assim:
+
+     6   isca de minhoca      (poupa no raso, sem isca)
+     8   linha do meio        (poupa no raso, com minhoca)
+     8   isca de camarao      (poupa no meio, com minhoca)
+    10   linha do abissal     (poupa no meio, com camarao)
+    18   isca braba           (poupa no abissal, com camarao)
+
+   As taxas por cm dobraram junto, para os precos continuarem a ter cara de
+   preco em vez de virarem trocos de dois digitos.
+
+   `shop.test.ts` mede isto e falha se sair da faixa: mexer no tamanho, na
+   taxa ou no peso de um peixe MOVE estes numeros. */
+export const LINE_PRICE: Record<LineId, number> = { medio: 50, abissal: 140 };
 
 export type Progress = {
   coins: number;
@@ -65,9 +81,9 @@ export const EMPTY_PROGRESS: Progress = {
  * a taxa na frente, peixe maior simplesmente vale mais.
  */
 const RATE: Record<Kind, Record<1 | 2 | 3, number>> = {
-  comum: { 1: 0.1, 2: 0.125, 3: 0.333 },
-  raro: { 1: 0.182, 2: 0.313, 3: 0.556 },
-  lenda: { 1: 1, 2: 1, 3: 1 },
+  comum: { 1: 0.2, 2: 0.25, 3: 0.666 },
+  raro: { 1: 0.364, 2: 0.626, 3: 1.112 },
+  lenda: { 1: 2, 2: 2, 3: 2 },
 };
 
 export type Kind = 'comum' | 'raro' | 'lenda';

@@ -7,7 +7,10 @@ import {
 } from './shop';
 import { FISH } from './fish';
 
-const rico = { ...EMPTY_PROGRESS, coins: 1000 };
+/** Saldo folgado de proposito: os testes de equipar querem provar a REGRA de
+    "so uma por vez", e nao esbarrar em dinheiro. Estava em 1000, e deixou de
+    dar para duas iscas quando a braba subiu de 800 para perto de 1000. */
+const rico = { ...EMPTY_PROGRESS, coins: 5000 };
 
 describe('valor do pescado', () => {
   const grupo = (t: 1 | 2 | 3, raro: boolean) =>
@@ -20,7 +23,7 @@ describe('valor do pescado', () => {
   // do grupo — um abissal mais imenso pagava menos por cm, que e o oposto do
   // que o jogo promete.
   it('a taxa por centimetro e a que o dono definiu', () => {
-    const taxa = { comum: { 1: 0.1, 2: 0.125, 3: 0.333 }, raro: { 1: 0.182, 2: 0.313, 3: 0.556 } };
+    const taxa = { comum: { 1: 0.2, 2: 0.25, 3: 0.666 }, raro: { 1: 0.364, 2: 0.626, 3: 1.112 } };
     for (const t of [1, 2, 3] as const) {
       expect(coinPerCm(maiorDo(t, false))).toBeCloseTo(taxa.comum[t], 3);
       expect(coinPerCm(maiorDo(t, true))).toBeCloseTo(taxa.raro[t], 3);
@@ -34,43 +37,87 @@ describe('valor do pescado', () => {
     }
   });
 
-  /** Peixe medio de uma faixa: o valor do exemplar do meio da escala, media
-      sobre as especies nao lendarias. E a unidade em que o dono pensa o
-      preco — "quantos peixes tenho de vender para comprar a proxima linha". */
-  const peixeMedio = (t: 1 | 2 | 3) => {
-    const g = FISH.filter((f) => f.tier === t && !f.legend);
-    const v = g.map((f) => fishValue(f.id, (f.sizeMin + f.sizeMax) / 2));
-    return v.reduce((a, b) => a + b, 0) / v.length;
+  /**
+   * Quanto se ganha POR FISGADA na faixa `t`, com a isca de sorte `luck`.
+   *
+   * Esta e a unidade certa para precificar, e o teste anterior usava a errada.
+   * Ele media o esforco de cada linha em "peixes medios da faixa que a linha
+   * DESTRAVA" — mas ninguem pesca no abissal antes de comprar a linha do
+   * abissal. As 900 moedas juntavam-se no MEIO, e o preco derivado da faixa
+   * errada custava 132 fisgadas em vez das 20 pedidas: 59 por cento do grind
+   * do jogo inteiro numa compra so.
+   *
+   * O valor esperado sai dos pesos do sorteio, sem aleatoriedade: a qualidade
+   * media de `luckyQuality` sobre q uniforme e 0.5 + 0.5*luck.
+   */
+  const ganhoPorFisgada = (t: 1 | 2 | 3, luck: number) => {
+    const qMedia = 0.5 + 0.5 * luck;
+    const pool = FISH.filter((f) => {
+      if (f.tier > t) return false;
+      if (f.legend) return false;               // exige ponto e isca proprios
+      if (f.engine === 'hold') return luck > 0 || t > 1;  // o raro so morde com isca no raso
+      return true;
+    }).map((f) => {
+      const distancia = t - f.tier;
+      const perto = distancia === 0 ? 1 : distancia === 1 ? 0.35 : 0.12;
+      const base = f.engine === 'hold' ? rareWeight(f.weight, luck) : f.weight;
+      const peso = Math.max(1, Math.round(base * perto));
+      return { peso, valor: fishValue(f.id, f.sizeMin + (f.sizeMax - f.sizeMin) * qMedia) };
+    });
+    const total = pool.reduce((a, p) => a + p.peso, 0);
+    return pool.reduce((a, p) => a + p.peso * p.valor, 0) / total;
   };
 
-  // O dono fixou o ESFORCO, nao o preco: 15 peixes medios para a linha do
-  // meio, 20 para a abissal. O preco e derivado. Sem este teste, mudar o
-  // tamanho ou a taxa de um peixe move a progressao em silencio — e nada mais
-  // no projeto olha para essa relacao.
-  it('o esforco de cada linha e o que o dono pediu: 15 no meio, 20 no abissal', () => {
-    expect(LINE_PRICE.medio / peixeMedio(2)).toBeCloseTo(15, 0);
-    expect(LINE_PRICE.abissal / peixeMedio(3)).toBeCloseTo(20, 0);
+  /** Fisgadas necessarias para comprar `preco`, poupando na faixa `t`. */
+  const fisgadas = (preco: number, t: 1 | 2 | 3, luck: number) =>
+    preco / ganhoPorFisgada(t, luck);
+
+  const SORTE = { nenhuma: 0, minhoca: BAITS[0].luck, camarao: BAITS[1].luck };
+
+  // O dono fixou o ESFORCO, nao o preco, e o esforco conta-se em FISGADAS na
+  // faixa onde se poupa. Sem este teste, mudar tamanho ou taxa de um peixe
+  // move a progressao em silencio.
+  it('cada compra custa o numero de fisgadas pedido, na faixa onde se poupa', () => {
+    expect(fisgadas(BAITS[0].price, 1, SORTE.nenhuma)).toBeCloseTo(6, 0);
+    expect(fisgadas(LINE_PRICE.medio, 1, SORTE.minhoca)).toBeCloseTo(8, 0);
+    expect(fisgadas(BAITS[1].price, 2, SORTE.minhoca)).toBeCloseTo(8, 0);
+    expect(fisgadas(LINE_PRICE.abissal, 2, SORTE.camarao)).toBeCloseTo(10, 0);
+    expect(fisgadas(BAITS[2].price, 3, SORTE.camarao)).toBeCloseTo(18, 0);
+  });
+
+  // O tecto que faltava. Um joguinho de browser nao pode pedir uma hora para
+  // ser visto por inteiro, e era o que pedia: 223 fisgadas, cerca de 67
+  // minutos. Este numero e o que impede a economia de voltar a inchar.
+  it('o jogo inteiro cabe em cerca de cinquenta fisgadas', () => {
+    const total =
+      fisgadas(BAITS[0].price, 1, SORTE.nenhuma) +
+      fisgadas(LINE_PRICE.medio, 1, SORTE.minhoca) +
+      fisgadas(BAITS[1].price, 2, SORTE.minhoca) +
+      fisgadas(LINE_PRICE.abissal, 2, SORTE.camarao) +
+      fisgadas(BAITS[2].price, 3, SORTE.camarao);
+    expect(total).toBeGreaterThan(40);
+    expect(total).toBeLessThan(58);
   });
 
   it('a linha do abissal custa mais esforco que a do meio', () => {
-    expect(LINE_PRICE.abissal / peixeMedio(3)).toBeGreaterThan(LINE_PRICE.medio / peixeMedio(2));
+    expect(fisgadas(LINE_PRICE.abissal, 2, SORTE.camarao))
+      .toBeGreaterThan(fisgadas(LINE_PRICE.medio, 1, SORTE.minhoca));
   });
 
-  // A primeira compra do jogo passou a ser a isca de minhoca. Ela tem de caber
-  // numa sessao curta, senao o comeco arrasta — foi o que aconteceu com a
-  // linha do raso a 50, que ainda por cima nao levava a lado nenhum.
-  it('a primeira compra cabe numa sessao curta: a isca barata em poucos peixes', () => {
-    expect(BAITS[0].price / peixeMedio(1)).toBeLessThan(10);
+  // A primeira compra do jogo e a isca de minhoca. Ela tem de caber numa
+  // sessao curta, senao o comeco arrasta.
+  it('a primeira compra cabe numa sessao curta', () => {
+    expect(fisgadas(BAITS[0].price, 1, SORTE.nenhuma)).toBeLessThan(8);
   });
 
-  // A isca braba deixou de ser o item mais caro do jogo quando a linha abissal
-  // subiu para 900. O que a define nao e o lugar no ranking de precos: e ser a
-  // ultima compra, a de melhor sorte, e custar uma temporada no abissal.
-  it('a isca braba e de fim de jogo: melhor sorte e uma temporada de abissal', () => {
+  // A isca braba nao e definida pelo lugar no ranking de precos: e ser a
+  // ultima compra, a de melhor sorte, e a que custa mais fisgadas.
+  it('a isca braba e de fim de jogo: melhor sorte e o maior esforco', () => {
     const braba = BAITS[BAITS.length - 1];
     expect(braba.price).toBe(Math.max(...BAITS.map((b) => b.price)));
     expect(braba.luck).toBe(Math.max(...BAITS.map((b) => b.luck)));
-    expect(braba.price / peixeMedio(3)).toBeGreaterThan(12);
+    expect(fisgadas(braba.price, 3, SORTE.camarao))
+      .toBeGreaterThan(fisgadas(LINE_PRICE.abissal, 2, SORTE.camarao));
   });
 
   it('o valor e proporcional aos centimetros: peixe maior paga mais, sempre', () => {
