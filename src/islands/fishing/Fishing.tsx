@@ -6,7 +6,7 @@ import { TrackView } from './views/TrackView';
 import { HoldView } from './views/HoldView';
 import { DodgeView } from './views/DodgeView';
 import { weightedPick } from './draw';
-import { castDuration, castFrameAt, fightFrame, shadowScale, FISGA_MS } from './cast';
+import { castDuration, castFrameAt, shadowScale, FISGA_MS } from './cast';
 import { WorldView, WorldPad, useBoat } from './views/WorldView';
 import { TIER_BY_DEPTH, DEPTH_BY_TIER, depthAt, spotUnder, atShop } from './world';
 import { ShopView } from './views/ShopView';
@@ -101,9 +101,6 @@ export default function Fishing({ texts }: { texts: Texts }) {
   /** Quadro do pescador durante a espera. So 1 ou 2: o 0 e a fase parada e o
       3 aqui e a fisgada com o mundo ainda limpo, antes de o veu subir. */
   const [castFrame, setCastFrame] = useState<1 | 2 | 3>(1);
-  /** Quadro da luta. O comum fica no 3; raro e lenda alternam, e a alternancia
-      le como esforco. */
-  const [fightF, setFightF] = useState<2 | 3>(3);
   const [log, setLog] = useState<Log>(() => validLog(loadLog()));
   const [guaranteed, setGuaranteed] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -400,21 +397,10 @@ export default function Fishing({ texts }: { texts: Texts }) {
     return () => cancelAnimationFrame(raf);
   }, [phase]);
 
-  /** O debate durante a luta. O comum nao se debate, entao para ele nao se
-      acende laco nenhum: fica no quadro da fisgada e pronto. */
-  useEffect(() => {
-    if (phase.kind !== 'playing') { setFightF(3); return; }
-    const rar = rarityOf(phase.fish);
-    if (rar === 'comum') { setFightF(3); return; }
-    const t0 = performance.now();
-    let raf = 0;
-    const passo = () => {
-      setFightF(fightFrame(rar, performance.now() - t0));
-      raf = requestAnimationFrame(passo);
-    };
-    raf = requestAnimationFrame(passo);
-    return () => cancelAnimationFrame(raf);
-  }, [phase]);
+  /* Nao ha laco durante a luta. O puxao e um GESTO, com principio e fim, e
+     ele acontece na batida da fisgada. Enquanto ele durava o que a luta
+     durasse, o pescador ficava preso a alternar para sempre — e a luta pode
+     demorar o que o jogador quiser. Na luta ele segura, no quadro 3. */
 
   const enter = useCallback(() => {
     setPlaying(true);
@@ -592,7 +578,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
               reach={reachTier(progress)}
               onSailTo={sailTo}
               texts={texts.world}
-              frame={phase.kind === 'casting' ? castFrame : phase.kind === 'playing' ? fightF : 0}
+              frame={phase.kind === 'casting' ? castFrame : phase.kind === 'playing' ? 3 : 0}
               shadow={phase.kind === 'casting' && castFrame < 3 ? shadowScale(phase.fish) : null}
               facing={facing}
               paused={phase.kind !== 'idle'}

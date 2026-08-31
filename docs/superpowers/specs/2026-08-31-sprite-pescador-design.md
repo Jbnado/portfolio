@@ -116,11 +116,20 @@ Depois da espera vem a **batida da fisgada**: `FISGA_MS` = 700ms com o mundo
 ainda limpo, antes de o véu e o minigame entrarem. É o único tempo morto do
 lance, e é de propósito.
 
-É nela que o puxão do raro acontece. A alternância chegou a viver só na fase da
-luta, e ali corria atrás de um véu de 82% — quem pescou um bagre (que é `hold`,
-logo raro) não viu animação nenhuma e reportou como bug. Por isso existe uma
-função só para a fase inteira do lance, que entrega a batida ao `fightFrame` em
-vez de duas funções disputarem a fronteira.
+É nela, e **só** nela, que o puxão do raro acontece. A alternância chegou a viver
+na fase da luta, e as duas tentativas falharam por motivos opostos: ali ela corria
+atrás de um véu de 82%, então quem pescou um bagre (que é `hold`, logo raro) não
+viu animação nenhuma; e como a luta dura o que o jogador quiser, ela também não
+tinha fim — o pescador ficava preso a alternar para sempre.
+
+**O puxão é um gesto, não um estado.** Tem princípio e fim, cabe na batida, e
+durante a luta o pescador segura no quadro 3. Por isso existe uma função só para
+a fase inteira do lance, que entrega a batida ao `fightFrame`, e nenhum laço na
+fase da luta.
+
+A cadência é deliberada e não frenética: 340ms por quadro no raro e 220ms no
+lendário. Com a batida em 700ms isso dá um puxão e o regresso, que lê como
+esforço — mais rápido virava tremor.
 
 ### Mapa de fase para quadro
 
@@ -130,9 +139,8 @@ vez de duas funções disputarem a fronteira.
 | `casting`, primeiros 300ms | 1 | Levantando |
 | `casting`, até a mordida | 2 | Lançou; o vulto se aproxima na água |
 | `casting`, os 700ms finais, comum | 3 | Fisgou e segura, mundo limpo |
-| `casting`, os 700ms finais, raro e lenda | 2 ↔ 3 | **O puxão, com o mundo limpo** |
-| `playing`, peixe comum | 3 | Segura, parado |
-| `playing`, raro e lenda | 2 ↔ 3 | Continua a debater-se, agora atrás do véu |
+| `casting`, os 700ms finais, raro e lenda | 2 → 3 | **O puxão, com o mundo limpo** |
+| `playing`, qualquer raridade | 3 | Segura. Sem laço nenhum |
 | `result` | 0 | Sentado outra vez |
 
 ### Comportamentos

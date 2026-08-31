@@ -53,10 +53,13 @@ export function shadowScale(fish: Fish): number {
  */
 export const FISGA_MS = 700;
 
-/** Cadencia do debate, em ms por quadro. O lendario se sacode mais depressa:
+/** Cadencia do puxao, em ms por quadro. O lendario se sacode mais depressa:
     e o que faz a lenda PARECER lenda antes de o nome dela aparecer. O comum
-    nao entra aqui — ele nao se debate. */
-const DEBATE_MS: Record<'raro' | 'lenda', number> = { raro: 260, lenda: 150 };
+    nao entra aqui — ele nao se debate.
+
+    Ritmo deliberado, nao frenetico: com a batida em 700ms isto da um puxao e
+    o regresso, que le como esforco. Mais rapido virava tremor. */
+const DEBATE_MS: Record<'raro' | 'lenda', number> = { raro: 340, lenda: 220 };
 
 /**
  * Qual quadro mostrar durante a luta.

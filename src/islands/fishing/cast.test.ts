@@ -95,8 +95,8 @@ describe('castFrameAt', () => {
 
 describe('fightFrame', () => {
   it('peixe comum nao se debate: fica no quadro da fisgada', () => {
-    // A luta com o comum e a de hoje. Sem isto, TODO peixe ganharia o mesmo
-    // puxao e o raro deixaria de parecer diferente.
+    // Sem isto, TODO peixe ganharia o mesmo puxao e o raro deixaria de
+    // parecer diferente.
     for (const t of [0, 100, 500, 3000]) expect(fightFrame('comum', t)).toBe(3);
   });
 
@@ -106,7 +106,7 @@ describe('fightFrame', () => {
     expect(raro[0]).toBe(3);
   });
 
-  it('a luta comeca sempre no puxao, nunca no meio do gesto', () => {
+  it('o gesto comeca sempre no puxao, nunca no meio dele', () => {
     expect(fightFrame('raro', 0)).toBe(3);
     expect(fightFrame('lenda', 0)).toBe(3);
   });
@@ -121,7 +121,7 @@ describe('fightFrame', () => {
     expect(trocas('lenda')).toBeGreaterThan(trocas('raro'));
   });
 
-  it('so existem dois quadros na luta', () => {
+  it('so existem dois quadros no puxao', () => {
     for (const k of ['comum', 'raro', 'lenda'] as const) {
       for (let t = 0; t < 2000; t += 37) expect([2, 3]).toContain(fightFrame(k, t));
     }
