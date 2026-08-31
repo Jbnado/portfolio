@@ -1,0 +1,74 @@
+/* A loja, ainda em blockout: lista simples, um item selecionado por vez.
+   Navegar com as setas e agir com espaco espelha o resto do jogo — uma tecla
+   faz tudo. */
+
+.shop {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92%, 700px);
+  max-height: 84%;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 22px;
+  overflow: auto;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.shop-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+.shop-head h3 { margin: 0; letter-spacing: 0.08em; }
+.shop-coins { font-weight: 700; }
+
+.shop-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 2px solid transparent;
+}
+
+/* O item selecionado nao se distingue so por cor: ganha borda e um quadrado
+   cheio a esquerda, que e forma. */
+.shop-item[data-sel='true'] { border-color: var(--fishing-rule); }
+.shop-item[data-sel='true'] .shop-mark { background: var(--fishing-marker); }
+.shop-item[data-off='true'] { opacity: 0.5; }
+
+.shop-mark {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--fishing-rule);
+}
+
+.shop-name { flex: 1; }
+.shop-price { font-weight: 700; }
+
+.shop-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin: 0;
+}
+
+/* As teclas em cracha, uma por acao, como no resto do jogo. A frase corrida
+   que estava aqui nao dizia que Esc fecha e lia-se como nota de rodape. */
+.shop-keys {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.8;
+}
+
+.shop-keys .key { margin-left: 4px; }
+.shop-keys .key:first-child { margin-left: 0; }

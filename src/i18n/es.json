@@ -17,6 +17,9 @@
     "role": "Fullstack Developer",
     "name": "João Bernardo",
     "description": "Fullstack developer en Ribeirão Preto, Brasil. Construyo APIs, interfaces y a veces juegos.",
+    "descricaoAntes": "Fullstack developer en Ribeirão Preto, Brasil. Construyo APIs, interfaces y a veces ",
+    "descricaoLink": "juegos",
+    "descricaoDepois": ".",
     "ctaProjects": "Ver proyectos",
     "ctaContact": "Hablemos",
     "panelLabel": "TRAYECTORIA",
@@ -31,6 +34,9 @@
   "about": {
     "title": "Sobre Mí",
     "intro": "Soy un developer fullstack con 5 años de experiencia construyendo aplicaciones web que hacen la diferencia. He trabajado en empresas de marketing (Authorify, EE.UU.), e-commerce B2B (Take) y fintech (Verzel). Todo empezó por los videojuegos. Amaba jugarlos y siempre quise entender cómo estaban hechos, así que terminé estudiando Análisis y Desarrollo de Sistemas y me enamoré de la programación y de este mundo de la tecnología. Esa curiosidad de desarmar las cosas para ver cómo funcionan se volvió una pasión por crear soluciones completas, del backend al pixel final.",
+    "introAntes": "Soy un developer fullstack con 5 años de experiencia construyendo aplicaciones web que hacen la diferencia. He trabajado en empresas de marketing (Authorify, EE.UU.), e-commerce B2B (Take) y fintech (Verzel). Todo empezó por los ",
+    "introLink": "videojuegos",
+    "introDepois": ". Amaba jugarlos y siempre quise entender cómo estaban hechos, así que terminé estudiando Análisis y Desarrollo de Sistemas y me enamoré de la programación y de este mundo de la tecnología. Esa curiosidad de desarmar las cosas para ver cómo funcionan se volvió una pasión por crear soluciones completas, del backend al pixel final.",
     "philosophy": "Creo que el buen software es invisible: carga rápido, es intuitivo y accesible para todos. Cada línea de código que escribo tiene un propósito — resolver un problema real, no impresionar con complejidad innecesaria.",
     "approach": "Mi enfoque combina visión fullstack con atención al detalle. Trabajo con React en el frontend y Java/Python/NestJS en el backend, deploy en la nube con AWS y Docker. Fuera del código, co-fundé RP.js — comunidad JavaScript de Ribeirão Preto — y desarrollé Ribeirão Noir, un juego investigativo lanzado en la Feria del Libro y validado por 3 doctores."
   },
@@ -167,5 +173,139 @@
   "a11y": {
     "externalLink": "Abre en nueva ventana",
     "mobileNav": "Menú de navegación"
+  },
+  "game": {
+    "title": "Pesca",
+    "description": "Un juego de pesca dentro del portfolio. Una pantalla, tres minijuegos, nueve peces.",
+    "cast": "Lanzar la línea",
+    "play": "Jugar",
+    "exit": "Salir",
+    "exitHelp": "Esc también sale",
+    "gameArea": "Área de juego",
+    "howToPlay": "Espacio hace todo: lanza la línea y resuelve el minijuego de cada pez.",
+    "tuto": {
+      "title": "Ver el tutorial otra vez",
+      "skip": "Saltar",
+      "next": "Continuar",
+      "chapters": {
+        "intro": [
+          "Eh, llegaste. Este lago es raro: aparecen peces de agua dulce y salada, de la nada. Nadie lo explica.",
+          "Anda, haz clic en una marca del agua y el barco va solo. Al llegar, lanza la línea."
+        ],
+        "catch": [
+          "¡Pescaste! Ves qué fácil. Mira, puedes venderlo aquí conmigo, en la tienda de la orilla.",
+          "El pez grande paga mejor. Y los raros, mucho mejor."
+        ],
+        "sale": [
+          "Eso es. Ahora con las monedas compra una línea mejor — es ella la que te deja pescar más hondo.",
+          "Y oye, hay mucho más pez del que has visto. Mucho más. Echa un ojo al cuaderno."
+        ]
+      }
+    },
+    "close": "Cerrar",
+    "depth3": {
+      "1": "Bajío",
+      "2": "Media agua",
+      "3": "Abismo"
+    },
+    "shop": {
+      "baitLabel": "Cebo",
+      "title": "Tienda de la orilla",
+      "coins": "Monedas",
+      "sell": "Vender la pesca",
+      "nothingToSell": "bodega vacía",
+      "line": "Línea",
+      "equip": "equipar",
+      "equipped": "en uso",
+      "close": "Cerrar",
+      "baitName": {
+        "minhoca": "Cebo de lombriz",
+        "camarao": "Cebo de camarón",
+        "sardinha": "Cebo de sardina"
+      },
+      "choose": "elegir",
+      "act": "actuar"
+    },
+    "world": {
+      "clickHint": "Haz clic en una marca para navegar",
+      "shop": "Tienda aquí",
+      "cast": "Aquí se puede pescar",
+      "noSpot": "Navega hasta una marca en el agua",
+      "menu": "Tab abre el cuaderno",
+      "shopShort": "Tienda",
+      "castShort": "Lanzar",
+      "noSpotShort": "Elige una marca",
+      "logShort": "Cuaderno",
+      "needLine": "Tu línea es corta para este fondo",
+      "needLineShort": "Sin línea",
+      "turnPhone": "Gira el móvil en vertical.",
+      "depth": {
+        "raso": "Bajío",
+        "medio": "Media agua",
+        "abissal": "Abismo"
+      }
+    },
+    "instruction": {
+      "track": "Espacio cuando el marcador cruce la zona.",
+      "hold": "Mantén espacio para subir. Conserva el pez dentro de la franja.",
+      "dodge": "Espacio cambia de carril. Aguanta sin caer hasta llenar la barra."
+    },
+    "caught": "Picó",
+    "escaped": "Se escapó",
+    "log": "Cuaderno de especímenes",
+    "logEmpty": "Aún no hay peces registrados.",
+    "times": "veces",
+    "time": "vez",
+    "largest": "mayor",
+    "guaranteedMode": "Modo garantizado",
+    "guaranteedModeHelp": "Más lento, pero siempre pesca.",
+    "reeling": "Recogiendo",
+    "falls": "Caídas",
+    "resets": "Reinicios",
+    "fallsUnlimited": "El pez no escapa.",
+    "water": {
+      "doce": "agua dulce",
+      "salgada": "agua salada"
+    },
+    "fish": {
+      "p1": "Lambarí",
+      "p10": "Acará",
+      "p3": "Lisa",
+      "p11": "Piau",
+      "p2": "Tararira",
+      "p12": "Bagre",
+      "p4": "Róbalo",
+      "p13": "Corvina",
+      "p14": "Piraputanga",
+      "p15": "Vieja",
+      "p6": "Pacú",
+      "p16": "Sabalo",
+      "p17": "Piapara",
+      "p18": "Jurel",
+      "p5": "Matrinxã",
+      "p19": "Barbado",
+      "p7": "Mero",
+      "p20": "Pirarara",
+      "p9": "Jaú",
+      "p21": "Cherna",
+      "p8": "Dorado",
+      "p22": "Piraíba",
+      "p23": "Arapaima",
+      "p24": "Mero guasa"
+    },
+    "fight": "MANTENER / TOCAR",
+    "keyAct": "Espacio",
+    "keyLog": "Tab",
+    "keyClose": "Esc",
+    "back": "Continuar",
+    "keyLeft": "A",
+    "keyRight": "D",
+    "keyPick": "W S",
+    "scroll": "desplazar",
+    "rarity": {
+      "comum": "Común",
+      "raro": "Raro",
+      "lenda": "Legendario"
+    }
   }
 }

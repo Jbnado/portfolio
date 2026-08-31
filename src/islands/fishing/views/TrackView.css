@@ -1,0 +1,38 @@
+/* Largura explicita, como toda vista do jogo. Sem isto o trilho fica com 4px:
+   todos os seus filhos sao position:absolute, entao ele nao tem largura
+   intrinseca nenhuma, e .fishing-arena e um flex column com align-items:center,
+   que encolhe o item em vez de estica-lo. */
+.track {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.track-rail {
+  position: relative;
+  height: 44px;
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Cor nao e o unico sinal: a zona tambem tem borda tracejada propria. */
+.track-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: color-mix(in srgb, var(--fishing-zone) 30%, transparent);
+  border-left: 2px dashed var(--fishing-zone);
+  border-right: 2px dashed var(--fishing-zone);
+}
+
+.track-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--fishing-marker);
+}

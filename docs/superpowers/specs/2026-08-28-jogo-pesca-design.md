@@ -48,23 +48,20 @@ por decisão explícita — a pergunta que essa versão responde não depende de
 **Os três motores entram inteiros no v1.** Testar só um não responde a pergunta, e a DRAGAGEM
 é justamente a que corre mais risco de não ser divertida.
 
-**Nove peixes**, o bastante para exercitar todo o espaço de parâmetros sem trabalho de conteúdo:
+**Nove peixes, matriz de motor × faixa de dificuldade.** Cada faixa tem exatamente um peixe de
+cada motor, do raso que ensina ao abissal sem perdão — a tabela original (nove peixes indexados
+só pela variação do TRAJETO) foi revista a pedido do dono: o raso precisa ensinar as três
+mecânicas, não só a mais fácil (ver "Modelo de falha" para a regra de quem perde em cada faixa):
 
-| # | motor | variação exercitada |
-|---|---|---|
-| 1 | TRAJETO | caminho `reta`, janela larga, 1 acerto |
-| 2 | TRAJETO | caminho `pêndulo`, 2 acertos |
-| 3 | TRAJETO | caminho `pêndulo` com alternância, 3 acertos |
-| 4 | TRAJETO | caminho `radial` |
-| 5 | TRAJETO | caminho `subida` |
-| 6 | SUSTENTAÇÃO | peixe de velocidade média |
-| 7 | SUSTENTAÇÃO | peixe rápido e arisco |
-| 8 | DRAGAGEM | tolerância 2 |
-| 9 | DRAGAGEM | tolerância 0 |
+| faixa | TRAJETO | SUSTENTAÇÃO | DRAGAGEM |
+|---|---|---|---|
+| 1 — raso, ensina | p1: zona de 30%, 3 acertos | p2: peixe calmo, carência longa | p3: 2 pistas, nunca perde, 3 limpas seguidas |
+| 2 — meio | p4: zona de 25%, 3 acertos | p5: peixe errático | p6: 2 pistas, tolera 2 quedas |
+| 3 — abissal, sem perdão | p7: zona de 15%, 3 acertos (ainda o mais fácil dos três motores) | p8: peixe arisco, carência curta | p9: 3 pistas, tolera 1 queda |
 
-**O v1 não tem faixas de profundidade**, então a regra "rasos nunca perdem" ainda não tem
-onde se aplicar. Cada peixe carrega a própria tolerância diretamente na tabela, que é o que o
-modelo de dados já faz. O amarre entre faixa e tolerância entra junto com o mapa.
+Cada peixe carrega os próprios parâmetros diretamente na tabela, que é o que o modelo de dados já
+faz. O amarre entre faixa de profundidade real (o mapa, ainda inexistente no v1) e essa faixa de
+dificuldade entra junto com o mapa.
 
 ## Critério de sucesso
 
@@ -106,20 +103,31 @@ Três regras fechadas sobre o bonequinho:
 
 ```
 src/pages/jogo/pesca.astro              (+ en/game/fishing, es/juego/pesca)
-src/islands/pesca/
-  Pesca.tsx            ilha Preact, client:load
-  mar.ts               camada Canvas — existe e fica VAZIA no v1
-  motores/
-    trajeto.ts         lógica pura
-    trajeto.tsx        casca visual + trajeto.css
-    sustentacao.ts     lógica pura
-    sustentacao.tsx    casca visual + sustentacao.css
-    dragagem.ts        lógica pura
-    dragagem.tsx       casca visual + dragagem.css
-  peixes.ts            tabela de peixes: id, nome, cor, faixa de tamanho
+src/islands/fishing/
+  Fishing.tsx          ilha Preact, client:load
+  sea.ts               camada Canvas — existe e fica VAZIA no v1
+                       (mountSea, unmountSea, drawSea)
+  types.ts             tipos compartilhados: Result, Fish, params de cada
+                       motor, Zone, Gate
+  engines/
+    track.ts           lógica pura do TRAJETO
+    hold.ts            lógica pura do SUSTENTAÇÃO
+    dodge.ts           lógica pura da DRAGAGEM
+  views/
+    TrackView.tsx + TrackView.css     casca visual do TRAJETO
+    HoldView.tsx + HoldView.css       casca visual do SUSTENTAÇÃO
+    DodgeView.tsx + DodgeView.css     casca visual da DRAGAGEM
+  draw.ts              sorteio ponderado do peixe (weightedPick), extraído
+                       pra poder testar sem simular um lance inteiro
+  fish.ts              tabela de peixes: id, nome, cor, faixa de tamanho
                        (min/max em cm), motor e parâmetros
-  estado.ts            localStorage
+  log.ts               localStorage: caderno de espécimes
 ```
+
+Os nomes em inglês (`fishing`, `track`, `hold`, `dodge`, `Fishing.tsx`) divergem do
+português do resto do texto: convenção de código do projeto, não uma tradução
+esquecida. `TRAJETO`, `SUSTENTAÇÃO` e `DRAGAGEM` continuam sendo os nomes que este
+documento usa pra falar dos três motores.
 
 **A ilha só carrega nessa rota.** Astro não vaza island entre páginas. As outras 37 páginas
 continuam entregando os 33KB de JS que entregam hoje.
@@ -140,8 +148,8 @@ de acessibilidade, não de CSP.
 **Costura DOM/Canvas.** Interface, botões e minigames em DOM e SVG. Uma camada de Canvas
 existe atrás de tudo para o mar e as partículas quando o mundo existir.
 
-No v1, "vazia" quer dizer literalmente: o elemento `<canvas>` e o módulo `mar.ts` existem e
-expõem a interface (`montar`, `desmontar`, `desenhar`), e **o laço de animação não roda**. Não
+No v1, "vazia" quer dizer literalmente: o elemento `<canvas>` e o módulo `sea.ts` existem e
+expõem a interface (`mountSea`, `unmountSea`, `drawSea`), e **o laço de animação não roda**. Não
 é para existir `requestAnimationFrame` sem nada para desenhar — isso queima bateria e aparece
 em profiling como se o jogo fosse pesado.
 
@@ -149,8 +157,8 @@ em profiling como se o jogo fosse pesado.
 regra foi **explicitamente dispensada para o jogo**: cada motor carrega seu `.css` ao lado do
 `.tsx`, o Vite empacota, e o custo fica na rota que usa. Continua sem CSS modules.
 
-**Estado no localStorage**, sem conta e sem servidor. No v1 guarda apenas quais peixes foram
-pegos e o maior de cada.
+**Estado no localStorage**, sem conta e sem servidor. No v1 guarda, por peixe, quantas vezes
+foi pego (`times`) e o maior já pescado (`largest`).
 
 ## Os três motores
 
@@ -166,37 +174,57 @@ recompensa visível, e é o que dá sentido ao caderno.
 
 ### 1. TRAJETO — acerto no tempo
 
-Um indicador percorre um caminho, zonas ficam sobre o caminho, espaço quando sobrepõe.
+Uma barra vai e volta; uma zona verde fica sobre ela; espaço quando o marcador a cruza.
+**A cada acerto a zona pula para outro lugar sorteado da barra**, então não dá para decorar o
+ritmo: tem que reencontrar o alvo três vezes.
 
 ```ts
-type Trajeto = {
-  caminho: 'reta' | 'pendulo' | 'radial' | 'subida'
-  velocidade: number
-  zonas: { pos: number; tamanho: number }[]
-  acertos: number           // quantos precisa para fisgar
-  alternancia: boolean      // acertou uma, ela esvazia e a outra ativa
-  tolerancia: number | null // null = nunca perde
+type TrackParams = {
+  periodMs: number
+  zoneSize: number          // botao de dificuldade: a zona encolhe
+  hits: number              // sempre 3
+  tolerance: number | null  // sempre 2: perde no terceiro erro
 }
 ```
 
-Quatro geometrias, **mesmo código**:
+**O anel saiu daqui.** O `radial` era a segunda geometria do TRAJETO e foi removido a pedido do
+dono, com a razão explícita de que o anel é a linguagem da DRAGAGEM e **cada minigame precisa ser
+um tipo por si só** — emprestar a forma do vizinho apaga a diferença entre os dois. Junto saíram
+o campo `path`, o tipo `PathKind`, o array `zones`, o campo `alternates` e o SVG do anel na vista.
+`reta` e `subida` já tinham saído antes, por teleportarem o indicador (ver Controles).
 
-| caminho | como lê |
-|---|---|
-| `reta` | velocímetro, esquerda para direita, repete |
-| `pendulo` | vai e volta; com `alternancia` é esquerda, direita, esquerda |
-| `radial` | gira o círculo completo — lê como sonar, que é a linguagem do turno noturno |
-| `subida` | as marcas sobem até a linha do topo |
+**A posição da zona não é parâmetro, é estado.** Ela é sorteada em `startTrack` e resorteada a
+cada acerto, sempre de modo que a zona caiba inteira na barra — senão uma zona sorteada na ponta
+sairia pela borda e valeria menos que as outras, e a dificuldade deixaria de ser só o tamanho.
+Isso também resolve de graça a saturação de qualidade: com alvo móvel, mesmo quem joga bem varia
+o tamanho do peixe.
 
-Este é o motor de peixe **de tempo e paciência**.
+**O SUSTENTAÇÃO é o peixe raro de toda faixa.** Depois de jogar os três motores, o dono
+concluiu que ele é de longe o mais difícil — a carga é de controle contínuo, que os outros dois
+não têm — e que por isso ele fica para os peixes mais difíceis. Peso 10 contra 45 dos outros dois
+em **todas** as faixas. A faixa 1 já era assim por decisão anterior dele (o peixe que ensina a
+perder tem que ser raro, senão cai um em cada três); as faixas 2 e 3 tinham os três empatados.
+
+**Este é o minigame de boa.** Por decisão do dono, o TRAJETO é simples e fácil **inclusive no
+abissal** — é o descanso entre os outros dois. A dificuldade sobe só encolhendo a zona
+(30% / 25% / 15% da barra), com a velocidade quase parada.
+
+**Perde no terceiro erro em todas as faixas, inclusive no raso.** Isto revoga, só para o TRAJETO,
+a regra "o raso nunca perde" da seção de modelo de falha: a pedido do dono, `tolerance: 2` vale
+para os três. A DRAGAGEM do raso continua sem perder.
 
 ### 2. SUSTENTAÇÃO — controle contínuo
 
 Segura espaço para subir, solta para descer, mantém a faixa sobre o peixe. A barra de progresso
-enche enquanto o peixe está dentro e drena quando está fora. **Barra zerada perde o peixe** —
-o dreno é o mecanismo, e uma barra que não pode zerar não tem tensão nenhuma.
+enche enquanto o peixe está dentro e drena quando está fora. **Barra zerada não perde o peixe
+na hora** — abre uma carência (`graceMs`): o peixe escapa só se a barra ficar zerada por tempo
+demais sem se recuperar. `graceMs: number | null` segue a mesma convenção `null = nunca perde`
+de `tolerancia` (TRAJETO) e `bumpsAllowed` (DRAGAGEM) — o dreno continua sendo o mecanismo, e uma
+barra que não pode zerar não tem tensão nenhuma, mas zerar deixa de ser perda instantânea.
 
-Parâmetros: altura da faixa, padrão do peixe, gravidade, taxa de enchimento, taxa de dreno.
+Parâmetros: altura da faixa (`bandHeight`), padrão do peixe, gravidade e força de subida
+(`gravity`, `lift`), teto de velocidade da faixa (`maxSpeed`), velocidade do peixe (`fishSpeed`),
+taxa de enchimento e de dreno, carência antes de escapar (`graceMs`).
 
 Este é o motor de peixe **rápido e arisco**. A dificuldade mora no comportamento do peixe, não
 em código diferente: um peixe que dá arranco e muda de direção é muito mais difícil que um
@@ -204,20 +232,275 @@ calmo, com a mesma implementação.
 
 ### 3. DRAGAGEM — desvio contínuo
 
-O indicador ocupa uma pista; anéis giram com brechas; espaço troca de pista para passar pela
-brecha em vez de bater no cheio.
+**Sempre duas pistas.** Dois anéis concêntricos giram; onde um vão quebra a pista em que você
+está, o trilho acaba. Espaço troca de pista antes do vão. Cair no vão é o dano.
 
-**Não é acerto no tempo, é posicionamento sob pressão contínua.** É a habilidade genuinamente
-diferente das três, e é o motor de peixe **brigão**.
+**Os vãos são sorteados a cada lance.** Quantos (dentro de um intervalo por peixe), onde e de que
+largura — tudo muda de lance para lance, então não dá para decorar o anel. As pistas abertas
+alternam, então cada vão cobra uma troca; o que varia é o ritmo em que elas chegam. Cada vão
+nasce dentro da sua fatia da volta com folga mínima para o vizinho: sem isso dois vãos poderiam
+colar e exigir uma troca em poucos milissegundos, o que não é dificuldade, é sorte.
 
-Parâmetros: velocidade dos anéis, número de pistas, tamanho das brechas, batidas toleradas.
+**Fisga enchendo uma barrinha, não contando passagens.** A barra sobe enquanto você não cai e
+representa o peixe sendo puxado. Encher exige `holdMs` de tempo limpo — 3s, 4s e 5s. Isto
+substituiu um modelo de "três passagens limpas seguidas", a pedido do dono.
+
+**Cair recua, não zera.** Cada queda desconta `penaltyMs` da barra. A regra anterior zerava tudo,
+e perder 15 segundos de luta por um deslize é punição demais para um jogo de portfólio.
+
+**Duas portas de saída para perder o peixe**, ambas desligadas no raso:
+
+1. **Três quedas seguidas.** Passar limpo por um vão zera a contagem. Pega quem se perdeu no
+   ritmo — e é alcançável justamente porque as pistas alternam: quem troca *atrasado* erra o vão,
+   troca, e o vão seguinte já pedia a outra pista. Esse cai em todos.
+2. **A barra zerar duas vezes.** Pega o caso que a primeira porta não pega: quem cai espaçado
+   nunca junta uma sequência, mas também nunca progride.
+
+**A dificuldade é a velocidade da volta e a quantidade de vãos** — decisão do dono. Mais vãos por
+volta significa mais trocas obrigatórias; a volta mais curta encurta a janela de cada decisão.
+
+Parâmetros: `periodMs`, `gatesMin`/`gatesMax`, `gapMin`/`gapMax`, `holdMs`, `penaltyMs`,
+`fallsToLose`, `zeroesToLose`.
+
+## O mundo (v2, em construção)
+
+**O cenário é um lago pequeno, visto de lado.** A premissa, do dono: peixes de água doce e
+salgada aparecem ali **do nada** — é justamente por isso que se pesca nesse lago, e é o que
+autoriza a matriz de espécies a misturar o que na natureza não se encontra junto.
+
+### As espécies
+
+O pedido foi "só peixes endêmicos brasileiros". **Endemismo estrito não sobrevive ao contato com
+a lista**: as bacias brasileiras atravessam fronteiras, então pirarucu, tucunaré, dourado e jaú
+também ocorrem no Peru, no Paraguai ou na Argentina. Espécie estritamente endêmica costuma ser
+peixe obscuro de uma bacia só, que ninguém reconheceria. A régua adotada é outra e está dita
+aqui para não virar discussão depois: **peixes brasileiros icônicos**, e a decisão de mudar de
+régua é do dono.
+
+Cada faixa tem **pelo menos um peixe de água salgada** — é a premissa aparecendo onde o jogador
+está, e não só na ficha do cenário. Há teste travando isso.
+
+| faixa | TRAJETO | SUSTENTAÇÃO (raro) | DRAGAGEM |
+|---|---|---|---|
+| 1 — raso | Lambari, doce, 8–18cm | Traíra, doce, 25–55cm | Tainha, **salgada**, 25–50cm |
+| 2 — meio | Robalo, **salgada**, 30–70cm | Matrinxã, doce, 28–58cm | Pacu, doce, 35–80cm |
+| 3 — abissal | Garoupa, **salgada**, 45–95cm | Dourado, doce, 55–105cm | Jaú, doce, 80–150cm |
+
+Os tamanhos são fiéis às espécies, e o teto sobe a cada faixa — há teste para isso também. Mudar
+tamanho **não** mexe na dificuldade: ela mora nos parâmetros dos motores, e o tamanho é só a
+recompensa que a qualidade vira.
+
+**Blockout primeiro, arte depois.** Tudo quadrado de propósito: o que se julga nesta fase é o
+arranjo — onde fica a loja, quanto se anda, como o minigame cobre a cena — e não o desenho, que
+ainda não existe. Os peixes já têm lugar reservado para a foto no caderno.
+
+- **Margem à esquerda com a loja.** O barco nasce na água, à direita dela.
+- **Anda com A/D ou setas**, segurando. O lago inteiro se atravessa em pouco mais de quatro
+  segundos: o mapa é pequeno de propósito.
+- **Marcas finas sobre a água** são os pontos de pesca. Só dá para lançar em cima de uma.
+- **A profundidade abre a faixa de peixes** — raso, meio, abissal, da esquerda para a direita.
+  Isto substitui o "quantos peixes você já conhece" do v1, que era progressão de mentira por não
+  existir mapa. **Andar para a direita passa a ser a progressão.**
+- **O minigame cobre a cena, não a substitui.** O lago fica desenhado atrás.
+- **Tab abre o caderno** por cima da cena.
+
+**A câmera olha o lago de cima, em ângulo.** A linha d'água fica em **25%** e
+os 75% de baixo são o plano da água. O barco **não se cola ao horizonte**:
+flutua nesse plano, entre 50% e 67%, dentro do retângulo da marca — água
+atrás dele e água à frente. A loja fica em pé na margem (26%–46%), na mesma
+faixa por onde o barco passa.
+
+Duas versões anteriores ficaram pelo caminho, e a lição é a mesma nas duas.
+Primeiro o barco estava solto no alto da moldura, sem nada atrás. Depois veio
+o horizonte a 40% com o barco pousado nele, em 28% — e o dono voltou a dizer
+que continuava "super alto na água". **Mexer na altura do barco não resolve
+enquanto a linha d'água estiver a meio da moldura**: pousado nela, o barco vai
+sempre ficar no alto do quadro. O que muda o enquadramento é subir a linha e
+soltar o barco dela.
+
+### A loja
+
+Abre com espaço quando o barco está na margem. W e S escolhem, espaço age, Esc fecha — a mesma
+gramática do resto do jogo, uma tecla faz tudo, e cada tecla num crachá dentro do painel.
+
+**Linha é permissão, isca é probabilidade.** A separação importa e veio das palavras do dono.
+
+- **Duas linhas** (110 e 900 — ver Economia). A linha decide **até onde dá para pescar**: sem a
+  linha do meio, o meio inteiro está fechado. Cada uma alcança a sua profundidade e todas as mais
+  rasas — por isso **a abissal é a melhor: com ela se pesca em qualquer lugar**.
+
+  Sem linha nenhuma dá para pescar no raso, senão o jogo começa travado (moeda só vem de vender
+  peixe).
+
+- **Não há linha do raso.** Houve, a 50, e o papel dela era abrir o peixe raro do raso. Era um mau
+  primeiro alvo, e o dono disse-o depois de a comprar: cinquenta moedas que não levavam a lado
+  nenhum, e o fundo ficava ainda mais longe. **Esse papel passou para a isca**: no raso quem abre
+  o raro é a isca equipada, e a primeira compra do jogo passa a ser a minhoca a 30 — oito peixes
+  comuns, uma sessão curta.
+
+  Mais fundo a permissão já é a própria linha: quem está a pescar no meio tem a linha do meio,
+  senão não estaria ali. Uma regra só, `rareBites`, cobre as três profundidades.
+
+  Quem tinha comprado a linha do raso **recebe as 50 moedas de volta** ao carregar o save. Deixar
+  a moeda presa num item que sumiu do jogo seria roubo de save.
+
+  **Marca fora do alcance não é desenhada.** Mostrar um ponto que não dá para usar só convida a
+  tentar; a água hachurada já diz que ali tem mais lago. E `spotUnder` passa a devolver `null`
+  fora do alcance — sem isso o barco continuava "em cima" de um ponto invisível e o botão de
+  lançar aparecia do nada.
+
+### Economia
+
+**O peixe vale por centímetro, e a TAXA é a fonte da verdade.** Cada grupo —
+faixa × raridade — tem uma taxa de moedas por cm. O teto de cada grupo é
+consequência: a taxa vezes o maior exemplar dele.
+
+A ordem importa, e custou uma volta para descobrir. Na primeira versão o teto
+vinha primeiro e a taxa era derivada (teto ÷ maior exemplar). Isso tinha um
+efeito perverso: **engordar um peixe baixava a taxa do grupo inteiro**, então
+um abissal mais imenso passava a pagar menos por centímetro — o oposto do que
+o jogo promete. Com a taxa na frente, peixe maior simplesmente vale mais.
+
+E antes disso o modelo era pior ainda: dava de 40% a 100% do teto conforme o
+tamanho *dentro da espécie*, de modo que um lambari de 18cm valia o mesmo que
+uma tainha de 50cm. "Peixe maior paga mais" precisa valer **entre** espécies.
+
+| grupo | moedas/cm | maior exemplar |
+|---|---|---|
+| raso comum | 0,100 | 5 |
+| raso raro | 0,182 | 10 |
+| meio comum | 0,125 | 10 |
+| meio raro | 0,313 | 25 |
+| abissal comum | 0,333 | 63 |
+| abissal raro | 0,556 | 133 |
+| lendário | 1,000 | 400 |
+
+**O abissal tem peixe imenso.** Jaú até 190cm, Piraíba até 240cm, e os
+lendários em 400cm e 350cm — que valem 400 e 350 moedas, mais que qualquer
+linha.
+
+**O preço da linha é derivado do esforço, não escolhido à mão.** Esforço é
+quantos peixes médios da faixa é preciso vender para comprar a linha seguinte
+— preço ÷ valor do peixe médio, tamanho no meio da escala, sem os lendários.
+O dono fixou o esforço, não o preço: **15 no meio e 20 no abissal**.
+
+Com o peixe médio em 3,67 / 7,50 / 44,33 moedas, sai 15 × 7,50 = 112,5 e
+20 × 44,33 = 886,7, que arredondam para **110 e 900**. O raso fica nos 50 que
+o dono deu.
+
+| linha | preço | peixe médio | esforço medido |
+|---|---|---|---|
+| raso | 50 | 3,67 | 13,6 |
+| meio | 110 | 7,50 | 14,7 |
+| abissal | 900 | 44,33 | 20,3 |
+
+A progressão **sobe**: cada faixa custa mais trabalho que a anterior, e o
+abissal é o compromisso grande do jogo. Isto inverte o desenho anterior, em
+que o abissal era o mais barato em esforço porque a linha estava em 500.
+
+**Mexer no tamanho ou no valor de um peixe move estes números.** Quem mexer
+recalcula os preços, senão a progressão sai do que foi pedido.
+
+**A isca braba custa 800**, porque é ela que libera os dois lendários: 18
+peixes do abissal para comprá-la, e paga-se em 2,9 lendários médios. Passa a
+ser a segunda compra mais cara, atrás da linha abissal — ela era a mais cara
+de todas quando a linha custava 500.
+
+### Celular
+
+**Portrait, e completamente responsivo** — pedido do dono. Duas coisas que só apareceram medindo
+num viewport real de 410px:
+
+- **O jogo era injogável no celular.** Tudo dependia de tecla: mover, lançar, abrir a loja e o
+  caderno. Sem teclado, não havia entrada nenhuma. Agora há uma fileira de controles com alvos de
+  48px, escondida onde há ponteiro fino **e** tela larga.
+- **A cópia do HUD falava de tecla** ("Espaço lança a linha") para quem não tem tecla. As frases
+  passam a ser neutras quanto ao meio de entrada, e o rótulo do botão diz o que fazer.
+
+A ação principal — lançar, abrir a loja, dispensar o resultado — é **uma função só**, que o
+Espaço e o botão de toque chamam. Duplicar a regra faria teclado e dedo divergirem na primeira
+mudança. Em paisagem baixa, um aviso pede para girar o aparelho em vez de espremer a cena.
+
+**Num telefone os quatro controles não cabem lado a lado.** Com 410px sobravam
+55px para o botão de ação e "Escolha uma marca" quebrava em quatro linhas, com
+a tecla a sair do botão. Abaixo de 560px a fileira quebra e o **caderno passa
+a ocupar uma linha inteira** — que era a única saída aceitável, porque a outra
+seria escondê-lo, e coleção escondida não existe para quem não a procura.
+
+### O tutorial
+
+**Capítulos disparados por acontecimento, não um manual na abertura.** Quem
+fala é o lojista, e ele volta quando você faz algo novo: `intro` na primeira
+partida, `catch` no primeiro peixe, `sale` na primeira venda. O que já foi
+visto é da **pessoa**, não da partida — fica em `fishing:tuto`.
+
+Enquanto a fala corre, um véu bloqueia a cena: é assim que novel funciona, e
+sem ele a pessoa navega por baixo do texto e não lê nada.
+
+**Um capítulo não entra por cima de um painel aberto.** A venda dispara o
+capítulo de dentro da loja, e a caixa de fala, ancorada no rodapé do lago,
+cortava a lista da loja ao meio — com o rodapé do painel a sair por baixo
+dela. O capítulo fica pendente e abre quando o painel fecha, que é também
+onde a fala faz sentido: acabou de vender, agora olha.
+- **Vender o pescado** é o que vira moeda: o valor sai da taxa por cm do grupo
+  (ver Economia), com piso de 1. Pescar enche o porão; vender esvazia e credita.
+
+O progresso mora numa chave própria (`fishing:progress`), separada do caderno de espécimes — o
+caderno tem formato já publicado, e misturar obrigaria a migrar um dado que não precisa mudar.
+
+### A revelação da fisgada
+
+**Uma vista para as três raridades**; o `data-rarity` é que muda o degrau. Três componentes
+separados divergiriam na primeira mudança de layout.
+
+**Todos os degraus têm luz.** O clarão sai de trás do cartão e abre para fora, uma vez; o que
+escala é o tamanho dele — 260px no comum, 380 no raro, 520 no lendário — e o que vem depois:
+raios no raro, aura e giro no lendário, com mais tempo, porque **o tempo também é o prémio**.
+
+A primeira versão dava luz só ao raro e ao lendário, e o comum era um cartão a subir 18px. O dono
+jogou e disse que não tinha visto animação nenhuma. Estava certo: **subir não lê como comemorar**.
+O cartão ficou também com um halo que **não depende de animação** — sem ele, volta a ser uma caixa
+qualquer assim que a animação acaba, que era a outra metade do problema.
+
+A raridade sai da **mesma função** que a economia usa (`rarityOf`). Com duas contas separadas, um
+peixe podia pagar como raro e comemorar como comum.
+
+**Nada pisca.** O clarão acontece **uma** vez, então não é flash no sentido do critério por mais
+brilhante que seja; os raios entram uma vez e ficam; e a aura do lendário faz dois ciclos de 0,9 s
+(~1,1 Hz), bem abaixo dos três flashes por segundo de WCAG 2.3.1 (nível A, e portanto piso deste
+projeto).
+
+**O tutorial tapava a comemoração.** A captura dispara o capítulo `catch`, e o véu do tutorial
+(z-index 6) cobre `.fishing-over` (z-index 3): as duas camadas vivem na mesma pilha, a do overlay,
+porque `.fishing-arena` é `position: relative` sem `z-index` e portanto não abre contexto próprio.
+Resultado: a **única** vez em que o capítulo aparece era também a única em que a revelação ficava
+escondida. O capítulo passa a esperar a tela esvaziar — a mesma regra que já valia para a loja,
+agora estendida à fase de resultado.
+
+**Com movimento reduzido a comemoração encolhe, não desaparece.** O dono pediu a animação; apagá-la
+sob a preferência deixaria justamente quem a pediu sem prémio. Fica o que informa — o cartão
+assenta, a etiqueta aparece — e sai o que costuma incomodar: a rotação contínua e o pulso.
+
+Isso exige furar o `*{animation-duration:0.01ms!important}` de `global.css:202`, o mesmo caminho já
+andado pela vinheta de erro. **Verificado**, e não deduzido: reproduzindo o empate do cascade com
+as duas regras fora das suas media queries (a media query não participa da especificidade), as do
+jogo ganham — 0,3 s no cartão, 0,3 s nos raios — enquanto um elemento de controlo fica nos
+0,01 ms do global.
+
+**Os raios nasceram invisíveis.** A faixa visível ia de 12% a 68% do raio e o cartão, que ocupa até
+uns 38%, tapava quase toda ela; o que sobrava estava a 26% de alpha. A faixa agora começa depois
+do cartão e a cor tem peso.
+
+`?fisga=<id>` **em DEV** pula o minigame e vai direto à revelação, no tamanho máximo da espécie.
+Sem isso não há como ver a comemoração do lendário sem sortear um peixe de peso 1 que só morde no
+ponto dele com a isca dele.
 
 ### Origem das mecânicas
 
 Verificado, não presumido. O Dredge tem seis minigames de pesca, e todos são o mesmo gesto —
 apertar quando o indicador cruza a zona — variando **a geometria do caminho**: Radial,
 Ball Catcher, Diamond, Pendulum, Spiral. O TRAJETO é essa família inteira reduzida a um motor
-com quatro caminhos.
+com dois caminhos (`pendulo` e `radial` — ver a seção acima para os dois que saíram e por quê).
 
 A DRAGAGEM vem do minigame de **dragagem** do Dredge, que não é de pesca lá e é aproveitado
 aqui como mecânica de pesca por decisão explícita.
@@ -236,9 +519,19 @@ Fontes: [DREDGE Wiki — Minigames](https://dredge.wiki.gg/wiki/Minigames),
 | mapa | ← → ou A D | andar o barco |
 | mapa, no mar | espaço | lançar a linha |
 | mapa, na loja | espaço | entrar na loja |
-| loja | setas ou WASD | andar nos itens |
+| loja | setas ou W S | andar nos itens |
 | loja | espaço | comprar, vender |
+| loja, caderno | esc | fechar |
+| caderno | W S ou setas | rolar as fichas |
 | **os três motores** | **espaço** | tudo |
+
+**Cada tecla vai num crachá, dentro do controlo a que pertence.** Legenda solta no rodapé
+ninguém lê — foi dito assim, e vale para os dois lados do erro: o crachá do movimento era
+"A D" num botão só, então a seta da esquerda anunciava as duas teclas e a da direita nenhuma.
+Uma tecla por botão.
+
+**A cabeça do caderno é fixa.** Rolando o grid ela saía do painel e levava consigo o botão de
+fechar: a saída desaparecia justamente para quem estava a explorar as 24 fichas.
 
 Espaço significa sempre "a ação óbvia daqui", e isso traz uma obrigação: **botão contextual
 exige que a tela sempre diga o que ele faz agora.** Sem prompt visível, contextual vira
@@ -257,30 +550,114 @@ jogo funciona no celular sem redesenho.
 
 ## Modelo de falha
 
-**Perda existe, mas só nos raros.** Quem apenas passeia pelo portfólio nunca perde nada.
+**Perda existe sempre no meio e no abissal.** No raso, dois dos três motores nunca perdem
+(TRAJETO e DRAGAGEM, `tolerancia`/`bumpsAllowed` null) — mas a SUSTENTAÇÃO do raso (p2) pode
+perder, raro de propósito, com carência longa. É uma exceção registrada, não um vazamento: o
+tipo do parâmetro de carência (`graceMs: number | null`) segue a mesma convenção `null = nunca
+perde` dos outros dois motores, então quando o SUSTENTAÇÃO do raso perde é porque alguém decidiu
+isso, não porque o tipo não tinha como dizer o contrário.
 
-| faixa | perde? | o que o erro custa |
-|---|---|---|
-| rasos | não | **tamanho** — pesca menor, vale menos, não bate o recorde |
-| meio e abissal | sim | o peixe |
+| faixa | TRAJETO | SUSTENTAÇÃO | DRAGAGEM |
+|---|---|---|---|
+| 1 — raso | **perde no 3º erro** | pode perder (raro, de propósito) | nunca perde |
+| 2 — meio | perde | perde | perde |
+| 3 — abissal | perde | perde | perde |
 
-**Por que o custo não é tempo.** No Dredge, errar não perde o peixe, só demora mais — e isso
-funciona lá porque a noite é perigosa e demorar é caro. Este jogo não tem noite nem pressão
-temporal, então "demora mais" não custaria absolutamente nada. O custo nos rasos é tamanho.
+Isto revoga a regra original do v1, "SUSTENTAÇÃO e DRAGAGEM não aparecem nos rasos": a pedido do
+dono, a tabela de peixes virou uma matriz motor × faixa (ver "Escopo do v1") onde **cada faixa
+tem exatamente um peixe de cada motor**, para que o raso ensine as três mecânicas em vez de só a
+mais fácil. A generosidade do raso passou a morar no **parâmetro** (tolerância nula, carência
+longa), não na ausência do motor.
+
+**Por que o custo do erro que não perde o peixe é tamanho, não tempo.** No Dredge, errar não
+perde o peixe, só demora mais — e isso funciona lá porque a noite é perigosa e demorar é caro.
+Este jogo não tem noite nem pressão temporal, então "demora mais" não custaria absolutamente
+nada. O custo é tamanho: pesca menor, vale menos, não bate o recorde.
 
 Esta decisão é registrada explicitamente porque alguém no futuro pode "corrigir" o modelo para
 o do Dredge sem perceber que falta o sistema que o sustenta.
 
 **Motor não é função da profundidade.** O motor é função da personalidade do peixe: TRAJETO
 para o de tempo, SUSTENTAÇÃO para o rápido, DRAGAGEM para o brigão. A faixa controla aposta e
-dificuldade.
+dificuldade — e agora, com a matriz completa, também garante que as três personalidades
+apareçam em toda faixa.
 
-**Uma regra rígida, e é de propósito:** SUSTENTAÇÃO e DRAGAGEM **não aparecem nos rasos**,
-porque os dois perdem por construção e os rasos não perdem. O raso é a rampa de entrada e é o
-primeiro peixe de todo mundo.
+**Tolerância se expressa na moeda de cada motor:** tamanho da zona no TRAJETO, taxa de dreno no
+SUSTENTAÇÃO, quedas até arrebentar na DRAGAGEM.
 
-**Tolerância se expressa na moeda de cada motor:** voltas extras no TRAJETO, taxa de dreno no
-SUSTENTAÇÃO, batidas até arrebentar na DRAGAGEM.
+### Orçamento de JS: por página, e dois em vez de um
+
+O v1 nasceu com **um** teto de 48KB medido como "a soma de todos os
+`dist/_astro/*.js`". Essa métrica estava errada por dois motivos, e os dois
+apareceram na prática.
+
+**Ela nunca mediu o que alguém baixa.** Somava a pasta inteira, incluindo
+chunks que só uma rota usa — o `BlogFeed` conta contra o jogo, e vice-versa.
+Medido pelo fecho transitivo dos imports a partir do HTML: a home baixa
+**30,3KB**, a página do jogo **44,4KB**, e o jogo em si é **14,1KB** deles.
+
+**E um teto só faz o jogo pesar contra páginas que não o carregam.** O
+`Fishing.js` é um chunk separado que só a rota do jogo puxa; o site não fica
+mais lento porque o jogo cresceu. Com sprites, loja, barco e mapa vindo, um
+teto compartilhado obrigaria a apertar o site para caber o jogo.
+
+Passam a ser dois, verificados por `pnpm budget`:
+
+| orçamento | mede | teto |
+|---|---|---|
+| **site** | JS que a home baixa | 32KB |
+| **jogo** | JS que `/jogo/pesca` baixa | 80KB |
+
+O do site é apertado de propósito — é ele que protege o portfólio. O do jogo
+tem folga para o que falta construir.
+
+**Sprites não entram aqui.** Imagem não é JS: elas não contam contra estes
+tetos, mas contam contra o peso da página, e vão precisar do seu próprio
+limite quando existirem.
+
+### Calibragem das faixas
+
+Medida por simulação, não por opinião: três jogadores sintéticos (tempo de reação e tremor
+diferentes) × 400 tentativas por peixe. Taxa de captura:
+
+| faixa | iniciante | mediano | bom |
+|---|---|---|---|
+| 1 — ensina | 100% | 100% | 100% |
+| 2 — meio | ~50% | ~90% | 100% |
+| 3 — abissal | 3–22% | 41–62% | ~100% |
+
+**O p4 nunca perdia o peixe.** Ele tinha `tolerance: null`, o que contradizia a tabela do modelo
+de falha logo acima — a faixa 2 perde. Nenhum teste comparava os parâmetros com aquela tabela,
+então a contradição sobreviveu. Corrigido para `tolerance: 2`.
+
+**Cada motor tem um botão dominante, e não é o óbvio.**
+
+- **SUSTENTAÇÃO:** a razão `fillRate`/`drainRate`. Com `fillRate < drainRate` é preciso ficar
+  dentro da faixa mais da metade do tempo só para empatar, e a taxa de captura despenca de 64%
+  para 6% com o jogador mediano. Mantenha o enchimento acima do dreno e use a largura da faixa
+  e a velocidade do peixe para dosar. Regra prática: `fishSpeed ≈ bandHeight / 340` põe o
+  jogador de reação média no fio da navalha, porque em 170ms o peixe anda meia faixa.
+
+  Isto já **inverteu a escada uma vez**: o p5 ficou com razão 0,89 enquanto o p8 tinha 1,06, e o
+  peixe do meio passou a doer mais que o do abissal. O dono percebeu jogando antes de qualquer
+  medição minha. Um saldo negativo não é dificuldade — é perder terreno mesmo jogando bem, e
+  lê como jogo quebrado. **A razão fica acima de 1 nos três**, e a escada mora na faixa
+  (34% / 19% / 15%) e na velocidade do peixe.
+
+  Os três também precisam de **larguras de faixa visivelmente diferentes**. p5 e p8 chegaram a
+  ter exatamente 17% os dois, e a primeira coisa que o dono relatou foi "a barra verde nunca
+  muda de tamanho".
+- **DRAGAGEM:** o espaçamento entre portões (`periodMs / nº de portões`) contra o tempo de
+  reação. É quase uma função degrau — acima da reação, quase 100%; abaixo, quase 0% — e só o
+  tremor humano suaviza a borda. Por isso a dificuldade é a velocidade, como pedido pelo dono.
+- **TRAJETO:** o tamanho da zona contra o quanto o marcador anda no erro de tempo típico.
+  É o mais gradual dos três, e por isso o melhor para a faixa 3.
+
+**Lacuna conhecida:** para um jogador competente, o tamanho do p2 e do p3 é sempre o máximo
+(46cm e 58cm). A qualidade satura quando não se erra, e no raso isso é generosidade de propósito;
+mas o recorde do caderno nesses dois nasce cravado. Resolver exige um termo contínuo de precisão
+na qualidade, que não cabe no teto de 48KB de JS — decisão a tomar junto com o escopo do jogo
+completo.
 
 ## Acessibilidade
 
@@ -288,9 +665,38 @@ WCAG AA é piso vinculante no projeto (PRODUCT.md), e aqui são requisitos de ac
 melhorias.
 
 - **Um botão** já resolve metade. Switch access funciona por definição.
-- **`prefers-reduced-motion`:** TRAJETO e DRAGAGEM avançam em **passos discretos** em vez de
-  deslizar, mesma cadência e mesma decisão. No SUSTENTAÇÃO o peixe salta entre posições e **a
-  faixa não muda** — ela é a mão do jogador, e controle direto não é animação automática.
+- **`prefers-reduced-motion`: revogado, e a revogação é a correção de um erro meu.** A regra
+  original mandava TRAJETO e DRAGAGEM avançarem em **passos discretos** em vez de deslizar.
+  Na prática isso atualizava o marcador **9 a 11 vezes por segundo**, e o dono do projeto — que
+  tem a preferência ligada no Windows — relatou o jogo como travando. Não era percepção: era o
+  comportamento especificado.
+
+  A regra estava errada por dois motivos. O primeiro é que `prefers-reduced-motion` existe contra
+  movimento que causa desconforto vestibular — parallax, giro, zoom, movimento de área grande —
+  e um marcador de 4px numa barra de 420px não é nada disso. O segundo é que esse movimento é
+  **essencial à tarefa**: ele *é* o minigame. O próprio WCAG isenta movimento essencial
+  (2.3.3 Animation from Interactions, que além disso é AAA, acima do piso AA deste projeto).
+  Discretizar não protegia ninguém — deixava o jogo pior e mais difícil exatamente para quem
+  tinha a preferência ligada.
+
+  Os três motores passam a se mover continuamente para todo mundo. Saíram `quantizeSteps` do
+  `stepHold`, o campo `fishDrawPos` do estado e as constantes `STEPS` das três vistas. As
+  animações **decorativas** do site seguem respeitando a preferência, como sempre — o que muda
+  é só o movimento que carrega a jogabilidade.
+- **Aviso de erro.** Errar sacode a arena e acende uma vinheta vermelha nas bordas. Duas
+  decisões deliberadas aqui. A vinheta é **de borda, não de tela cheia**: o critério de três
+  flashes por segundo (WCAG 2.3.1, **nível A** — dentro do piso do projeto) mede área, e uma
+  piscada que ocupasse mais de 25% do campo visual viraria estrobo se alguém martelasse o espaço.
+  E a **tremida vale para todo mundo, inclusive sob `prefers-reduced-motion`** — decisão explícita
+  do dono, tomada depois de ver os dois lados lado a lado e com o custo dito: sacudir a tela é o
+  exemplo canônico de gatilho vestibular, e quem liga a preferência costuma ligar por isso. Não
+  fere o piso AA do projeto, porque o critério que trata de animação por interação (2.3.3) é AAA.
+  Se um dia doer, o botão é a amplitude nos keyframes, não a media query.
+
+  Detalhe que quase passou: `global.css:202` zera a duração de **toda** animação sob a
+  preferência (seletor `*`, `!important`). Sem furar aquele reset, tanto a vinheta quanto a
+  tremida rodariam por 0,01ms — e o aviso de erro ficava **invisível** justamente para quem tem
+  a preferência ligada. Verificar o nome da animação não pega isso; só a duração pega.
 - **Modo garantido.** Uma opção que garante a captura, mais lenta. O próprio Dredge tem isso.
 - **Cor não pode ser o único sinal.** "Zona verde" é informação só por cor e falha o critério
   AA de uso de cor. A zona ativa muda também de **forma e espessura**.
@@ -300,12 +706,16 @@ melhorias.
 
 ## Testes
 
-**Motor é função pura, casca é burra.** Dado um trajeto, uma velocidade e o instante do aperto,
-o resultado é determinístico:
+**Motor é função pura, casca é burra.** Dado o estado do minigame e o instante do aperto, o
+próximo estado é determinístico. A assinatura real do TRAJETO, por exemplo:
 
 ```ts
-avaliarAcerto(trajeto, tMs) → { acertou: boolean, precisao: number }
+pressTrack(params: TrackParams, state: TrackState, tMs: number) → TrackState
 ```
+
+Os outros dois motores seguem a mesma forma (`stepHold`, `stepDodge`), cada um com o `params` e
+o `state` da própria mecânica. `TrackState.done` (e o equivalente nos outros dois) é que carrega
+o par `{ caught: boolean; quality: number }` quando o lance termina.
 
 Isso roda em `vitest`, que já está no projeto. Cobre janela de acerto, alternância de zonas,
 taxa de dreno, contagem de batidas, sem navegador e sem flake. A casca visual só desenha o que

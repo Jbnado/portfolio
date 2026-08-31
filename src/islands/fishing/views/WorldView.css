@@ -1,0 +1,619 @@
+/* Blockout do lago. Tudo quadrado de proposito: o que se julga aqui e o
+   ARRANJO e a INTERACAO, nao a arte, que ainda nao existe. */
+
+.world {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  /* No desktop o lago pode ser grande: estamos num monitor, nao num selo. O
+     teto por altura existe porque a proporcao e 16/7 — sem ele, telas baixas
+     e largas cortariam a cena. */
+  max-width: min(96vw, 1080px, 128vh);
+}
+
+/* A caixa do tutorial ancora aqui dentro. */
+.world-view {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
+  border: 2px solid var(--fishing-rule);
+  border-radius: 6px;
+  background: var(--fishing-surface);
+}
+
+/* ---- A cena tem tres planos: a outra margem, a agua, e o barco.
+
+   A camera olha o lago DE CIMA, em angulo: a linha d'agua fica em
+   `--horizonte`, e o que ha por baixo dela e o plano da agua a vir na nossa
+   direcao. O barco NAO se cola ao horizonte — flutua no meio desse plano,
+   com agua atras e agua a frente.
+
+   O valor ja foi 40%, caiu para 25% porque o barco pousado na linha ficava
+   sempre no alto do quadro, e voltou a 40% agora que o barco tem posicao
+   propria (67% da cena) em vez de se colar ao horizonte. O problema de
+   entao ja nao existe, e um quarto de ceu era cenario a menos. */
+.world-sky {
+  position: absolute;
+  inset: 0 0 calc(100% - var(--horizonte)) 0;
+  /* O ceu clareia PARA BAIXO, na direcao do horizonte. E assim que ceu de
+     verdade se comporta, e e o que faz a linha d'agua parecer longe em vez de
+     ser so uma divisoria. */
+  background: linear-gradient(to bottom, var(--lago-ceu-alto), var(--lago-ceu-baixo));
+}
+
+/* A outra margem: mata ciliar com casinhas, ancorada NA linha d'agua e
+   subindo dali. Uma faixa de 256px que LADRILHA na horizontal, no lugar dos
+   sete retangulos que faziam de morro.
+
+   Dia e noite estao empilhados na mesma folha, e nao lado a lado: lado a lado
+   quebrava o `repeat-x`, porque o ladrilho passaria a incluir os dois. */
+.world-mata {
+  position: absolute;
+  bottom: calc(100% - var(--horizonte));
+  height: calc(64px * var(--s));
+  background-image: url('../art/mata.png');
+  background-size: calc(256px * var(--s)) calc(128px * var(--s));
+  background-repeat: repeat-x;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+.light .world-mata { background-position: 0 0; }
+.dark .world-mata { background-position: 0 calc(-64px * var(--s)); }
+
+/* A linha d'agua ja NAO leva filete proprio.
+
+   Ela existia para separar o longe do perto quando o fundo eram sete blocos
+   chapados. Com a mata desenhada assente exatamente nessa linha, a base dela
+   ja faz essa separacao — e o filete passou a ser um segundo risco por cima
+   do primeiro. De noite era pior: verde fosforo a 45 por cento sobre a
+   silhueta escura da mata lia como um laser a atravessar a cena. */
+.world-horizon { display: none; }
+
+/* A profundidade num gradiente SO, do raso a esquerda ao abissal a direita.
+
+   As paradas caem no CENTRO de cada faixa do mundo (raso 8-44, medio 44-72,
+   abissal 72-100), nao nas fronteiras: assim cada faixa tem a sua cor pura no
+   meio e a passagem acontece ao longo de meia faixa inteira. E o unico jeito
+   de a transicao ser mesmo suave — nas fronteiras, ela seria um degrau.
+
+   Cobre o mundo INTEIRO, desde a coordenada zero, e nao so a partir da orla:
+   a margem e desenhada por cima. Enquanto a agua comecava onde a terra
+   acabava, encolher a terra abria um buraco por onde se via o fundo da
+   moldura. */
+.world-water {
+  position: absolute;
+  top: var(--horizonte);
+  bottom: 0;
+  background: linear-gradient(
+    to right,
+    var(--lago-raso) 0 26%,
+    var(--lago-medio) 58%,
+    var(--lago-fundo) 86% 100%
+  );
+}
+
+/* A distancia, num degrade LISO.
+
+   Este bloco ja foi hachura diagonal, estrias a deslizar e xadrez de 16 bits,
+   e as tres foram recusadas pelo mesmo motivo: qualquer trama sobre uma area
+   desta dimensao le como listra, nao como agua. Sobre 900px de largura nao ha
+   padrao discreto que passe por superficie.
+
+   A agua e o FUNDO onde o pixel art acontece, nao pixel art ela propria. Quem
+   carrega essa linguagem e o pescador e o barco, que sao pequenos e tem
+   contorno. O lago so precisa de dar distancia — e distancia faz-se com dois
+   degrades lisos a cruzarem-se: este, do horizonte para o primeiro plano, e o
+   da profundidade, da margem para o abissal. */
+.world-view::before {
+  content: '';
+  position: absolute;
+  inset: var(--horizonte) 0 0 0;
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--lago-fundo) 52%, transparent),
+    color-mix(in srgb, var(--lago-fundo) 16%, transparent) 38%,
+    transparent 72%
+  );
+  pointer-events: none;
+  z-index: var(--camada-atmosfera);
+}
+
+/* ---- Camadas da cena, declaradas de uma vez.
+
+   Antes so o aviso de virar o celular tinha z-index, e todo o resto empilhava
+   por ordem no documento. Isso bastava enquanto nada flutuava por cima da
+   agua — mas o brilho e um pseudo-elemento, logo o PRIMEIRO filho, e sem
+   empilhamento explicito ele passaria por baixo da agua; com z-index solto,
+   por cima do barco. Nem uma coisa nem outra: o reflexo esta NA agua, sob o
+   barco que flutua nela. */
+.world-view {
+  /* A LINHA D'AGUA. Estava cravada como 25% em sete regras diferentes, e
+     mexer nela desalinhava a cena por partes. Agora e um numero so, e tudo
+     o que depende dela deriva por calc.
+
+     Subiu de 25 para 40: com um quarto de ceu era agua a mais e cenario a
+     menos, e a outra margem — que e onde o LUGAR se ve — ficava espremida
+     numa tira no topo. */
+  --horizonte: 40%;
+  /* Onde a TERRA acaba e a agua comeca, medido do topo da cena.
+     Tem de ficar ACIMA da linha por onde o barco passa (67%), senao nao ha
+     agua nenhuma entre quem navega e a margem — e era esse o defeito: a
+     terra descia ate ao fundo do quadro e o barco entrava dentro dela. */
+  --margem-agua: 60%;
+  /* Escala do pixel, partilhada por TODOS os sprites da cena. Vivia dentro
+     do .world-boat, e a loja nao a enxergava — cada sprite novo teria de
+     redeclarar o mesmo par de degraus e um deles acabaria por divergir. */
+  --s: 1;
+  /* A venda e o chao dela crescem um degrau acima dos outros sprites. */
+  --s-loja: calc(var(--s) + 1);
+  --camada-atmosfera: 1;  /* brilho e profundidade, sobre a agua */
+  --camada-cena: 2;       /* margem, marcas, vulto sob a superficie */
+  --camada-barco: 3;      /* o que flutua */
+}
+.world-shore,
+.world-hot,
+.world-shadow { z-index: var(--camada-cena); }
+.world-boat { z-index: var(--camada-barco); }
+
+/* A agua fora do alcance ja NAO leva hachura.
+
+   Ela existia porque a trava tinha de se ver na cena: sem sinal nenhum, andar
+   ate la e nao pescar pareceria defeito. Mas o sinal passou a existir sozinho
+   quando as marcas viraram bolhas — onde da para pescar borbulha, onde nao da
+   a agua e so agua. Presenca e ausencia bastam, e o aviso no HUD continua a
+   dizer por palavras quando a linha nao alcanca.
+
+   Riscar por cima disso era dizer a mesma coisa uma terceira vez, em papel
+   milimetrado, na metade mais bonita do lago. */
+
+/* A margem. Sobe oito pontos acima do horizonte, e PARA em `--margem-agua`.
+
+   Descia ate ao fundo do quadro, o que fazia dela uma parede de terra pela
+   qual o barco navegava adentro. Agora ha agua a frente dela, que e o que
+   torna verdade chegar de barco a uma loja que fica em terra.
+
+   O canto de baixo e arredondado e a orla ganha uma faixa molhada: sem isso
+   a terra acaba num corte reto, e corte reto no meio de um lago le como um
+   retangulo pousado sobre a agua — que e exatamente o que parecia. */
+.world-shore {
+  position: absolute;
+  /* Um PEDACO de terra sob a casa, e nao um bloco que sobe ate ao horizonte.
+     Enquanto era alto e largo, sobrava por todos os lados do sprite e lia
+     como uma mancha colada atras dele — e a mata ao fundo ja diz que ha
+     terra do outro lado, entao esta so tem de dar chao a construcao.
+
+     Medido em px na escala da loja, para acompanhar a casa em vez de
+     acompanhar a moldura. */
+  width: calc(66px * var(--s-loja));
+  top: calc(var(--margem-agua) - 20px * var(--s-loja));
+  bottom: calc(100% - var(--margem-agua));
+  /* A areia molhada vive no PROPRIO fundo, e nao num pseudo-elemento: com
+     raio em percentagem, uma tira de 5px a herdar esse raio deforma e sai
+     para fora da curva. Dentro do gradiente ela acompanha a forma. */
+  background: linear-gradient(
+    to bottom,
+    var(--lago-terra) calc(100% - 7px),
+    color-mix(in srgb, var(--lago-terra) 55%, var(--lago-raso))
+  );
+  border-bottom-right-radius: 46% 70%;
+}
+
+/* ---- Alvos clicaveis.
+
+   Loja e marcas sao <button> de verdade: mouse, toque e teclado chegam nos
+   mesmos alvos. `cursor: pointer` e o anel pulsante sao a pista de que ali se
+   clica — sem eles a cena parece um desenho, nao um controle. */
+.world-hot {
+  position: absolute;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.world-hot:focus-visible {
+  outline: 3px solid var(--fishing-marker);
+  outline-offset: 3px;
+}
+
+/* A loja fica EM PE na margem, logo abaixo da linha d'agua — na mesma faixa
+   por onde o barco passa. Encostada ao horizonte, como ja esteve, lia-se
+   como parte do cenario de fundo em vez de um sitio aonde se vai.
+
+   Em TERRA, entao ao contrario da marca ela pode ser solida: e uma
+   construcao, nao um acidente da agua. */
+.world-shop {
+  /* A base assenta EXATAMENTE na orla, e nao num numero solto: e o que a
+     planta em terra em vez de a deixar a pairar sobre um bloco. */
+  /* A venda cresce um degrau acima dos outros sprites. Uma construcao da
+     altura do barco lia como casa de brinquedo — um homem de pe tem de caber
+     na porta. O degrau e INTEIRO, nunca 1,5x: meio pixel borra a grade.
+     Declarado na cena, e nao aqui, porque o pedaco de terra sob a casa tem
+     de crescer com ela. */
+  top: calc(var(--margem-agua) - 64px * var(--s-loja));
+  width: calc(96px * var(--s-loja));
+  height: calc(64px * var(--s-loja));
+  /* Ancorada pela ESQUERDA, no inicio da terra: a casa fica na margem e o
+     cais avanca dali para a agua, que e a leitura certa.
+
+     Chegou a estar ancorada pela ponta do cais, por essa ser o sitio de
+     atracar — mas a loja fica no canto do mundo e nao ha espaco nenhum a
+     esquerda dela, entao a casa saia inteira para fora da moldura. */
+  background-image: url('../art/loja.png');
+  background-size: calc(192px * var(--s-loja)) calc(64px * var(--s-loja));
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+/* Dia e noite, declarados duas vezes como a Regra do Turno manda. Ao
+   contrario do pescador, a loja MUDA de turno: ele e uma pessoa e nao troca
+   de cor ao anoitecer, mas um lugar sim — e de noite acende a janela.
+
+   Sao dois quadros na mesma folha, entao a troca e so deslocamento. */
+.light .world-shop { background-position: 0 0; }
+.dark .world-shop { background-position: calc(-96px * var(--s-loja)) 0; }
+
+/* Sombra de contacto, so debaixo da CASA: o cais fica sobre estacas e ja tem
+   as proprias sombras desenhadas. Sem ela a casa flutua, por mais certa que
+   esteja a posicao — e o olho que decide se uma coisa esta pousada, e o que
+   ele procura e a sombra. */
+.world-shop::after {
+  content: '';
+  position: absolute;
+  left: 4%;
+  width: 38%;
+  bottom: -2px;
+  height: calc(4px * var(--s-loja));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--lago-fundo) 38%, transparent);
+  pointer-events: none;
+}
+
+/* Estar atracado acende a construcao pela SILHUETA, e nao com uma moldura.
+   `outline` desenha o retangulo da caixa, e uma caixa vermelha por cima de
+   pixel art le como erro de layout; `drop-shadow` segue o alfa do sprite,
+   entao o brilho contorna o telhado, o toldo e as estacas do cais. */
+.world-shop[data-near='true'] {
+  filter:
+    drop-shadow(0 0 calc(1px * var(--s-loja)) var(--fishing-marker))
+    drop-shadow(0 0 calc(4px * var(--s-loja)) color-mix(in srgb, var(--fishing-marker) 60%, transparent));
+}
+.world-shop:hover { filter: brightness(1.12); }
+.world-shop[data-near='true']:hover {
+  filter:
+    brightness(1.12)
+    drop-shadow(0 0 calc(1px * var(--s-loja)) var(--fishing-marker))
+    drop-shadow(0 0 calc(4px * var(--s-loja)) color-mix(in srgb, var(--fishing-marker) 60%, transparent));
+}
+
+/* Rotulo da loja: o unico texto dentro da cena, porque um quadrado colorido
+   sozinho nao diz que ali se compra. */
+.world-tag {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--color-text-primary);
+}
+
+/* No plano de agua perto, a meia distancia: e ali que o barco navega. Junto
+   ao horizonte a marca ficava "longe" e o barco nunca parecia chegar nela. */
+/* Uma marca e um BORBULHAR: tres bolhas na superficie, e nada mais.
+
+   Passou por retangulo opaco (lia como tampa a boiar) e por poca clara (uma
+   mancha grande demais para dizer "ha peixe aqui"). Bolha e o sinal certo:
+   pequena, discreta, e diz que ha vida por baixo em vez de marcar o chao.
+
+   O alvo continua com o mesmo tamanho e no mesmo sitio — muda so o que se ve
+   dele. */
+.world-spot {
+  top: 57%;
+  height: 12%;
+  transform: translateX(-50%);
+  /* Sem fundo: quem marca o sitio sao as bolhas, que agora sao elementos e
+     sobem sozinhas. As tres que viviam aqui como gradiente ficavam paradas —
+     bolha parada nao e bolha, e um ponto. */
+  background: none;
+}
+
+/* De vez em quando passa uma sombra por baixo: aparece, encolhe e some. E o
+   que diz que o lago esta vivo sem prometer peixe nenhum — o vulto da fisgada
+   e outro, aquele acontece so quando ha peixe de verdade na linha.
+
+   Ciclo longo com janela curta: a sombra ocupa menos de um quinto do tempo.
+   Se passasse sempre, deixaria de ser um acontecimento. `--atraso` vem do
+   indice da marca, senao as tres piscavam em unissono e o lago inteiro
+   parecia um semaforo. */
+.world-spot::after {
+  content: '';
+  position: absolute;
+  left: 42%;
+  top: 46%;
+  width: 26%;
+  height: 26%;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--lago-fundo) 78%, transparent);
+  opacity: 0;
+  animation: world-passagem 8s ease-in-out infinite;
+  animation-delay: var(--atraso, 0s);
+  pointer-events: none;
+}
+
+@keyframes world-passagem {
+  0%, 72%   { opacity: 0; transform: translateX(-6px) scale(1); }
+  78%       { opacity: 0.85; transform: translateX(0) scale(1); }
+  90%       { opacity: 0.5; transform: translateX(7px) scale(0.55); }
+  96%, 100% { opacity: 0; transform: translateX(10px) scale(0.2); }
+}
+
+/* "Estas aqui" e hover SOMAM uma lavagem por baixo das bolhas, em vez de
+   trocarem o fundo: escrever `background` de novo apagava as bolhas, e a
+   marca onde o barco esta era justamente a unica sem elas.
+
+   A lavagem usa --fishing-marker, token de INSTRUMENTO de proposito: isto ja
+   nao e paisagem, e a interface a dizer onde voce esta. Fraca porque nao e um
+   alarme — no claro, oxblood a cheio sobre agua lia como aviso de perigo. */
+.world-spot[data-here='true'],
+.world-spot:hover {
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--fishing-marker) 22%, transparent),
+    transparent 76%
+  );
+}
+
+/* Anel pulsante sobre cada marca: e ele que ensina, sem texto, que dali se
+   pode clicar. Some com movimento reduzido — o aviso vira estatico. */
+/* As bolhas. Sobem, incham e estouram.
+
+   O anel que havia aqui foi-se: passou por retangulo, por elipse do tamanho
+   do alvo e por circulo fino, e em todas as versoes era uma forma de
+   INTERFACE pousada num lago. O que anuncia o sitio agora e o proprio lago a
+   borbulhar — e isso nao precisa de moldura.
+
+   Cada bolha sobe no seu tempo. Iguais e sincronizadas nao seriam bolhas,
+   seriam tres pontos a piscar. */
+.world-bolha {
+  position: absolute;
+  bottom: 34%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--lago-brilho) 62%, transparent);
+  animation: world-bolha 3.4s ease-in infinite;
+  pointer-events: none;
+}
+.world-bolha:nth-of-type(1) { left: 40%; animation-delay: 0s; }
+.world-bolha:nth-of-type(2) { left: 51%; width: 4px; height: 4px; animation-duration: 4.1s; animation-delay: 1.3s; }
+.world-bolha:nth-of-type(3) { left: 60%; animation-duration: 3.9s; animation-delay: 2.4s; }
+
+/* Sobe acelerando e estoura no fim: por isso `ease-in` e a escala a crescer
+   ate desaparecer, em vez de simplesmente sumir. */
+@keyframes world-bolha {
+  0%        { opacity: 0; transform: translateY(4px) scale(0.4); }
+  18%       { opacity: 0.95; transform: translateY(0) scale(1); }
+  72%       { opacity: 0.8; }
+  92%       { opacity: 0.35; transform: translateY(-15px) scale(1.35); }
+  100%      { opacity: 0; transform: translateY(-17px) scale(1.6); }
+}
+
+/* Passar o ponteiro por cima trava o anel e o acende: o alvo confirma que
+   entendeu o mouse antes mesmo do clique. */
+/* Hover acelera o borbulhar: o lago responde ao ponteiro. */
+.world-hot:hover .world-bolha { animation-duration: 1.9s; }
+
+/* Pausado. Vem DEPOIS do :hover de proposito: sem isto o anel voltava a
+   acender ao passar o rato por cima de um alvo que ja nao aceita clique.
+   O pulso e a promessa de que da para clicar, e durante a espera e a luta
+   essa promessa e falsa. */
+.world-hot:disabled { cursor: default; }
+/* Pausado, o lago para de borbulhar: a bolha promete que ali se pode pescar,
+   e durante a espera e a luta isso e falso. */
+.world-hot:disabled .world-bolha,
+.world-hot:disabled:hover .world-bolha { animation: none; opacity: 0; }
+.world-hot:disabled .world-tag { opacity: 0.35; }
+/* O :not e obrigatorio: `:disabled:hover` tem especificidade maior que
+   `[data-here='true']`, entao sem ele passar o rato apagava o realce de
+   "estas aqui" — que nao e hover, e estado. */
+.world-spot:disabled:not([data-here='true']):hover { background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* As bolhas param mas FICAM: sao elas que marcam o sitio, e apaga-las
+     tiraria a informacao junto com o movimento. */
+  .world-bolha { animation: none; opacity: 0.85; }
+  /* O vulto que se aproxima para de nadar mas FICA: ele diz o tamanho do que
+     vem vindo, e isso e informacao, nao enfeite. */
+  .world-shadow { animation: none; opacity: 0.5; }
+  /* A sombra que passa e puro acontecimento decorativo, e some por inteiro:
+     deixa-la parada seria uma mancha permanente que nao quer dizer nada. As
+     bolhas ficam, porque sao o que marca o sitio. */
+  .world-spot::after { animation: none; opacity: 0; }
+}
+
+/* O barco flutua NO plano da agua, nao na linha do horizonte: topo em 50%,
+   base em 67%, dentro do retangulo da marca. Com o horizonte a 25% sobra
+   agua atras dele e agua a frente — e o que da o angulo. */
+.world-boat {
+  position: absolute;
+  /* A base do sprite assenta na linha de agua do barco (67% da cena), entao
+     o topo sobe a altura dele. Antes era `height: 17%`, fluido — pixel art
+     so fica nitida em multiplo inteiro do pixel de origem, e a 1,5x o pixel
+     cai entre a grade e borra. Por isso a altura vem em degraus. */
+  width: calc(64px * var(--s));
+  height: calc(64px * var(--s));
+  top: calc(67% - 64px * var(--s));
+  /* `--olha` e -1 quando o barco vai para a esquerda. O desenho e virado para
+     a direita, entao sem o espelho ele andava de re. A ordem importa: o
+     espelho vem DEPOIS da centragem, senao ele espelha o proprio
+     deslocamento e o barco salta uma largura de lado. */
+  transform: translateX(-50%) scaleX(var(--olha, 1));
+  background-image: url('../art/pescador.png');
+  background-size: calc(256px * var(--s)) calc(64px * var(--s));
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  /* Sem isto o navegador interpola e devolve exatamente a papa que a grade
+     de 64 existe para evitar. */
+  image-rendering: pixelated;
+  /* Some do caminho do clique: quem clica quer a marca, nao o barco. */
+  pointer-events: none;
+}
+
+/* Um quadro por fase. O tempo quem conta e o jogo, em `cast.ts`; aqui so se
+   traduz indice em deslocamento, sempre em multiplo exato de 64. */
+.world-boat[data-frame='1'] { background-position: calc(-64px * var(--s)) 0; }
+.world-boat[data-frame='2'] { background-position: calc(-128px * var(--s)) 0; }
+.world-boat[data-frame='3'] { background-position: calc(-192px * var(--s)) 0; }
+
+@media (min-width: 900px) {
+  /* Na cena, nao no barco: a loja e qualquer sprite futuro crescem junto. */
+  .world-view { --s: 2; }
+}
+
+/* O vulto sob a agua durante a espera. Elipse e nao desenho: o que ele diz e
+   TAMANHO, e forma de peixe entregaria a especie, que pertence a revelacao
+   do CatchView. */
+.world-shadow {
+  position: absolute;
+  top: 63%;
+  width: calc(34px * var(--vulto, 1));
+  height: calc(11px * var(--vulto, 1));
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: var(--fishing-rule);
+  opacity: 0.45;
+  pointer-events: none;
+  animation: world-vulto 1.1s ease-in-out infinite alternate;
+}
+
+/* A aproximacao. Movimento pequeno e local, nao varre a tela — e conteudo do
+   jogo, nao enfeite, entao sobrevive a reduced-motion junto com o pescador. */
+@keyframes world-vulto {
+  from { transform: translateX(-50%) translateX(10px); opacity: 0.30; }
+  to   { transform: translateX(-50%) translateX(-4px); opacity: 0.55; }
+}
+
+.world-hud {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+
+.world-depth { font-weight: 700; }
+.world-hint { opacity: 0.85; }
+
+/* Retrato e o formato pedido. Em paisagem baixa a cena nao cabe junto dos
+   controles, entao em vez de espremer, pedimos para girar. */
+.world-turn {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+  font-family: var(--font-mono);
+  background: var(--color-bg-primary);
+}
+
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 520px) {
+  .world-turn { display: flex; }
+}
+
+/* ---- Barra de acao.
+
+   NAO e "controle de toque": e a interface de mouse tambem, e por isso fica
+   sempre visivel. Quem chega com ponteiro precisa VER onde clicar; esconder
+   os botoes no desktop deixava o jogo com cara de nao ter controles. */
+.world-pad {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  width: 100%;
+  max-width: min(96vw, 1080px, 128vh);
+}
+
+.world-pad-move { display: flex; gap: 8px; }
+
+.world-pad-btn,
+.world-pad-act {
+  /* 48px e o alvo de toque confortavel; abaixo disso erra-se o botao. */
+  min-height: 48px;
+  min-width: 48px;
+  padding: 0 16px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--color-text-primary);
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  cursor: pointer;
+  /* Sem isto, segurar a seta seleciona texto e o arrasto vira rolagem. */
+  touch-action: none;
+  user-select: none;
+}
+
+.world-pad-act {
+  flex: 1;
+  font-weight: 700;
+  background: var(--fishing-marker);
+  color: var(--color-bg-primary);
+  border-color: var(--fishing-marker);
+}
+
+/* Desabilitado se le pela FORMA, nao so pela cor: fica vazado, como os outros
+   botoes, em vez de preenchido. */
+.world-pad-act:disabled {
+  background: var(--fishing-surface);
+  color: var(--color-text-primary);
+  border-color: var(--fishing-rule);
+  opacity: 0.55;
+  cursor: default;
+}
+
+.world-pad-log { white-space: nowrap; }
+
+.world-pad-btn:not(:disabled):hover,
+.world-pad-act:not(:disabled):hover { filter: brightness(1.12); }
+
+.world-pad-btn:active,
+.world-pad-act:not(:disabled):active { transform: translateY(1px); }
+
+.world-pad-btn:focus-visible,
+.world-pad-act:focus-visible { outline: 3px solid var(--fishing-marker); outline-offset: 2px; }
+
+/* Num telefone os quatro controles nao cabem lado a lado: com 410px sobravam
+   55px para o botao de acao e "Escolha uma marca" quebrava em quatro linhas,
+   com a tecla a sair do botao. O caderno passa para uma linha inteira sua —
+   e nao some, que era a outra saida possivel e a errada: colecao escondida
+   nao existe para quem nao a procura. */
+@media (max-width: 560px) {
+  .world-pad { flex-wrap: wrap; }
+  .world-pad-act { min-width: 0; }
+  .world-pad-log { flex: 1 0 100%; }
+}
+
+@media (max-width: 520px) {
+  .world-pad-btn, .world-pad-act { padding: 0 10px; font-size: 0.72rem; }
+}
+
+/* Em retrato o lago fica mais alto. Com 16/7 numa largura de 378px sobra uma
+   tira de 165px, estreita demais para ler a cena — e num telefone a altura e
+   justamente o que sobra. */
+@media (max-width: 640px) {
+  .world-view { aspect-ratio: 3 / 2; }
+}

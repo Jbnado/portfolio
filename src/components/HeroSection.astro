@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import StatCard from './StatCard.astro';
 import { t } from '../i18n/utils';
+import { gameUrl, type Locale } from '../utils/constants';
 import gonImg from '../assets/imgs/Gon-full-body-hi.webp';
 import skullRockImg from '../assets/imgs/skull-rockandroll.webp';
 
@@ -37,6 +38,10 @@ const catalog = [
 
 const techStack = ['React', 'Node.js', 'TypeScript', 'Java', 'Python', 'AWS'];
 const techString = techStack.join(' · ');
+
+// A evidencia do jogo senta ao lado da alegacao: a palavra "jogos" na
+// descricao vira o link para a rota do idioma corrente.
+const gameRoute = gameUrl(locale as Locale);
 ---
 
 <section id="hero" class="hero-section blueprint-wrap">
@@ -74,7 +79,7 @@ const techString = techStack.join(' · ');
         <span class="hero-role hero-stagger terminal-cursor" style="--stagger: 1">{t('hero.role', locale)}</span>
         <h1 class="hero-title hero-stagger punk-glitch" style="--stagger: 2">João<br />Bernardo</h1>
         <p class="hero-description hero-stagger" style="--stagger: 3">
-          {t('hero.description', locale)}
+          {t('hero.descricaoAntes', locale)}<a class="fishing-bait" href={gameRoute}>{t('hero.descricaoLink', locale)}</a>{t('hero.descricaoDepois', locale)}
         </p>
         <p class="hero-techhead hero-stagger" style="--stagger: 4" aria-hidden="true">
           <span class="term-line crt-glow" data-txt={t('terminal.heroStack', locale)}></span>

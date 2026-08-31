@@ -66,13 +66,13 @@
       },
       {
         "rule": "ai-color-palette",
-        "value": "Cyan gradient background",
+        "value": "cyan gradient background",
         "createdAt": "2026-08-28T02:51:19.909Z",
         "reason": "Bloom de CRT no hero do turno noturno: radial de rgba(97,255,202,0.07), o token live-cursor a 7%. Mesma familia do dark-glow e mesma justificativa da Regra Sem Elevacao So Emissao."
       },
       {
         "rule": "kicker-above-heading",
-        "value": "Fullstack Developer",
+        "value": "fullstack developer",
         "createdAt": "2026-08-28T02:51:19.909Z",
         "reason": "Nao e kicker: e a saida de um comando. A linha acima dela e 'jbnado@rp:~$ whoami', e o papel aparece com o cursor do terminal piscando ao lado. O hero e uma transcricao, entao a ordem prompt -> resposta -> nome e a forma correta, nao um rotulo decorativo sobre o titulo."
       },
@@ -87,6 +87,12 @@
         "value": "*",
         "createdAt": "2026-08-28T02:51:19.909Z",
         "reason": "Falso positivo verificado por hit-test a 390px nas paginas de case: a regra compara caixas e ignora empilhamento. O .lang-dropdown vive dentro da .navbar (position fixed, z-index 40) e o cartao de case esta em .case-container (z-index 1). document.elementFromPoint nos tres pontos de amostra das duas opcoes devolve lang-option, nao o cartao."
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgb(0 0 0 / 0.85)",
+        "createdAt": "2026-08-31T14:03:00.229Z",
+        "reason": "Alfa de mascara (mask-image), nao cor pintada: mask so usa o canal alfa, o RGB e irrelevante e nunca chega a tela"
       }
     ],
     "notes": {

@@ -1,0 +1,108 @@
+/* Veu que BLOQUEIA a cena enquanto a fala roda — e assim que novel funciona.
+   Sem ele a pessoa sai navegando por baixo do texto e nao le nada. O lago
+   continua visivel atras, so nao aceita clique. */
+.tuto-block {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: flex-end;
+  background: color-mix(in srgb, var(--color-bg-primary) 62%, transparent);
+}
+
+/* Caixa de fala no rodape da cena. */
+.tuto {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  padding: 10px;
+  background: color-mix(in srgb, var(--color-bg-primary) 92%, transparent);
+  border-top: 2px solid var(--fishing-rule);
+}
+
+/* Retrato de quem fala, ainda por vir. O espaco ja fica guardado. */
+.tuto-face {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+}
+
+/* A caixa inteira e o botao de avancar: alvo grande, como em novel. */
+.tuto-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tuto-body:hover { filter: brightness(1.1); }
+.tuto-body:focus-visible { outline: 3px solid var(--fishing-marker); outline-offset: 2px; }
+
+.tuto-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.68rem;
+  opacity: 0.8;
+}
+
+.tuto-next { display: inline-flex; align-items: center; gap: 6px; }
+
+/* A setinha piscando e a convencao de "clique para continuar" em novel. */
+.tuto-caret { animation: tuto-caret 1.1s steps(2, end) infinite; }
+
+@keyframes tuto-caret {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.15; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tuto-caret { animation: none; }
+}
+
+.tuto-skip {
+  flex: none;
+  align-self: flex-start;
+  min-height: 32px;
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--color-text-primary);
+  background: none;
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+@media (max-width: 560px) {
+  .tuto-face { width: 40px; height: 40px; }
+  .tuto-body { font-size: 0.72rem; }
+}
+
+/* No celular a caixa NAO pode engolir a cena: ela manda clicar numa marca, e
+   uma fala que esconde a marca se contradiz. Frases curtas resolvem a maior
+   parte; o teto de altura garante o resto. */
+@media (max-width: 640px) {
+  .tuto { padding: 8px; gap: 8px; }
+  /* Sem teto de altura: com as frases curtas a caixa cabe sozinha, e um
+     tutorial com barra de rolagem corta a fala no meio. */
+  .tuto-body { font-size: 0.7rem; line-height: 1.4; }
+  .tuto-face { width: 34px; height: 34px; }
+  .tuto-skip { min-height: 28px; font-size: 0.62rem; }
+}

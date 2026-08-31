@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import SectionTitle from './SectionTitle.astro';
 import SectionEyebrow from './SectionEyebrow.astro';
 import { t } from '../i18n/utils';
+import { gameUrl, type Locale } from '../utils/constants';
 import killuaImg from '../assets/imgs/Killua_full_body.webp';
 import esqueletoImg from '../assets/imgs/esqueleto-de-surf-tropical.webp';
 
@@ -11,6 +12,10 @@ interface Props {
 }
 
 const { locale = 'pt-br' } = Astro.props;
+
+// A evidencia do jogo senta ao lado da alegacao: a palavra "games" no
+// intro vira o link para a rota do idioma corrente.
+const gameRoute = gameUrl(locale as Locale);
 ---
 
 <section id="sobre" class="about-section blueprint-wrap" style="position:relative;overflow:hidden">
@@ -32,7 +37,7 @@ const { locale = 'pt-br' } = Astro.props;
     <SectionEyebrow term={t('terminal.about', locale)} paper={t('paper.about', locale)} />
     <SectionTitle title={t('about.title', locale)} />
     <div class="about-content">
-      <p class="about-description">{t('about.intro', locale)}</p>
+      <p class="about-description">{t('about.introAntes', locale)}<a class="fishing-bait" href={gameRoute}>{t('about.introLink', locale)}</a>{t('about.introDepois', locale)}</p>
       <blockquote class="about-pullquote">
         {t('about.philosophy', locale)}
       </blockquote>

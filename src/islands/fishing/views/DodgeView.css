@@ -1,0 +1,32 @@
+.dodge { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.dodge-ring { display: block; width: 100%; max-width: 280px; height: auto; }
+/* A contagem principal e progresso (limpas seguidas), entao herda a cor de
+   texto normal. So a parte das quedas usa a cor de perigo. */
+.dodge-count {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.dodge-falls { color: var(--fishing-danger); }
+
+/* A barrinha do peixe sendo puxado. Mesma linguagem do medidor do
+   SUSTENTACAO: superficie com borda, preenchimento na cor da zona. */
+.dodge-meter {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  height: 12px;
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dodge-meter-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--fishing-zone);
+}

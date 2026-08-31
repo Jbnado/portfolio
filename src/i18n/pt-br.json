@@ -17,6 +17,9 @@
     "role": "Fullstack Developer",
     "name": "João Bernardo",
     "description": "Fullstack developer em Ribeirão Preto. Construo APIs, interfaces e às vezes jogos.",
+    "descricaoAntes": "Fullstack developer em Ribeirão Preto. Construo APIs, interfaces e às vezes ",
+    "descricaoLink": "jogos",
+    "descricaoDepois": ".",
     "ctaProjects": "Ver projetos",
     "ctaContact": "Fala comigo",
     "panelLabel": "TRAJETÓRIA",
@@ -31,6 +34,9 @@
   "about": {
     "title": "Sobre Mim",
     "intro": "Sou um developer fullstack com 5 anos de experiência construindo aplicações web que fazem a diferença. Já passei por empresas de marketing (Authorify, EUA), e-commerce B2B (Take) e fintech (Verzel). Tudo começou pelos games. Eu amava jogar e sempre quis entender como eram feitos, então fui parar em Análise e Desenvolvimento de Sistemas e me apaixonei pela programação e por esse mundo da tecnologia. Aquela curiosidade de desmontar as coisas pra ver como funcionam virou paixão por criar soluções completas, do backend ao pixel final.",
+    "introAntes": "Sou um developer fullstack com 5 anos de experiência construindo aplicações web que fazem a diferença. Já passei por empresas de marketing (Authorify, EUA), e-commerce B2B (Take) e fintech (Verzel). Tudo começou pelos ",
+    "introLink": "games",
+    "introDepois": ". Eu amava jogar e sempre quis entender como eram feitos, então fui parar em Análise e Desenvolvimento de Sistemas e me apaixonei pela programação e por esse mundo da tecnologia. Aquela curiosidade de desmontar as coisas pra ver como funcionam virou paixão por criar soluções completas, do backend ao pixel final.",
     "philosophy": "Acredito que bom software é invisível: carrega rápido, é intuitivo e acessível a todos. Cada linha de código que escrevo tem um propósito — resolver um problema real, não impressionar com complexidade desnecessária.",
     "approach": "A minha abordagem combina visão fullstack com atenção ao detalhe. Trabalho com React no frontend e Java/Python/NestJS no backend, deploy em cloud com AWS e Docker. Fora do código, co-fundei a RP.js — comunidade JavaScript de Ribeirão Preto — e desenvolvi o Ribeirão Noir, um jogo investigativo lançado na Feira do Livro e validado por 3 doutores."
   },
@@ -167,5 +173,139 @@
   "a11y": {
     "externalLink": "Abre em nova janela",
     "mobileNav": "Menu de navegação"
+  },
+  "game": {
+    "title": "Pesca",
+    "description": "Um jogo de pesca dentro do portfólio. Uma tela, três minigames, nove peixes.",
+    "cast": "Lançar a linha",
+    "play": "Jogar",
+    "exit": "Sair",
+    "exitHelp": "Esc também sai",
+    "gameArea": "Área de jogo",
+    "howToPlay": "Espaço faz tudo: lança a linha e resolve o minigame de cada peixe.",
+    "tuto": {
+      "title": "Rever o tutorial",
+      "skip": "Pular",
+      "next": "Continuar",
+      "chapters": {
+        "intro": [
+          "Ô, chegou. Esse lago aqui é esquisito: aparece peixe de água doce e de água salgada, do nada. Ninguém explica.",
+          "Vai lá, clica numa marca na água que o barco vai sozinho. Chegando, joga a linha."
+        ],
+        "catch": [
+          "Pescou! Viu como é fácil. Ó, pode vender aqui comigo, na loja da margem.",
+          "Peixe grande paga melhor. E os raros, bem melhor."
+        ],
+        "sale": [
+          "Isso. Agora com o dinheiro compra uma linha melhor — é ela que te deixa pescar mais fundo.",
+          "E olha, tem muito mais peixe do que você viu até agora. Muito mais. Dá uma espiada no caderno."
+        ]
+      }
+    },
+    "close": "Fechar",
+    "depth3": {
+      "1": "Raso",
+      "2": "Meio",
+      "3": "Abissal"
+    },
+    "shop": {
+      "baitLabel": "Isca",
+      "title": "Loja da margem",
+      "coins": "Moedas",
+      "sell": "Vender o pescado",
+      "nothingToSell": "porão vazio",
+      "line": "Linha",
+      "equip": "equipar",
+      "equipped": "na vara",
+      "close": "Fechar",
+      "baitName": {
+        "minhoca": "Isca de minhoca",
+        "camarao": "Isca de camarão",
+        "sardinha": "Isca de sardinha"
+      },
+      "choose": "escolher",
+      "act": "agir"
+    },
+    "world": {
+      "clickHint": "Clique numa marca para navegar até ela",
+      "shop": "Loja aqui",
+      "cast": "Dá para pescar aqui",
+      "noSpot": "Ande até uma marca na água",
+      "menu": "Tab abre o caderno",
+      "shopShort": "Loja",
+      "castShort": "Lançar",
+      "noSpotShort": "Escolha uma marca",
+      "logShort": "Caderno",
+      "needLine": "Linha curta demais para este fundo",
+      "needLineShort": "Sem linha",
+      "turnPhone": "Gire o celular para a vertical.",
+      "depth": {
+        "raso": "Raso",
+        "medio": "Meio",
+        "abissal": "Abissal"
+      }
+    },
+    "instruction": {
+      "track": "Espaço quando o marcador cruzar a zona.",
+      "hold": "Segure espaço para subir. Mantenha o peixe dentro da faixa.",
+      "dodge": "Espaço troca de pista. Fique sem cair até a barra encher."
+    },
+    "caught": "Fisgou",
+    "escaped": "Escapou",
+    "log": "Caderno de espécimes",
+    "logEmpty": "Nenhum peixe registrado ainda.",
+    "times": "vezes",
+    "time": "vez",
+    "largest": "maior",
+    "guaranteedMode": "Modo garantido",
+    "guaranteedModeHelp": "Mais lento, mas sempre pesca.",
+    "reeling": "Puxando",
+    "falls": "Quedas",
+    "resets": "Zerou",
+    "fallsUnlimited": "O peixe não escapa.",
+    "water": {
+      "doce": "água doce",
+      "salgada": "água salgada"
+    },
+    "fish": {
+      "p1": "Lambari",
+      "p10": "Acará",
+      "p3": "Tainha",
+      "p11": "Piau",
+      "p2": "Traíra",
+      "p12": "Bagre",
+      "p4": "Robalo",
+      "p13": "Corvina",
+      "p14": "Piraputanga",
+      "p15": "Cascudo",
+      "p6": "Pacu",
+      "p16": "Curimbatá",
+      "p17": "Piapara",
+      "p18": "Xaréu",
+      "p5": "Matrinxã",
+      "p19": "Barbado",
+      "p7": "Garoupa",
+      "p20": "Pirarara",
+      "p9": "Jaú",
+      "p21": "Badejo",
+      "p8": "Dourado",
+      "p22": "Piraíba",
+      "p23": "Pirarucu",
+      "p24": "Mero"
+    },
+    "fight": "SEGURAR / TOCAR",
+    "keyAct": "Espaço",
+    "keyLog": "Tab",
+    "keyClose": "Esc",
+    "back": "Continuar",
+    "keyLeft": "A",
+    "keyRight": "D",
+    "keyPick": "W S",
+    "scroll": "rolar",
+    "rarity": {
+      "comum": "Comum",
+      "raro": "Raro",
+      "lenda": "Lendário"
+    }
   }
 }

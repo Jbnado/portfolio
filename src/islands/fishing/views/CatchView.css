@@ -1,0 +1,230 @@
+/* A revelacao da fisgada, em tres degraus.
+
+   Uma so estrutura; o `data-rarity` no topo e que liga os degraus. TODOS os
+   degraus tem LUZ — o clarao que sai de tras do cartao e o que diz "pegaste
+   alguma coisa". A primeira versao dava luz so ao raro e ao lendario, e o
+   comum era um cartao que subia 18px: o dono jogou e disse que nao viu
+   animacao nenhuma. Estava certo — subir nao le como comemorar.
+
+   O que muda por degrau e o TAMANHO da luz e o que vem depois dela: o comum
+   tem o clarao e para por ai; o raro ganha raios; o lendario ganha aura,
+   raios que giram e mais tempo.
+
+   Sobre piscar: WCAG 2.3.1 (nivel A, e portanto piso deste projeto) limita a
+   tres flashes por segundo. O clarao acontece UMA vez, entao nao e flash no
+   sentido do criterio por mais brilhante que seja; os raios entram uma vez e
+   ficam; e a aura do lendario faz dois ciclos lentos (0,9 s cada, ~1,1 Hz),
+   bem abaixo do limite. */
+
+.catch {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+}
+
+/* O CLARAO. Sai de tras do cartao e abre para fora, uma vez. E a peca que
+   faz a coisa parecer uma comemoracao em vez de uma troca de tela, e por
+   isso existe nos tres degraus — muda o tamanho, nao a presenca. */
+.catch-burst {
+  position: absolute;
+  z-index: 0;
+  width: 260px;
+  height: 260px;
+  max-width: 80vw;
+  max-height: 80vw;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--catch-fish, var(--fishing-marker)) 85%, transparent) 0%,
+    color-mix(in srgb, var(--fishing-marker) 45%, transparent) 38%,
+    transparent 66%
+  );
+  opacity: 0;
+  animation: catch-burst 620ms cubic-bezier(0.1, 0.7, 0.2, 1) both;
+}
+
+.catch-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 14px 26px;
+  text-align: center;
+  font-family: var(--font-mono);
+  background: var(--color-bg-primary);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 6px;
+  /* O halo FICA depois do clarao passar: sem ele o cartao volta a ser uma
+     caixa qualquer assim que a animacao acaba, que era metade do problema. */
+  box-shadow: 0 0 22px -4px color-mix(in srgb, var(--fishing-marker) 45%, transparent);
+  animation: catch-rise 420ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+/* Espaco guardado para o desenho do peixe. Ate la, o bloco de cor da especie
+   — o mesmo que o minigame usa, para o peixe da vista e o do premio serem
+   reconheciveis como o mesmo bicho. */
+.catch-pic {
+  width: 84px;
+  height: 56px;
+  background: var(--catch-fish, var(--fishing-marker));
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+}
+
+.catch-name { font-size: 1rem; letter-spacing: 0.04em; }
+.catch-size { font-size: 0.78rem; opacity: 0.85; }
+
+/* A etiqueta de raridade nao se distingue so por cor: muda de peso, de
+   moldura e de espacamento. Cor sozinha nao passa em 1.4.1. */
+.catch-tag {
+  margin-top: 2px;
+  padding: 2px 10px;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid var(--fishing-rule);
+  border-radius: 999px;
+  opacity: 0.75;
+}
+
+/* ---- Raro: raios atras do cartao, e a etiqueta carimba. */
+
+.catch[data-rarity='raro'] .catch-burst { width: 380px; height: 380px; animation-duration: 760ms; }
+.catch[data-rarity='lenda'] .catch-burst { width: 520px; height: 520px; max-width: 92vw; max-height: 92vw; animation-duration: 980ms; }
+
+.catch[data-rarity='raro'] .catch-card,
+.catch[data-rarity='lenda'] .catch-card {
+  box-shadow: 0 0 34px -2px color-mix(in srgb, var(--fishing-marker) 62%, transparent);
+  animation: catch-pop 420ms cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+
+/* Os raios tem de aparecer FORA do cartao: a primeira versao punha a faixa
+   visivel entre 12% e 68% do raio, e o cartao — que ocupa ate uns 38% —
+   tapava quase toda ela. O que sobrava ficava a 26% de alpha, invisivel na
+   pratica. A faixa agora comeca depois do cartao e a cor tem peso. */
+.catch-rays {
+  position: absolute;
+  z-index: 0;
+  width: 440px;
+  height: 440px;
+  max-width: 92vw;
+  max-height: 92vw;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--fishing-marker) 55%, transparent) 0deg 5deg,
+    transparent 5deg 20deg
+  );
+  mask-image: radial-gradient(circle, transparent 26%, #000 40%, transparent 74%);
+  opacity: 0;
+  animation: catch-rays-in 520ms ease-out 80ms both;
+}
+
+.catch[data-rarity='raro'] .catch-tag,
+.catch[data-rarity='lenda'] .catch-tag {
+  font-weight: 700;
+  border-color: var(--fishing-marker);
+  color: var(--fishing-marker);
+  opacity: 1;
+  animation: catch-stamp 320ms cubic-bezier(0.2, 1.6, 0.4, 1) 220ms both;
+}
+
+/* ---- Lendario: os raios giram devagar, e uma aura pulsa duas vezes. */
+
+.catch[data-rarity='lenda'] .catch-card {
+  animation-duration: 560ms;
+  border-width: 3px;
+  border-color: var(--fishing-marker);
+  box-shadow: 0 0 48px 0 color-mix(in srgb, var(--fishing-marker) 75%, transparent);
+}
+
+.catch[data-rarity='lenda'] .catch-rays {
+  animation:
+    catch-rays-in 720ms ease-out 80ms both,
+    catch-spin 14s linear 800ms infinite;
+}
+
+.catch-aura {
+  position: absolute;
+  z-index: 0;
+  width: 320px;
+  height: 320px;
+  max-width: 84vw;
+  max-height: 84vw;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--fishing-marker) 34%, transparent) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  animation: catch-aura-pulse 900ms ease-in-out 2;
+}
+
+.catch[data-rarity='lenda'] .catch-tag {
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  animation-delay: 340ms;
+}
+
+@keyframes catch-burst {
+  0% { opacity: 0.9; transform: scale(0.2); }
+  55% { opacity: 0.5; }
+  100% { opacity: 0; transform: scale(1.25); }
+}
+
+@keyframes catch-rise {
+  from { opacity: 0; transform: translateY(18px) scale(0.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes catch-pop {
+  0% { opacity: 0; transform: translateY(22px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes catch-rays-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes catch-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes catch-aura-pulse {
+  0%, 100% { opacity: 0; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+/* Com movimento reduzido a comemoracao ENCOLHE, nao desaparece.
+
+   O dono pediu a animacao, e joga com a preferencia ligada: apagar tudo
+   deixaria justamente ele sem o premio que pediu. Fica o que informa — o
+   cartao assenta e a etiqueta aparece — e sai o que costuma incomodar: a
+   rotacao continua e o pulso da aura.
+
+   O !important existe porque global.css:202 zera a duracao de TODA animacao
+   sob a preferencia, com seletor * e !important; a especificidade maior daqui
+   desempata. Mesmo caminho ja andado pela vinheta de erro. */
+@media (prefers-reduced-motion: reduce) {
+  .catch .catch-card { animation: catch-rise 300ms ease-out both !important; }
+  .catch .catch-rays { animation: catch-rays-in 300ms ease-out both !important; }
+  .catch .catch-tag { animation: catch-rise 240ms ease-out 160ms both !important; }
+  .catch .catch-aura { animation: none !important; opacity: 0.7; }
+  /* O clarao encolhe e some mais depressa, mas ACONTECE: e ele que diz que
+     se pegou alguma coisa, e o halo que fica no cartao nao depende de
+     animacao nenhuma. */
+  .catch .catch-burst { animation: catch-burst 380ms ease-out both !important; }
+}
+
+@media (max-width: 560px) {
+  .catch-card { padding: 12px 18px; }
+  .catch-pic { width: 68px; height: 46px; }
+  .catch-burst { width: 200px; height: 200px; }
+  .catch[data-rarity='raro'] .catch-burst { width: 280px; height: 280px; }
+  .catch[data-rarity='lenda'] .catch-burst { width: 340px; height: 340px; }
+}

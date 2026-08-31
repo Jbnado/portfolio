@@ -1,0 +1,581 @@
+/* Regra do Turno: todo par cor/uso declarado duas vezes, nunca herdado. */
+.light {
+  --fishing-surface: var(--color-bg-secondary);
+  --fishing-rule: var(--color-border-strong);
+  --fishing-zone: var(--color-accent-secondary);
+  --fishing-marker: var(--color-accent);
+  /* --color-revolt tambem cai no mesmo oxblood do accent no claro (por
+     desenho), entao nao resolve a colisao com o marcador. --color-accent-hover
+     e o oxblood escurecido: token existente, ainda le como perigo, 7.67:1
+     contra --fishing-surface — ver relatorio da Task 9. */
+  --fishing-danger: var(--color-accent-hover);
+  --fishing-fish-a: #4a7c59;
+  --fishing-fish-b: #2f5aa8;
+  --fishing-fish-c: #8f2d24;
+  --fishing-fish-d: #6f6757;
+  /* Era #a8763e: 2.83:1 contra --fishing-surface e 1.88:1 contra o
+     preenchimento da faixa (color-mix com --fishing-zone), os dois abaixo do
+     piso de 3:1 pra objeto grafico. Novo valor: 5.52:1 e 3.67:1 (achado C1). */
+  --fishing-fish-e: #6b4d2e;
+  --fishing-fish-f: #3d6b7d;
+  --fishing-fish-g: #7a4b8f;
+  --fishing-fish-h: #22242b;
+  --fishing-fish-i: #5e564a;
+
+  /* ---- O LAGO. Grupo proprio, e nao derivado de --fishing-rule/-zone, que
+     sao tokens de INSTRUMENTO: enquanto a cena saia deles, ela parecia um
+     diagrama do lago e nao um lago.
+
+     A cena nao e excecao a Regra do Turno — ela e declarada duas vezes como
+     tudo o mais. So que muda de DIA para NOITE, em vez de mudar de papel para
+     fosforo. Um lago verde-fosforo nao le como agua, e era por isso que o
+     pescador parecia colado por cima da cena em vez de estar dentro dela.
+
+     Aqui: meio-dia. Dessaturado de proposito — a primeira tentativa foi um
+     azul de cartao-postal, e sobre a manila da pagina lia como uma fotografia
+     colada na mesa. O lago do dia tem de parecer DESENHADO nesse papel: agua
+     de tinta lavada, areia da cor da folha, verde seco na outra margem. */
+  --lago-ceu-alto: #c3cfd1;
+  --lago-ceu-baixo: #e4e2d6;
+  --lago-margem: #8a9070;
+  --lago-terra: #bfa87e;
+  --lago-raso: #93aeb0;
+  --lago-medio: #5f8290;
+  --lago-fundo: #3b5c6c;
+  /* Sol na agua. Nunca #fff literal: branco puro nao existe em lugar nenhum
+     deste site. */
+  --lago-brilho: #f6efd8;
+}
+
+.dark {
+  --fishing-surface: var(--color-bg-secondary);
+  --fishing-rule: var(--color-border-strong);
+  --fishing-zone: var(--color-accent);
+  --fishing-marker: var(--color-accent-secondary);
+  --fishing-danger: var(--color-revolt);
+  --fishing-fish-a: #42f59b;
+  --fishing-fish-b: #61ffca;
+  --fishing-fish-c: #ff3e3e;
+  --fishing-fish-d: #54c59f;
+  --fishing-fish-e: #7dffb0;
+  --fishing-fish-f: #4fbf85;
+  --fishing-fish-g: #7cf5ad;
+  /* Era #2f8a5e: 4.33:1 contra --fishing-surface (passava), mas 1.95:1
+     contra o preenchimento da faixa — sumia bem onde o jogador esta
+     acertando. Novo valor: 8.88:1 e 4.00:1 (achado C1). */
+  --fishing-fish-h: #33cc80;
+  --fishing-fish-i: #1f5a3d;
+
+  /* ---- O MESMO LAGO, a noite. Nao e o lago do terminal: e o lago depois de
+     escurecer. O fosforo nao vira a agua — ele volta como REFLEXO nela, em
+     --lago-brilho, que e onde a identidade do CRT sobrevive sem o lago deixar
+     de ser um lugar.
+
+     A agua de noite e naturalmente pouco contrastada, entao os tres degraus de
+     profundidade sao mais separados aqui do que no dia: no escuro o risco nao
+     e ofuscar, e as tres faixas virarem uma mancha so. */
+  --lago-ceu-alto: #080d12;
+  --lago-ceu-baixo: #14222a;
+  --lago-margem: #17251f;
+  --lago-terra: #1e2823;
+  --lago-raso: #1d4453;
+  --lago-medio: #123140;
+  --lago-fundo: #081a26;
+  /* O fosforo, so como luz refletida na agua. */
+  --lago-brilho: #42f59b;
+}
+
+/* A area do jogo ocupa a tela sem transbordar: e isto que resolve a rolagem
+   por espaco, e nao um preventDefault. */
+.fishing-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.fishing-sea {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Sem z-index proprio: fica atras do .fishing-sea so por ordem no DOM (que
+   ja resolve, o canvas vem primeiro), e assim NAO cria stacking context
+   proprio. Um z-index aqui prenderia a sobreposicao em tela cheia dentro
+   dele — e ela perderia do navbar (z-index 40) mesmo com z-index 80. */
+.fishing-content { position: relative; }
+
+.fishing-button {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-height: 44px;
+  padding: 12px 16px;
+  color: var(--color-bg-primary);
+  background: var(--color-accent);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.fishing-button:focus-visible {
+  outline: 2px solid var(--color-accent-secondary);
+  outline-offset: 2px;
+}
+
+/* Prompt do botao contextual: espaco so e obvio se a tela disser o que faz. */
+.fishing-prompt {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  max-width: 60ch;
+}
+
+/* Anuncio para leitor de tela. Visualmente escondido, nunca display:none,
+   que remove do leitor tambem. */
+.fishing-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.fishing-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+/* <small> herda "font-size: smaller" do UA stylesheet por padrao (0.75rem
+   vira ~9.6px, abaixo do piso de legibilidade de 11px). Sem isto a ajuda do
+   modo garantido fica pequena demais pra ler. */
+.fishing-option small {
+  font-size: inherit;
+  color: var(--color-text-secondary);
+}
+.fishing-option input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Sobreposicao em tela cheia: fixed + inset zera qualquer questao de altura,
+   porque a caixa E a viewport. Nada de calc() competindo com navbar e rodape. */
+.fishing-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--color-bg-primary);
+  overflow: hidden;
+}
+
+/* Enquanto a sobreposicao esta aberta o documento atras nao rola. Sem isto a
+   barra de espaco volta a rolar a pagina de baixo. */
+body.fishing-locked {
+  overflow: hidden;
+}
+
+.fishing-overlay-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.fishing-exit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: 2px solid var(--color-border-strong);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.fishing-exit:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.fishing-exit:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* <small> herda "font-size: smaller" do UA stylesheet por padrao (0.75rem
+   vira ~9.6px, abaixo do piso de legibilidade de 12px). Mesma correcao do
+   .fishing-option small acima. */
+.fishing-exit small {
+  font-size: inherit;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-secondary);
+}
+
+.fishing-arena {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 0;
+}
+
+/* ---- Aviso de erro: a arena treme e uma vinheta vermelha pulsa nas bordas.
+
+   Dois nomes de keyframe identicos (sufixo -a e -b) porque a ilha alterna
+   data-miss entre 1 e 2 a cada erro: trocar de classe para o MESMO nome de
+   animacao nao a reinicia, trocar o NOME reinicia. Isso evita timer em JS.
+
+   A vinheta e de BORDA e nao de tela cheia de proposito. O criterio de tres
+   flashes por segundo (WCAG 2.3.1, nivel A) mede area: uma piscada que ocupe
+   mais de 25% do campo visual e martelada no espaco viraria estrobo. Uma
+   vinheta nas bordas fica bem abaixo desse limite e ainda assim se ve. */
+
+.fishing-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: inset 0 0 90px 12px var(--fishing-danger);
+}
+
+.fishing-overlay[data-miss='1'] .fishing-flash { animation: fishing-flash-a 320ms ease-out; }
+.fishing-overlay[data-miss='2'] .fishing-flash { animation: fishing-flash-b 320ms ease-out; }
+.fishing-overlay[data-miss='1'] .fishing-arena { animation: fishing-shake-a 320ms ease-out; }
+.fishing-overlay[data-miss='2'] .fishing-arena { animation: fishing-shake-b 320ms ease-out; }
+
+@keyframes fishing-flash-a { 0% { opacity: 0 } 12% { opacity: 1 } 100% { opacity: 0 } }
+@keyframes fishing-flash-b { 0% { opacity: 0 } 12% { opacity: 1 } 100% { opacity: 0 } }
+
+@keyframes fishing-shake-a {
+  0%, 100% { transform: translateX(0) }
+  12% { transform: translateX(-9px) }
+  28% { transform: translateX(8px) }
+  44% { transform: translateX(-6px) }
+  60% { transform: translateX(4px) }
+  78% { transform: translateX(-2px) }
+}
+
+@keyframes fishing-shake-b {
+  0%, 100% { transform: translateX(0) }
+  12% { transform: translateX(-9px) }
+  28% { transform: translateX(8px) }
+  44% { transform: translateX(-6px) }
+  60% { transform: translateX(4px) }
+  78% { transform: translateX(-2px) }
+}
+
+/* O aviso de erro fura o reset de movimento reduzido, tremida inclusive.
+
+   Decisao explicita do dono: a tremida vale para TODO MUNDO. Foi tomada
+   depois de ver os dois lados lado a lado, com o custo dito — sacudir a tela
+   e o exemplo canonico de gatilho vestibular, e quem liga "reduzir movimento"
+   normalmente liga por isso. Nao fere o piso AA do projeto: o criterio que
+   trata disso (2.3.3 Animation from Interactions) e AAA. Se um dia doer,
+   o botao e a amplitude nos keyframes, nao esta media query.
+
+   O !important existe porque global.css:202 zera a duracao de TODA animacao
+   sob a preferencia, com seletor * e !important. Sem furar aquilo, tanto a
+   vinheta quanto a tremida rodariam por 0.01ms — ou seja, nao rodariam. A
+   especificidade maior daqui resolve o empate entre os dois !important. */
+@media (prefers-reduced-motion: reduce) {
+  .fishing-overlay[data-miss='1'] .fishing-flash { animation: fishing-flash-a 320ms ease-out !important; }
+  .fishing-overlay[data-miss='2'] .fishing-flash { animation: fishing-flash-b 320ms ease-out !important; }
+  .fishing-overlay[data-miss='1'] .fishing-arena { animation: fishing-shake-a 320ms ease-out !important; }
+  .fishing-overlay[data-miss='2'] .fishing-arena { animation: fishing-shake-b 320ms ease-out !important; }
+}
+
+/* ---- O mundo e a camada por cima dele.
+
+   O minigame COBRE a cena em vez de substitui-la: e assim que se julga como a
+   partida aparece por cima do lago. O vidro atras escurece o mundo o
+   suficiente para o minigame ler, sem apaga-lo. */
+
+.fishing-arena { position: relative; }
+
+.fishing-over {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  background: color-mix(in srgb, var(--color-bg-primary) 82%, transparent);
+}
+
+.fishing-menu {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92%, 700px);
+  max-height: 84%;
+  z-index: 4;
+  overflow: auto;
+  /* Sem padding em cima: a cabeca fixa e que o carrega. Com ele aqui, a tira
+     de padding rolava e deixava passar ficha por cima da cabeca. */
+  padding: 0 20px 16px;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+/* Caderno em grade, como uma pokedex: as nove especies sempre a vista, as
+   que faltam como "???". Serve para mostrar o que ainda ha por pescar, e nao
+   so o que ja se pescou. */
+/* A cabeca FICA. Rolando o grid ela saia do painel e levava consigo o botao
+   de fechar e o cracha da tecla — a saida desaparecia justamente para quem
+   estava a explorar as 24 fichas. As margens negativas cobrem o padding do
+   painel, senao passa conteudo pelos lados por baixo dela. */
+.fishing-menu-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0 -20px 0;
+  padding: 16px 20px 10px;
+  background: var(--color-bg-primary);
+  border-bottom: 2px solid var(--fishing-rule);
+}
+.fishing-menu-head h3 { margin: 0; letter-spacing: 0.08em; }
+
+/* O cracha de rolar. Fica ao lado do titulo porque e ali que se olha ao abrir
+   o painel — e num grid de 24 especies quase tudo esta abaixo da dobra. */
+.fishing-menu-keys {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.fishing-menu-close {
+  min-height: 40px;
+  padding: 0 14px;
+  font: inherit;
+  color: var(--color-text-primary);
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.fishing-dex {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.fishing-dex-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border: 2px solid var(--fishing-rule);
+  border-radius: 4px;
+}
+
+.fishing-dex-item[data-found='false'] { opacity: 0.55; }
+.fishing-dex-item strong { font-size: 0.85rem; }
+.fishing-dex-item small { opacity: 0.8; line-height: 1.5; }
+
+/* Espaco reservado para a foto do peixe, que ainda nao existe. Quadrado
+   grande de proposito: e ele que vai carregar a identidade da especie. */
+.fishing-menu-pic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  width: 100%;
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  font-size: 1.1rem;
+  opacity: 0.7;
+}
+
+/* Linha de acao com altura reservada: o botao de lancar entra e sai conforme
+   o barco chega numa marca, e sem a reserva ele empurrava o lago pra cima e
+   pra baixo a cada passo. */
+.fishing-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: min(96vw, 1080px);
+  min-height: 108px;
+}
+
+/* O checkbox mora na barra de cima: e ajuste, nao cena. Dentro da arena ele
+   entrava e saia do fluxo e empurrava o lago a cada troca de fase. */
+/* Barra de status. Moeda, linha e isca sempre a vista: escondidas, a
+   economia parece arbitraria e a trava de profundidade parece defeito. */
+.fishing-overlay-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px 20px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: min(96vw, 1080px, 128vh);
+  margin: 0 auto;
+}
+
+.fishing-stat {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  opacity: 0.9;
+}
+
+.fishing-stat strong { opacity: 1; }
+
+/* Empurra o checkbox para a direita, separando ajuste de status. */
+.fishing-overlay-bar .fishing-option { margin-left: auto; }
+
+@media (max-width: 640px) {
+  .fishing-dex { grid-template-columns: repeat(2, 1fr); }
+  .fishing-keys { display: none; }
+}
+
+/* Botao de rever o tutorial. Redondo e discreto, mas presente: aprender nao
+   pode depender de ter visto na primeira visita. */
+.fishing-help {
+  width: 30px;
+  height: 30px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  background: var(--fishing-surface);
+  border: 2px solid var(--fishing-rule);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.fishing-help:hover { filter: brightness(1.15); }
+.fishing-help:focus-visible { outline: 3px solid var(--fishing-marker); outline-offset: 2px; }
+
+/* ---- Celular em retrato.
+
+   Medido num viewport real de 410px: a barra de status ocupava 134px, quase
+   um terco da altura util, porque o texto de ajuda do modo garantido quebrava
+   em varias linhas. Numa tela de telefone o lago tem que ganhar essa altura,
+   nao a legenda de um ajuste. */
+@media (max-width: 640px) {
+  .fishing-overlay-bar {
+    gap: 6px 12px;
+    font-size: 0.68rem;
+  }
+
+  /* A ajuda do modo garantido some: o rotulo ja diz o que e, e a frase
+     inteira custava tres linhas de tela. */
+  .fishing-overlay-bar .fishing-option small { display: none; }
+  .fishing-overlay-bar .fishing-option { margin-left: 0; }
+
+  .fishing-exit small { display: none; }
+  .fishing-stat { font-size: 0.66rem; }
+}
+
+/* O botao da briga: grande, porque no celular ele e o unico jeito de jogar o
+   minigame, e porque nos tres motores o gesto e o mesmo — tocar ou segurar. */
+.fishing-fight {
+  width: 100%;
+  max-width: min(96vw, 1080px, 128vh);
+  min-height: 56px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-bg-primary);
+  background: var(--fishing-marker);
+  border: 2px solid var(--fishing-marker);
+  border-radius: 4px;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+
+.fishing-fight:active { filter: brightness(0.9); }
+
+/* ---- A tecla vai NO botao.
+
+   Legenda solta no rodape ninguem le: a dica precisa estar onde a acao esta.
+   E como jogo faz — o atalho mora ao lado do rotulo, nao numa nota de pe de
+   pagina. */
+.key {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 6px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+  color: inherit;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+  opacity: 0.75;
+}
+
+/* No celular nao ha teclado: a etiqueta so ocuparia espaco mentindo. */
+@media (pointer: coarse) {
+  .key { display: none; }
+}
+
+/* "Fisgou" e a manchete da revelacao: o cartao por baixo traz o nome, o
+   tamanho e a raridade. */
+.fishing-caught {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}

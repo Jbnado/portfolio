@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "budget": "node scripts/js-budget.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "astro preview",

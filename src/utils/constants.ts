@@ -43,6 +43,19 @@ export function blogUrl(locale: Locale = DEFAULT_LOCALE): string {
   return `${localePrefix(locale)}/blog`;
 }
 
+/** Segmentos da rota do jogo por idioma: `/jogo/pesca`, `/en/game/fishing`,
+    `/es/juego/pesca`. A rota e descritiva, nao carrega o nome do jogo. */
+const GAME_SEGMENTS: Record<Locale, { dir: string; slug: string }> = {
+  'pt-br': { dir: 'jogo', slug: 'pesca' },
+  en: { dir: 'game', slug: 'fishing' },
+  es: { dir: 'juego', slug: 'pesca' },
+};
+
+export function gameUrl(locale: Locale = DEFAULT_LOCALE): string {
+  const { dir, slug } = GAME_SEGMENTS[locale];
+  return `${localePrefix(locale)}/${dir}/${slug}`;
+}
+
 export function blogPostUrl(urlSlug: string, locale: Locale = DEFAULT_LOCALE): string {
   return `${blogUrl(locale)}/${urlSlug}`;
 }

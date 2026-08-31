@@ -17,6 +17,9 @@
     "role": "Fullstack Developer",
     "name": "João Bernardo",
     "description": "Fullstack developer from Ribeirão Preto, Brazil. I build APIs, interfaces, and sometimes games.",
+    "descricaoAntes": "Fullstack developer from Ribeirão Preto, Brazil. I build APIs, interfaces, and sometimes ",
+    "descricaoLink": "games",
+    "descricaoDepois": ".",
     "ctaProjects": "View projects",
     "ctaContact": "Say hello",
     "panelLabel": "TRACK RECORD",
@@ -31,6 +34,9 @@
   "about": {
     "title": "About Me",
     "intro": "I'm a fullstack developer with 5 years of experience building web applications that make a difference. I've worked at marketing (Authorify, US), B2B e-commerce (Take), and fintech (Verzel) companies. It all started with games. I loved playing them and always wanted to understand how they were made, so I ended up studying Systems Analysis and Development and fell for programming and this whole world of technology. That curiosity to take things apart and see how they work turned into a passion for building complete solutions, from the backend to the final pixel.",
+    "introAntes": "I'm a fullstack developer with 5 years of experience building web applications that make a difference. I've worked at marketing (Authorify, US), B2B e-commerce (Take), and fintech (Verzel) companies. It all started with ",
+    "introLink": "games",
+    "introDepois": ". I loved playing them and always wanted to understand how they were made, so I ended up studying Systems Analysis and Development and fell for programming and this whole world of technology. That curiosity to take things apart and see how they work turned into a passion for building complete solutions, from the backend to the final pixel.",
     "philosophy": "I believe good software is invisible: it loads fast, is intuitive, and accessible to everyone. Every line of code I write has a purpose — solving a real problem, not impressing with unnecessary complexity.",
     "approach": "My approach combines fullstack vision with attention to detail. I work with React on the frontend and Java/Python/NestJS on the backend, deploying to the cloud with AWS and Docker. Outside of code, I co-founded RP.js — a JavaScript community in Ribeirão Preto — and developed Ribeirão Noir, an investigative game launched at the Book Fair and validated by 3 PhD academics."
   },
@@ -167,5 +173,139 @@
   "a11y": {
     "externalLink": "Opens in new window",
     "mobileNav": "Navigation menu"
+  },
+  "game": {
+    "title": "Fishing",
+    "description": "A fishing game inside the portfolio. One screen, three minigames, nine fish.",
+    "cast": "Cast the line",
+    "play": "Play",
+    "exit": "Exit",
+    "exitHelp": "Esc exits too",
+    "gameArea": "Game area",
+    "howToPlay": "Space does everything: it casts the line and plays each fish's minigame.",
+    "tuto": {
+      "title": "Replay the tutorial",
+      "skip": "Skip",
+      "next": "Continue",
+      "chapters": {
+        "intro": [
+          "Hey, you made it. This lake is odd: freshwater and saltwater fish show up here out of nowhere. Nobody explains it.",
+          "Go on, click a mark on the water and the boat sails itself. Once there, cast the line."
+        ],
+        "catch": [
+          "You landed one! See, easy. Look, you can sell it right here with me, at the shore shop.",
+          "Big fish pay better. Rare ones, much better."
+        ],
+        "sale": [
+          "That's it. Now buy a better line with the coins — the line is what lets you fish deeper.",
+          "And listen, there is a lot more fish than you have seen. A lot more. Take a look at the log."
+        ]
+      }
+    },
+    "close": "Close",
+    "depth3": {
+      "1": "Shallows",
+      "2": "Mid water",
+      "3": "Abyss"
+    },
+    "shop": {
+      "baitLabel": "Bait",
+      "title": "Shore shop",
+      "coins": "Coins",
+      "sell": "Sell the catch",
+      "nothingToSell": "hold empty",
+      "line": "Line",
+      "equip": "equip",
+      "equipped": "in use",
+      "close": "Close",
+      "baitName": {
+        "minhoca": "Worm bait",
+        "camarao": "Shrimp bait",
+        "sardinha": "Sardine bait"
+      },
+      "choose": "choose",
+      "act": "act"
+    },
+    "world": {
+      "clickHint": "Click a mark to sail there",
+      "shop": "Shop here",
+      "cast": "You can fish here",
+      "noSpot": "Sail to a mark on the water",
+      "menu": "Tab opens the log",
+      "shopShort": "Shop",
+      "castShort": "Cast",
+      "noSpotShort": "Pick a mark",
+      "logShort": "Log",
+      "needLine": "Your line is too short for this depth",
+      "needLineShort": "No line",
+      "turnPhone": "Turn your phone upright.",
+      "depth": {
+        "raso": "Shallows",
+        "medio": "Mid water",
+        "abissal": "Abyss"
+      }
+    },
+    "instruction": {
+      "track": "Space when the marker crosses the zone.",
+      "hold": "Hold space to rise. Keep the fish inside the band.",
+      "dodge": "Space switches lane. Stay clean until the bar fills."
+    },
+    "caught": "Hooked",
+    "escaped": "Got away",
+    "log": "Specimen log",
+    "logEmpty": "No fish logged yet.",
+    "times": "times",
+    "time": "time",
+    "largest": "largest",
+    "guaranteedMode": "Guaranteed mode",
+    "guaranteedModeHelp": "Slower, but always lands the fish.",
+    "reeling": "Reeling in",
+    "falls": "Falls",
+    "resets": "Bar resets",
+    "fallsUnlimited": "The fish will not escape.",
+    "water": {
+      "doce": "freshwater",
+      "salgada": "saltwater"
+    },
+    "fish": {
+      "p1": "Lambari",
+      "p10": "Acará",
+      "p3": "Mullet",
+      "p11": "Piau",
+      "p2": "Wolf fish",
+      "p12": "Catfish",
+      "p4": "Snook",
+      "p13": "Croaker",
+      "p14": "Piraputanga",
+      "p15": "Pleco",
+      "p6": "Pacu",
+      "p16": "Curimbatá",
+      "p17": "Piapara",
+      "p18": "Jack",
+      "p5": "Matrinxã",
+      "p19": "Barbado catfish",
+      "p7": "Grouper",
+      "p20": "Redtail catfish",
+      "p9": "Jaú catfish",
+      "p21": "Black grouper",
+      "p8": "Golden dorado",
+      "p22": "Piraíba",
+      "p23": "Arapaima",
+      "p24": "Goliath grouper"
+    },
+    "fight": "HOLD / TAP",
+    "keyAct": "Space",
+    "keyLog": "Tab",
+    "keyClose": "Esc",
+    "back": "Continue",
+    "keyLeft": "A",
+    "keyRight": "D",
+    "keyPick": "W S",
+    "scroll": "scroll",
+    "rarity": {
+      "comum": "Common",
+      "raro": "Rare",
+      "lenda": "Legendary"
+    }
   }
 }
