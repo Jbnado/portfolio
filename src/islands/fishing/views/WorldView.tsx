@@ -2,7 +2,7 @@ import type preact from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import {
   SPOTS, SHOP_X, SHORE_TO, BOAT_START, REACH, WORLD_MAX, TIER_BY_DEPTH,
-  cameraAt, depthAt, moveBoat, spotUnder, atShop, type Depth,
+  cameraAt, depthAt, moveBoat, spotUnder, atShop, facingAfter, type Depth,
 } from '../world';
 import './WorldView.css';
 
@@ -27,6 +27,15 @@ type Props = {
     shop: string; cast: string; noSpot: string; needLine: string;
     clickHint: string; turnPhone: string; depth: Record<string, string>;
   };
+  /** Quadro da folha do pescador: 0 parado, 1 levantando, 2 lancado, 3 na
+      luta. Quem decide e a fase do jogo — a vista so desenha. */
+  frame: 0 | 1 | 2 | 3;
+  /** Multiplicador do vulto que se aproxima na agua, ou `null` fora da
+      espera. Sai do tamanho da especie ja sorteada. */
+  shadow: number | null;
+  /** Para que lado o pescador olha: 1 direita, -1 esquerda. O desenho e
+      virado para a direita, entao sem isto andar para a esquerda dava re. */
+  facing: 1 | -1;
   /** A caixa de fala do tutorial entra AQUI DENTRO, sobre a cena — e a
       convencao de novel, e faz a fala pertencer ao lago em vez de ficar
       solta no rodape da pagina. */
@@ -45,7 +54,7 @@ const FUNDO = [
     tudo desliza junto e a paisagem parece colada no barco. */
 const PARALLAX = 0.35;
 
-export function WorldView({ boat, reach, onSailTo, texts, children }: Props) {
+export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing, children }: Props) {
   const cam = cameraAt(boat, VIEW_W);
   const sx = (x: number) => ((x - cam) / VIEW_W) * 100;
   const sxFar = (x: number) => ((x - cam * PARALLAX) / VIEW_W) * 100;
@@ -116,9 +125,23 @@ export function WorldView({ boat, reach, onSailTo, texts, children }: Props) {
           </button>
         ))}
 
+        {/* O vulto vem ANTES do barco na ordem do documento, entao fica por
+            baixo dele: e uma sombra sob a agua, nao um adesivo na proa. */}
+        {shadow !== null && (
+          <div
+            class="world-shadow"
+            aria-hidden="true"
+            style={{ left: `${sx(boat) + 14}%`, '--vulto': shadow }}
+          />
+        )}
+
+        {/* Largura ja nao sai de REACH: pixel art so fica nitida em multiplos
+            inteiros do pixel de origem, entao o tamanho vem em degraus do CSS
+            e a cena continua fluida em volta. */}
         <div
           class="world-boat"
-          style={{ left: `${sx(boat)}%`, width: `${((REACH * 1.7) / VIEW_W) * 100}%` }}
+          data-frame={frame}
+          style={{ left: `${sx(boat)}%`, '--olha': facing }}
         />
 
         <p class="world-turn">{texts.turnPhone}</p>
@@ -194,12 +217,24 @@ export function WorldPad({ setDir, onAct, onLog, actLabel, actEnabled, logLabel,
     dedo e a tecla. Tres entradas, um laco so. */
 export function useBoat(active: boolean): {
   boat: number;
+  facing: 1 | -1;
   setDir: (d: number) => void;
   sailTo: (x: number) => void;
 } {
   const [boat, setBoat] = useState(BOAT_START);
   const dirRef = useRef(0);
   const alvoRef = useRef<number | null>(null);
+
+  /** Para onde o pescador olha. Sai da posicao e nao de `dirRef`, que zera no
+      keyup: derivado da tecla, ele voltaria a olhar para a direita toda vez
+      que se soltasse o A. Vale tambem para o clique no mundo, que move sem
+      tecla nenhuma. */
+  const [facing, setFacing] = useState<1 | -1>(1);
+  const anteriorRef = useRef(BOAT_START);
+  useEffect(() => {
+    setFacing((f) => facingAfter(f, boat - anteriorRef.current));
+    anteriorRef.current = boat;
+  }, [boat]);
 
   useEffect(() => {
     if (!active) { dirRef.current = 0; alvoRef.current = null; return; }
@@ -249,5 +284,5 @@ export function useBoat(active: boolean): {
   }, []);
   const sailTo = useCallback((x: number) => { alvoRef.current = x; }, []);
 
-  return { boat, setDir, sailTo };
+  return { boat, facing, setDir, sailTo };
 }

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   depthAt, spotUnder, atShop, moveBoat, cameraAt, TIER_BY_DEPTH,
-  SPOTS, SHOP_X, SHORE_TO, BOAT_START, WORLD_MAX, WORLD_MIN, REACH,
+  SPOTS, SHOP_X, SHORE_TO, BOAT_START, WORLD_MAX, WORLD_MIN, REACH, facingAfter,
 } from './world';
 
 describe('depthAt', () => {
@@ -86,5 +86,30 @@ describe('camera', () => {
   it('trava nas pontas para nao mostrar vazio', () => {
     expect(cameraAt(0, 40)).toBe(0);
     expect(cameraAt(WORLD_MAX, 40)).toBe(WORLD_MAX - 40);
+  });
+});
+
+describe('facingAfter', () => {
+  it('andar para a direita vira o pescador para a direita', () => {
+    expect(facingAfter(-1, +0.5)).toBe(1);
+    expect(facingAfter(1, +0.5)).toBe(1);
+  });
+
+  it('andar para a esquerda vira o pescador para a esquerda', () => {
+    // Sem isto o barco anda de re: o desenho olha sempre para a direita.
+    expect(facingAfter(1, -0.5)).toBe(-1);
+    expect(facingAfter(-1, -0.5)).toBe(-1);
+  });
+
+  it('parado guarda o lado para onde ja estava virado', () => {
+    expect(facingAfter(-1, 0)).toBe(-1);
+    expect(facingAfter(1, 0)).toBe(1);
+  });
+
+  it('tremor de arredondamento nao faz o barco piscar de lado', () => {
+    // O laco corre a cada quadro e a posicao e float: sem uma zona morta,
+    // um resto de 1e-15 viraria o barco no meio da travessia.
+    expect(facingAfter(1, -1e-9)).toBe(1);
+    expect(facingAfter(-1, +1e-9)).toBe(-1);
   });
 });

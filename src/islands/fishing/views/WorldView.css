@@ -184,14 +184,61 @@
    agua atras dele e agua a frente — e o que da o angulo. */
 .world-boat {
   position: absolute;
-  top: 50%;
-  height: 17%;
-  transform: translateX(-50%);
-  background: var(--fishing-marker);
-  border: 2px solid var(--fishing-rule);
-  border-radius: 3px;
+  /* A base do sprite assenta na linha de agua do barco (67% da cena), entao
+     o topo sobe a altura dele. Antes era `height: 17%`, fluido — pixel art
+     so fica nitida em multiplo inteiro do pixel de origem, e a 1,5x o pixel
+     cai entre a grade e borra. Por isso a altura vem em degraus. */
+  --s: 1;
+  width: calc(64px * var(--s));
+  height: calc(64px * var(--s));
+  top: calc(67% - 64px * var(--s));
+  /* `--olha` e -1 quando o barco vai para a esquerda. O desenho e virado para
+     a direita, entao sem o espelho ele andava de re. A ordem importa: o
+     espelho vem DEPOIS da centragem, senao ele espelha o proprio
+     deslocamento e o barco salta uma largura de lado. */
+  transform: translateX(-50%) scaleX(var(--olha, 1));
+  background-image: url('../art/pescador.png');
+  background-size: calc(256px * var(--s)) calc(64px * var(--s));
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  /* Sem isto o navegador interpola e devolve exatamente a papa que a grade
+     de 64 existe para evitar. */
+  image-rendering: pixelated;
   /* Some do caminho do clique: quem clica quer a marca, nao o barco. */
   pointer-events: none;
+}
+
+/* Um quadro por fase. O tempo quem conta e o jogo, em `cast.ts`; aqui so se
+   traduz indice em deslocamento, sempre em multiplo exato de 64. */
+.world-boat[data-frame='1'] { background-position: calc(-64px * var(--s)) 0; }
+.world-boat[data-frame='2'] { background-position: calc(-128px * var(--s)) 0; }
+.world-boat[data-frame='3'] { background-position: calc(-192px * var(--s)) 0; }
+
+@media (min-width: 900px) {
+  .world-boat { --s: 2; }
+}
+
+/* O vulto sob a agua durante a espera. Elipse e nao desenho: o que ele diz e
+   TAMANHO, e forma de peixe entregaria a especie, que pertence a revelacao
+   do CatchView. */
+.world-shadow {
+  position: absolute;
+  top: 63%;
+  width: calc(34px * var(--vulto, 1));
+  height: calc(11px * var(--vulto, 1));
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: var(--fishing-rule);
+  opacity: 0.45;
+  pointer-events: none;
+  animation: world-vulto 1.1s ease-in-out infinite alternate;
+}
+
+/* A aproximacao. Movimento pequeno e local, nao varre a tela — e conteudo do
+   jogo, nao enfeite, entao sobrevive a reduced-motion junto com o pescador. */
+@keyframes world-vulto {
+  from { transform: translateX(-50%) translateX(10px); opacity: 0.30; }
+  to   { transform: translateX(-50%) translateX(-4px); opacity: 0.55; }
 }
 
 .world-hud {

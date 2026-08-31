@@ -6,13 +6,14 @@ import { TrackView } from './views/TrackView';
 import { HoldView } from './views/HoldView';
 import { DodgeView } from './views/DodgeView';
 import { weightedPick } from './draw';
+import { castDuration, frameAt, fightFrame, shadowScale } from './cast';
 import { WorldView, WorldPad, useBoat } from './views/WorldView';
 import { TIER_BY_DEPTH, DEPTH_BY_TIER, depthAt, spotUnder, atShop } from './world';
 import { ShopView } from './views/ShopView';
 import { CatchView } from './views/CatchView';
 import { TutorialView } from './views/TutorialView';
 import {
-  loadProgress, saveProgress, rareBites, canFish, reachTier, luckOf, addCatch,
+  loadProgress, saveProgress, rareBites, canFish, reachTier, luckOf, addCatch, rarityOf,
   rareWeight, luckyQuality, type Progress,
 } from './shop';
 import {
@@ -78,6 +79,10 @@ type TutorialChapter = 'intro' | 'catch' | 'sale';
 
 type Phase =
   | { kind: 'idle' }
+  // A espera entre o lance e a mordida. O peixe JA esta sorteado aqui: e o
+  // que deixa o vulto na agua ser honesto sobre o tamanho do que vem vindo,
+  // sem entregar o nome, que pertence ao CatchView.
+  | { kind: 'casting'; fish: Fish; luck: number; ms: number }
   // A sorte viaja com a fase: ela e lida no lance e tem que valer no
   // resultado, mesmo que o jogador troque de isca no meio tempo.
   | { kind: 'playing'; fish: Fish; luck: number }
@@ -93,6 +98,12 @@ function validLog(c: Log): Log {
 
 export default function Fishing({ texts }: { texts: Texts }) {
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' });
+  /** Quadro do pescador durante a espera. So 1 ou 2: o 0 e a fase parada e o
+      3 pertence a luta, e nenhum dos dois depende de tempo. */
+  const [castFrame, setCastFrame] = useState<1 | 2>(1);
+  /** Quadro da luta. O comum fica no 3; raro e lenda alternam, e a alternancia
+      le como esforco. */
+  const [fightF, setFightF] = useState<2 | 3>(3);
   const [log, setLog] = useState<Log>(() => validLog(loadLog()));
   const [guaranteed, setGuaranteed] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -109,6 +120,10 @@ export default function Fishing({ texts }: { texts: Texts }) {
       um `menu` velho. A ref carrega o valor atual sem religar o efeito. */
   const menuRef = useRef(false);
   menuRef.current = menu;
+  /** O ouvinte de teclas e registado uma vez, entao a fase tem de chegar nele
+      por ref. Sem isto, Esc durante a espera fechava o jogo inteiro. */
+  const castingRef = useRef(false);
+  castingRef.current = phase.kind === 'casting';
   /** O painel do caderno, para o teclado o poder rolar. */
   const dexRef = useRef<HTMLDivElement>(null);
 
@@ -190,7 +205,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
     saveProgress(p);
   }, []);
   const onMiss = useCallback(() => setMiss((n) => n + 1), []);
-  const { boat, setDir, sailTo } = useBoat(playing && phase.kind !== 'playing' && !menu && !shop && tuto === null);
+  const { boat, facing, setDir, sailTo } = useBoat(playing && phase.kind !== 'playing' && phase.kind !== 'casting' && !menu && !shop && tuto === null);
   /** A linha equipada decide ate onde da para pescar. Sem ela, o meio e o
       abissal ficam fechados. */
   const podePescar = canFish(progress, depthAt(boat));
@@ -227,6 +242,10 @@ export default function Fishing({ texts }: { texts: Texts }) {
         // derrubava o jogo inteiro junto — e "Esc fecha" deixava de ser
         // verdade justamente onde o jogador mais usa a tecla.
         if (menuRef.current) { setMenu(false); return; }
+        // Desistir do lance NAO cobra o peixe ja sorteado: sair no meio da
+        // espera seria uma armadilha, e "Esc fecha o que esta por cima"
+        // deixaria de ser verdade justamente no unico ponto sem saida.
+        if (castingRef.current) { setPhase({ kind: 'idle' }); return; }
         setPlaying(false);
         return;
       }
@@ -344,8 +363,45 @@ export default function Fishing({ texts }: { texts: Texts }) {
     // Modo garantido desacelera de verdade agora (achado I3): o peixe entra
     // na vista com o ritmo ja mais lento, nao so com a perda desligada.
     const fish = guaranteed ? guaranteedFish(picked) : picked;
-    setPhase({ kind: 'playing', fish, luck });
+    // Nao vai direto pra luta: passa pela espera, onde o pescador levanta,
+    // lanca, e o vulto se aproxima na agua.
+    setPhase({ kind: 'casting', fish, luck, ms: castDuration(Math.random) });
   }, [boat, guaranteed, progress, saveAnd]);
+
+  /** A espera. Um laco de animacao em vez de dois `setTimeout` porque quem
+      decide o quadro e `frameAt`, no modulo puro que os testes cobrem — aqui
+      so se conta o tempo e se entrega o resultado. `setCastFrame` com o mesmo
+      valor nao re-renderiza, entao o laco custa uma conta por quadro. */
+  useEffect(() => {
+    if (phase.kind !== 'casting') return;
+    const { fish, luck, ms } = phase;
+    const t0 = performance.now();
+    let raf = 0;
+    const passo = () => {
+      const decorrido = performance.now() - t0;
+      if (decorrido >= ms) { setPhase({ kind: 'playing', fish, luck }); return; }
+      setCastFrame(frameAt(decorrido));
+      raf = requestAnimationFrame(passo);
+    };
+    raf = requestAnimationFrame(passo);
+    return () => cancelAnimationFrame(raf);
+  }, [phase]);
+
+  /** O debate durante a luta. O comum nao se debate, entao para ele nao se
+      acende laco nenhum: fica no quadro da fisgada e pronto. */
+  useEffect(() => {
+    if (phase.kind !== 'playing') { setFightF(3); return; }
+    const rar = rarityOf(phase.fish);
+    if (rar === 'comum') { setFightF(3); return; }
+    const t0 = performance.now();
+    let raf = 0;
+    const passo = () => {
+      setFightF(fightFrame(rar, performance.now() - t0));
+      raf = requestAnimationFrame(passo);
+    };
+    raf = requestAnimationFrame(passo);
+    return () => cancelAnimationFrame(raf);
+  }, [phase]);
 
   const enter = useCallback(() => {
     setPlaying(true);
@@ -514,7 +570,19 @@ export default function Fishing({ texts }: { texts: Texts }) {
             {/* O mundo fica SEMPRE desenhado. O minigame cobre a cena em vez de
                 substitui-la: e assim que da pra julgar como a partida aparece
                 por cima do lago, que e o ponto deste blockout. */}
-            <WorldView boat={boat} reach={reachTier(progress)} onSailTo={sailTo} texts={texts.world}>
+            {/* O quadro do pescador sai da FASE, nunca de um keyframe: a
+                espera e sorteada a cada lance e o CSS nao tem como saber esse
+                numero. O vulto so existe durante a espera, e o tamanho dele
+                vem do peixe ja sorteado. */}
+            <WorldView
+              boat={boat}
+              reach={reachTier(progress)}
+              onSailTo={sailTo}
+              texts={texts.world}
+              frame={phase.kind === 'casting' ? castFrame : phase.kind === 'playing' ? fightF : 0}
+              shadow={phase.kind === 'casting' ? shadowScale(phase.fish) : null}
+              facing={facing}
+            >
               {tuto !== null && (
                 <TutorialView
                   step={tuto.i}
@@ -571,7 +639,7 @@ export default function Fishing({ texts }: { texts: Texts }) {
                   setDir={setDir}
                   onAct={act}
                   onLog={() => setMenu((m) => !m)}
-                  actEnabled={tuto === null && (atShop(boat) || (!!spot && podePescar))}
+                  actEnabled={tuto === null && phase.kind === 'idle' && (atShop(boat) || (!!spot && podePescar))}
                   actLabel={
                     atShop(boat) ? texts.world.shopShort
                       : !podePescar ? texts.world.needLineShort
@@ -584,7 +652,12 @@ export default function Fishing({ texts }: { texts: Texts }) {
 
             </div>
 
-            {phase.kind !== 'idle' && (
+            {/* O veu cobre a cena para o minigame e para a revelacao — mas
+                NAO durante a espera. Em `casting` o que ha para ver e
+                justamente o lago: o pescador levantando, a linha indo, e o
+                vulto se aproximando. Tapar isso apagava a animacao inteira no
+                instante em que se aperta o espaco. */}
+            {(phase.kind === 'playing' || phase.kind === 'result') && (
               <div class="fishing-over">
             {phase.kind === 'playing' && (
               <>

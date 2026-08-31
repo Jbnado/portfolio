@@ -78,3 +78,21 @@ export function moveBoat(x: number, dir: number, dtMs: number): number {
 export function cameraAt(boat: number, viewW: number): number {
   return Math.min(WORLD_MAX - viewW, Math.max(WORLD_MIN, boat - viewW / 2));
 }
+
+/** Zona morta do virar. Um passo real do barco anda entre 0,001 e 1,15
+    unidades (BOAT_SPEED por um dt de ate 50ms), entao qualquer coisa abaixo
+    disto e resto de ponto flutuante, nao movimento. */
+const PARADO = 1e-6;
+
+/**
+ * Para que lado o pescador olha depois de andar `delta`.
+ *
+ * O desenho e virado para a direita; sem isto, andar para a esquerda faz o
+ * barco ir de re. Parar nao vira ninguem: guarda-se o ultimo lado, senao ele
+ * voltaria a olhar para a direita toda vez que se solta a tecla.
+ */
+export function facingAfter(facing: 1 | -1, delta: number): 1 | -1 {
+  if (delta > PARADO) return 1;
+  if (delta < -PARADO) return -1;
+  return facing;
+}
