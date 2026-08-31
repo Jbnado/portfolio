@@ -21,6 +21,27 @@
   --fishing-fish-g: #7a4b8f;
   --fishing-fish-h: #22242b;
   --fishing-fish-i: #5e564a;
+
+  /* ---- O LAGO. Grupo proprio, e nao derivado de --fishing-rule/-zone, que
+     sao tokens de INSTRUMENTO: enquanto a cena saia deles, ela parecia um
+     diagrama do lago e nao um lago.
+
+     A cena nao e excecao a Regra do Turno — ela e declarada duas vezes como
+     tudo o mais. So que muda de DIA para NOITE, em vez de mudar de papel para
+     fosforo. Um lago verde-fosforo nao le como agua, e era por isso que o
+     pescador parecia colado por cima da cena em vez de estar dentro dela.
+
+     Aqui: meio-dia. */
+  --lago-ceu-alto: #a9c6d6;
+  --lago-ceu-baixo: #d6e3e0;
+  --lago-margem: #74855f;
+  --lago-terra: #a8926b;
+  --lago-raso: #74aebd;
+  --lago-medio: #3f7e94;
+  --lago-fundo: #245066;
+  /* Sol na agua. Nunca #fff literal: branco puro nao existe em lugar nenhum
+     deste site. */
+  --lago-brilho: #f6efd8;
 }
 
 .dark {
@@ -41,6 +62,24 @@
      acertando. Novo valor: 8.88:1 e 4.00:1 (achado C1). */
   --fishing-fish-h: #33cc80;
   --fishing-fish-i: #1f5a3d;
+
+  /* ---- O MESMO LAGO, a noite. Nao e o lago do terminal: e o lago depois de
+     escurecer. O fosforo nao vira a agua — ele volta como REFLEXO nela, em
+     --lago-brilho, que e onde a identidade do CRT sobrevive sem o lago deixar
+     de ser um lugar.
+
+     A agua de noite e naturalmente pouco contrastada, entao os tres degraus de
+     profundidade sao mais separados aqui do que no dia: no escuro o risco nao
+     e ofuscar, e as tres faixas virarem uma mancha so. */
+  --lago-ceu-alto: #080d12;
+  --lago-ceu-baixo: #14222a;
+  --lago-margem: #17251f;
+  --lago-terra: #1e2823;
+  --lago-raso: #1d4453;
+  --lago-medio: #123140;
+  --lago-fundo: #081a26;
+  /* O fosforo, so como luz refletida na agua. */
+  --lago-brilho: #42f59b;
 }
 
 /* A area do jogo ocupa a tela sem transbordar: e isto que resolve a rolagem

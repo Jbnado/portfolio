@@ -33,37 +33,54 @@
 .world-sky {
   position: absolute;
   inset: 0 0 75% 0;
-  background: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--fishing-rule) 6%, transparent),
-    color-mix(in srgb, var(--fishing-rule) 18%, transparent)
-  );
+  /* O ceu clareia PARA BAIXO, na direcao do horizonte. E assim que ceu de
+     verdade se comporta, e e o que faz a linha d'agua parecer longe em vez de
+     ser so uma divisoria. */
+  background: linear-gradient(to bottom, var(--lago-ceu-alto), var(--lago-ceu-baixo));
 }
 
 /* A outra margem. Fica ancorada NA linha d'agua e sobe dali. */
 .world-far {
   position: absolute;
   bottom: 75%;
-  background: color-mix(in srgb, var(--fishing-rule) 58%, transparent);
+  background: var(--lago-margem);
   border-radius: 4px 4px 0 0;
   pointer-events: none;
 }
 
+/* A linha d'agua apanha luz: e o brilho, nao o filete de instrumento. De
+   noite e por aqui que o fosforo entra na cena. */
 .world-horizon {
   position: absolute;
   left: 0;
   right: 0;
   top: 25%;
   height: 2px;
-  background: var(--fishing-rule);
-  opacity: 0.5;
+  background: var(--lago-brilho);
+  opacity: 0.45;
   pointer-events: none;
 }
 
 .world-water { position: absolute; top: 25%; bottom: 0; }
 
-/* Gradiente vertical na agua: o longe escurece. E o segundo sinal de
-   profundidade, junto do parallax — cor sozinha nao daria angulo nenhum. */
+/* As tres profundidades. Cada faixa DISSOLVE-SE na vizinha nas pontas: com
+   borda dura, tres listras da mesma cor no meio de um lago liam como azulejo,
+   nao como agua. A informacao sobrevive porque o escurecer progressivo
+   continua la — o que some e a costura. */
+.world-water[data-depth='raso'] {
+  background: linear-gradient(to right, var(--lago-raso) 82%, var(--lago-medio));
+}
+.world-water[data-depth='medio'] {
+  background: linear-gradient(to right, var(--lago-raso), var(--lago-medio) 14% 86%, var(--lago-fundo));
+}
+.world-water[data-depth='abissal'] {
+  background: linear-gradient(to right, var(--lago-medio), var(--lago-fundo) 18%);
+}
+
+/* O plano da agua vindo na nossa direcao: escuro ao longe, claro ao perto. E
+   o segundo sinal de angulo, junto do parallax — cor sozinha nao daria
+   profundidade nenhuma. Somado, tambem tira o brilho do reflexo do primeiro
+   plano, onde ele nao faria sentido. */
 .world-view::after {
   content: '';
   position: absolute;
@@ -71,25 +88,90 @@
   right: 0;
   top: 25%;
   bottom: 0;
-  background: linear-gradient(to bottom, color-mix(in srgb, var(--fishing-rule) 30%, transparent), transparent 45%);
+  background:
+    linear-gradient(to bottom, color-mix(in srgb, var(--lago-brilho) 22%, transparent), transparent 18%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--lago-fundo) 55%, transparent), transparent 45%);
   pointer-events: none;
+  z-index: var(--camada-atmosfera);
 }
-.world-water[data-depth='raso'] { background: color-mix(in srgb, var(--fishing-zone) 26%, transparent); }
-.world-water[data-depth='medio'] { background: color-mix(in srgb, var(--fishing-zone) 48%, transparent); }
-.world-water[data-depth='abissal'] { background: color-mix(in srgb, var(--fishing-zone) 72%, transparent); }
+
+/* O brilho na agua.
+
+   Primeira tentativa foi diagonal e regular, e leu como CHUVA. Agua vista em
+   angulo nao brilha em riscos inclinados: brilha em estrias HORIZONTAIS,
+   densas perto do horizonte e sumindo no primeiro plano — e por isso o
+   degrade que as apaga para baixo. A deriva tambem e vertical, o que le como
+   o plano da agua vindo na nossa direcao, o mesmo que a camera ja diz.
+
+   Movimento decorativo de campo largo — ao contrario do gesto do pescador,
+   este OBEDECE a reduced-motion. */
+.world-view::before {
+  content: '';
+  position: absolute;
+  inset: 25% 0 0 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 8px,
+    color-mix(in srgb, var(--lago-brilho) 8%, transparent) 8px 10px,
+    transparent 10px 20px
+  );
+  /* Alfa de mascara, nao cor de tema: apaga as estrias na agua de perto, onde
+     reflexo rasante nao existe. */
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.85), transparent 62%);
+  animation: world-brilho 9s linear infinite;
+  pointer-events: none;
+  z-index: var(--camada-atmosfera);
+}
+
+/* ---- Camadas da cena, declaradas de uma vez.
+
+   Antes so o aviso de virar o celular tinha z-index, e todo o resto empilhava
+   por ordem no documento. Isso bastava enquanto nada flutuava por cima da
+   agua — mas o brilho e um pseudo-elemento, logo o PRIMEIRO filho, e sem
+   empilhamento explicito ele passaria por baixo da agua; com z-index solto,
+   por cima do barco. Nem uma coisa nem outra: o reflexo esta NA agua, sob o
+   barco que flutua nela. */
+.world-view {
+  --camada-atmosfera: 1;  /* brilho e profundidade, sobre a agua */
+  --camada-cena: 2;       /* margem, marcas, vulto sob a superficie */
+  --camada-barco: 3;      /* o que flutua */
+}
+.world-shore,
+.world-hot,
+.world-shadow { z-index: var(--camada-cena); }
+.world-boat { z-index: var(--camada-barco); }
+
+@keyframes world-brilho {
+  from { transform: translateY(0); }
+  to   { transform: translateY(20px); }
+}
 
 /* Agua fora do alcance da linha: hachurada e apagada. A trava tem que se VER
    na cena — se so o aviso dissesse, andar ate la e nao achar nada pareceria
-   defeito. */
-.world-water[data-locked='true'] {
-  opacity: 0.3;
+   defeito.
+
+   A hachura fica num pseudo-elemento, e nao no `background` da faixa, porque
+   a faixa agora carrega o gradiente das profundidades: escrever por cima dele
+   apagaria a dissolucao das pontas. */
+.world-water[data-locked='true'] { opacity: 0.55; }
+.world-water[data-locked='true']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Borda DURA de proposito, ao contrario das faixas de profundidade: isto
+     nao e profundidade, e uma REGRA — ate aqui a linha chega, dali nao.
+
+     Fio fino e espacado: a hachura a cheio dominava metade da cena e o lago
+     virava papel milimetrado. Ela precisa de se VER, nao de gritar. */
   background-image: repeating-linear-gradient(
-    45deg, transparent 0 6px, var(--fishing-rule) 6px 8px
+    45deg,
+    transparent 0 11px,
+    color-mix(in srgb, var(--lago-brilho) 42%, transparent) 11px 12px
   );
 }
 
 /* Terra, nao agua translucida: a margem sobe acima da linha d'agua. */
-.world-shore { position: absolute; top: 17%; bottom: 0; background: var(--fishing-rule); }
+.world-shore { position: absolute; top: 17%; bottom: 0; background: var(--lago-terra); }
 
 /* ---- Alvos clicaveis.
 
@@ -113,13 +195,18 @@
 /* A loja fica EM PE na margem, a meia altura do plano — na mesma faixa por
    onde o barco passa. Encostada ao horizonte, como estava, lia-se como parte
    do cenario de fundo em vez de um sitio aonde se vai. */
+/* A loja fica em TERRA, entao ao contrario da marca ela pode ser solida: e
+   uma construcao, nao um acidente da agua. O corpo sai da paleta do lugar e
+   so a luz de dentro usa o token de instrumento — de noite le como uma
+   janela acesa na margem, que e exatamente o que ela e. */
 .world-shop {
   top: 26%;
   height: 20%;
   transform: translateX(-50%);
-  background: var(--fishing-marker);
-  border: 2px solid var(--fishing-rule);
-  border-radius: 3px;
+  background: var(--lago-margem);
+  border: 2px solid var(--lago-terra);
+  border-bottom: 3px solid var(--fishing-marker);
+  border-radius: 3px 3px 0 0;
 }
 
 .world-shop[data-near='true'] { outline: 3px solid var(--fishing-marker); outline-offset: 3px; }
@@ -141,24 +228,45 @@
 
 /* No plano de agua perto, a meia distancia: e ali que o barco navega. Junto
    ao horizonte a marca ficava "longe" e o barco nunca parecia chegar nela. */
+/* Uma marca e um BAIXIO: agua mais clara onde o fundo sobe, com a borda
+   desfeita. Era um retangulo opaco de --fishing-rule, que sobre um lago de
+   verdade lia como uma tampa a boiar. O alvo continua do mesmo tamanho e no
+   mesmo sitio — muda so o que ele parece. */
 .world-spot {
   top: 57%;
   height: 12%;
   transform: translateX(-50%);
-  background: var(--fishing-rule);
-  border-radius: 2px;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--lago-brilho) 26%, transparent),
+    transparent 72%
+  );
+  border-radius: 50%;
 }
 
-.world-spot[data-here='true'] { background: var(--fishing-marker); }
-.world-spot:hover { background: var(--fishing-marker); }
+/* "Estas aqui" e hover acendem o mesmo baixio, com mais luz. Continuam a usar
+   --fishing-marker, que e token de INSTRUMENTO de proposito: isto ja nao e a
+   paisagem, e a interface a dizer onde voce esta. */
+.world-spot[data-here='true'],
+.world-spot:hover {
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--fishing-marker) 58%, transparent),
+    transparent 74%
+  );
+}
 
 /* Anel pulsante sobre cada marca: e ele que ensina, sem texto, que dali se
    pode clicar. Some com movimento reduzido — o aviso vira estatico. */
+/* Ondulacao, nao moldura. Era um retangulo de cantos arredondados com 2px de
+   --fishing-marker, e sobre um lago de verdade lia como uma caixa de
+   interface a boiar. Elipse fina e mais apagada: continua a dizer "da para
+   clicar", agora como um circulo na agua. */
 .world-ping {
   position: absolute;
-  inset: -8px -6px;
-  border: 2px solid var(--fishing-marker);
-  border-radius: 6px;
+  inset: -7px -4px;
+  border: 2px solid color-mix(in srgb, var(--fishing-marker) 62%, transparent);
+  border-radius: 50%;
   animation: world-ping 2s ease-out infinite;
   pointer-events: none;
 }
@@ -190,6 +298,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .world-ping { animation: none; opacity: 0.9; }
+  /* O brilho varre a largura toda da agua e nao carrega informacao nenhuma —
+     e exatamente o tipo de movimento que a preferencia existe para evitar. Ao
+     contrario do gesto do pescador, que e conteudo do jogo, este some. O
+     reflexo fica parado, nao desaparece: a agua continua a ter luz. */
+  .world-view::before { animation: none; }
+  .world-shadow { animation: none; opacity: 0.5; }
 }
 
 /* O barco flutua NO plano da agua, nao na linha do horizonte: topo em 50%,
