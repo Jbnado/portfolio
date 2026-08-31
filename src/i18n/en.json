@@ -182,7 +182,6 @@
     "exit": "Exit",
     "exitHelp": "Esc exits too",
     "gameArea": "Game area",
-    "howToPlay": "Space does everything: it casts the line and plays each fish's minigame.",
     "tuto": {
       "title": "Replay the tutorial",
       "skip": "Skip",

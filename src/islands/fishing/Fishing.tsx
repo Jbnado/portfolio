@@ -42,7 +42,6 @@ type Texts = {
   exit: string;
   exitHelp: string;
   gameArea: string;
-  howToPlay: string;
   keyLeft: string;
   keyRight: string;
   keyAct: string;
@@ -477,8 +476,10 @@ export default function Fishing({ texts }: { texts: Texts }) {
 
   return (
     <div>
-      <p class="fishing-prompt">{texts.howToPlay}</p>
-
+      {/* A frase de "como se joga" saiu daqui. Quem chega a esta pagina ja tem
+          a linha de apresentacao logo acima, e dentro do jogo cada motor diz o
+          seu proprio comando quando ele importa. Explicar a tecla antes de a
+          pessoa ter clicado em jogar era instrucao sem contexto. */}
       <button class="fishing-button" ref={playBtnRef} onClick={enter}>
         {texts.play}
       </button>
