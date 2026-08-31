@@ -84,7 +84,18 @@
    moldura. */
 .world-water {
   position: absolute;
-  top: var(--horizonte);
+  /* Comeca alguns pixels ACIMA do horizonte, e isso e de proposito duas
+     vezes. Fisicamente, a borda longe da agua lambe a base da margem em vez
+     de encostar nela num corte reto.
+
+     E tecnicamente, fecha uma fresta: a folha da mata tem a ultima linha
+     transparente (sobrou assim quando o xadrez do gerador foi vazado do
+     asset), entao entre a base opaca dela e o topo da agua aparecia o CEU,
+     como um risco claro a atravessar a cena inteira. Medido no print:
+     `227,225,214`, que e exatamente `--lago-ceu-baixo`.
+
+     A agua vem depois da mata no documento, logo pinta por cima. */
+  top: calc(var(--horizonte) - var(--agua-sobe));
   bottom: 0;
   background: linear-gradient(
     to right,
@@ -109,7 +120,11 @@
 .world-view::before {
   content: '';
   position: absolute;
-  inset: var(--horizonte) 0 0 0;
+  /* Comeca junto com a AGUA, e nao no horizonte. Os pixels em que ela sobe
+     ficavam de fora deste degrade, e viravam uma faixa clara no topo do lago
+     — troquei uma fresta por uma listra ate amarrar os dois na mesma
+     variavel. */
+  inset: calc(var(--horizonte) - var(--agua-sobe)) 0 0 0;
   background-image: linear-gradient(
     to bottom,
     color-mix(in srgb, var(--lago-fundo) 52%, transparent),
@@ -142,6 +157,9 @@
      agua nenhuma entre quem navega e a margem — e era esse o defeito: a
      terra descia ate ao fundo do quadro e o barco entrava dentro dela. */
   --margem-agua: 60%;
+  /* Quanto a agua sobe acima do horizonte para lamber a base da margem e
+     fechar a fresta por onde se via o ceu. */
+  --agua-sobe: 4px;
   /* Escala do pixel, partilhada por TODOS os sprites da cena. Vivia dentro
      do .world-boat, e a loja nao a enxergava — cada sprite novo teria de
      redeclarar o mesmo par de degraus e um deles acabaria por divergir. */
