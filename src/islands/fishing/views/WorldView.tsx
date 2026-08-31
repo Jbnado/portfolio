@@ -111,7 +111,10 @@ export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing,
           class="world-hot world-shop"
           disabled={paused}
           data-near={String(naLoja)}
-          style={{ left: `${sx(SHOP_X)}%`, width: `${(5 / VIEW_W) * 100}%` }}
+          /* So a posicao vem daqui. A largura passou a ser px em degraus, no
+             CSS, porque a loja e pixel art e so fica nitida em multiplo
+             inteiro — o mesmo que ja vale para o barco. */
+          style={{ left: `${sx(SHOP_X)}%` }}
           onClick={() => onSailTo(SHOP_X)}
           aria-label={texts.shop}
         >

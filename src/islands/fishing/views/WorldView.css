@@ -25,14 +25,18 @@
 
 /* ---- A cena tem tres planos: a outra margem, a agua, e o barco.
 
-   A camera olha o lago DE CIMA, em angulo: a linha d'agua fica alta, em 25%,
-   e os 75% de baixo sao o plano da agua a vir na nossa direcao. O barco NAO
-   se cola ao horizonte — flutua no meio desse plano, com agua atras e agua a
-   frente. Foi o que faltava na versao de 40%: com a linha a meio da moldura,
-   o barco pousado nela ficava sempre no alto do quadro. */
+   A camera olha o lago DE CIMA, em angulo: a linha d'agua fica em
+   `--horizonte`, e o que ha por baixo dela e o plano da agua a vir na nossa
+   direcao. O barco NAO se cola ao horizonte — flutua no meio desse plano,
+   com agua atras e agua a frente.
+
+   O valor ja foi 40%, caiu para 25% porque o barco pousado na linha ficava
+   sempre no alto do quadro, e voltou a 40% agora que o barco tem posicao
+   propria (67% da cena) em vez de se colar ao horizonte. O problema de
+   entao ja nao existe, e um quarto de ceu era cenario a menos. */
 .world-sky {
   position: absolute;
-  inset: 0 0 75% 0;
+  inset: 0 0 calc(100% - var(--horizonte)) 0;
   /* O ceu clareia PARA BAIXO, na direcao do horizonte. E assim que ceu de
      verdade se comporta, e e o que faz a linha d'agua parecer longe em vez de
      ser so uma divisoria. */
@@ -42,7 +46,7 @@
 /* A outra margem. Fica ancorada NA linha d'agua e sobe dali. */
 .world-far {
   position: absolute;
-  bottom: 75%;
+  bottom: calc(100% - var(--horizonte));
   background: var(--lago-margem);
   border-radius: 4px 4px 0 0;
   pointer-events: none;
@@ -54,7 +58,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 25%;
+  top: var(--horizonte);
   height: 2px;
   background: var(--lago-brilho);
   opacity: 0.45;
@@ -69,7 +73,7 @@
    de a transicao ser mesmo suave — nas fronteiras, ela seria um degrau. */
 .world-water {
   position: absolute;
-  top: 25%;
+  top: var(--horizonte);
   bottom: 0;
   background: linear-gradient(
     to right,
@@ -94,7 +98,7 @@
 .world-view::before {
   content: '';
   position: absolute;
-  inset: 25% 0 0 0;
+  inset: var(--horizonte) 0 0 0;
   background-image: linear-gradient(
     to bottom,
     color-mix(in srgb, var(--lago-fundo) 52%, transparent),
@@ -114,6 +118,18 @@
    por cima do barco. Nem uma coisa nem outra: o reflexo esta NA agua, sob o
    barco que flutua nela. */
 .world-view {
+  /* A LINHA D'AGUA. Estava cravada como 25% em sete regras diferentes, e
+     mexer nela desalinhava a cena por partes. Agora e um numero so, e tudo
+     o que depende dela deriva por calc.
+
+     Subiu de 25 para 40: com um quarto de ceu era agua a mais e cenario a
+     menos, e a outra margem — que e onde o LUGAR se ve — ficava espremida
+     numa tira no topo. */
+  --horizonte: 40%;
+  /* Escala do pixel, partilhada por TODOS os sprites da cena. Vivia dentro
+     do .world-boat, e a loja nao a enxergava — cada sprite novo teria de
+     redeclarar o mesmo par de degraus e um deles acabaria por divergir. */
+  --s: 1;
   --camada-atmosfera: 1;  /* brilho e profundidade, sobre a agua */
   --camada-cena: 2;       /* margem, marcas, vulto sob a superficie */
   --camada-barco: 3;      /* o que flutua */
@@ -134,8 +150,9 @@
    Riscar por cima disso era dizer a mesma coisa uma terceira vez, em papel
    milimetrado, na metade mais bonita do lago. */
 
-/* Terra, nao agua translucida: a margem sobe acima da linha d'agua. */
-.world-shore { position: absolute; top: 17%; bottom: 0; background: var(--lago-terra); }
+/* Terra, nao agua translucida: a margem sobe oito pontos acima da linha
+   d'agua, e e isso que a faz ler como margem. */
+.world-shore { position: absolute; top: calc(var(--horizonte) - 8%); bottom: 0; background: var(--lago-terra); }
 
 /* ---- Alvos clicaveis.
 
@@ -156,23 +173,33 @@
   outline-offset: 3px;
 }
 
-/* A loja fica EM PE na margem, a meia altura do plano — na mesma faixa por
-   onde o barco passa. Encostada ao horizonte, como estava, lia-se como parte
-   do cenario de fundo em vez de um sitio aonde se vai. */
-/* A loja fica em TERRA, entao ao contrario da marca ela pode ser solida: e
-   uma construcao, nao um acidente da agua. O corpo sai da paleta do lugar e
-   so a luz de dentro usa o token de instrumento — de noite le como uma
-   janela acesa na margem, que e exatamente o que ela e. */
+/* A loja fica EM PE na margem, logo abaixo da linha d'agua — na mesma faixa
+   por onde o barco passa. Encostada ao horizonte, como ja esteve, lia-se
+   como parte do cenario de fundo em vez de um sitio aonde se vai.
+
+   Em TERRA, entao ao contrario da marca ela pode ser solida: e uma
+   construcao, nao um acidente da agua. */
 .world-shop {
-  top: 26%;
-  height: 20%;
+  /* Assente na margem a 66% da cena, logo atras da linha por onde o barco
+     passa (67%): quem esta em terra fica um pouco mais longe do que quem
+     esta na agua a frente dela. */
+  top: calc(66% - 64px * var(--s));
+  width: calc(64px * var(--s));
+  height: calc(64px * var(--s));
   transform: translateX(-50%);
-  background: var(--lago-margem);
-  border: 2px solid var(--lago-terra);
-  /* Cantos retos: e uma construcao, e o arredondado sobrava justamente ao
-     lado da faixa de luz que marca a soleira. */
-  border-bottom: 3px solid var(--fishing-marker);
+  background-image: url('../art/loja.png');
+  background-size: calc(128px * var(--s)) calc(64px * var(--s));
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
 }
+
+/* Dia e noite, declarados duas vezes como a Regra do Turno manda. Ao
+   contrario do pescador, a loja MUDA de turno: ele e uma pessoa e nao troca
+   de cor ao anoitecer, mas um lugar sim — e de noite acende a janela.
+
+   Sao dois quadros na mesma folha, entao a troca e so deslocamento. */
+.light .world-shop { background-position: 0 0; }
+.dark .world-shop { background-position: calc(-64px * var(--s)) 0; }
 
 .world-shop[data-near='true'] { outline: 3px solid var(--fishing-marker); outline-offset: 3px; }
 .world-shop:hover { filter: brightness(1.15); }
@@ -334,7 +361,6 @@
      o topo sobe a altura dele. Antes era `height: 17%`, fluido — pixel art
      so fica nitida em multiplo inteiro do pixel de origem, e a 1,5x o pixel
      cai entre a grade e borra. Por isso a altura vem em degraus. */
-  --s: 1;
   width: calc(64px * var(--s));
   height: calc(64px * var(--s));
   top: calc(67% - 64px * var(--s));
@@ -361,7 +387,8 @@
 .world-boat[data-frame='3'] { background-position: calc(-192px * var(--s)) 0; }
 
 @media (min-width: 900px) {
-  .world-boat { --s: 2; }
+  /* Na cena, nao no barco: a loja e qualquer sprite futuro crescem junto. */
+  .world-view { --s: 2; }
 }
 
 /* O vulto sob a agua durante a espera. Elipse e nao desenho: o que ele diz e
