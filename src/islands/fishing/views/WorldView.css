@@ -229,44 +229,83 @@
 
 /* No plano de agua perto, a meia distancia: e ali que o barco navega. Junto
    ao horizonte a marca ficava "longe" e o barco nunca parecia chegar nela. */
-/* Uma marca e um BAIXIO: agua mais clara onde o fundo sobe, com a borda
-   desfeita. Era um retangulo opaco de --fishing-rule, que sobre um lago de
-   verdade lia como uma tampa a boiar. O alvo continua do mesmo tamanho e no
-   mesmo sitio — muda so o que ele parece. */
+/* Uma marca e um BORBULHAR: tres bolhas na superficie, e nada mais.
+
+   Passou por retangulo opaco (lia como tampa a boiar) e por poca clara (uma
+   mancha grande demais para dizer "ha peixe aqui"). Bolha e o sinal certo:
+   pequena, discreta, e diz que ha vida por baixo em vez de marcar o chao.
+
+   O alvo continua com o mesmo tamanho e no mesmo sitio — muda so o que se ve
+   dele. */
 .world-spot {
   top: 57%;
   height: 12%;
   transform: translateX(-50%);
-  background: radial-gradient(
-    ellipse at center,
-    color-mix(in srgb, var(--lago-brilho) 26%, transparent),
-    transparent 72%
-  );
-  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 44%, color-mix(in srgb, var(--lago-brilho) 52%, transparent) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 54% 62%, color-mix(in srgb, var(--lago-brilho) 40%, transparent) 0 3px, transparent 3.5px),
+    radial-gradient(circle at 70% 38%, color-mix(in srgb, var(--lago-brilho) 46%, transparent) 0 2px, transparent 2.5px);
 }
 
-/* "Estas aqui" e hover acendem o mesmo baixio, com mais luz. Continuam a usar
-   --fishing-marker, que e token de INSTRUMENTO de proposito: isto ja nao e a
-   paisagem, e a interface a dizer onde voce esta. */
+/* De vez em quando passa uma sombra por baixo: aparece, encolhe e some. E o
+   que diz que o lago esta vivo sem prometer peixe nenhum — o vulto da fisgada
+   e outro, aquele acontece so quando ha peixe de verdade na linha.
+
+   Ciclo longo com janela curta: a sombra ocupa menos de um quinto do tempo.
+   Se passasse sempre, deixaria de ser um acontecimento. `--atraso` vem do
+   indice da marca, senao as tres piscavam em unissono e o lago inteiro
+   parecia um semaforo. */
+.world-spot::after {
+  content: '';
+  position: absolute;
+  left: 42%;
+  top: 46%;
+  width: 26%;
+  height: 26%;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--lago-fundo) 78%, transparent);
+  opacity: 0;
+  animation: world-passagem 8s ease-in-out infinite;
+  animation-delay: var(--atraso, 0s);
+  pointer-events: none;
+}
+
+@keyframes world-passagem {
+  0%, 72%   { opacity: 0; transform: translateX(-6px) scale(1); }
+  78%       { opacity: 0.85; transform: translateX(0) scale(1); }
+  90%       { opacity: 0.5; transform: translateX(7px) scale(0.55); }
+  96%, 100% { opacity: 0; transform: translateX(10px) scale(0.2); }
+}
+
+/* "Estas aqui" e hover SOMAM uma lavagem por baixo das bolhas, em vez de
+   trocarem o fundo: escrever `background` de novo apagava as bolhas, e a
+   marca onde o barco esta era justamente a unica sem elas.
+
+   A lavagem usa --fishing-marker, token de INSTRUMENTO de proposito: isto ja
+   nao e paisagem, e a interface a dizer onde voce esta. Fraca porque nao e um
+   alarme — no claro, oxblood a cheio sobre agua lia como aviso de perigo. */
 .world-spot[data-here='true'],
 .world-spot:hover {
-  background: radial-gradient(
-    ellipse at center,
-    color-mix(in srgb, var(--fishing-marker) 58%, transparent),
-    transparent 74%
-  );
+  background:
+    radial-gradient(circle at 32% 44%, color-mix(in srgb, var(--lago-brilho) 52%, transparent) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 54% 62%, color-mix(in srgb, var(--lago-brilho) 40%, transparent) 0 3px, transparent 3.5px),
+    radial-gradient(circle at 70% 38%, color-mix(in srgb, var(--lago-brilho) 46%, transparent) 0 2px, transparent 2.5px),
+    radial-gradient(ellipse at center, color-mix(in srgb, var(--fishing-marker) 26%, transparent), transparent 76%);
 }
 
 /* Anel pulsante sobre cada marca: e ele que ensina, sem texto, que dali se
    pode clicar. Some com movimento reduzido — o aviso vira estatico. */
-/* Ondulacao, nao moldura. Era um retangulo de cantos arredondados com 2px de
-   --fishing-marker, e sobre um lago de verdade lia como uma caixa de
-   interface a boiar. Elipse fina e mais apagada: continua a dizer "da para
-   clicar", agora como um circulo na agua. */
+/* Ondulacao em volta das BOLHAS, nao em volta do alvo.
+
+   Passou por retangulo de interface e depois por elipse do tamanho do alvo —
+   que e largo, entao o anel ficava maior que o barco e dominava a cena. Ele
+   existe para ensinar que ali se clica, nao para ser o assunto: agora e um
+   circulinho fino a cercar as bolhas, e o alvo clicavel continua largo por
+   baixo dele. */
 .world-ping {
   position: absolute;
-  inset: -7px -4px;
-  border: 2px solid color-mix(in srgb, var(--fishing-marker) 62%, transparent);
+  inset: 18% 30%;
+  border: 1px solid color-mix(in srgb, var(--fishing-marker) 40%, transparent);
   border-radius: 50%;
   animation: world-ping 2s ease-out infinite;
   pointer-events: none;
@@ -305,6 +344,10 @@
      reflexo fica parado, nao desaparece: a agua continua a ter luz. */
   .world-view::before { animation: none; }
   .world-shadow { animation: none; opacity: 0.5; }
+  /* A sombra que passa e puro acontecimento decorativo, e some por inteiro:
+     deixa-la parada seria uma mancha permanente que nao quer dizer nada. As
+     bolhas ficam, porque sao o que marca o sitio. */
+  .world-spot::after { animation: none; opacity: 0; }
 }
 
 /* O barco flutua NO plano da agua, nao na linha do horizonte: topo em 50%,

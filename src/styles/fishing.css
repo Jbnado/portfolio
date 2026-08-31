@@ -31,14 +31,17 @@
      fosforo. Um lago verde-fosforo nao le como agua, e era por isso que o
      pescador parecia colado por cima da cena em vez de estar dentro dela.
 
-     Aqui: meio-dia. */
-  --lago-ceu-alto: #a9c6d6;
-  --lago-ceu-baixo: #d6e3e0;
-  --lago-margem: #74855f;
-  --lago-terra: #a8926b;
-  --lago-raso: #74aebd;
-  --lago-medio: #3f7e94;
-  --lago-fundo: #245066;
+     Aqui: meio-dia. Dessaturado de proposito — a primeira tentativa foi um
+     azul de cartao-postal, e sobre a manila da pagina lia como uma fotografia
+     colada na mesa. O lago do dia tem de parecer DESENHADO nesse papel: agua
+     de tinta lavada, areia da cor da folha, verde seco na outra margem. */
+  --lago-ceu-alto: #c3cfd1;
+  --lago-ceu-baixo: #e4e2d6;
+  --lago-margem: #8a9070;
+  --lago-terra: #bfa87e;
+  --lago-raso: #93aeb0;
+  --lago-medio: #5f8290;
+  --lago-fundo: #3b5c6c;
   /* Sol na agua. Nunca #fff literal: branco puro nao existe em lugar nenhum
      deste site. */
   --lago-brilho: #f6efd8;

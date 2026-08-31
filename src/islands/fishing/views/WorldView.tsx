@@ -115,14 +115,16 @@ export function WorldView({ boat, reach, onSailTo, texts, frame, shadow, facing,
           <span class="world-tag" aria-hidden="true">{texts.shop}</span>
         </button>
 
-        {visiveis.map((s) => (
+        {visiveis.map((s, i) => (
           <button
             type="button"
             key={s.id}
             class="world-hot world-spot"
             disabled={paused}
             data-here={String(spot?.id === s.id)}
-            style={{ left: `${sx(s.x)}%`, width: `${((REACH * 2) / VIEW_W) * 100}%` }}
+            /* O atraso vem do indice: sem ele as tres sombras passavam em
+               unissono e o lago parecia um semaforo. */
+            style={{ left: `${sx(s.x)}%`, width: `${((REACH * 2) / VIEW_W) * 100}%`, '--atraso': `${i * 2.7}s` }}
             onClick={() => onSailTo(s.x)}
             aria-label={texts.cast}
           >
