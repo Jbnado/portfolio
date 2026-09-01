@@ -80,8 +80,13 @@ type Base = {
   /** De que agua o peixe e. A graca do lago e que os dois aparecem ali: e a
       premissa do cenario, entao ela precisa estar visivel no caderno. */
   water: 'doce' | 'salgada';
-  /** Retangulo colorido de placeholder. Token CSS, nunca hex literal. */
+  /** Cor da especie no minigame e no clarao da revelacao. Token CSS, nunca
+      hex literal. */
   color: string;
+  /** Celula da folha `art/peixes.png`, que e 6x4 de 64. E um campo proprio,
+      e nao a posicao na tabela, porque o caderno guarda por id: reordenar a
+      tabela trocaria a cara dos peixes de quem ja jogou, sem erro nenhum. */
+  sprite: number;
   sizeMin: number;
   sizeMax: number;
   /** Peixe lendario: so morde NESTE ponto de pesca e so com ESTA isca

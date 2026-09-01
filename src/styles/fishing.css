@@ -425,19 +425,44 @@ body.fishing-locked {
 .fishing-dex-item strong { font-size: 0.85rem; }
 .fishing-dex-item small { opacity: 0.8; line-height: 1.5; }
 
-/* Espaco reservado para a foto do peixe, que ainda nao existe. Quadrado
-   grande de proposito: e ele que vai carregar a identidade da especie. */
+/* A folha das 24 especies: 6 colunas por 4 linhas de celulas de 64.
+   O tamanho e o deslocamento andam em MULTIPLO INTEIRO do lado da celula.
+   Meio pixel de escala tira o desenho da grade e a arte perde o contorno,
+   que e o unico defeito que nao da para corrigir depois. */
+.peixe-sprite {
+  --lado: 64px;
+  flex: none;
+  /* A moldura fica DE FORA do lado: com border-box a borda comeria 4px da
+     celula e cortaria a cauda dos peixes que ocupam a largura toda. */
+  box-sizing: content-box;
+  width: var(--lado);
+  height: var(--lado);
+  background-image: url('../islands/fishing/art/peixes.png');
+  background-repeat: no-repeat;
+  background-size: calc(var(--lado) * 6) calc(var(--lado) * 4);
+  background-position: calc(var(--peixe-col) * var(--lado) * -1)
+    calc(var(--peixe-linha) * var(--lado) * -1);
+  image-rendering: pixelated;
+}
+
+/* A moldura do caderno. O quadrado acompanha a coluna da grade, mas o peixe
+   dentro dele fica sempre em 64: e a moldura que estica, nunca o desenho. */
 .fishing-menu-pic {
   display: flex;
   align-items: center;
   justify-content: center;
   aspect-ratio: 1;
   width: 100%;
+  overflow: hidden;
   background: var(--fishing-surface);
   border: 2px solid var(--fishing-rule);
   font-size: 1.1rem;
   opacity: 0.7;
 }
+
+/* Peixe ja pescado nao e um placeholder desbotado: mostra-se por inteiro. */
+.fishing-menu-pic:has(.peixe-sprite) { opacity: 1; }
+.fishing-menu-pic .peixe-sprite { --lado: 128px; }
 
 /* Linha de acao com altura reservada: o botao de lancar entra e sai conforme
    o barco chega numa marca, e sem a reserva ele empurrava o lago pra cima e
@@ -481,6 +506,9 @@ body.fishing-locked {
 
 @media (max-width: 640px) {
   .fishing-dex { grid-template-columns: repeat(2, 1fr); }
+  /* Com duas colunas a celula nao chega aos 128, e o peixe sairia cortado.
+     Cai para 64, que e o outro multiplo inteiro possivel. */
+  .fishing-menu-pic .peixe-sprite { --lado: 64px; }
   .fishing-keys { display: none; }
 }
 

@@ -1,3 +1,4 @@
+import { spriteCell } from '../fish';
 import { rarityOf, type Kind } from '../shop';
 import type { Fish } from '../types';
 import './CatchView.css';
@@ -22,6 +23,7 @@ type Props = {
  */
 export function CatchView({ fish, cm, texts }: Props) {
   const rarity = rarityOf(fish);
+  const cell = spriteCell(fish.sprite);
   return (
     <div class="catch" data-rarity={rarity} style={{ '--catch-fish': fish.color }}>
       {/* Luz, raios e aura sao decoracao pura: o nome, o tamanho e a raridade
@@ -31,9 +33,13 @@ export function CatchView({ fish, cm, texts }: Props) {
       {rarity === 'lenda' && <span class="catch-aura" aria-hidden="true" />}
 
       <div class="catch-card">
-        {/* Lugar guardado para o desenho do peixe. Por enquanto e o bloco de
-            cor da especie, o mesmo que o minigame usa. */}
-        <span class="catch-pic" aria-hidden="true" />
+        {/* O desenho da especie. Fica `aria-hidden` porque o nome vem logo
+            a seguir em texto: quem ouve nao ganha nada com "imagem de peixe". */}
+        <span
+          class="catch-pic peixe-sprite"
+          aria-hidden="true"
+          style={{ '--peixe-col': cell.col, '--peixe-linha': cell.row }}
+        />
         <strong class="catch-name">{texts.name}</strong>
         <span class="catch-size">{cm} cm</span>
         <span class="catch-tag">{texts.rarity[rarity]}</span>

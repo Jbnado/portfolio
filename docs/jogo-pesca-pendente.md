@@ -1,32 +1,41 @@
 # Jogo de pesca — o que falta
 
-Estado em 31/08/2026, depois do PR #5 e da página de vitrine. O jogo está
-jogável e no ar nos três idiomas. O que segue é o que ficou por fazer, com o
+Estado em 31/08/2026, depois do PR #5, da página de vitrine e da arte dos
+peixes. O jogo está jogável e no ar nos três idiomas. O que segue é o que ficou por fazer, com o
 motivo de cada coisa ainda estar aberta.
 
 Não é uma lista de bugs. Nada aqui impede o jogo de funcionar.
 
 ## Arte
 
-### Os 24 peixes — o buraco grande
+### Os 24 peixes — feito
 
-As espécies ainda são bloco de cor. Aparecem em dois lugares:
+As espécies têm cara. A folha é `src/islands/fishing/art/peixes.png`, 384×256,
+seis colunas por quatro linhas de células de 64, e pesa 17,7 KB para os
+vinte e quatro. Ela aparece em dois sítios:
 
-- `.catch-pic` na revelação da fisgada, 84×56, hoje `background: var(--catch-fish)`
-- `.fishing-menu-pic` no caderno, célula quadrada que mostra `???` ou vazio
+- `.catch-pic` na revelação da fisgada, 128 no computador e 64 no telefone,
+  com a cor da espécie por trás a atravessar os pixels transparentes
+- `.fishing-menu-pic` no caderno, 128 na grade de três colunas e 64 na de duas
 
-O caderno é uma pokédex de 24 espécies brasileiras em que nenhuma tem cara. É
-ali que a coleção deixa de valer a pena, e é por isso que este item vem antes
-dos outros.
+**A decisão de uma folha ou duas ficou em UMA.** Os peixes continuam quentes
+sobre o painel de fósforo, pela mesma razão que o pescador: uma segunda folha
+em paleta fria custaria outros 17 KB para resolver um desconforto que, olhado
+no escuro, não aparece.
 
-A 600 bytes por sprite, os 24 dão uns 15 KB. Gerar em folhas de seis,
-referenciando sempre a última folha aprovada — o pipeline está em
-`superpowers/specs/2026-08-31-sprite-pescador-design.md`.
+Cada peixe leva um campo `sprite` próprio em `fish.ts`, e não a posição na
+tabela. O caderno guarda por id: se alguém reordenasse a tabela, cada espécie
+passaria a mostrar o desenho de outra, sem erro nenhum a apontar o problema.
 
-**Decisão em aberto antes de gerar:** uma versão ou duas. Os peixes aparecem
-sobre *cromo de interface* (o véu da revelação e o painel do caderno), não
-dentro do lago. Então herdam a mesma tensão do pescador: peixe quente sobre
-painel de fósforo. Decidir antes de gerar 24, não depois.
+O desenho foi feito em quatro tiras de seis, pelo `codex`, com as descrições
+pesquisadas em `docs/jogo-pesca-especies.md`. Duas ferramentas ficaram:
+
+- `scripts/montar-peixes.mjs` recorta a imagem grande do gerador. Acha os
+  peixes pela FORMA, não por fatia fixa, porque a cauda de um passa para o
+  quadro do vizinho e lá aparece como caco solto.
+- `scripts/check-peixes.mjs` conta ilhas de pixels opacos por célula. Um peixe
+  inteiro é uma ilha só; duas querem dizer que a cauda saiu separada do corpo,
+  defeito que a caixa delimitadora não apanha e que o olho quase não vê.
 
 ### O céu
 
@@ -57,8 +66,10 @@ verdade, a de que as imagens usaram a lib `sprite-gen`. Ela foi avaliada nesta
 mesma sessão e descartada por ser feita para personagem com estados, e nada
 dela entrou no projeto.
 
-**Falta o quinto print, o da revelação da fisgada.** Ele mostra o retângulo de
-placeholder no lugar do peixe, então só entra depois de os peixes terem arte.
+**O quinto print, o da revelação da fisgada, deixou de estar bloqueado** — o
+peixe já tem desenho. Mas entrar com ele quebra a grade de quatro, que foi
+pedida par de propósito. Ou substitui um dos quatro, ou vira grade de seis.
+É escolha do dono, não arrumação.
 
 ## Defeitos pequenos, achados depois
 
@@ -86,9 +97,9 @@ detector, e por isso merece tarefa própria.
 
 ### Sprites embutidos como data URI
 
-O Vite embute PNG abaixo do limite de inline direto no CSS. Funciona bem com
-os três assets de hoje e poupa requisições. Com os 24 peixes a folha de estilo
-incha, e aí vale passar do inline para arquivo servido.
+O Vite embute PNG abaixo do limite direto no CSS. A folha dos peixes passou do
+limite e já sai como arquivo servido, que era o receio. Sobra um sprite ainda
+embutido na folha de estilo do jogo — pequeno, e sem custo que se note.
 
 ## O que é placeholder de propósito
 

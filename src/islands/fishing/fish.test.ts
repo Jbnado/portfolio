@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { FISH, sizeOf, guaranteedFish } from './fish';
+import { FISH, sizeOf, guaranteedFish, spriteCell } from './fish';
 import type { TrackParams, HoldParams, DodgeParams } from './types';
 
 describe('FISH', () => {
@@ -187,5 +187,47 @@ describe('guaranteedFish', () => {
     expect(lento.color).toBe(original.color);
     expect(lento.sizeMin).toBe(original.sizeMin);
     expect(lento.sizeMax).toBe(original.sizeMax);
+  });
+});
+
+describe('sprite', () => {
+  it('cada especie aponta para uma celula propria da folha de 6x4', () => {
+    const celulas = FISH.map((f) => f.sprite);
+    expect(new Set(celulas).size).toBe(FISH.length);
+    for (const c of celulas) {
+      expect(Number.isInteger(c)).toBe(true);
+      expect(c).toBeGreaterThanOrEqual(0);
+      expect(c).toBeLessThan(24);
+    }
+  });
+
+  it('a folha esta na ordem em que as especies foram desenhadas', () => {
+    // O desenho foi feito em quatro tiras de seis, seguindo a ordem da tabela.
+    // O campo existe justamente para reordenar a tabela nao trocar os peixes
+    // de cara: se alguem mexer aqui, este teste diz o que precisa recortar.
+    expect(FISH.find((f) => f.id === 'p1')!.sprite).toBe(0);
+    expect(FISH.find((f) => f.id === 'p12')!.sprite).toBe(5);
+    expect(FISH.find((f) => f.id === 'p4')!.sprite).toBe(6);
+    expect(FISH.find((f) => f.id === 'p20')!.sprite).toBe(17);
+    expect(FISH.find((f) => f.id === 'p9')!.sprite).toBe(18);
+    expect(FISH.find((f) => f.id === 'p24')!.sprite).toBe(23);
+  });
+});
+
+describe('spriteCell', () => {
+  it('converte o indice na coluna e na linha da folha', () => {
+    expect(spriteCell(0)).toEqual({ col: 0, row: 0 });
+    expect(spriteCell(5)).toEqual({ col: 5, row: 0 });
+    expect(spriteCell(6)).toEqual({ col: 0, row: 1 });
+    expect(spriteCell(17)).toEqual({ col: 5, row: 2 });
+    expect(spriteCell(23)).toEqual({ col: 5, row: 3 });
+  });
+
+  it('nenhuma especie cai fora da folha', () => {
+    for (const f of FISH) {
+      const { col, row } = spriteCell(f.sprite);
+      expect(col).toBeLessThan(6);
+      expect(row).toBeLessThan(4);
+    }
   });
 });

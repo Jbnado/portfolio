@@ -9,6 +9,10 @@ import type { DodgeParams, Fish, HoldParams, TrackParams } from './types';
  *
  * Os ids p1..p9 nao mudam de especie nem de faixa: o caderno guarda por id, e
  * remexer neles apagaria a colecao de quem ja jogou.
+ *
+ * A ORDEM desta tabela e a ordem em que os peixes foram desenhados na folha
+ * `art/peixes.png`. Reordenar aqui exige recortar a folha na mesma ordem, ou
+ * cada especie passa a mostrar o desenho de outra.
  */
 
 const TRACK: Record<1 | 2 | 3, TrackParams> = {
@@ -84,7 +88,7 @@ export const FISH: Fish[] = TABELA.map((l, i) => {
   const peso = l.legend ? LENDA : l.engine === 'hold' ? RARO : COMUM;
   const base = {
     id: l.id, tier: l.tier, weight: peso, water: l.water, color: cor(i),
-    sizeMin: l.min, sizeMax: l.max, legend: l.legend,
+    sprite: i, sizeMin: l.min, sizeMax: l.max, legend: l.legend,
   };
   // Cada especie leva a PROPRIA copia dos parametros. Compartilhar o objeto
   // faria duas especies da mesma faixa terem params identicos por referencia,
@@ -93,6 +97,20 @@ export const FISH: Fish[] = TABELA.map((l, i) => {
   if (l.engine === 'hold') return { ...base, engine: 'hold' as const, params: { ...HOLD[l.tier] } };
   return { ...base, engine: 'dodge' as const, params: { ...DODGE[l.tier] } };
 });
+
+/** Colunas da folha `art/peixes.png`. Quatro tiras de seis, uma por lote. */
+export const SPRITE_COLS = 6;
+
+/**
+ * Onde o desenho da especie mora na folha.
+ *
+ * A conta e trivial, mas vive aqui e nao na vista porque quem desenha nao
+ * pode ser quem decide o recorte: a folha e um dado do jogo, e mudar de 6x4
+ * para outro formato tem de ser uma mudanca num sitio so.
+ */
+export function spriteCell(sprite: number): { col: number; row: number } {
+  return { col: sprite % SPRITE_COLS, row: Math.floor(sprite / SPRITE_COLS) };
+}
 
 /** Qualidade 0..1 vira tamanho dentro da faixa da especie. */
 export function sizeOf(fish: Fish, quality: number): number {

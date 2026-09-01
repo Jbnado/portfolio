@@ -34,10 +34,10 @@ geral e vale conferir antes de gerar, se o resultado sair duvidoso.
 | **Cascudo** *(Hypostomus)* | 4:1, achatado | 78% | ✓ Coberto de **placas ósseas como armadura**, em fileiras pelo corpo. Boca ventral em ventosa, ventre chato, dorsal alta em leque |
 | **Pacu** *(Piaractus mesopotamicus)* | 1,5:1 | 88% | ✓ **Corpo alto e comprimido, em forma de disco.** Dorso cinza-escuro e ventre amarelo-dourado. Quilha de espinhos na linha do ventre |
 | **Curimbatá** *(Prochilodus lineatus)* | 3:1 | 82% | ✓ Cinza-prateado com **faixas transversais escuras discretas no dorso**. Nadadeiras com pintas escuras e claras alternadas. Boca em ventosa, arredondada |
-| **Piapara** *(Leporinus obtusidens)* | 3,5:1 | 80% | Da mesma família do piau. Alongado, amarelado, com manchas escuras arredondadas no flanco |
-| **Xaréu** *(Caranx)* | 2,5:1 | 88% | Corpo alto e comprimido, prateado, cabeça de perfil íngreme. Cauda muito bifurcada e escudos ósseos na parte final da linha lateral |
-| **Matrinxã** *(Brycon)* | 3,5:1 | 82% | Prateado de dorso escuro, com nadadeiras avermelhadas. Parente da piraputanga, e a semelhança é real |
-| **Barbado** | 4:1 | 85% | Bagre de barbilhões muito longos, corpo cinzento e sem escamas |
+| **Piapara** *(Megaleporinus obtusidens)* | 3,5:1 | 80% | ✓ Corpo alongado e largo, **cabeça pequena para o corpo e boca romba**. Prateado com faixas verticais escuras alternando com amarelo pelo flanco |
+| **Xaréu** *(Caranx hippos)* | 2,5:1 | 88% | ✓ Corpo alto e comprimido, cabeça de perfil íngreme. **Dorso azulado, flanco prateado com reflexo dourado, ventre amarelado.** Mancha preta na peitoral e outra no operáculo. Cauda muito bifurcada e escudos ósseos no fim da linha lateral |
+| **Matrinxã** *(Brycon cephalus)* | 3,5:1 | 82% | ✓ Corpo alongado, um pouco alto e comprimido de lado. Prateado, **nadadeiras alaranjadas e caudal escura**. Uma **mancha escura arredondada na região umeral**, logo atrás da guelra |
+| **Barbado** *(Pinirampus pirinampu)* | 4:1 | 85% | ✓ Bagre de couro, boca pequena e **barbilhões achatados em fita, muito longos**. **Nadadeira adiposa longíssima**, começa logo depois da dorsal e vai quase até a cauda. Cinza a marrom no dorso, clareando no ventre |
 
 ## Faixa 3 — o abissal
 
@@ -45,10 +45,10 @@ geral e vale conferir antes de gerar, se o resultado sair duvidoso.
 |---|---|---|---|
 | **Garoupa** | 2,8:1 | 90% | ✓ Corpo robusto, **cabeça grande**, boca larga. Manchada, de camuflagem, contra o recife |
 | **Pirarara** *(Phractocephalus hemioliopterus)* | 3,5:1 | 95% | ✓ Bagre grande. Dorso cinza-escuro ou marrom, ventre esbranquiçado ou amarelado, e **nadadeiras de vermelho vibrante**, que é o traço inconfundível |
-| **Jaú** | 3:1 | 96% | Bagre gigante de corpo muito robusto, oliva ou amarelado manchado, cabeça enorme e larga |
+| **Jaú** *(Zungaro jahu)* | 3:1 | 96% | Bagre gigante de corpo muito robusto que afina depressa para a cauda. Cabeça enorme e larga, boca terminal. Amarelo-oliva a marrom, salpicado de escuro, ventre claro. Barbilhões curtos para um bagre deste tamanho |
 | **Badejo** *(Mycteroperca)* | 3,2:1 | 88% | ✓ **Mais alongado que a garoupa**, com escamas menores. Pele pintada de marrom e branco |
 | **Dourado** *(Salminus brasiliensis)* | 3,2:1 | 92% | **Dourado brilhante**, cabeça grande e mandíbula forte. Cauda com faixa avermelhada. É o troféu de rio |
-| **Piraíba** | 3,5:1 | 98% | Bagre gigante, cinza-azulado no dorso e branco no ventre. Barbilhões longos |
+| **Piraíba** *(Brachyplatystoma filamentosum)* | 3,5:1 | 98% | ✓ Bagre gigante de **corpo roliço e cabeça deprimida, olhos pequenos e no topo dela**. Cinza-escuro amarronzado no dorso, claro no ventre. **Barbilhões maxilares passam da dorsal**, e o raio de fora da cauda estica-se num filamento |
 | **Pirarucu** *(Arapaima gigas)* | 4:1 | 100% | ✓ O maior peixe de água doce do Brasil. **Cabeça achatada e ossificada, corpo longo e escamoso, cauda vermelha contrastando com escamas esverdeadas** |
 | **Mero** *(Epinephelus itajara)* | 2,5:1 | 100% | Garoupa gigante. Corpo enorme e robusto, cabeça larguíssima, pele manchada de marrom e amarelado |
 
@@ -58,3 +58,9 @@ Pesquisa em [CPT Cursos](https://www.cpt.com.br/), [InfoEscola](https://www.info
 [Guia de peixes de água doce do RS, UFRGS](https://www.ufrgs.br/peixesrs/ordem-siluriformes-bagres-e-cascudos/),
 [Portal Amazônia](https://portalamazonia.com/amazonia-de-a-a-z/pirarucu-o-gigante-da-amazonia/)
 e [Wikipédia](https://pt.wikipedia.org/wiki/Robalo-branco).
+
+Lote 3: [Matrinxã, CPT](https://www.cpt.com.br/cursos-criacaodepeixes/artigos/peixes-de-agua-doce-do-brasil-matrinxa-brycon-cephalus),
+[Xaréu, Ambiente Brasil](https://ambientes.ambientebrasil.com.br/agua/pesca_esportiva_em_agua_salgada/xareu_-_caranx_hippos.html),
+[Barbado, CPT](https://www.cpt.com.br/cursos-criacaodepeixes/artigos/peixes-de-agua-doce-do-brasil-barbado-pinirampus-pinirampu),
+[Piapara, Wikipedia](https://en.wikipedia.org/wiki/Megaleporinus_obtusidens),
+[Piraíba, Seriously Fish](https://www.seriouslyfish.com/species/brachyplatystoma-filamentosum/).

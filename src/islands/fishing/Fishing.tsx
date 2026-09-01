@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
-import { FISH, sizeOf, guaranteedFish } from './fish';
+import { FISH, sizeOf, guaranteedFish, spriteCell } from './fish';
 import { mountSea, unmountSea } from './sea';
 import type { Fish, TrackParams, HoldParams, DodgeParams, Result } from './types';
 import { TrackView } from './views/TrackView';
@@ -743,7 +743,19 @@ export default function Fishing({ texts }: { texts: Texts }) {
                     const r = log[f.id];
                     return (
                       <li key={f.id} class="fishing-dex-item" data-found={String(!!r)}>
-                        <span class="fishing-menu-pic" aria-hidden="true">{r ? '' : '???'}</span>
+                        <span class="fishing-menu-pic" aria-hidden="true">
+                          {r ? (
+                            <i
+                              class="peixe-sprite"
+                              style={{
+                                '--peixe-col': spriteCell(f.sprite).col,
+                                '--peixe-linha': spriteCell(f.sprite).row,
+                              }}
+                            />
+                          ) : (
+                            '???'
+                          )}
+                        </span>
                         <strong>{r ? texts.fish[f.id] : '???'}</strong>
                         {r ? (
                           <small>

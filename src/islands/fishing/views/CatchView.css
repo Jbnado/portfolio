@@ -62,13 +62,11 @@
   animation: catch-rise 420ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
 }
 
-/* Espaco guardado para o desenho do peixe. Ate la, o bloco de cor da especie
-   — o mesmo que o minigame usa, para o peixe da vista e o do premio serem
-   reconheciveis como o mesmo bicho. */
+/* O desenho da especie, em dobro. A moldura leva a cor do peixe atras, que e
+   o que continua a ligar o premio ao bicho que se viu no minigame. */
 .catch-pic {
-  width: 84px;
-  height: 56px;
-  background: var(--catch-fish, var(--fishing-marker));
+  --lado: 128px;
+  background: color-mix(in srgb, var(--catch-fish, var(--fishing-marker)) 22%, transparent);
   border: 2px solid var(--fishing-rule);
   border-radius: 4px;
 }
@@ -223,7 +221,8 @@
 
 @media (max-width: 560px) {
   .catch-card { padding: 12px 18px; }
-  .catch-pic { width: 68px; height: 46px; }
+  /* Metade exata, para o pixel continuar na grade. */
+  .catch-pic { --lado: 64px; }
   .catch-burst { width: 200px; height: 200px; }
   .catch[data-rarity='raro'] .catch-burst { width: 280px; height: 280px; }
   .catch[data-rarity='lenda'] .catch-burst { width: 340px; height: 340px; }
